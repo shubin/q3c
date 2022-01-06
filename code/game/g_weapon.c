@@ -263,6 +263,51 @@ SHOTGUN
 ======================================================================
 */
 
+#if defined( QC )
+
+typedef struct client_damage_s {
+	gentity_t *targ;
+	gentity_t *inflictor;
+	gentity_t *attacker;
+	vec3_t dir;
+	vec3_t point;
+	int damage;
+} client_damage_t;
+
+static client_damage_t s_client_damage[MAX_CLIENTS];
+
+static
+void SG_ResetDamage( void ) {
+	memset( s_client_damage, 0, sizeof( s_client_damage ) );
+}
+
+static
+void SG_AddDamage( gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t dir, vec3_t point, int damage ) {
+	if ( targ->client == NULL ) { // not a player, so process the damage regularily
+		G_Damage( targ, inflictor, attacker, dir, point, damage, 0, MOD_SHOTGUN );
+	} else {
+		client_damage_t *cd = &s_client_damage[targ->client->ps.clientNum];
+		cd->targ = targ;
+		cd->inflictor = inflictor;
+		cd->attacker = attacker;
+		VectorCopy( dir, cd->dir );
+		VectorCopy( point, cd->point );
+		cd->damage += damage;
+	}
+}
+
+static
+void SG_ExecuteClientDamage( void ) {
+	for ( int i = 0; i < MAX_CLIENTS; i++ ) {
+		client_damage_t *cd = &s_client_damage[i];
+		if ( cd->targ != NULL && cd->inflictor != NULL && cd->attacker != NULL ) {
+			G_Damage( cd->targ, cd->inflictor, cd->attacker, cd->dir, cd->point, cd->damage, 0, MOD_SHOTGUN );
+		}
+	}		
+}
+
+#endif
+
 // DEFAULT_SHOTGUN_SPREAD and DEFAULT_SHOTGUN_COUNT	are in bg_public.h, because
 // client predicts same spreads
 #define	DEFAULT_SHOTGUN_DAMAGE	10
@@ -309,7 +354,11 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 			if( LogAccuracyHit( traceEnt, ent ) ) {
 				hitClient = qtrue;
 			}
+#if defined( QC )
+            SG_AddDamage( traceEnt, ent, ent, forward, tr.endpos, damage );
+#else
 			G_Damage( traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
+#endif
 			return hitClient;
 		}
 		return qfalse;
@@ -356,7 +405,13 @@ void weapon_supershotgun_fire (gentity_t *ent) {
 	tent->s.eventParm = rand() & 255;		// seed for spread pattern
 	tent->s.otherEntityNum = ent->s.number;
 
+#if defined( QC )
+    SG_ResetDamage();
+#endif
 	ShotgunPattern( tent->s.pos.trBase, tent->s.origin2, tent->s.eventParm, ent );
+#if defined( QC )
+    SG_ExecuteClientDamage();
+#endif
 }
 
 
