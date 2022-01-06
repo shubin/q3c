@@ -43,6 +43,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	RESPAWN_MEGAHEALTH	35//120
 #define	RESPAWN_POWERUP		120
 
+#if defined( QC )
+
+static const int MAX_AMMO[WP_NUM_WEAPONS] = {
+    -1,  // WP_NONE,
+    -1,  // WP_GAUNTLET,
+    150, // WP_MACHINEGUN,
+    25,  // WP_SHOTGUN,
+    15,  // WP_GRENADE_LAUNCHER,
+    25,  // WP_ROCKET_LAUNCHER,
+    150, // WP_LIGHTNING,
+    25,  // WP_RAILGUN,
+    250, // WP_PLASMAGUN,
+    15,  // WP_BFG,
+    -1,  // WP_GRAPPLING_HOOK,
+};
+
+#endif
 
 //======================================================================
 
@@ -209,9 +226,15 @@ int Pickup_Holdable( gentity_t *ent, gentity_t *other ) {
 void Add_Ammo (gentity_t *ent, int weapon, int count)
 {
 	ent->client->ps.ammo[weapon] += count;
+#if defined( QC )
+    if ( ent->client->ps.ammo[weapon] > MAX_AMMO[weapon] ) {
+        ent->client->ps.ammo[weapon] = MAX_AMMO[weapon];
+    }
+#else
 	if ( ent->client->ps.ammo[weapon] > 200 ) {
 		ent->client->ps.ammo[weapon] = 200;
 	}
+#endif
 }
 
 int Pickup_Ammo (gentity_t *ent, gentity_t *other)
