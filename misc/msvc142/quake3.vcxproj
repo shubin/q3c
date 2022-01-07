@@ -1260,6 +1260,17 @@ copy "$(SolutionDir)..\..\code\libs\win32\sdl2.dll" "$(TargetDir)"</Command>
   <ItemGroup>
     <ResourceCompile Include="..\..\code\sys\win_resource.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="cgame.vcxproj">
+      <Project>{c878e295-cb82-4b40-8ecf-5ce5525466fa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="game.vcxproj">
+      <Project>{f9ee10da-2404-4154-b904-f93c936c040a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="opengl2.vcxproj">
+      <Project>{f7b397a4-8111-421b-a23b-b9a2ce509183}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
