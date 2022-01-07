@@ -105,8 +105,8 @@
     <TargetName>qagamex86</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug QC|Win32'">
-    <OutDir>..\..\build\debug-msvc142-x86\baseq3\</OutDir>
-    <IntDir>..\..\build\debug-msvc142-x86\baseq3\game\</IntDir>
+    <OutDir>..\..\build\debug-msvc142-x86\q3c\</OutDir>
+    <IntDir>..\..\build\debug-msvc142-x86\q3c\game\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>qagamex86</TargetName>
   </PropertyGroup>
