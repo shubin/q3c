@@ -727,6 +727,10 @@ typedef struct {
 	qhandle_t	viewBloodShader;
 	qhandle_t	tracerShader;
 	qhandle_t	crosshairShader[NUM_CROSSHAIRS];
+#if defined( QC )
+    qhandle_t    hitCrossShader;
+    qhandle_t    damageDirectionShader;
+#endif
 	qhandle_t	lagometerShader;
 	qhandle_t	backTileShader;
 	qhandle_t	noammoShader;
@@ -1190,6 +1194,13 @@ extern  vmCvar_t		cg_recordSPDemo;
 extern  vmCvar_t		cg_recordSPDemoName;
 extern	vmCvar_t		cg_obeliskRespawnDelay;
 #endif
+#if defined( QC )
+extern  vmCvar_t        cg_damagePlum;
+extern  vmCvar_t        cg_damagePlumSize;
+extern  vmCvar_t        cg_damagePlumPulse;
+extern  vmCvar_t        cg_damageDirection;
+extern  vmCvar_t        cg_hitCross;
+#endif
 
 //
 // cg_main.c
@@ -1470,6 +1481,25 @@ void CG_Respawn( void );
 void CG_TransitionPlayerState( playerState_t *ps, playerState_t *ops );
 void CG_CheckChangedPredictableEvents( playerState_t *ps );
 
+#if defined( QC )
+//
+// cg_damageplums.c
+//
+
+void CG_InitDamagePlums( void );
+void CG_ShutdownDamagePlums( void );
+void CG_AddDamagePlum( int clientnum, int damage, vec3_t position );
+void CG_DrawDamagePlums( void );
+
+//
+// cg_damagedir.c
+//
+
+void CG_InitDamageDir( void );
+void CG_AddDamageDir( int clientnum, int damage, vec3_t position );
+void CG_ClearDamageDir( void );
+void CG_DrawDamageDir( void );
+#endif
 
 //===============================================
 

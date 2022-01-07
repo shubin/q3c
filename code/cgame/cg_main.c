@@ -200,6 +200,14 @@ vmCvar_t	cg_recordSPDemoName;
 vmCvar_t	cg_obeliskRespawnDelay;
 #endif
 
+#if defined( QC )
+vmCvar_t    cg_damagePlum;			// the number which pops up out of an enemy when you hit them
+vmCvar_t    cg_damagePlumSize;		// size of that number
+vmCvar_t    cg_damagePlumPulse;     // whether to animate the popping up number or not to
+vmCvar_t    cg_damageDirection;		// damage indicator around the crosshair showing the direction the damage came from
+vmCvar_t    cg_hitCross;			// diagonal cross which blinks around the crosshair when you hit an enemy
+#endif
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -320,8 +328,15 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_oldRail, "cg_oldRail", "1", CVAR_ARCHIVE},
 	{ &cg_oldRocket, "cg_oldRocket", "1", CVAR_ARCHIVE},
 	{ &cg_oldPlasma, "cg_oldPlasma", "1", CVAR_ARCHIVE},
-	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE}
+	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
 //	{ &cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO | CVAR_ARCHIVE }
+#if defined( QC )
+    { &cg_damagePlum, "cg_damagePlum", "1", CVAR_ARCHIVE },
+    { &cg_damagePlumSize, "cg_damagePlumSize", "12", CVAR_ARCHIVE },
+    { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
+    { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
+    { &cg_hitCross, "cg_hitCross", "1", CVAR_ARCHIVE },
+#endif
 };
 
 static int  cvarTableSize = ARRAY_LEN( cvarTable );
@@ -868,6 +883,11 @@ static void CG_RegisterGraphics( void ) {
 	for ( i = 0 ; i < NUM_CROSSHAIRS ; i++ ) {
 		cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("gfx/2d/crosshair%c", 'a'+i) );
 	}
+
+#if defined( QC )
+    cgs.media.hitCrossShader = trap_R_RegisterShader( "gfx/2d/hitcross" );
+    cgs.media.damageDirectionShader = trap_R_RegisterShader( "gfx/damage/damagedir" );
+#endif
 
 	cgs.media.backTileShader = trap_R_RegisterShader( "gfx/2d/backtile" );
 	cgs.media.noammoShader = trap_R_RegisterShader( "icons/noammo" );
@@ -1942,6 +1962,11 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_InitTeamChat();
 #endif
 
+#if defined( QC )
+	CG_InitDamagePlums();
+	CG_InitDamageDir();
+#endif
+
 	CG_ShaderStateChanged();
 
 	trap_S_ClearLoopingSounds( qtrue );
@@ -1958,7 +1983,6 @@ void CG_Shutdown( void ) {
 	// some mods may need to do cleanup work here,
 	// like closing files or archiving session data
 }
-
 
 /*
 ==================

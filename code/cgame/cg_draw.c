@@ -2650,6 +2650,11 @@ void CG_DrawActive( stereoFrame_t stereoView ) {
 	// draw 3D view
 	trap_R_RenderScene( &cg.refdef );
 
+#if defined( QC )
+    CG_DrawDamagePlums();
+    CG_DrawDamageDir();
+#endif
+
 	// draw status bar and other floating elements
  	CG_Draw2D(stereoView);
 }

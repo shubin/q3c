@@ -967,6 +967,29 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		attacker->client->ps.persistant[PERS_ATTACKEE_ARMOR] = (targ->health<<8)|(client->ps.stats[STAT_ARMOR]);
 	}
 
+#if defined( QC )
+        if ( targ->client ) {
+			if ( attacker->client ) { // attacker could be 
+				trap_SendServerCommand( attacker->client->ps.clientNum, 
+					va("dmgplum %d %d %.4f %.4f %.4f", client->ps.clientNum, damage, 
+						targ->client->ps.origin[0], 
+						targ->client->ps.origin[1], 
+						targ->client->ps.origin[2]
+				));
+			}
+            int attackerClientNum = -1;
+            if ( attacker->client != NULL ) {
+                attackerClientNum = attacker->client->ps.clientNum;
+            }
+            trap_SendServerCommand( targ->client->ps.clientNum,
+                va("dmgdir %d %d %.4f %.4f %.4f", attackerClientNum, damage, 
+                    inflictor->r.currentOrigin[0],
+                    inflictor->r.currentOrigin[1],
+                    inflictor->r.currentOrigin[2]
+            ));
+        }
+#endif
+
 	// always give half damage if hurting self
 	// calculated after knockback, so rocket jumping works
 	if ( targ == attacker) {
