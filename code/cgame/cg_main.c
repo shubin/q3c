@@ -1962,11 +1962,6 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_InitTeamChat();
 #endif
 
-#if defined( QC )
-	CG_InitDamagePlums();
-	CG_InitDamageDir();
-#endif
-
 	CG_ShaderStateChanged();
 
 	trap_S_ClearLoopingSounds( qtrue );

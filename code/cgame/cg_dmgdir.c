@@ -74,13 +74,8 @@ static qboolean DrawHitMarker( hitmarker_t *hm ) {
 
 //static linked_list_t s_hitmarkers;
 
-static hitmarker_t s_markers[MAX_MARKERS];
-static hitmarker_t* s_hitmarkerByClientNum[MAX_CLIENTS];
-
-void CG_InitDamageDir( void ) {
-	memset( s_hitmarkerByClientNum, 0, sizeof( s_hitmarkerByClientNum ) );
-	memset( s_markers, 0, sizeof( s_markers ) );
-}
+static hitmarker_t s_markers[MAX_MARKERS] = { 0 };
+static hitmarker_t* s_hitmarkerByClientNum[MAX_CLIENTS] = { 0 };
 
 void CG_AddDamageDir( int clientnum, int damage, vec3_t position ) {
 	hitmarker_t *hm = NULL;

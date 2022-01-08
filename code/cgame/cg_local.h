@@ -1486,7 +1486,6 @@ void CG_CheckChangedPredictableEvents( playerState_t *ps );
 // cg_damageplums.c
 //
 
-void CG_InitDamagePlums( void );
 void CG_AddDamagePlum( int clientnum, int damage, vec3_t position );
 void CG_DrawDamagePlums( void );
 
@@ -1494,7 +1493,6 @@ void CG_DrawDamagePlums( void );
 // cg_damagedir.c
 //
 
-void CG_InitDamageDir( void );
 void CG_AddDamageDir( int clientnum, int damage, vec3_t position );
 void CG_ClearDamageDir( void );
 void CG_DrawDamageDir( void );
