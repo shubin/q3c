@@ -1487,7 +1487,6 @@ void CG_CheckChangedPredictableEvents( playerState_t *ps );
 //
 
 void CG_InitDamagePlums( void );
-void CG_ShutdownDamagePlums( void );
 void CG_AddDamagePlum( int clientnum, int damage, vec3_t position );
 void CG_DrawDamagePlums( void );
 

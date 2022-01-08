@@ -23,10 +23,151 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_damageplum.c
 
 #include "cg_local.h"
-//#include "../q3c/linked_list.h"
-//#include "../q3c/qcCamera.h"
 
-static struct qcCamera *cam = NULL;
+/* 
+* Some math taken from other parts of the source code
+* It's all needed to project damage indicator position from the world space onto the screen
+*/
+
+static
+void TransformModelToClip( const vec3_t src, const float *modelMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst ) {
+	int i;
+	for ( i = 0 ; i < 4 ; i++ ) {
+		eye[i] = 
+			src[0] * modelMatrix[ i + 0 * 4 ] +
+			src[1] * modelMatrix[ i + 1 * 4 ] +
+			src[2] * modelMatrix[ i + 2 * 4 ] +
+			1 * modelMatrix[ i + 3 * 4 ];
+	}
+	for ( i = 0 ; i < 4 ; i++ ) {
+		dst[i] = 
+			eye[0] * projectionMatrix[ i + 0 * 4 ] +
+			eye[1] * projectionMatrix[ i + 1 * 4 ] +
+			eye[2] * projectionMatrix[ i + 2 * 4 ] +
+			eye[3] * projectionMatrix[ i + 3 * 4 ];
+	}
+}
+
+static
+void TransformClipToWindow( const vec4_t clip, const refdef_t *view, vec4_t normalized, vec4_t window ) {
+	normalized[0] = clip[0] / clip[3];
+	normalized[1] = clip[1] / clip[3];
+	normalized[2] = ( clip[2] + clip[3] ) / ( 2 * clip[3] );
+
+	window[0] = 0.5f * ( 1.0f + normalized[0] ) * view->width;
+	window[1] = 0.5f * ( 1.0f + normalized[1] ) * view->height;
+	window[2] = normalized[2];
+
+	window[0] = (int) ( window[0] + 0.5 );
+	window[1] = (int) ( window[1] + 0.5 );
+}
+
+static
+void myGlMultMatrix( const float *a, const float *b, float *out ) {
+	int		i, j;
+
+	for ( i = 0 ; i < 4 ; i++ ) {
+		for ( j = 0 ; j < 4 ; j++ ) {
+			out[ i * 4 + j ] =
+				a [ i * 4 + 0 ] * b [ 0 * 4 + j ]
+				+ a [ i * 4 + 1 ] * b [ 1 * 4 + j ]
+				+ a [ i * 4 + 2 ] * b [ 2 * 4 + j ]
+				+ a [ i * 4 + 3 ] * b [ 3 * 4 + j ];
+		}
+	}
+}
+
+static float s_flipMatrix[16] = {
+	0, 0, -1, 0,
+	-1, 0, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 0, 1
+};
+
+static float s_modelMatrix[16];
+static float s_projectionMatrix[16];
+
+static
+void CalcModelMatrix( refdef_t *fd, float *modelMatrix ) {
+	float viewerMatrix[16];
+
+	viewerMatrix[0] = fd->viewaxis[0][0];
+	viewerMatrix[4] = fd->viewaxis[0][1];
+	viewerMatrix[8] = fd->viewaxis[0][2];
+	viewerMatrix[12] = -fd->vieworg[0] * viewerMatrix[0] + -fd->vieworg[1] * viewerMatrix[4] + -fd->vieworg[2] * viewerMatrix[8];
+
+	viewerMatrix[1] = fd->viewaxis[1][0];
+	viewerMatrix[5] = fd->viewaxis[1][1];
+	viewerMatrix[9] = fd->viewaxis[1][2];
+	viewerMatrix[13] = -fd->vieworg[0] * viewerMatrix[1] + -fd->vieworg[1] * viewerMatrix[5] + -fd->vieworg[2] * viewerMatrix[9];
+
+	viewerMatrix[2] =  fd->viewaxis[2][0];
+	viewerMatrix[6] =  fd->viewaxis[2][1];
+	viewerMatrix[10] = fd->viewaxis[2][2];
+	viewerMatrix[14] = -fd->vieworg[0] * viewerMatrix[2] + -fd->vieworg[1] * viewerMatrix[6] + -fd->vieworg[2] * viewerMatrix[10];
+
+	viewerMatrix[3] = 0;
+	viewerMatrix[7] = 0;
+	viewerMatrix[11] = 0;
+	viewerMatrix[15] = 1;
+
+	myGlMultMatrix( viewerMatrix, s_flipMatrix, modelMatrix );
+}
+
+static
+void CalcProjectionMatrix( refdef_t *fd, float *projectionMatrix ) {
+	float	xmin, xmax, ymin, ymax;
+	float	width, height, stereoSep = 0;//r_stereoSeparation->value;
+	float zProj = 4;
+
+	ymax = zProj * tan(fd->fov_y * M_PI / 360.0f);
+	ymin = -ymax;
+
+	xmax = zProj * tan(fd->fov_x * M_PI / 360.0f);
+	xmin = -xmax;
+
+	width = xmax - xmin;
+	height = ymax - ymin;
+	
+	projectionMatrix[0] = 2 * zProj / width;
+	projectionMatrix[4] = 0;
+	projectionMatrix[8] = (xmax + xmin + 2 * stereoSep) / width;
+	projectionMatrix[12] = 2 * zProj * stereoSep / width;
+
+	projectionMatrix[1] = 0;
+	projectionMatrix[5] = 2 * zProj / height;
+	projectionMatrix[9] = ( ymax + ymin ) / height;	// normally 0
+	projectionMatrix[13] = 0;
+
+	projectionMatrix[3] = 0;
+	projectionMatrix[7] = 0;
+	projectionMatrix[11] = -1;
+	projectionMatrix[15] = 0;
+}
+
+static
+qboolean ProjectPoint( refdef_t *fd, vec3_t pos, vec3_t screenpos ) {
+	vec4_t eye, clip, normalized, window;
+	int i;
+
+	TransformModelToClip( pos, s_modelMatrix, s_projectionMatrix, eye, clip );
+	for ( i = 0 ; i < 3 ; i++ ) {
+		if ( clip[i] >= clip[3] || clip[i] <= -clip[3] ) {
+			return qfalse;
+		}
+	}
+
+	TransformClipToWindow( clip, fd, normalized, window );
+
+	if ( window[0] < 0 || window[0] >= fd->width
+		|| window[1] < 0 || window[1] >= fd->height ) {
+		return qfalse;	// shouldn't happen, since we check the clip[] above, except for FP rounding
+	}
+	screenpos[0] = window[0];
+	screenpos[1] = window[1];
+	screenpos[2] = window[2];
+	return qtrue;
+}
 
 typedef struct damage_plum_data_s {
 	vec3_t origin;
@@ -34,6 +175,8 @@ typedef struct damage_plum_data_s {
 	int time;
 	int clientnum;
 } damage_plum_data_t;
+
+#define MAX_DAMAGE_PLUMS 64
 
 #define DAMAGE_PLUM_WIDTH	12
 #define DAMAGE_PLUM_HEIGHT	12
@@ -47,38 +190,38 @@ typedef struct damage_plum_data_s {
 #define DAMAGE_PLUM_ACCUMULATION_THRESHOLD	300
 #define DAMAGE_CROSS_TIME					200
 
-static qboolean s_damage_plum_initialized = qfalse;
-//static linked_list_t s_damage_plums = { 0 };
+static damage_plum_data_t s_damage_plums[MAX_DAMAGE_PLUMS] = { 0 };
 static int s_last_damage_time = -1;
 
 void CG_InitDamagePlums( void ) {
-	//linked_list_create( &s_damage_plums, sizeof( damage_plum_data_t ) );
-	s_damage_plum_initialized = qtrue;
-	//cam = qcCreateCamera();
-}
-
-void CG_ShutdownDamagePlums( void ) {
-	//linked_list_clear( &s_damage_plums );
-	s_damage_plum_initialized = qfalse;
-	//qcDestroyCamera( cam );
+	// Just in case I want to load some custom font etc.
 }
 
 static
 damage_plum_data_t *GetDamagePlumData( int clientnum, int time ) {
 	damage_plum_data_t *data = NULL;
+	damage_plum_data_t *freeslot = NULL;
 
 	if ( cg_damagePlum.integer == 2 ) {
-		//linked_list_iter_t iter;
-		//for ( damage_plum_data_t* p = (damage_plum_data_t*)linked_list_iterate( &s_damage_plums, &iter ); p; p = (damage_plum_data_t*)linked_list_advance( &iter ) ) {
-		//	if ( p->clientnum == clientnum && time - p->time < DAMAGE_PLUM_ACCUMULATION_THRESHOLD ) {
-		//		data = p;
-		//		break;
-		//	}
-		//}
+		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
+			if ( freeslot == NULL && p->damage == 0 ) {
+				freeslot = p;
+			}
+			if ( p->clientnum == clientnum && time - p->time < DAMAGE_PLUM_ACCUMULATION_THRESHOLD ) {
+				data = p;
+				break;
+			}
+		}
+	} else {
+		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
+			if ( freeslot == NULL && p->damage == 0 ) {
+				freeslot = p;
+			}
+		}
 	}
 
 	if ( data == NULL ) {
-		//data = (damage_plum_data_t*)linked_list_push_back( &s_damage_plums );
+		data = freeslot;
 		if ( data != NULL ) {
 			memset( data, 0, sizeof( damage_plum_data_t ) );
 			data->clientnum = clientnum;
@@ -102,15 +245,6 @@ void AddDamagePlum( int clientnum, vec3_t origin, int damage, int time ) {
 		//trap_S_StartLocalSound( cgs.media.hitSound[damage*2], CHAN_LOCAL_SOUND );
 #endif
 	}
-}
-
-void ReleaseDamagePlums( void ) {
-	//linked_list_iter_t iter;
-	//for ( damage_plum_data_t* p = (damage_plum_data_t*)linked_list_iterate( &s_damage_plums, &iter ); p; p = (damage_plum_data_t*)linked_list_advance( &iter ) ) {
-	//	if ( cg.time - p->time > DAMAGE_PLUM_STAY_TIME + DAMAGE_PLUM_DISSOLVE_TIME ) {
-	//		linked_list_remove_item(&s_damage_plums, iter.current);
-	//	}
-	//}
 }
 
 static
@@ -175,11 +309,12 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 		pos[2] += k * DAMAGE_PLUM_TRAVEL_DISTANCE;
 	}
 
-	qcUpdateCamera( cam, cg.refdef.vieworg, cg.refdef.viewaxis, cg.refdef.fov_x, 
-		0.0f, 0.0f, cg.refdef.width, cg.refdef.height );
+	CalcModelMatrix( &cg.refdef, s_modelMatrix );
+	CalcProjectionMatrix( &cg.refdef, s_projectionMatrix );
 
 	vec3_t screenpos;
-	if ( qcProjectPoint( cam, pos, screenpos ) ) {
+	if ( ProjectPoint( &cg.refdef, pos, screenpos ) ) {
+		screenpos[1] = cg.refdef.height - screenpos[1];
  		float char_width = DAMAGE_PLUM_WIDTH * cg.refdef.height / 480.0f;
 		float char_height = DAMAGE_PLUM_HEIGHT * cg.refdef.height / 480.0f;
 
@@ -206,20 +341,21 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 }
 
 void CG_AddDamagePlum( int clientnum, int damage, vec3_t position ) {
-	if ( damage > 0 ) {
+	if ( damage > 0 && cg_damagePlum.integer ) {
 		AddDamagePlum( clientnum, position, damage, cg.time );
 		s_last_damage_time = cg.time;
 	}
 }
 
 void CG_DrawDamagePlums( void ) {
-	//if ( s_damage_plums.first != NULL && cg_damagePlum.integer > 0 ) {
-	//	linked_list_iter_t iter;
-	//	for ( damage_plum_data_t *p = (damage_plum_data_t*)linked_list_iterate( &s_damage_plums, &iter ); p; p = (damage_plum_data_t*)linked_list_advance( &iter ) ) {
-	//		DrawDamagePlum( p );
-	//	}
-	//	ReleaseDamagePlums();
-	//}
+	for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++ ) {
+		if ( p->damage > 0 ) {
+			DrawDamagePlum( p );
+			if ( cg.time - p->time > DAMAGE_PLUM_STAY_TIME + DAMAGE_PLUM_DISSOLVE_TIME ) {
+				p->damage = 0;
+			}
+		}
+	}
 	if ( cg.time - s_last_damage_time < DAMAGE_CROSS_TIME && cg_hitCross.integer ) {
 		float x = cg.refdef.width / 2.0f;
 		float y = cg.refdef.height / 2.0f;
