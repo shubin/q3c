@@ -583,6 +583,9 @@ void CG_GibPlayer( vec3_t playerOrigin ) {
 		return;
 	}
 
+#if defined( QC )
+	for ( int i = 0; i < cg_gibs.integer && i < 5; i++ ) {
+#endif
 	VectorCopy( playerOrigin, origin );
 	velocity[0] = crandom()*GIB_VELOCITY;
 	velocity[1] = crandom()*GIB_VELOCITY;
@@ -636,6 +639,9 @@ void CG_GibPlayer( vec3_t playerOrigin ) {
 	velocity[1] = crandom()*GIB_VELOCITY;
 	velocity[2] = GIB_JUMP + crandom()*GIB_VELOCITY;
 	CG_LaunchGib( origin, velocity, cgs.media.gibLeg );
+#if defined( QC )
+	}
+#endif
 }
 
 /*
