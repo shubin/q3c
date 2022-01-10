@@ -81,6 +81,10 @@ void CG_AddDamageDir( int clientnum, int damage, vec3_t position ) {
 	hitmarker_t *hm = NULL;
 	int i;
 
+	if ( !cg_damageDirection.integer ) {
+		return;
+	}
+
 	if ( clientnum >= 0 && clientnum < MAX_CLIENTS ) {
 		hm = s_hitmarkerByClientNum[clientnum];
 	}

@@ -341,18 +341,22 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 }
 
 void CG_AddDamagePlum( int clientnum, int damage, vec3_t position ) {
-	if ( damage > 0 && cg_damagePlum.integer ) {
-		AddDamagePlum( clientnum, position, damage, cg.time );
+	if ( damage > 0 ) {
+		if ( cg_damagePlum.integer ) {
+			AddDamagePlum( clientnum, position, damage, cg.time );
+		}
 		s_last_damage_time = cg.time;
 	}
 }
 
 void CG_DrawDamagePlums( void ) {
-	for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++ ) {
-		if ( p->damage > 0 ) {
-			DrawDamagePlum( p );
-			if ( cg.time - p->time > DAMAGE_PLUM_STAY_TIME + DAMAGE_PLUM_DISSOLVE_TIME ) {
-				p->damage = 0;
+	if ( cg_damagePlum.integer ) {
+		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++ ) {
+			if ( p->damage > 0 ) {
+				DrawDamagePlum( p );
+				if ( cg.time - p->time > DAMAGE_PLUM_STAY_TIME + DAMAGE_PLUM_DISSOLVE_TIME ) {
+					p->damage = 0;
+				}
 			}
 		}
 	}
