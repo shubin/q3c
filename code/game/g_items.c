@@ -35,13 +35,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   movers and respawn appropriately.
 */
 
+#if defined( QC )
+#define	RESPAWN_REDARMOR	30
+#define RESPAWN_YELLOWARMOR	30
+#define RESPAWN_GREENARMOR	30
+#define RESPAWN_SHARD		30
+#define	RESPAWN_MEGAHEALTH	30
+#define RESPAWN_HEALTH50	30
+#define RESPAWN_HEALTH25	30
+#define RESPANW_BUBBLE		30
+#define	RESPAWN_HOLDABLE	60
+#define	RESPAWN_POWERUP		120
 
+#define WEAPON_RESPAWN_FFA			1
+#define WEAPON_RESPAWN_TOURNAMENT	5
+
+#define AMMO_RESPAWN_FFA		1
+#define AMMO_RESPAWN_TOURNAMENT	5
+#else
 #define	RESPAWN_ARMOR		25
 #define	RESPAWN_HEALTH		35
 #define	RESPAWN_AMMO		40
 #define	RESPAWN_HOLDABLE	60
 #define	RESPAWN_MEGAHEALTH	35//120
 #define	RESPAWN_POWERUP		120
+#endif
 
 #if defined( QC )
 
@@ -249,7 +267,14 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 
 	Add_Ammo (other, ent->item->giTag, quantity);
 
+#if defined( QC )
+	if ( g_gametype.integer == GT_FFA ) {
+		return AMMO_RESPAWN_FFA;
+	}
+	return AMMO_RESPAWN_TOURNAMENT;
+#else
 	return RESPAWN_AMMO;
+#endif
 }
 
 //======================================================================
@@ -287,12 +312,19 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 	if (ent->item->giTag == WP_GRAPPLING_HOOK)
 		other->client->ps.ammo[ent->item->giTag] = -1; // unlimited ammo
 
+#if defined( QC )
+	if ( g_gametype.integer == GT_FFA) {
+		return WEAPON_RESPAWN_FFA;
+	}
+	return WEAPON_RESPAWN_TOURNAMENT;
+#else
 	// team deathmatch has slow weapon respawns
 	if ( g_gametype.integer == GT_TEAM ) {
 		return g_weaponTeamRespawn.integer;
 	}
 
 	return g_weaponRespawn.integer;
+#endif
 }
 
 
@@ -331,8 +363,20 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	if ( ent->item->quantity == 100 ) {		// mega health respawns slow
 		return RESPAWN_MEGAHEALTH;
 	}
-
+#if defined( QC )
+	if ( ent->item->quantity == 5 ) {
+		return RESPANW_BUBBLE;
+	}
+	if ( ent->item->quantity == 25 ) {
+		return RESPAWN_HEALTH25;
+	}
+	if ( ent->item->quantity == 50 ) {
+		return RESPAWN_HEALTH50;
+	}
+	return RESPAWN_MEGAHEALTH;
+#else
 	return RESPAWN_HEALTH;
+#endif
 }
 
 //======================================================================
@@ -359,8 +403,20 @@ int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 		other->client->ps.stats[STAT_ARMOR] = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
 	}
 #endif
-
+#if defined( QC )
+	if ( ent->item->quantity == 5 ) {
+		return RESPAWN_SHARD;
+	}
+	if ( ent->item->quantity == 25 ) {
+		return RESPAWN_GREENARMOR;
+	}
+	if ( ent->item->quantity == 50 ) {
+		return RESPAWN_YELLOWARMOR;
+	}
+	return RESPAWN_REDARMOR;
+#else
 	return RESPAWN_ARMOR;
+#endif
 }
 
 //======================================================================

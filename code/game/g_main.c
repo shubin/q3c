@@ -59,8 +59,10 @@ vmCvar_t	g_inactivity;
 vmCvar_t	g_debugMove;
 vmCvar_t	g_debugDamage;
 vmCvar_t	g_debugAlloc;
+#if !defined( QC )
 vmCvar_t	g_weaponRespawn;
 vmCvar_t	g_weaponTeamRespawn;
+#endif
 vmCvar_t	g_motd;
 vmCvar_t	g_synchronousClients;
 vmCvar_t	g_warmup;
@@ -141,9 +143,15 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_speed, "g_speed", "320", 0, 0, qtrue  },
 	{ &g_gravity, "g_gravity", "800", 0, 0, qtrue  },
 	{ &g_knockback, "g_knockback", "1000", 0, 0, qtrue  },
+#if defined( QC )
+	{ &g_quadfactor, "g_quadfactor", "4", 0, 0, qtrue  },
+#else
 	{ &g_quadfactor, "g_quadfactor", "3", 0, 0, qtrue  },
+#endif
+#if !defined( QC )
 	{ &g_weaponRespawn, "g_weaponrespawn", "5", 0, 0, qtrue  },
 	{ &g_weaponTeamRespawn, "g_weaponTeamRespawn", "30", 0, 0, qtrue },
+#endif
 	{ &g_forcerespawn, "g_forcerespawn", "20", 0, 0, qtrue },
 	{ &g_inactivity, "g_inactivity", "0", 0, 0, qtrue },
 	{ &g_debugMove, "g_debugMove", "0", 0, 0, qfalse },
