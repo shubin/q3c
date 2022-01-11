@@ -2032,6 +2032,36 @@ Perform the same traces the server did to locate the
 hit splashes
 ================
 */
+#if defined( QC )
+static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
+	int			i, k;
+	float		r, u, radius;
+	vec3_t		end;
+	vec3_t		forward, right, up;
+
+	// derive the right and up vectors from the forward vector, because
+	// the client won't have any other information
+	VectorNormalize2( origin2, forward );
+	PerpendicularVector( right, forward );
+	CrossProduct( forward, right, up );
+
+	VectorMA( origin, 8192 * 16, forward, end);
+	CG_ShotgunPellet( origin, end, otherEntNum );
+
+	radius = SHOTGUN_SPREAD / 3.0f;
+	for ( k = 0; k < 3; k++, radius += SHOTGUN_SPREAD / 3.0f ) {
+		for ( i = 0 ; i < 9; i++ ) {
+			r = cos( i * M_PI / 4.5f ) * radius * 16;
+			u = sin( i * M_PI / 4.5f ) * radius * 16;
+			VectorMA( origin, 8192 * 16, forward, end);
+			VectorMA (end, r, right, end);
+			VectorMA (end, u, up, end);
+
+			CG_ShotgunPellet( origin, end, otherEntNum );
+		}
+	}
+}
+#else
 static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
 	int			i;
 	float		r, u;
@@ -2055,6 +2085,7 @@ static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int othe
 		CG_ShotgunPellet( origin, end, otherEntNum );
 	}
 }
+#endif
 
 /*
 ==============

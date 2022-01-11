@@ -310,7 +310,11 @@ void SG_ExecuteClientDamage( void ) {
 
 // DEFAULT_SHOTGUN_SPREAD and DEFAULT_SHOTGUN_COUNT	are in bg_public.h, because
 // client predicts same spreads
+#if defined( QC )
+#define	DEFAULT_SHOTGUN_DAMAGE	4
+#else
 #define	DEFAULT_SHOTGUN_DAMAGE	10
+#endif
 
 qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 	trace_t		tr;
@@ -366,6 +370,43 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 	return qfalse;
 }
 
+#if defined( QC )
+// this should match CG_ShotgunPattern
+void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
+	int			i, k;
+	float		r, u, radius;
+	vec3_t		end;
+	vec3_t		forward, right, up;
+	qboolean	hitClient = qfalse;
+
+	// derive the right and up vectors from the forward vector, because
+	// the client won't have any other information
+	VectorNormalize2( origin2, forward );
+	PerpendicularVector( right, forward );
+	CrossProduct( forward, right, up );
+
+	VectorMA( origin, 8192 * 16, forward, end);
+	if ( ShotgunPellet( origin, end, ent ) && !hitClient ) {
+		hitClient = qtrue;
+		ent->client->accuracy_hits++;
+	}
+
+	radius = SHOTGUN_SPREAD / 3.0f;
+	for ( k = 0; k < 3; k++, radius += SHOTGUN_SPREAD / 3.0f ) {
+		for ( i = 0 ; i < 9; i++ ) {
+			r = cos( i * M_PI / 4.5f ) * radius * 16;
+			u = sin( i * M_PI / 4.5f ) * radius * 16;
+			VectorMA( origin, 8192 * 16, forward, end);
+			VectorMA (end, r, right, end);
+			VectorMA (end, u, up, end);
+			if( ShotgunPellet( origin, end, ent ) && !hitClient ) {
+				hitClient = qtrue;
+				ent->client->accuracy_hits++;
+			}
+		}
+	}
+}
+#else
 // this should match CG_ShotgunPattern
 void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	int			i;
@@ -393,6 +434,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 		}
 	}
 }
+#endif
 
 
 void weapon_supershotgun_fire (gentity_t *ent) {
@@ -504,7 +546,11 @@ void weapon_railgun_fire (gentity_t *ent) {
 	int			passent;
 	gentity_t	*unlinkedEntities[MAX_RAIL_HITS];
 
+#if defined( QC )
+	damage = 90 * s_quadFactor;
+#else
 	damage = 100 * s_quadFactor;
+#endif
 
 	VectorMA (muzzle, 8192, forward, end);
 
