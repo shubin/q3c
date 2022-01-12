@@ -1219,7 +1219,18 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		if ( !(es->eFlags & EF_KAMIKAZE) ) {
 			trap_S_StartSound( NULL, es->number, CHAN_BODY, cgs.media.gibSound );
 		}
+		#if defined( QC )
+		if ( es->eventParm == cg.predictedPlayerState.clientNum ) {
+			CG_GibPlayer( cent->lerpOrigin, cg.predictedPlayerState.origin );
+		} else if ( es->eventParm != ENTITYNUM_NONE ) {
+			CG_GibPlayer( cent->lerpOrigin, cg_entities[es->eventParm].lerpOrigin );
+		}
+		else {
+			CG_GibPlayer( cent->lerpOrigin, 0 );
+		}
+		#else
 		CG_GibPlayer( cent->lerpOrigin );
+		#endif
 		break;
 
 	case EV_STOPLOOPINGSOUND:

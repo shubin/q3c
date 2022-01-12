@@ -615,7 +615,15 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 	if ( (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP) && g_blood.integer) || meansOfDeath == MOD_SUICIDE) {
 		// gib death
+#if defined( QC )
+		if ( meansOfDeath == MOD_SHOTGUN && attacker != NULL && attacker->client != NULL ) {
+			GibEntity( self, attacker->client->ps.clientNum ); // we send killer id for directional gibs by shotgun kills
+		} else {
+			GibEntity( self, ENTITYNUM_NONE );
+		}
+#else
 		GibEntity( self, killer );
+#endif
 	} else {
 		// normal death
 		static int i;

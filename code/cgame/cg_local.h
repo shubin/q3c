@@ -1427,7 +1427,11 @@ void CG_LightningBoltBeam( vec3_t start, vec3_t end );
 #endif
 void CG_ScorePlum( int client, vec3_t org, int score );
 
+#if defined( QC )
+void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin );
+#else
 void CG_GibPlayer( vec3_t playerOrigin );
+#endif
 void CG_BigExplode( vec3_t playerOrigin );
 
 void CG_Bleed( vec3_t origin, int entityNum );

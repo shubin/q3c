@@ -546,7 +546,11 @@ void CG_LaunchGib( vec3_t origin, vec3_t velocity, qhandle_t hModel ) {
 	VectorCopy( velocity, le->pos.trDelta );
 	le->pos.trTime = cg.time;
 
+#if defined( QC )
+	le->bounceFactor = 0.2f; // this looks more brutal
+#else
 	le->bounceFactor = 0.6f;
+#endif
 
 	le->leBounceSoundType = LEBS_BLOOD;
 	le->leMarkType = LEMT_BLOOD;
@@ -561,12 +565,79 @@ Generated a bunch of gibs launching out from the bodies location
 */
 #define	GIB_VELOCITY	250
 #define	GIB_JUMP		250
+
+#if defined( QC )
+void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
+	vec3_t	origin, velocity;
+	vec3_t	killvector, knockvel;
+	float	distance, speed;
+	qhandle_t giblist[] = {
+		cgs.media.gibAbdomen,
+		cgs.media.gibArm,
+		cgs.media.gibChest,
+		cgs.media.gibFist,
+		cgs.media.gibFoot,
+		cgs.media.gibForearm,
+		cgs.media.gibIntestine,
+		cgs.media.gibLeg,
+		cgs.media.gibLeg,
+	};
+
+	if ( !cg_blood.integer ) {
+		return;
+	}
+
+	if ( killerOrigin != NULL ) {
+		// brutal shotgun gib knock, recommended with cg_gibs = 3
+		VectorSubtract( playerOrigin, killerOrigin, killvector );
+		distance = VectorLength( killvector );
+		speed = 900 - distance;
+		if ( speed < 0 ) {
+			speed = 0;
+		}
+		VectorNormalize2( killvector, knockvel );
+		VectorScale( knockvel, speed, knockvel );
+	}
+	else {
+		knockvel[0] = knockvel[1] = knockvel[2] = 0.0f;
+	}
+
+	VectorCopy( playerOrigin, origin );
+	velocity[0] = crandom()*GIB_VELOCITY;
+	velocity[1] = crandom()*GIB_VELOCITY;
+	velocity[2] = GIB_JUMP + crandom()*GIB_VELOCITY;
+	VectorAdd( velocity, knockvel, velocity );
+	if ( rand() & 1 ) {
+		CG_LaunchGib( origin, velocity, cgs.media.gibSkull );
+	} else {
+		CG_LaunchGib( origin, velocity, cgs.media.gibBrain );
+	}
+
+	// allow gibs to be turned off for speed
+	if ( !cg_gibs.integer ) {
+		return;
+	}
+
+	for ( int i = 0; i < cg_gibs.integer && i < 5; i++ ) {
+		for ( int gib = 0; gib < ARRAY_LEN(giblist); gib++ ) {
+			VectorCopy( playerOrigin, origin );
+			velocity[0] = crandom()*GIB_VELOCITY;
+			velocity[1] = crandom()*GIB_VELOCITY;
+			velocity[2] = GIB_JUMP + crandom()*GIB_VELOCITY;
+			VectorAdd( velocity, knockvel, velocity );
+			CG_LaunchGib( origin, velocity, giblist[gib] );
+		}
+	}
+}
+
+#else
 void CG_GibPlayer( vec3_t playerOrigin ) {
 	vec3_t	origin, velocity;
 
 	if ( !cg_blood.integer ) {
 		return;
 	}
+
 
 	VectorCopy( playerOrigin, origin );
 	velocity[0] = crandom()*GIB_VELOCITY;
@@ -583,9 +654,6 @@ void CG_GibPlayer( vec3_t playerOrigin ) {
 		return;
 	}
 
-#if defined( QC )
-	for ( int i = 0; i < cg_gibs.integer && i < 5; i++ ) {
-#endif
 	VectorCopy( playerOrigin, origin );
 	velocity[0] = crandom()*GIB_VELOCITY;
 	velocity[1] = crandom()*GIB_VELOCITY;
@@ -639,10 +707,8 @@ void CG_GibPlayer( vec3_t playerOrigin ) {
 	velocity[1] = crandom()*GIB_VELOCITY;
 	velocity[2] = GIB_JUMP + crandom()*GIB_VELOCITY;
 	CG_LaunchGib( origin, velocity, cgs.media.gibLeg );
-#if defined( QC )
-	}
-#endif
 }
+#endif
 
 /*
 ==================
