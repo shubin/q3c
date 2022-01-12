@@ -217,13 +217,26 @@ typedef struct {
 
 static cvarTable_t cvarTable[] = {
 	{ &cg_ignore, "cg_ignore", "0", 0 },	// used for debugging
+#if defined( QC )
+	{ &cg_autoswitch, "cg_autoswitch", "0", CVAR_ARCHIVE },
+#else
 	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
+#endif
 	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
+#if defined( QC )
+	{ &cg_zoomFov, "cg_zoomfov", "80", CVAR_ARCHIVE },
+	{ &cg_fov, "cg_fov", "120", CVAR_ARCHIVE },
+#else
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
 	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE },
+#endif
 	{ &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
 	{ &cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE  },
+#if defined( QC )
+	{ &cg_gibs, "cg_gibs", "3", CVAR_ARCHIVE  },
+#else
 	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE  },
+#endif
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
@@ -313,7 +326,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
 	{ &cg_timescaleFadeSpeed, "cg_timescaleFadeSpeed", "0", 0},
 	{ &cg_timescale, "timescale", "1", 0},
+#if defined( QC )
+	{ &cg_scorePlum, "cg_scorePlums", "0", CVAR_USERINFO | CVAR_ARCHIVE},
+#else
 	{ &cg_scorePlum, "cg_scorePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE},
+#endif
 	{ &cg_smoothClients, "cg_smoothClients", "0", CVAR_USERINFO | CVAR_ARCHIVE},
 	{ &cg_cameraMode, "com_cameraMode", "0", CVAR_CHEAT},
 
