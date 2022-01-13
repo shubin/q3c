@@ -977,7 +977,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 #if defined( QC )
         if ( targ->client ) {
-			if ( attacker->client ) { // attacker could be 
+			if ( attacker->client && attacker->client->ps.clientNum != targ->client->ps.clientNum ) {
 				trap_SendServerCommand( attacker->client->ps.clientNum, 
 					va("dmgplum %d %d %.4f %.4f %.4f", client->ps.clientNum, damage, 
 						targ->client->ps.origin[0], 
