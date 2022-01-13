@@ -1222,7 +1222,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		#if defined( QC )
 		if ( es->eventParm == cg.predictedPlayerState.clientNum ) {
 			CG_GibPlayer( cent->lerpOrigin, cg.predictedPlayerState.origin );
-		} else if ( es->eventParm != ENTITYNUM_NONE ) {
+		} else if ( es->eventParm != 255 ) { // server sends ENTITYNUM_NONE, it becomes 255 here
 			CG_GibPlayer( cent->lerpOrigin, cg_entities[es->eventParm].lerpOrigin );
 		}
 		else {

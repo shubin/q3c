@@ -591,7 +591,7 @@ void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
 		// brutal shotgun gib knock, recommended with cg_gibs = 3
 		VectorSubtract( playerOrigin, killerOrigin, killvector );
 		distance = VectorLength( killvector );
-		speed = 900 - distance;
+		speed = 1200 - distance;
 		if ( speed < 0 ) {
 			speed = 0;
 		}
