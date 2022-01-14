@@ -1242,7 +1242,12 @@ typedef struct playerState_s {
 #define BUTTON_PATROL		512
 #define BUTTON_FOLLOWME		1024
 
+#if defined( QC )
+#define BUTTON_ZOOM			2048
+#define BUTTON_ANY			4096			// any key whatsoever
+#else
 #define	BUTTON_ANY			2048			// any key whatsoever
+#endif
 
 #define	MOVE_RUN			120			// if forwardmove or rightmove are >= MOVE_RUN,
 										// then BUTTON_WALKING should be set
@@ -1252,7 +1257,7 @@ typedef struct usercmd_s {
 	int				serverTime;
 	int				angles[3];
 	int 			buttons;
-	byte			weapon;           // weapon 
+	byte			weapon;           // weapon (QC: upper bit indicates if the player uses zoom)
 	signed char	forwardmove, rightmove, upmove;
 } usercmd_t;
 

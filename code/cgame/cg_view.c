@@ -792,7 +792,11 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	}
 
 	// let the client system know what our weapon and zoom settings are
+#if defined( QC )
+	trap_SetUserCmdValue( cg.zoomed ? cg.weaponSelect | 128 : cg.weaponSelect, cg.zoomSensitivity ); // send zoom flag as the higher bit of the weapon byte (let the server know since it affect heavy machinegun)
+#else
 	trap_SetUserCmdValue( cg.weaponSelect, cg.zoomSensitivity );
+#endif
 
 	// this counter will be bumped for every valid scene we generate
 	cg.clientFrame++;

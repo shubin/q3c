@@ -1654,7 +1654,15 @@ static void PM_Weapon( void ) {
 		addTime = 1000;
 		break;
 	case WP_MACHINEGUN:
+#if defined( QC )
+		if ( pm->cmd.buttons & BUTTON_ZOOM ) {
+			addTime = 150;
+		} else {
+			addTime = 75;
+		}
+#else
 		addTime = 100;
+#endif
 		break;
 	case WP_GRENADE_LAUNCHER:
 		addTime = 800;
