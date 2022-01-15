@@ -410,7 +410,15 @@ static void CG_ItemPickup( int itemNum ) {
 	// see if it should be the grabbed weapon
 	if ( bg_itemlist[itemNum].giType == IT_WEAPON ) {
 		// select it immediately
+#if defined( QC )
+		if ( cg_autoswitch.integer 
+				&& bg_itemlist[itemNum].giTag != WP_LOUSY_MACHINEGUN
+				&& bg_itemlist[itemNum].giTag != WP_LOUSY_SHOTGUN
+				&& bg_itemlist[itemNum].giTag != WP_LOUSY_PLASMAGUN
+			) {
+#else
 		if ( cg_autoswitch.integer && bg_itemlist[itemNum].giTag != WP_MACHINEGUN ) {
+#endif
 			cg.weaponSelectTime = cg.time;
 			cg.weaponSelect = bg_itemlist[itemNum].giTag;
 		}

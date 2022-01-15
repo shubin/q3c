@@ -55,6 +55,9 @@ void CG_CheckAmmo( void ) {
 		case WP_GRENADE_LAUNCHER:
 		case WP_RAILGUN:
 		case WP_SHOTGUN:
+#if defined( QC )
+		case WP_LOUSY_SHOTGUN:
+#endif
 #ifdef MISSIONPACK
 		case WP_PROX_LAUNCHER:
 #endif

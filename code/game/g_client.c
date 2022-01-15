@@ -1164,12 +1164,23 @@ void ClientSpawn(gentity_t *ent) {
 
 	client->ps.clientNum = index;
 
+#if defined( QC )
+	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_LOUSY_MACHINEGUN ); // TODO: spawn with selected starting weapon
+	if ( g_gametype.integer == GT_TEAM ) {
+		client->ps.ammo[WP_MACHINEGUN] = 50;
+		client->ps.ammo[WP_LOUSY_MACHINEGUN] = 50;
+	} else {
+		client->ps.ammo[WP_MACHINEGUN] = 100;
+		client->ps.ammo[WP_LOUSY_MACHINEGUN] = 100;
+	}
+#else
 	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
 	if ( g_gametype.integer == GT_TEAM ) {
 		client->ps.ammo[WP_MACHINEGUN] = 50;
 	} else {
 		client->ps.ammo[WP_MACHINEGUN] = 100;
 	}
+#endif
 
 	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
 	client->ps.ammo[WP_GAUNTLET] = -1;
@@ -1202,7 +1213,11 @@ void ClientSpawn(gentity_t *ent) {
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR) {
 			G_KillBox(ent);
 			// force the base weapon up
+#if defined( QC )
+			client->ps.weapon = WP_LOUSY_MACHINEGUN; // TODO: use selected starting weapon
+#else
 			client->ps.weapon = WP_MACHINEGUN;
+#endif
 			client->ps.weaponstate = WEAPON_READY;
 			// fire the targets of the spawn point
 			G_UseTargets(spawnPoint, ent);

@@ -1638,6 +1638,27 @@ static void PM_Weapon( void ) {
 	if ( pm->ps->ammo[ pm->ps->weapon ] != -1 ) {
 		pm->ps->ammo[ pm->ps->weapon ]--;
 	}
+#if defined( QC )
+	// sync "super" and "lousy" weapon ammo
+	if ( pm->ps->weapon == WP_MACHINEGUN ) {
+		pm->ps->ammo[ WP_LOUSY_MACHINEGUN ] = pm->ps->ammo[ WP_MACHINEGUN ];
+	}
+	if ( pm->ps->weapon == WP_LOUSY_MACHINEGUN ) {
+		pm->ps->ammo[ WP_MACHINEGUN ] = pm->ps->ammo[ WP_LOUSY_MACHINEGUN ];
+	}
+	if ( pm->ps->weapon == WP_SHOTGUN ) {
+		pm->ps->ammo[ WP_LOUSY_SHOTGUN ] = pm->ps->ammo[ WP_SHOTGUN ];
+	}
+	if ( pm->ps->weapon == WP_LOUSY_SHOTGUN ) {
+		pm->ps->ammo[ WP_SHOTGUN ] = pm->ps->ammo[ WP_LOUSY_SHOTGUN ];
+	}
+	if ( pm->ps->weapon == WP_PLASMAGUN ) {
+		pm->ps->ammo[ WP_LOUSY_PLASMAGUN ] = pm->ps->ammo[ WP_PLASMAGUN ];
+	}
+	if ( pm->ps->weapon == WP_LOUSY_PLASMAGUN ) {
+		pm->ps->ammo[ WP_PLASMAGUN ] = pm->ps->ammo[ WP_LOUSY_PLASMAGUN ];
+	}
+#endif
 
 	// fire weapon
 	PM_AddEvent( EV_FIRE_WEAPON );
@@ -1650,6 +1671,9 @@ static void PM_Weapon( void ) {
 	case WP_LIGHTNING:
 		addTime = 50;
 		break;
+#if defined( QC )
+	case WP_LOUSY_SHOTGUN:
+#endif
 	case WP_SHOTGUN:
 		addTime = 1000;
 		break;
@@ -1664,12 +1688,20 @@ static void PM_Weapon( void ) {
 		addTime = 100;
 #endif
 		break;
+#if defined( QC )
+	case WP_LOUSY_MACHINEGUN:
+		addTime = 75;
+		break;
+#endif
 	case WP_GRENADE_LAUNCHER:
 		addTime = 800;
 		break;
 	case WP_ROCKET_LAUNCHER:
 		addTime = 800;
 		break;
+#if defined( QC )
+	case WP_LOUSY_PLASMAGUN:
+#endif
 	case WP_PLASMAGUN:
 		addTime = 100;
 		break;

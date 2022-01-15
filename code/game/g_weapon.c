@@ -157,13 +157,16 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 #define CHAINGUN_SPREAD		600
 #define CHAINGUN_DAMAGE		7
 #endif
-#define MACHINEGUN_SPREAD	200
+#define MACHINEGUN_SPREAD	300
 #define	MACHINEGUN_DAMAGE	10
 #define	MACHINEGUN_TEAM_DAMAGE	7		// wimpier MG in teamplay
 #if defined( QC )
 #define MACHINEGUN_ZOOM_SPREAD	0
 #define MACHINEGUN_ZOOM_DAMAGE	15
 #define MACHINEGUN_ZOOM_TEAM_DAMAGE	10
+#define LOUSY_MACHINEGUN_SPREAD 300
+#define LOUSY_MACHINEGUN_DAMAGE 7
+#define LOUSY_MACHINEGUN_TEAM_DAMAGE 5
 #endif
 
 void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
@@ -411,6 +414,42 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 		}
 	}
 }
+
+void LousyShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
+	int			i, k;
+	float		r, u, radius;
+	vec3_t		end;
+	vec3_t		forward, right, up;
+	qboolean	hitClient = qfalse;
+
+	// derive the right and up vectors from the forward vector, because
+	// the client won't have any other information
+	VectorNormalize2( origin2, forward );
+	PerpendicularVector( right, forward );
+	CrossProduct( forward, right, up );
+
+	VectorMA( origin, 8192 * 16, forward, end);
+	if ( ShotgunPellet( origin, end, ent ) && !hitClient ) {
+		hitClient = qtrue;
+		ent->client->accuracy_hits++;
+	}
+
+	radius = SHOTGUN_SPREAD / 3.0f;
+	for ( k = 0; k < 2; k++, radius += SHOTGUN_SPREAD / 2.0f ) { // TODO: check the actual QC pattern
+		for ( i = 0 ; i < 9; i++ ) {
+			r = cos( i * M_PI / 4.5f ) * radius * 16;
+			u = sin( i * M_PI / 4.5f ) * radius * 16;
+			VectorMA( origin, 8192 * 16, forward, end);
+			VectorMA (end, r, right, end);
+			VectorMA (end, u, up, end);
+			if( ShotgunPellet( origin, end, ent ) && !hitClient ) {
+				hitClient = qtrue;
+				ent->client->accuracy_hits++;
+			}
+		}
+	}
+}
+
 #else
 // this should match CG_ShotgunPattern
 void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
@@ -449,7 +488,11 @@ void weapon_supershotgun_fire (gentity_t *ent) {
 	tent = G_TempEntity( muzzle, EV_SHOTGUN );
 	VectorScale( forward, 4096, tent->s.origin2 );
 	SnapVector( tent->s.origin2 );
+#if defined( QC )
+	tent->s.eventParm = 0; // 0 -> super shotgun pattern
+#else
 	tent->s.eventParm = rand() & 255;		// seed for spread pattern
+#endif
 	tent->s.otherEntityNum = ent->s.number;
 
 #if defined( QC )
@@ -462,17 +505,43 @@ void weapon_supershotgun_fire (gentity_t *ent) {
 }
 
 #if defined( QC )
-void wapon_heavymachinegun_fire(gentity_t* ent) {
+void weapon_lousyshotgun_fire (gentity_t *ent) {
+	gentity_t		*tent;
+
+	// send shotgun blast
+	tent = G_TempEntity( muzzle, EV_SHOTGUN );
+	VectorScale( forward, 4096, tent->s.origin2 );
+	SnapVector( tent->s.origin2 );
+	tent->s.eventParm = 1;		// 1 -> lousy shotgun pattern
+	tent->s.otherEntityNum = ent->s.number;
+
+    SG_ResetDamage();
+	LousyShotgunPattern( tent->s.pos.trBase, tent->s.origin2, tent->s.eventParm, ent );
+    SG_ExecuteClientDamage();
+}
+#endif
+
+#if defined( QC )
+void weapon_heavymachinegun_fire (gentity_t* ent) {
 	float spread;
 	int damage;
 
 	if ( ent->client->pers.cmd.buttons & BUTTON_ZOOM ) {
 		spread = MACHINEGUN_ZOOM_SPREAD;
-		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_ZOOM_DAMAGE : MACHINEGUN_TEAM_DAMAGE;
+		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_ZOOM_DAMAGE : MACHINEGUN_ZOOM_TEAM_DAMAGE;
 	} else {
 		spread = MACHINEGUN_SPREAD;
-		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_DAMAGE : MACHINEGUN_DAMAGE;
+		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_DAMAGE : MACHINEGUN_TEAM_DAMAGE;
 	}
+	Bullet_Fire( ent, spread, damage, MOD_MACHINEGUN );
+}
+
+void weapon_lousymachinegun_fire (gentity_t* ent) {
+	float spread;
+	int damage;
+
+	spread = LOUSY_MACHINEGUN_SPREAD;
+	damage = g_gametype.integer != GT_TEAM ? LOUSY_MACHINEGUN_DAMAGE : LOUSY_MACHINEGUN_TEAM_DAMAGE;
 	Bullet_Fire( ent, spread, damage, MOD_MACHINEGUN );
 }
 #endif
@@ -535,6 +604,18 @@ void Weapon_Plasmagun_Fire (gentity_t *ent) {
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
+
+#if defined( QC )
+void Weapon_LousyPlasmagun_Fire (gentity_t *ent) {
+	gentity_t	*m;
+
+	m = fire_lousy_plasma (ent, muzzle, forward);
+	m->damage *= s_quadFactor;
+	m->splashDamage *= s_quadFactor;
+
+//	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
+}
+#endif
 
 /*
 ======================================================================
@@ -961,9 +1042,14 @@ void FireWeapon( gentity_t *ent ) {
 	case WP_SHOTGUN:
 		weapon_supershotgun_fire( ent );
 		break;
+#if defined( QC )
+	case WP_LOUSY_SHOTGUN:
+		weapon_lousyshotgun_fire( ent );
+		break;
+#endif
 	case WP_MACHINEGUN:
 #if defined( QC )
-		wapon_heavymachinegun_fire( ent );
+		weapon_heavymachinegun_fire( ent );
 #else
 		if ( g_gametype.integer != GT_TEAM ) {
 			Bullet_Fire( ent, MACHINEGUN_SPREAD, MACHINEGUN_DAMAGE, MOD_MACHINEGUN );
@@ -972,6 +1058,11 @@ void FireWeapon( gentity_t *ent ) {
 		}
 #endif
 		break;
+#if defined( QC )
+	case WP_LOUSY_MACHINEGUN:
+		weapon_lousymachinegun_fire( ent );
+		break;
+#endif
 	case WP_GRENADE_LAUNCHER:
 		weapon_grenadelauncher_fire( ent );
 		break;
@@ -981,6 +1072,11 @@ void FireWeapon( gentity_t *ent ) {
 	case WP_PLASMAGUN:
 		Weapon_Plasmagun_Fire( ent );
 		break;
+#if defined( QC )
+	case WP_LOUSY_PLASMAGUN:
+		Weapon_LousyPlasmagun_Fire( ent );
+		break;
+#endif
 	case WP_RAILGUN:
 		weapon_railgun_fire( ent );
 		break;

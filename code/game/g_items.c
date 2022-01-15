@@ -61,23 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	RESPAWN_POWERUP		120
 #endif
 
-#if defined( QC )
 
-static const int MAX_AMMO[WP_NUM_WEAPONS] = {
-    -1,  // WP_NONE,
-    -1,  // WP_GAUNTLET,
-    150, // WP_MACHINEGUN,
-    25,  // WP_SHOTGUN,
-    15,  // WP_GRENADE_LAUNCHER,
-    25,  // WP_ROCKET_LAUNCHER,
-    150, // WP_LIGHTNING,
-    25,  // WP_RAILGUN,
-    250, // WP_PLASMAGUN,
-    15,  // WP_BFG,
-    -1,  // WP_GRAPPLING_HOOK,
-};
-
-#endif
 
 //======================================================================
 
@@ -245,9 +229,12 @@ void Add_Ammo (gentity_t *ent, int weapon, int count)
 {
 	ent->client->ps.ammo[weapon] += count;
 #if defined( QC )
-    if ( ent->client->ps.ammo[weapon] > MAX_AMMO[weapon] ) {
-        ent->client->ps.ammo[weapon] = MAX_AMMO[weapon];
+    if ( ent->client->ps.ammo[weapon] > bg_maxAmmo[weapon] ) {
+        ent->client->ps.ammo[weapon] = bg_maxAmmo[weapon];
     }
+	ent->client->ps.ammo[WP_LOUSY_MACHINEGUN] = ent->client->ps.ammo[WP_MACHINEGUN];
+	ent->client->ps.ammo[WP_LOUSY_SHOTGUN] = ent->client->ps.ammo[WP_LOUSY_SHOTGUN];
+	ent->client->ps.ammo[WP_LOUSY_PLASMAGUN] = ent->client->ps.ammo[WP_PLASMAGUN];
 #else
 	if ( ent->client->ps.ammo[weapon] > 200 ) {
 		ent->client->ps.ammo[weapon] = 200;
@@ -888,7 +875,13 @@ void ClearRegisteredItems( void ) {
 	memset( itemRegistered, 0, sizeof( itemRegistered ) );
 
 	// players always start with the base weapon
+#if defined( QC )
+	RegisterItem( BG_FindItemForWeapon( WP_LOUSY_MACHINEGUN ) );
+	RegisterItem( BG_FindItemForWeapon( WP_LOUSY_SHOTGUN ) );
+	RegisterItem( BG_FindItemForWeapon( WP_LOUSY_PLASMAGUN ) );
+#else
 	RegisterItem( BG_FindItemForWeapon( WP_MACHINEGUN ) );
+#endif
 	RegisterItem( BG_FindItemForWeapon( WP_GAUNTLET ) );
 #ifdef MISSIONPACK
 	if( g_gametype.integer == GT_HARVESTER ) {

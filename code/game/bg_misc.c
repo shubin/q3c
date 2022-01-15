@@ -347,6 +347,56 @@ gitem_t	bg_itemlist[] =
 /* sounds */ ""
 	},
 
+#if defined( QC )
+/*QUAKED weapon_lousy_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_shotgun", 
+		"sound/misc/w_pkup.wav",
+        { "models/weapons3/shotgun/shotgun.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/iconw_shotgun",
+/* pickup */	"Lousy Shotgun",
+		10,
+		IT_WEAPON,
+		WP_LOUSY_SHOTGUN,
+/* precache */ "",
+/* sounds */ ""
+	},
+
+/*QUAKED weapon_lousy_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_machinegun", 
+		"sound/misc/w_pkup.wav",
+        { "models/weapons3/machinegun/machinegun.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/iconw_machinegun",
+/* pickup */	"Lousy Machinegun",
+		40,
+		IT_WEAPON,
+		WP_LOUSY_MACHINEGUN,
+/* precache */ "",
+/* sounds */ ""
+	},
+
+/*QUAKED weapon_lousy_plasmagun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_plasmagun", 
+		"sound/misc/w_pkup.wav",
+        { "models/weapons3/plasma/plasma.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/iconw_plasma",
+/* pickup */	"Lousy Plasma Gun",
+		50,
+		IT_WEAPON,
+		WP_LOUSY_PLASMAGUN,
+/* precache */ "",
+/* sounds */ ""
+	},
+#endif
+
 	//
 	// AMMO ITEMS
 	//
@@ -922,6 +972,26 @@ Only in One Flag CTF games
 
 int		bg_numItems = ARRAY_LEN( bg_itemlist ) - 1;
 
+#if defined( QC )
+
+int bg_maxAmmo[WP_NUM_WEAPONS] = {
+    -1,  // WP_NONE,
+    -1,  // WP_GAUNTLET,
+    150, // WP_MACHINEGUN,
+    25,  // WP_SHOTGUN,
+    15,  // WP_GRENADE_LAUNCHER,
+    25,  // WP_ROCKET_LAUNCHER,
+    150, // WP_LIGHTNING,
+    25,  // WP_RAILGUN,
+    250, // WP_PLASMAGUN,
+    15,  // WP_BFG,
+    -1,  // WP_GRAPPLING_HOOK,
+	// 25, // WP_TRIBOLT,
+	150, // WP_LOUSY_MACHINEGUN,
+	25,  // WP_LOUSY_SHOTGUN,
+	250, // WP_LOUSY_PLASMAGUN,
+};
+#endif
 
 /*
 ==============
@@ -1053,7 +1123,11 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		return qtrue;	// weapons are always picked up
 
 	case IT_AMMO:
+#if defined( QC )
+		if ( ps->ammo[ item->giTag ] >= bg_maxAmmo[ item->giTag ] ) {
+#else
 		if ( ps->ammo[ item->giTag ] >= 200 ) {
+#endif
 			return qfalse;		// can't hold any more
 		}
 		return qtrue;

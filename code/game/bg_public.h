@@ -323,7 +323,12 @@ typedef enum {
 	WP_PROX_LAUNCHER,
 	WP_CHAINGUN,
 #endif
-
+#if defined( QC )
+	//WP_TRIBOLT,
+	WP_LOUSY_MACHINEGUN,
+	WP_LOUSY_SHOTGUN,
+	WP_LOUSY_PLASMAGUN,
+#endif
 	WP_NUM_WEAPONS
 } weapon_t;
 
@@ -647,6 +652,9 @@ typedef struct gitem_s {
 // included in both the game dll and the client
 extern	gitem_t	bg_itemlist[];
 extern	int		bg_numItems;
+#if defined( QC )
+extern int		bg_maxAmmo[];
+#endif
 
 gitem_t	*BG_FindItem( const char *pickupName );
 gitem_t	*BG_FindItemForWeapon( weapon_t weapon );
