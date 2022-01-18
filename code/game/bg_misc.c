@@ -991,6 +991,25 @@ int bg_maxAmmo[WP_NUM_WEAPONS] = {
 	25,  // WP_LOUSY_SHOTGUN,
 	250, // WP_LOUSY_PLASMAGUN,
 };
+
+int bg_startAmmo[WP_NUM_WEAPONS] = {
+    -1,  // WP_NONE,
+    -1,  // WP_GAUNTLET,
+    50,  // WP_MACHINEGUN,
+    10,  // WP_SHOTGUN,
+     5,  // WP_GRENADE_LAUNCHER,
+     5,  // WP_ROCKET_LAUNCHER,
+    50,  // WP_LIGHTNING,
+     5,  // WP_RAILGUN,
+    50,  // WP_PLASMAGUN,
+     5,  // WP_BFG,
+    -1,  // WP_GRAPPLING_HOOK,
+	// 25, // WP_TRIBOLT,
+	50,  // WP_LOUSY_MACHINEGUN,
+	10,  // WP_LOUSY_SHOTGUN,
+	50,  // WP_LOUSY_PLASMAGUN,
+};
+
 #endif
 
 /*

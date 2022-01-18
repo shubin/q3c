@@ -904,6 +904,18 @@ void ClientThink_real( gentity_t *ent ) {
 
 	pm.ps = &client->ps;
 	pm.cmd = *ucmd;
+#if defined ( QC )
+	// server-side check that client cannot select "lousy" weapon when having the corresponding "super" one
+	if ( pm.cmd.weapon == WP_LOUSY_MACHINEGUN && ( pm.ps->stats[STAT_WEAPONS] & ( 1 << WP_MACHINEGUN ) ) ) {
+		pm.cmd.weapon = WP_MACHINEGUN;
+	}
+	if ( pm.cmd.weapon == WP_LOUSY_SHOTGUN && ( pm.ps->stats[STAT_WEAPONS] & ( 1 << WP_SHOTGUN ) ) ) {
+		pm.cmd.weapon = WP_SHOTGUN;
+	}
+	if ( pm.cmd.weapon == WP_LOUSY_PLASMAGUN && ( pm.ps->stats[STAT_WEAPONS] & ( 1 << WP_PLASMAGUN ) ) ) {
+		pm.cmd.weapon = WP_PLASMAGUN;
+	}
+#endif
 	if ( pm.ps->pm_type == PM_DEAD ) {
 		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 	}

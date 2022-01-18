@@ -3633,6 +3633,10 @@ void CL_Init( void ) {
 	Cvar_Get ("teamtask", "0", CVAR_USERINFO );
 	Cvar_Get ("sex", "male", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE );
+#if defined( QC )
+	Cvar_Get ("champion", "ranger", CVAR_USERINFO | CVAR_ARCHIVE );
+	Cvar_Get ("starting_weapon", "mg", CVAR_USERINFO | CVAR_ARCHIVE );
+#endif
 
 	Cvar_Get ("password", "", CVAR_USERINFO);
 	Cvar_Get ("cg_predictItems", "1", CVAR_USERINFO | CVAR_ARCHIVE );

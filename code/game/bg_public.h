@@ -654,6 +654,7 @@ extern	gitem_t	bg_itemlist[];
 extern	int		bg_numItems;
 #if defined( QC )
 extern int		bg_maxAmmo[];
+extern int		bg_startAmmo[];
 #endif
 
 gitem_t	*BG_FindItem( const char *pickupName );

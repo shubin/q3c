@@ -422,6 +422,16 @@ static void CG_ItemPickup( int itemNum ) {
 			cg.weaponSelectTime = cg.time;
 			cg.weaponSelect = bg_itemlist[itemNum].giTag;
 		}
+#if defined( QC )
+		// always autoswitch from starting lousy weapon to the corresponding super one when picking it up
+		if ( ( cg.weaponSelect == WP_LOUSY_MACHINEGUN && bg_itemlist[itemNum].giTag == WP_MACHINEGUN )
+		  || ( cg.weaponSelect == WP_LOUSY_SHOTGUN    && bg_itemlist[itemNum].giTag == WP_SHOTGUN )
+		  || ( cg.weaponSelect == WP_LOUSY_PLASMAGUN && bg_itemlist[itemNum].giTag == WP_PLASMAGUN )
+		) {
+			cg.weaponSelectTime = cg.time;
+			cg.weaponSelect = bg_itemlist[itemNum].giTag;
+		}
+#endif
 	}
 
 }

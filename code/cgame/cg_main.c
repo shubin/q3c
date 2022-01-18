@@ -383,6 +383,10 @@ void CG_RegisterCvars( void ) {
 	trap_Cvar_Register(NULL, "headmodel", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "team_model", DEFAULT_TEAM_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "team_headmodel", DEFAULT_TEAM_HEAD, CVAR_USERINFO | CVAR_ARCHIVE );
+#if defined( QC )
+	trap_Cvar_Register( NULL, "champion", DEFAULT_CHAMPION, CVAR_USERINFO | CVAR_ARCHIVE );
+	trap_Cvar_Register( NULL, "starting_weapon", DEFAULT_STARTING_WEAPON, CVAR_USERINFO | CVAR_ARCHIVE );
+#endif
 }
 
 /*																																			
@@ -1906,7 +1910,11 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	CG_InitConsoleCommands();
 
+#if defined( QC )
+	cg.weaponSelect = WP_MACHINEGUN; // TODO: probably have to figure out the preferred starting weapon and use it here
+#else
 	cg.weaponSelect = WP_MACHINEGUN;
+#endif
 
 	cgs.redflag = cgs.blueflag = -1; // For compatibily, default to unset for
 	cgs.flagStatus = -1;

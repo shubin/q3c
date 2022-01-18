@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 #include "g_local.h"
+#if defined( QC )
+#include "bg_champions.h"
+#endif
 
 // g_client.c -- client functions that don't happen every frame
 
@@ -772,6 +775,11 @@ void ClientUserinfoChanged( int clientNum ) {
 #endif
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 
+#if defined( QC )
+	client->pers.champion = ParseChampionName( Info_ValueForKey( userinfo, "champion" ) );
+	client->pers.startingWeapon = ParseStartingWeapon( Info_ValueForKey( userinfo, "starting_weapon" ) );
+#endif
+
 	// set model
 	if( g_gametype.integer >= GT_TEAM ) {
 		Q_strncpyz( model, Info_ValueForKey (userinfo, "team_model"), sizeof( model ) );
@@ -1147,6 +1155,10 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags = flags;
 
+#if defined( QC )
+	client->ps.champion = client->pers.champion;
+#endif
+
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client = &level.clients[index];
 	ent->takedamage = qtrue;
@@ -1165,13 +1177,16 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.clientNum = index;
 
 #if defined( QC )
-	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_LOUSY_MACHINEGUN ); // TODO: spawn with selected starting weapon
-	if ( g_gametype.integer == GT_TEAM ) {
-		client->ps.ammo[WP_MACHINEGUN] = 50;
-		client->ps.ammo[WP_LOUSY_MACHINEGUN] = 50;
-	} else {
-		client->ps.ammo[WP_MACHINEGUN] = 100;
-		client->ps.ammo[WP_LOUSY_MACHINEGUN] = 100;
+	client->ps.stats[STAT_WEAPONS] = ( 1 << client->pers.startingWeapon );
+	client->ps.ammo[client->pers.startingWeapon] = bg_startAmmo[client->pers.startingWeapon];
+	if ( client->pers.startingWeapon == WP_LOUSY_MACHINEGUN ) {
+		client->ps.ammo[WP_MACHINEGUN] = client->ps.ammo[WP_LOUSY_MACHINEGUN];
+	}
+	if ( client->pers.startingWeapon == WP_LOUSY_SHOTGUN ) {
+		client->ps.ammo[WP_SHOTGUN] = client->ps.ammo[WP_LOUSY_SHOTGUN];
+	}
+	if ( client->pers.startingWeapon == WP_LOUSY_PLASMAGUN ) {
+		client->ps.ammo[WP_PLASMAGUN] = client->ps.ammo[WP_LOUSY_PLASMAGUN];
 	}
 #else
 	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
@@ -1214,7 +1229,7 @@ void ClientSpawn(gentity_t *ent) {
 			G_KillBox(ent);
 			// force the base weapon up
 #if defined( QC )
-			client->ps.weapon = WP_LOUSY_MACHINEGUN; // TODO: use selected starting weapon
+			client->ps.weapon = client->pers.startingWeapon;
 #else
 			client->ps.weapon = WP_MACHINEGUN;
 #endif
@@ -1225,6 +1240,12 @@ void ClientSpawn(gentity_t *ent) {
 			client->ps.weapon = 1;
 
 			for (i = WP_NUM_WEAPONS - 1 ; i > 0 ; i--) {
+#if defined( QC )
+				// skip starting weapons
+				if ( i == WP_LOUSY_MACHINEGUN || i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN ) {
+					continue;
+				}
+#endif
 				if (client->ps.stats[STAT_WEAPONS] & (1 << i)) {
 					client->ps.weapon = i;
 					break;

@@ -246,6 +246,10 @@ typedef struct {
 	int			voteCount;			// to prevent people from constantly calling votes
 	int			teamVoteCount;		// to prevent people from constantly calling votes
 	qboolean	teamInfo;			// send team overlay updates?
+#if defined( QC )
+	int			champion;			// selected champion
+	int			startingWeapon;		// weapon with which the player spawns by default, could be one of "lousy" weapons
+#endif
 } clientPersistant_t;
 
 

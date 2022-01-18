@@ -1564,6 +1564,12 @@ static qboolean CG_WeaponSelectable( int i ) {
 	if ( ! (cg.snap->ps.stats[ STAT_WEAPONS ] & ( 1 << i ) ) ) {
 		return qfalse;
 	}
+#if defined( QC )
+	// starting weapons are not directly selectable
+	if ( i == WP_LOUSY_MACHINEGUN || i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN ) {
+		return qfalse;
+	}
+#endif
 
 	return qtrue;
 }
@@ -1661,10 +1667,33 @@ void CG_Weapon_f( void ) {
 		return;
 	}
 
+#if defined( QC )
+	// starting weapons are not directly selectable
+	if ( num == WP_LOUSY_MACHINEGUN || num == WP_LOUSY_SHOTGUN || num == WP_LOUSY_PLASMAGUN ) {
+		return;
+	}
+#endif
+
 	cg.weaponSelectTime = cg.time;
 
 	if ( ! ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << num ) ) ) {
+#if defined( QC )
+		// fall back to "lousy" version of the weapon
+		if ( num == WP_MACHINEGUN && ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_MACHINEGUN ) ) ) {
+			num = WP_LOUSY_MACHINEGUN;
+		} else
+		if ( num == WP_SHOTGUN && ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_SHOTGUN ) ) ) {
+			num = WP_LOUSY_SHOTGUN;
+		} else
+		if ( num == WP_PLASMAGUN && ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_PLASMAGUN ) ) ) {
+			num = WP_LOUSY_PLASMAGUN;
+		} else {
+			// don't have the weapon
+			return;
+		}
+#else
 		return;		// don't have the weapon
+#endif
 	}
 
 	cg.weaponSelect = num;
