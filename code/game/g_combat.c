@@ -288,7 +288,11 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 		return;
 	}
 
+#if defined( QC )
+	GibEntity( self, ENTITYNUM_NONE ); // event parameter is killer client number in QC, so pass ENTITYNUM_NONE to avoid directional gib dispersion
+#else
 	GibEntity( self, 0 );
+#endif
 }
 
 
