@@ -233,7 +233,7 @@ void Add_Ammo (gentity_t *ent, int weapon, int count)
         ent->client->ps.ammo[weapon] = bg_maxAmmo[weapon];
     }
 	ent->client->ps.ammo[WP_LOUSY_MACHINEGUN] = ent->client->ps.ammo[WP_MACHINEGUN];
-	ent->client->ps.ammo[WP_LOUSY_SHOTGUN] = ent->client->ps.ammo[WP_LOUSY_SHOTGUN];
+	ent->client->ps.ammo[WP_LOUSY_SHOTGUN] = ent->client->ps.ammo[WP_SHOTGUN];
 	ent->client->ps.ammo[WP_LOUSY_PLASMAGUN] = ent->client->ps.ammo[WP_PLASMAGUN];
 #else
 	if ( ent->client->ps.ammo[weapon] > 200 ) {
