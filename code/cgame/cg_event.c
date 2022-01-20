@@ -279,7 +279,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	}
 
 #if defined( QC )
-	if ( message && ( ringoutKiller < 0 || ringoutKiller >= MAX_CLIENTS ) ) {
+	if ( message && ringoutKiller >= 0 && ringoutKiller < MAX_CLIENTS ) {
 		return;
 	}
 #endif
