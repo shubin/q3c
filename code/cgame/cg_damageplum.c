@@ -185,9 +185,9 @@ typedef struct damage_plum_data_s {
 #define DAMAGE_PLUM_PULSE_SCALE				1.5f
 #define DAMAGE_PLUM_DEFAULT_SCALE			1.0f
 #define DAMAGE_PLUM_DISSOLVE_TIME			2500
-#define DAMAGE_PLUM_WORLD_OFFSET			30.0f;
+#define DAMAGE_PLUM_WORLD_OFFSET			30.0f
 #define DAMAGE_PLUM_TRAVEL_DISTANCE			60.0f
-#define DAMAGE_PLUM_ACCUMULATION_THRESHOLD	300
+#define DAMAGE_PLUM_ACCUMULATION_THRESHOLD	500
 #define DAMAGE_CROSS_TIME					200
 
 static damage_plum_data_t s_damage_plums[MAX_DAMAGE_PLUMS] = { 0 };
