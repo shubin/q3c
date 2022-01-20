@@ -234,6 +234,7 @@ static void CG_Obituary( entityState_t *ent ) {
 			return;
 		} else {
 			CG_Printf( "%s %s (thanks to %s).\n", targetName, message, ringoutKillerName );
+			// no return here, proceed further to get the "You fragged" message
 		}
 	}
 #else
