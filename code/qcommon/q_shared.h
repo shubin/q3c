@@ -1218,6 +1218,13 @@ typedef struct playerState_s {
 	int			pmove_framecount;
 	int			jumppad_frame;
 	int			entityEventSequence;
+#if defined( QC )
+	int			airTime;
+	int			attackerNum;
+	int			attackerTime;
+	int			ringoutKiller;
+#endif
+
 } playerState_t;
 
 

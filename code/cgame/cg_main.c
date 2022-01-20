@@ -694,6 +694,10 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.humiliationSound = trap_S_RegisterSound( "sound/feedback/humiliation.wav", qtrue );
 	cgs.media.assistSound = trap_S_RegisterSound( "sound/feedback/assist.wav", qtrue );
 	cgs.media.defendSound = trap_S_RegisterSound( "sound/feedback/defense.wav", qtrue );
+#if defined( QC )
+	// QCTODO: ringout sound
+	cgs.media.ringoutSound = trap_S_RegisterSound( "sound/feedback/humiliation.wav", qtrue );
+#endif
 #ifdef MISSIONPACK
 	cgs.media.firstImpressiveSound = trap_S_RegisterSound( "sound/feedback/first_impressive.wav", qtrue );
 	cgs.media.firstExcellentSound = trap_S_RegisterSound( "sound/feedback/first_excellent.wav", qtrue );
@@ -1047,6 +1051,9 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalDefend = trap_R_RegisterShaderNoMip( "medal_defend" );
 	cgs.media.medalAssist = trap_R_RegisterShaderNoMip( "medal_assist" );
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
+#if defined( QC )
+	cgs.media.medalRingout = trap_R_RegisterShaderNoMip( "medal_ringout" );
+#endif
 
 
 	memset( cg_items, 0, sizeof( cg_items ) );

@@ -827,6 +827,9 @@ typedef struct {
 	qhandle_t	medalDefend;
 	qhandle_t	medalAssist;
 	qhandle_t	medalCapture;
+#if defined( QC )
+	qhandle_t	medalRingout;
+#endif
 
 	// sounds
 	sfxHandle_t	quadSound;
@@ -896,6 +899,9 @@ typedef struct {
 	sfxHandle_t excellentSound;
 	sfxHandle_t deniedSound;
 	sfxHandle_t humiliationSound;
+#if defined( QC )
+	sfxHandle_t ringoutSound;
+#endif
 	sfxHandle_t assistSound;
 	sfxHandle_t defendSound;
 	sfxHandle_t firstImpressiveSound;

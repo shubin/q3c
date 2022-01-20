@@ -82,18 +82,30 @@ CG_Obituary
 static void CG_Obituary( entityState_t *ent ) {
 	int			mod;
 	int			target, attacker;
+#if defined( QC )
+	int			ringoutKiller;
+#endif
 	char		*message;
 	char		*message2;
 	const char	*targetInfo;
 	const char	*attackerInfo;
+#if defined( QC )
+	const char	*ringoutKillerInfo;
+#endif
 	char		targetName[32];
 	char		attackerName[32];
+#if defined( QC )
+	char		ringoutKillerName[32];
+#endif
 	gender_t	gender;
 	clientInfo_t	*ci;
 
 	target = ent->otherEntityNum;
 	attacker = ent->otherEntityNum2;
 	mod = ent->eventParm;
+#if defined( QC )
+	ringoutKiller = ent->generic1;
+#endif
 
 	if ( target < 0 || target >= MAX_CLIENTS ) {
 		CG_Error( "CG_Obituary: target out of range" );
@@ -113,6 +125,16 @@ static void CG_Obituary( entityState_t *ent ) {
 	}
 	Q_strncpyz( targetName, Info_ValueForKey( targetInfo, "n" ), sizeof(targetName) - 2);
 	strcat( targetName, S_COLOR_WHITE );
+
+#if defined( QC )
+	if ( attacker == ENTITYNUM_WORLD || ringoutKiller < 0 || ringoutKiller >= MAX_CLIENTS ) {
+		strcpy( ringoutKillerName, "noname" );
+	} else {
+		ringoutKillerInfo = CG_ConfigString( CS_PLAYERS + ringoutKiller );
+		Q_strncpyz( ringoutKillerName, Info_ValueForKey( ringoutKillerInfo, "n" ), sizeof(ringoutKillerName) - 2);
+		strcat( ringoutKillerName, S_COLOR_WHITE );
+	}
+#endif
 
 	message2 = "";
 
@@ -205,10 +227,21 @@ static void CG_Obituary( entityState_t *ent ) {
 		}
 	}
 
+#if defined( QC )
+	if (message) {
+		if ( ringoutKiller < 0 || ringoutKiller >= MAX_CLIENTS ) {
+			CG_Printf( "%s %s.\n", targetName, message);
+			return;
+		} else {
+			CG_Printf( "%s %s (thanks to %s).\n", targetName, message, ringoutKillerName );
+		}
+	}
+#else
 	if (message) {
 		CG_Printf( "%s %s.\n", targetName, message);
 		return;
 	}
+#endif
 
 	// check for kill messages from the current clientNum
 	if ( attacker == cg.snap->ps.clientNum ) {
@@ -244,6 +277,12 @@ static void CG_Obituary( entityState_t *ent ) {
 			Q_strncpyz( cg.killerName, attackerName, sizeof( cg.killerName ) );
 		}
 	}
+
+#if defined( QC )
+	if ( message && ( ringoutKiller < 0 || ringoutKiller >= MAX_CLIENTS ) ) {
+		return;
+	}
+#endif
 
 	if ( attacker != ENTITYNUM_WORLD ) {
 		switch (mod) {

@@ -393,6 +393,13 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		reward = qtrue;
 		//Com_Printf("gauntlet frag\n");
 	}
+#if defined( QC )
+	if (ps->persistant[PERS_RINGOUT_COUNT] != ops->persistant[PERS_RINGOUT_COUNT]) {
+		pushReward(cgs.media.ringoutSound, cgs.media.medalRingout, ps->persistant[PERS_RINGOUT_COUNT]);
+		reward = qtrue;
+		//Com_Printf("ringout frag\n");
+	}
+#endif
 	if (ps->persistant[PERS_DEFEND_COUNT] != ops->persistant[PERS_DEFEND_COUNT]) {
 		pushReward(cgs.media.defendSound, cgs.media.medalDefend, ps->persistant[PERS_DEFEND_COUNT]);
 		reward = qtrue;
@@ -417,6 +424,12 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 				(ops->persistant[PERS_PLAYEREVENTS] & PLAYEREVENT_HOLYSHIT)) {
 			trap_S_StartLocalSound( cgs.media.holyShitSound, CHAN_ANNOUNCER );
 		}
+#if defined( QC )
+		else if ((ps->persistant[PERS_PLAYEREVENTS] & PLAYEREVENT_RINGOUT) !=
+				(ops->persistant[PERS_PLAYEREVENTS] & PLAYEREVENT_RINGOUT)) {
+			trap_S_StartLocalSound( cgs.media.ringoutSound, CHAN_ANNOUNCER );
+		}
+#endif
 		reward = qtrue;
 	}
 

@@ -238,7 +238,10 @@ typedef enum {
 	PERS_DEFEND_COUNT,				// defend awards
 	PERS_ASSIST_COUNT,				// assist awards
 	PERS_GAUNTLET_FRAG_COUNT,		// kills with the guantlet
-	PERS_CAPTURES					// captures
+	PERS_CAPTURES,					// captures
+#if defined( QC )
+	PERS_RINGOUT_COUNT
+#endif
 } persEnum_t;
 
 
@@ -337,6 +340,9 @@ typedef enum {
 #define	PLAYEREVENT_DENIEDREWARD		0x0001
 #define	PLAYEREVENT_GAUNTLETREWARD		0x0002
 #define PLAYEREVENT_HOLYSHIT			0x0004
+#if defined( QC )
+#define PLAYEREVENT_RINGOUT				0x0008
+#endif
 
 // entityState_t->event values
 // entity events are for effects that take place relative

@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 #include "g_local.h"
-
+#if defined( QC )
+#include "bg_local.h" // for accessing the pml
+#endif
 
 /*
 ===============
@@ -951,6 +953,20 @@ void ClientThink_real( gentity_t *ent ) {
 		Pmove (&pm);
 #else
 		Pmove (&pm);
+#endif
+#if defined( QC )
+	// tracking when the player goes airborne
+	if ( pml.groundPlane ) {
+		if ( level.time - ent->client->ps.airTime > 700 ) { // have to stay at least 700 ms to get rid of the "ringouter"
+			ent->client->ps.airTime = -1;
+			ent->client->ps.ringoutKiller = -1;
+		}
+	} else if ( ent->client->ps.airTime == -1 ) {
+		ent->client->ps.airTime = level.time;
+		if ( level.time - ent->client->ps.attackerTime < 300 ) {
+			ent->client->ps.ringoutKiller = ent->client->ps.attackerNum;
+		}
+	}
 #endif
 
 	// save results of pmove

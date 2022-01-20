@@ -1157,6 +1157,10 @@ void ClientSpawn(gentity_t *ent) {
 
 #if defined( QC )
 	client->ps.champion = client->pers.champion;
+	client->ps.attackerNum = -1;
+	client->ps.attackerTime = 0;
+	client->ps.airTime = -1;
+	client->ps.ringoutKiller = -1;
 #endif
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;

@@ -457,6 +457,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	int			killer;
 	int			i;
 	char		*killerName, *obit;
+#if defined( QC )
+	qboolean	ringout;
+#endif
 
 	if ( self->client->ps.pm_type == PM_DEAD ) {
 		return;
@@ -465,6 +468,15 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	if ( level.intermissiontime ) {
 		return;
 	}
+
+#if defined( QC )
+	if ( ( !attacker || !attacker->client ) && self->client->ps.ringoutKiller != -1 ) {
+		attacker = &g_entities[self->client->ps.ringoutKiller];
+		ringout = qtrue;
+	} else {
+		ringout = qfalse;
+	}
+#endif
 
 	// check for an almost capture
 	CheckAlmostCapture( self, attacker );
@@ -515,6 +527,14 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->s.eventParm = meansOfDeath;
 	ent->s.otherEntityNum = self->s.number;
 	ent->s.otherEntityNum2 = killer;
+#if defined( QC )
+	// send ringout killer id so cgame can properly display the event
+	if  ( ringout ) {
+		ent->s.generic1 = attacker->s.number;
+	} else {
+		ent->s.generic1 = -1;
+	}
+#endif
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone
 
 	self->enemy = attacker;
@@ -528,6 +548,12 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			AddScore( attacker, self->r.currentOrigin, -1 );
 		} else {
 			AddScore( attacker, self->r.currentOrigin, 1 );
+#if defined( QC )
+			if ( ringout ) {
+				attacker->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_RINGOUT;
+				attacker->client->ps.persistant[PERS_RINGOUT_COUNT]++;
+			}
+#endif
 
 			if( meansOfDeath == MOD_GAUNTLET ) {
 				
@@ -1043,6 +1069,15 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( client ) {
 		if ( attacker ) {
 			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
+#if defined( QC )
+			client->ps.attackerNum = attacker->s.number;
+			client->ps.attackerTime = level.time;
+			if ( client->ps.airTime != -1 ) {
+				if ( attacker->client ) {
+					client->ps.ringoutKiller = attacker->s.number;
+				}
+			}
+#endif
 		} else {
 			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
 		}
