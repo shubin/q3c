@@ -72,6 +72,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INVENTORY_NEUTRALFLAG		47
 #define INVENTORY_REDCUBE			48
 #define INVENTORY_BLUECUBE			49
+#if defined( QC )
+#define INVENTORY_TRIBOLT			50
+#define INVENTORY_BOLTS				51
+#endif
 //enemy stuff
 #define ENEMY_HORIZONTAL_DIST		200
 #define ENEMY_HEIGHT				201

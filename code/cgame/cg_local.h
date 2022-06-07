@@ -847,6 +847,10 @@ typedef struct {
 	//sfxHandle_t	sfx_railg;
 	sfxHandle_t	sfx_rockexp;
 	sfxHandle_t	sfx_plasmaexp;
+#if defined( QC )
+	sfxHandle_t sfx_boltexp;
+	sfxHandle_t sfx_bolthitwall;
+#endif
 #ifdef MISSIONPACK
 	sfxHandle_t	sfx_proxexp;
 	sfxHandle_t	sfx_nghit;

@@ -970,6 +970,12 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 			trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.hgrenb2aSound );
 		}
 		break;
+#if defined( QC )
+	case EV_BOLT_HIT:
+		DEBUGNAME("EV_BOLT_HIT");
+		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.sfx_bolthitwall );
+		break;
+#endif
 
 #ifdef MISSIONPACK
 	case EV_PROXIMITY_MINE_STICK:

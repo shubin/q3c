@@ -1536,6 +1536,9 @@ Generates weapon events and modifes the weapon counter
 */
 static void PM_Weapon( void ) {
 	int		addTime;
+#if defined( QC )
+	int		wepTime;
+#endif
 
 	// don't allow attack until all buttons are up
 	if ( pm->ps->pm_flags & PMF_RESPAWNED ) {
@@ -1570,6 +1573,9 @@ static void PM_Weapon( void ) {
 		pm->ps->pm_flags &= ~PMF_USE_ITEM_HELD;
 	}
 
+#if defined( QC )
+	wepTime = pm->ps->weaponTime;
+#endif
 
 	// make weapon function
 	if ( pm->ps->weaponTime > 0 ) {
@@ -1586,6 +1592,19 @@ static void PM_Weapon( void ) {
 	}
 
 	if ( pm->ps->weaponTime > 0 ) {
+#if defined( QC )
+		// check for second and third bolt of the tribolt shot
+		if ( pm->ps->weapon == WP_TRIBOLT ) {			
+			if ( wepTime >= 1175 && pm->ps->weaponTime < 1175 ) { // fire second bolt
+				pm->ps->weaponFiringState++;
+				PM_AddEvent( EV_FIRE_WEAPON );
+			}			
+			if ( wepTime >= 1050 && pm->ps->weaponTime < 1050 ) { // fire third bolt
+				pm->ps->weaponFiringState++;
+				PM_AddEvent( EV_FIRE_WEAPON );
+			}
+		}
+#endif
 		return;
 	}
 
@@ -1626,6 +1645,9 @@ static void PM_Weapon( void ) {
 	}
 
 	pm->ps->weaponstate = WEAPON_FIRING;
+#if defined( QC )
+	pm->ps->weaponFiringState = 0;
+#endif
 
 	// check for out of ammo
 	if ( ! pm->ps->ammo[ pm->ps->weapon ] ) {
@@ -1700,6 +1722,9 @@ static void PM_Weapon( void ) {
 		addTime = 800;
 		break;
 #if defined( QC )
+	case WP_TRIBOLT:
+		addTime = 1300;
+		break;
 	case WP_LOUSY_PLASMAGUN:
 #endif
 	case WP_PLASMAGUN:

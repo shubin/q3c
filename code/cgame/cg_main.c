@@ -800,6 +800,11 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.hgrenb1aSound = trap_S_RegisterSound("sound/weapons/grenade/hgrenb1a.wav", qfalse);
 	cgs.media.hgrenb2aSound = trap_S_RegisterSound("sound/weapons/grenade/hgrenb2a.wav", qfalse);
 
+#if defined( QC )
+	cgs.media.sfx_boltexp = trap_S_RegisterSound("sound/weapons/tribolt/explode.wav", qfalse);
+	cgs.media.sfx_bolthitwall = trap_S_RegisterSound("sound/weapons/tribolt/hitwall.wav", qfalse);
+#endif
+
 #ifdef MISSIONPACK
 	trap_S_RegisterSound("sound/player/james/death1.wav", qfalse );
 	trap_S_RegisterSound("sound/player/james/death2.wav", qfalse );

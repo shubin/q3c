@@ -590,6 +590,25 @@ void Weapon_RocketLauncher_Fire (gentity_t *ent) {
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
 
+#if defined( QC )
+/*
+======================================================================
+
+TRIBOLT
+
+======================================================================
+*/
+
+void Weapon_Tribolt_Fire (gentity_t *ent) {
+	gentity_t	*m;
+
+	m = fire_bolt (ent, muzzle, forward);
+	m->damage *= s_quadFactor;
+	m->splashDamage *= s_quadFactor;
+
+//	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
+}
+#endif
 
 /*
 ======================================================================
@@ -1090,6 +1109,11 @@ void FireWeapon( gentity_t *ent ) {
 	case WP_GRAPPLING_HOOK:
 		Weapon_GrapplingHook_Fire( ent );
 		break;
+#if defined( QC )
+	case WP_TRIBOLT:
+		Weapon_Tribolt_Fire( ent );
+		break;
+#endif
 #ifdef MISSIONPACK
 	case WP_NAILGUN:
 		Weapon_Nailgun_Fire( ent );

@@ -1730,6 +1730,9 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_PLASMAGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_PLASMAGUN)) != 0;
 	bs->inventory[INVENTORY_BFG10K] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_BFG)) != 0;
 	bs->inventory[INVENTORY_GRAPPLINGHOOK] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_GRAPPLING_HOOK)) != 0;
+#if defined( QC )
+	bs->inventory[INVENTORY_TRIBOLT] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_TRIBOLT)) != 0;
+#endif
 #ifdef MISSIONPACK
 	bs->inventory[INVENTORY_NAILGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_NAILGUN)) != 0;;
 	bs->inventory[INVENTORY_PROXLAUNCHER] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_PROX_LAUNCHER)) != 0;;
@@ -1742,6 +1745,9 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_CELLS] = bs->cur_ps.ammo[WP_PLASMAGUN];
 	bs->inventory[INVENTORY_LIGHTNINGAMMO] = bs->cur_ps.ammo[WP_LIGHTNING];
 	bs->inventory[INVENTORY_ROCKETS] = bs->cur_ps.ammo[WP_ROCKET_LAUNCHER];
+#if defined( QC )
+	bs->inventory[INVENTORY_BOLTS] = bs->cur_ps.ammo[WP_TRIBOLT];
+#endif
 	bs->inventory[INVENTORY_SLUGS] = bs->cur_ps.ammo[WP_RAILGUN];
 	bs->inventory[INVENTORY_BFGAMMO] = bs->cur_ps.ammo[WP_BFG];
 #ifdef MISSIONPACK
@@ -3333,6 +3339,12 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_ROCKETLAUNCHER, 0, 1);
 		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_ROCKETLAUNCHER, 0, 1);
 	}
+#if defined( QC )
+	else if (wi.number == WP_TRIBOLT) {
+		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_ROCKETLAUNCHER, 0, 1);
+		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_ROCKETLAUNCHER, 0, 1);
+	}
+#endif
 	else if (wi.number == WP_LIGHTNING) {
 		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_LIGHTNING, 0, 1);
 	}
@@ -3493,6 +3505,9 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			//do prediction shots around corners
 			if (wi.number == WP_BFG ||
 				wi.number == WP_ROCKET_LAUNCHER ||
+#if defined( QC )
+				wi.number == WP_TRIBOLT ||
+#endif
 				wi.number == WP_GRENADE_LAUNCHER) {
 				//create the chase goal
 				goal.entitynum = bs->client;

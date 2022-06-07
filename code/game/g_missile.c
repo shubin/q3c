@@ -284,6 +284,17 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		return;
 	}
 
+#if defined( QC )
+	if ( !other->takedamage && !strcmp(ent->classname, "bolt")) {
+		// bolt sticks into walls/ground
+		// TODO: fix bolt orientation when stuck
+		G_SetOrigin( ent, trace->endpos );
+		ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
+		G_AddEvent( ent, EV_BOLT_HIT, 0 );
+		return;
+	}
+#endif
+
 #ifdef MISSIONPACK
 	if ( other->takedamage ) {
 		if ( ent->s.weapon != WP_PROX_LAUNCHER ) {
@@ -591,6 +602,44 @@ gentity_t *fire_lousy_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 
 	return bolt;
 }	
+
+/*
+=================
+fire_bolt
+=================
+*/
+gentity_t *fire_bolt (gentity_t *self, vec3_t start, vec3_t dir) {
+	gentity_t	*bolt;
+
+	VectorNormalize (dir);
+
+	bolt = G_Spawn();
+	bolt->classname = "bolt";
+	bolt->nextthink = level.time + 600;
+	bolt->think = G_ExplodeMissile;
+	bolt->s.eType = ET_MISSILE;
+	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+	bolt->s.weapon = WP_TRIBOLT;
+	bolt->r.ownerNum = self->s.number;
+	bolt->parent = self;
+	bolt->damage = 35;
+	bolt->splashDamage = 35;
+	bolt->splashRadius = 80;
+	bolt->methodOfDeath = MOD_TRIBOLT;
+	bolt->splashMethodOfDeath = MOD_TRIBOLT_SPLASH;
+	bolt->clipmask = MASK_SHOT;
+	bolt->target_ent = NULL;
+
+	bolt->s.pos.trType = TR_GRAVITY;
+	bolt->s.pos.trGravity = 400; // flat trajectory for bolts
+	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	VectorCopy( start, bolt->s.pos.trBase );
+	VectorScale( dir, 1600, bolt->s.pos.trDelta );
+	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
+	VectorCopy (start, bolt->r.currentOrigin);
+
+	return bolt;
+}
 #endif
 
 //=============================================================================

@@ -759,6 +759,21 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/shotgun/sshotf1b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
 		break;
+
+	case WP_TRIBOLT:
+		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/rocket/rocket.md3" );
+		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
+		weaponInfo->missileTrailFunc = CG_RocketTrail;
+		weaponInfo->missileDlight = 100;
+		weaponInfo->wiTrailTime = 2000;
+		weaponInfo->trailRadius = 32;
+		
+		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0 );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
+
+		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/tribolt/fire.wav", qfalse );
+		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
+		break;
 #endif
 
 	case WP_ROCKET_LAUNCHER:
@@ -1775,6 +1790,13 @@ void CG_FireWeapon( centity_t *cent ) {
 		cent->pe.railFireTime = cg.time;
 	}
 
+#if defined( QC )
+	// Don't play any sounds when second and third bolts are being fired, it's all covered within the sfx which plays first
+	if ( ent->weapon == WP_TRIBOLT && cg.predictedPlayerState.weaponFiringState != 0 ) {
+		return;
+	}
+#endif
+
 	// play quad sound if needed
 	if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
 		trap_S_StartSound (NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound );
@@ -1903,6 +1925,28 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 			CG_ParticleExplosion( "explode1", sprOrg, sprVel, 1400, 20, 30 );
 		}
 		break;
+#if defined( QC )
+	case WP_TRIBOLT:
+		mod = cgs.media.dishFlashModel;
+		shader = cgs.media.rocketExplosionShader;
+		sfx = cgs.media.sfx_boltexp;
+		mark = cgs.media.burnMarkShader;
+		radius = 32;
+		light = 300;
+		isSprite = qtrue;
+		duration = 1000;
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.0;
+		if (cg_oldRocket.integer == 0) {
+			// explosion sprite animation
+			VectorMA( origin, 24, dir, sprOrg );
+			VectorScale( dir, 64, sprVel );
+
+			CG_ParticleExplosion( "explode1", sprOrg, sprVel, 1200, 12, 20 );
+		}
+		break;
+#endif
 	case WP_RAILGUN:
 		mod = cgs.media.ringFlashModel;
 		shader = cgs.media.railExplosionShader;
@@ -2055,6 +2099,9 @@ void CG_MissileHitPlayer( int weapon, vec3_t origin, vec3_t dir, int entityNum )
 	switch ( weapon ) {
 	case WP_GRENADE_LAUNCHER:
 	case WP_ROCKET_LAUNCHER:
+#if defined( QC )
+	case WP_TRIBOLT:
+#endif
 	case WP_PLASMAGUN:
 	case WP_BFG:
 #ifdef MISSIONPACK

@@ -119,6 +119,12 @@ tryagain:
 		MAKERGB( pi->flashDlightColor, 1, 0.75f, 0 );
 		break;
 
+#if defined( QC )
+	case WP_TRIBOLT:
+		MAKERGB( pi->flashDlightColor, 1, 1, 0 );
+		break;
+#endif
+
 	case WP_LIGHTNING:
 		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
 		break;

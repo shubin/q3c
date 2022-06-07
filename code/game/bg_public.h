@@ -327,7 +327,7 @@ typedef enum {
 	WP_CHAINGUN,
 #endif
 #if defined( QC )
-	//WP_TRIBOLT,
+	WP_TRIBOLT,
 	WP_LOUSY_MACHINEGUN,
 	WP_LOUSY_SHOTGUN,
 	WP_LOUSY_PLASMAGUN,
@@ -415,6 +415,10 @@ typedef enum {
 	EV_PLAYER_TELEPORT_OUT,
 
 	EV_GRENADE_BOUNCE,		// eventParm will be the soundindex
+
+#if defined( QC )
+	EV_BOLT_HIT,
+#endif
 
 	EV_GENERAL_SOUND,
 	EV_GLOBAL_SOUND,		// no attenuation
@@ -615,7 +619,11 @@ typedef enum {
 	MOD_KAMIKAZE,
 	MOD_JUICED,
 #endif
-	MOD_GRAPPLE
+	MOD_GRAPPLE,
+#if defined( QC )
+	MOD_TRIBOLT,
+	MOD_TRIBOLT_SPLASH,
+#endif
 } meansOfDeath_t;
 
 

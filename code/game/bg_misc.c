@@ -348,6 +348,22 @@ gitem_t	bg_itemlist[] =
 	},
 
 #if defined( QC )
+/*QUAKED weapon_tribolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_tribolt", 
+		"sound/misc/w_pkup.wav",
+        { "models/weapons2/tribolt/tribolt.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/iconw_tribolt",
+/* pickup */	"Tribolt",
+		10,
+		IT_WEAPON,
+		WP_TRIBOLT,
+/* precache */ "",
+/* sounds */ ""
+	},
+			
 /*QUAKED weapon_lousy_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
@@ -496,6 +512,24 @@ gitem_t	bg_itemlist[] =
 /* precache */ "",
 /* sounds */ ""
 	},
+
+#if defined( QC )
+/*QUAKED ammo_bolts (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_bolts",
+		"sound/misc/am_pkup.wav",
+        { "models/powerups/ammo/triboltam.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/icona_tribolt",
+/* pickup */	"Bolts",
+		5,
+		IT_AMMO,
+		WP_TRIBOLT,
+/* precache */ "",
+/* sounds */ ""
+	},
+#endif
 
 /*QUAKED ammo_slugs (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -986,7 +1020,7 @@ int bg_maxAmmo[WP_NUM_WEAPONS] = {
     250, // WP_PLASMAGUN,
     15,  // WP_BFG,
     -1,  // WP_GRAPPLING_HOOK,
-	// 25, // WP_TRIBOLT,
+	25,  // WP_TRIBOLT,
 	150, // WP_LOUSY_MACHINEGUN,
 	25,  // WP_LOUSY_SHOTGUN,
 	250, // WP_LOUSY_PLASMAGUN,
@@ -1004,7 +1038,7 @@ int bg_startAmmo[WP_NUM_WEAPONS] = {
     50,  // WP_PLASMAGUN,
      5,  // WP_BFG,
     -1,  // WP_GRAPPLING_HOOK,
-	// 25, // WP_TRIBOLT,
+	25,  // WP_TRIBOLT,
 	50,  // WP_LOUSY_MACHINEGUN,
 	10,  // WP_LOUSY_SHOTGUN,
 	50,  // WP_LOUSY_PLASMAGUN,
@@ -1425,6 +1459,10 @@ char *eventnames[] = {
 	"EV_PLAYER_TELEPORT_OUT",
 
 	"EV_GRENADE_BOUNCE",		// eventParm will be the soundindex
+
+#if defined( QC )
+	"EV_BOLT_HIT",
+#endif
 
 	"EV_GENERAL_SOUND",
 	"EV_GLOBAL_SOUND",		// no attenuation

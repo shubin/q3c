@@ -149,6 +149,9 @@ typedef struct
 #define ANIM_GESTURE	23
 #define ANIM_DIE		24
 #define ANIM_CHAT		25
+#if defined( QC )
+#define ANIM_WEAPON11	26
+#endif
 
 typedef struct
 {
@@ -523,6 +526,10 @@ static void Controls_UpdateModel( int anim ) {
 	case ANIM_WEAPON10:
 		s_controls.playerWeapon = WP_GRAPPLING_HOOK;
 		break;
+#if defined( QC )
+	case ANIM_WEAPON11:
+		s_controls.playerWeapon = WP_TRIBOLT;
+#endif
 
 	case ANIM_ATTACK:
 		s_controls.playerTorso = TORSO_ATTACK;

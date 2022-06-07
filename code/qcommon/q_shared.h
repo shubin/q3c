@@ -1192,6 +1192,7 @@ typedef struct playerState_s {
 	int			weapon;			// copied to entityState_t->weapon
 	int			weaponstate;
 #if defined( QC )
+	int			weaponFiringState; // for complex weapon behaviors (like tribolt)
 	int			champion;		// selected champion
 #endif
 
