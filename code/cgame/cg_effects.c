@@ -542,6 +542,9 @@ void CG_LaunchGib( vec3_t origin, vec3_t velocity, qhandle_t hModel ) {
 	re->hModel = hModel;
 
 	le->pos.trType = TR_GRAVITY;
+#if defined( QC )
+	le->pos.trGravity = DEFAULT_GRAVITY;
+#endif
 	VectorCopy( origin, le->pos.trBase );
 	VectorCopy( velocity, le->pos.trDelta );
 	le->pos.trTime = cg.time;
@@ -731,6 +734,9 @@ void CG_LaunchExplode( vec3_t origin, vec3_t velocity, qhandle_t hModel ) {
 	re->hModel = hModel;
 
 	le->pos.trType = TR_GRAVITY;
+#if defined( QC )
+	le->pos.trGravity = DEFAULT_GRAVITY;
+#endif
 	VectorCopy( origin, le->pos.trBase );
 	VectorCopy( velocity, le->pos.trDelta );
 	le->pos.trTime = cg.time;

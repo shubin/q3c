@@ -653,6 +653,9 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity ) {
 
 	G_SetOrigin( dropped, origin );
 	dropped->s.pos.trType = TR_GRAVITY;
+#if defined( QC )
+	dropped->s.pos.trGravity = DEFAULT_GRAVITY;
+#endif
 	dropped->s.pos.trTime = level.time;
 	VectorCopy( velocity, dropped->s.pos.trDelta );
 
@@ -1037,6 +1040,9 @@ void G_RunItem( gentity_t *ent ) {
 	if ( ent->s.groundEntityNum == ENTITYNUM_NONE ) {
 		if ( ent->s.pos.trType != TR_GRAVITY ) {
 			ent->s.pos.trType = TR_GRAVITY;
+#if defined( QC )
+			ent->s.pos.trGravity = DEFAULT_GRAVITY;
+#endif
 			ent->s.pos.trTime = level.time;
 		}
 	}

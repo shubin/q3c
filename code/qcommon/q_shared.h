@@ -1291,6 +1291,9 @@ typedef struct {
 	int		trDuration;			// if non 0, trTime + trDuration = stop time
 	vec3_t	trBase;
 	vec3_t	trDelta;			// velocity, etc
+#if defined( QC )
+	int		trGravity;
+#endif
 } trajectory_t;
 
 // entityState_t is the information conveyed from the server

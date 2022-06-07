@@ -52,6 +52,9 @@ static void CG_MachineGunEjectBrass( centity_t *cent ) {
 	le->endTime = le->startTime + cg_brassTime.integer + ( cg_brassTime.integer / 4 ) * random();
 
 	le->pos.trType = TR_GRAVITY;
+#if defined( QC )
+	le->pos.trGravity = DEFAULT_GRAVITY;
+#endif
 	le->pos.trTime = cg.time - (rand()&15);
 
 	AnglesToAxis( cent->lerpAngles, v );
@@ -131,6 +134,9 @@ static void CG_ShotgunEjectBrass( centity_t *cent ) {
 		le->endTime = le->startTime + cg_brassTime.integer*3 + cg_brassTime.integer * random();
 
 		le->pos.trType = TR_GRAVITY;
+#if defined( QC )
+	le->pos.trGravity = DEFAULT_GRAVITY;
+#endif
 		le->pos.trTime = cg.time;
 
 		AnglesToAxis( cent->lerpAngles, v );
@@ -497,6 +503,9 @@ static void CG_PlasmaTrail( centity_t *cent, const weaponInfo_t *wi ) {
 	le->endTime = le->startTime + 600;
 
 	le->pos.trType = TR_GRAVITY;
+#if defined( QC )
+	le->pos.trGravity = DEFAULT_GRAVITY;
+#endif
 	le->pos.trTime = cg.time;
 
 	AnglesToAxis( cent->lerpAngles, v );

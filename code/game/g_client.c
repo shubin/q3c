@@ -450,6 +450,9 @@ void CopyToBodyQue( gentity_t *ent ) {
 	body->physicsBounce = 0;		// don't bounce
 	if ( body->s.groundEntityNum == ENTITYNUM_NONE ) {
 		body->s.pos.trType = TR_GRAVITY;
+#if defined( QC )
+		body->s.pos.trGravity = DEFAULT_GRAVITY;
+#endif
 		body->s.pos.trTime = level.time;
 		VectorCopy( ent->client->ps.velocity, body->s.pos.trDelta );
 	} else {
