@@ -359,11 +359,7 @@ static void CG_Item( centity_t *cent ) {
 		VectorScale( ent.axis[2], frac, ent.axis[2] );
 		ent.nonNormalizedAxes = qtrue;
 	} else {
-#if defined( QC )
-		frac = itemScale;
-#else
 		frac = 1.0;
-#endif
 	}
 
 	// items without glow textures need to keep a minimum light value
@@ -451,6 +447,9 @@ static void CG_Item( centity_t *cent ) {
 					VectorScale( ent.axis[2], frac, ent.axis[2] );
 					ent.nonNormalizedAxes = qtrue;
 				}
+				VectorScale( ent.axis[0], itemScale, ent.axis[0] );
+				VectorScale( ent.axis[1], itemScale, ent.axis[1] );
+				VectorScale( ent.axis[2], itemScale, ent.axis[2] );
 				trap_R_AddRefEntityToScene( &ent );
 			}
 		}
