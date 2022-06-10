@@ -61,6 +61,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	RESPAWN_POWERUP		120
 #endif
 
+#if defined( QC )
+int item_for_weapon[WP_NUM_WEAPONS];
+#endif
 
 
 //======================================================================
@@ -227,15 +230,26 @@ int Pickup_Holdable( gentity_t *ent, gentity_t *other ) {
 
 void Add_Ammo (gentity_t *ent, int weapon, int count)
 {
-	ent->client->ps.ammo[weapon] += count;
 #if defined( QC )
-    if ( ent->client->ps.ammo[weapon] > bg_maxAmmo[weapon] ) {
-        ent->client->ps.ammo[weapon] = bg_maxAmmo[weapon];
-    }
+	if ( weapon == WP_NONE ) {
+		for ( weapon = WP_MACHINEGUN; weapon < WP_NUM_WEAPONS; weapon++ ) {
+			ent->client->ps.ammo[weapon] += bg_itemlist[item_for_weapon[weapon]].quantity;
+			if ( ent->client->ps.ammo[weapon] > bg_maxAmmo[weapon] ) {
+				ent->client->ps.ammo[weapon] = bg_maxAmmo[weapon];
+			}
+		}
+	}
+	else {
+		ent->client->ps.ammo[weapon] += count;
+		if ( ent->client->ps.ammo[weapon] > bg_maxAmmo[weapon] ) {
+	        ent->client->ps.ammo[weapon] = bg_maxAmmo[weapon];
+	    }
+	}
 	ent->client->ps.ammo[WP_LOUSY_MACHINEGUN] = ent->client->ps.ammo[WP_MACHINEGUN];
 	ent->client->ps.ammo[WP_LOUSY_SHOTGUN] = ent->client->ps.ammo[WP_SHOTGUN];
 	ent->client->ps.ammo[WP_LOUSY_PLASMAGUN] = ent->client->ps.ammo[WP_PLASMAGUN];
 #else
+	ent->client->ps.ammo[weapon] += count;
 	if ( ent->client->ps.ammo[weapon] > 200 ) {
 		ent->client->ps.ammo[weapon] = 200;
 	}
@@ -935,6 +949,16 @@ void SaveRegisteredItems( void ) {
 
 	G_Printf( "%i items registered\n", count );
 	trap_SetConfigstring(CS_ITEMS, string);
+
+#if defined( QC )
+	// for each registered ammo type map their indices to weapon indices
+	for ( i = 0; i < bg_numItems; i++ ) {
+		if ( bg_itemlist[i].giType == IT_AMMO ) {
+			item_for_weapon[bg_itemlist[i].giTag] = i;
+		}
+	}
+#endif
+
 }
 
 /*

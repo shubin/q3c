@@ -257,6 +257,44 @@ spawn_t	spawns[] = {
 	{NULL, 0}
 };
 
+#if defined( QC )
+/*
+===============
+itemclasscmp
+
+Replace some items with another items based on gamerules
+===============
+*/
+qboolean itemclasscmp( const char *itemclass, const char *entclass_ ) {
+
+	static char entclass[64];
+	strcpy( entclass, entclass_ );
+
+	if ( g_triboltSubstitution.integer ) {
+		if ( !strcmp( entclass, "weapon_grenadelauncher") ) {
+			strcpy( entclass, "weapon_tribolt" );
+		}
+		if ( !strcmp( entclass, "ammo_grenades") ) {
+			strcpy( entclass, "ammo_bolts" );
+		}
+	}
+
+	if ( g_hourglassSubstition.integer ) {
+		if ( !strcmp( entclass, "item_armor_shard") ) {
+			strcpy( entclass, "item_hourglass" );
+		}
+	}
+
+	if ( g_gametype.integer == GT_FFA && !g_noUniAmmo.integer ) {
+		return ( !strcmp( itemclass, "ammo" ) && !strncmp( entclass, "ammo_", 5 ) )
+			|| ( !strcmp( itemclass, entclass ) && strncmp( entclass, "ammo_", 5 ) );
+	}
+	else {
+		return !strcmp( itemclass, entclass );
+	}
+}
+#endif
+
 /*
 ===============
 G_CallSpawn
@@ -276,7 +314,11 @@ qboolean G_CallSpawn( gentity_t *ent ) {
 
 	// check item spawn functions
 	for ( item=bg_itemlist+1 ; item->classname ; item++ ) {
+#if defined( QC )
+		if ( itemclasscmp( item->classname, ent->classname ) ) {
+#else
 		if ( !strcmp(item->classname, ent->classname) ) {
+#endif
 			G_SpawnItem( ent, item );
 			return qtrue;
 		}

@@ -563,6 +563,25 @@ gitem_t	bg_itemlist[] =
 /* sounds */ ""
 	},
 
+#if defined( QC )
+// universal ammo pack
+/*QUAKED ammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo",
+		"sound/misc/am_pkup.wav",
+        { "models/powerups/ammo/uniam.md3", 
+		NULL, NULL, NULL},
+/* icon */		"icons/icona_uni",
+/* pickup */	"Ammo",
+		15,
+		IT_AMMO,
+		WP_NONE,
+/* precache */ "",
+/* sounds */ ""
+	},
+#endif
+
 	//
 	// HOLDABLE ITEMS
 	//
@@ -1191,6 +1210,9 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 
 	case IT_AMMO:
 #if defined( QC )
+		if ( item->giTag == WP_NONE ) {
+			return qtrue; // we can grab universal ammos every time
+		}
 		if ( ps->ammo[ item->giTag ] >= bg_maxAmmo[ item->giTag ] ) {
 #else
 		if ( ps->ammo[ item->giTag ] >= 200 ) {
