@@ -232,6 +232,9 @@ static void CG_Item( centity_t *cent ) {
 	float			frac;
 	float			scale;
 	weaponInfo_t	*wi;
+#if defined( QC )
+	float			itemScale;
+#endif
 
 	es = &cent->currentState;
 	if ( es->modelindex >= bg_numItems ) {
@@ -257,6 +260,46 @@ static void CG_Item( centity_t *cent ) {
 		trap_R_AddRefEntityToScene(&ent);
 		return;
 	}
+
+#if defined( QC )
+	// tune up item model sizes
+	switch( item->giType ) {
+		case IT_WEAPON:
+			itemScale = 1.1f;
+			break;
+		case IT_AMMO:
+			itemScale = 0.8f;
+			break;
+		case IT_HEALTH:
+			if ( item->quantity == 100 ) {
+				itemScale = 1.5f;
+			}
+			else {
+				itemScale = 1.2f;
+			}
+			break;
+		case IT_ARMOR:
+			switch ( item->quantity ) {
+				case 5:
+					itemScale = 1.0f;
+					break;
+				case 25:
+				case 50:
+					itemScale = 1.1f;
+					break;
+				case 100:
+					itemScale = 1.2f;
+					break;
+				default:
+					itemScale = 1.0f;
+					break;
+			}
+			break;
+		default:
+			itemScale = 1.2f;
+			break;
+	}
+#endif
 
 	// items bob up and down continuously
 	scale = 0.005 + cent->currentState.number * 0.00001;
@@ -317,7 +360,7 @@ static void CG_Item( centity_t *cent ) {
 		ent.nonNormalizedAxes = qtrue;
 	} else {
 #if defined( QC )
-		frac = ITEM_SCALE;
+		frac = itemScale;
 #else
 		frac = 1.0;
 #endif
@@ -351,9 +394,9 @@ static void CG_Item( centity_t *cent ) {
 #endif
 
 #if defined( QC )
-	VectorScale( ent.axis[0], ITEM_SCALE, ent.axis[0] );
-	VectorScale( ent.axis[1], ITEM_SCALE, ent.axis[1] );
-	VectorScale( ent.axis[2], ITEM_SCALE, ent.axis[2] );
+	VectorScale( ent.axis[0], itemScale, ent.axis[0] );
+	VectorScale( ent.axis[1], itemScale, ent.axis[1] );
+	VectorScale( ent.axis[2], itemScale, ent.axis[2] );
 #endif
 
 	// add to refresh list
