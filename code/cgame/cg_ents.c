@@ -393,6 +393,7 @@ static void CG_Item( centity_t *cent ) {
 	VectorScale( ent.axis[0], itemScale, ent.axis[0] );
 	VectorScale( ent.axis[1], itemScale, ent.axis[1] );
 	VectorScale( ent.axis[2], itemScale, ent.axis[2] );
+	ent.nonNormalizedAxes = qtrue;
 #endif
 
 	// add to refresh list
@@ -447,9 +448,12 @@ static void CG_Item( centity_t *cent ) {
 					VectorScale( ent.axis[2], frac, ent.axis[2] );
 					ent.nonNormalizedAxes = qtrue;
 				}
+#if defined( QC )
 				VectorScale( ent.axis[0], itemScale, ent.axis[0] );
 				VectorScale( ent.axis[1], itemScale, ent.axis[1] );
 				VectorScale( ent.axis[2], itemScale, ent.axis[2] );
+				ent.nonNormalizedAxes = qtrue;
+#endif
 				trap_R_AddRefEntityToScene( &ent );
 			}
 		}
