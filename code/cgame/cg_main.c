@@ -848,7 +848,9 @@ This function may execute for a couple of minutes with a slow disk.
 */
 static void CG_RegisterGraphics( void ) {
 	int			i;
+#if !defined( QC )
 	char		items[MAX_ITEMS+1];
+#endif
 	static char		*sb_nums[11] = {
 		"gfx/2d/numbers/zero_32b",
 		"gfx/2d/numbers/one_32b",
@@ -1064,6 +1066,13 @@ static void CG_RegisterGraphics( void ) {
 	memset( cg_items, 0, sizeof( cg_items ) );
 	memset( cg_weapons, 0, sizeof( cg_weapons ) );
 
+#if defined( QC )
+	// register all the items
+	for ( i = 1 ; i < bg_numItems ; i++ ) {
+		CG_LoadingItem( i );
+		CG_RegisterItemVisuals( i );
+	}
+#else
 	// only register the items that the server says we need
 	Q_strncpyz(items, CG_ConfigString(CS_ITEMS), sizeof(items));
 
@@ -1073,6 +1082,7 @@ static void CG_RegisterGraphics( void ) {
 			CG_RegisterItemVisuals( i );
 		}
 	}
+#endif
 
 	// wall marks
 	cgs.media.bulletMarkShader = trap_R_RegisterShader( "gfx/damage/bullet_mrk" );
