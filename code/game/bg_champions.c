@@ -37,21 +37,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -65,21 +65,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -93,21 +93,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -121,21 +121,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -149,21 +149,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -177,21 +177,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -205,21 +205,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -233,21 +233,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -261,21 +261,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -289,21 +289,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -317,21 +317,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -345,21 +345,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -373,21 +373,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -401,21 +401,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -429,21 +429,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -457,21 +457,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
@@ -485,21 +485,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
-            100, // GT_SINGPE_PLAYER
+            100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
         .spawn_protection = {
             0, // GT_FFA
             0, // GT_TOURNAMENT
-            0, // GT_SINGPE_PLAYER
+            0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         }
