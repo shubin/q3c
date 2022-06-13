@@ -766,8 +766,13 @@ static qboolean CG_ScanForExistingClientInfo( clientInfo_t *ci ) {
 	int		i;
 	clientInfo_t	*match;
 
+#if defined( QC )
+	for ( i = NUM_CHAMPIONS ; i < NUM_CHAMPIONS + cgs.maxclients ; i++ ) {
+		match = i < NUM_CHAMPIONS ? &cgs.media.championModels[i] : &cgs.clientinfo[ i - NUM_CHAMPIONS ];
+#else
 	for ( i = 0 ; i < cgs.maxclients ; i++ ) {
 		match = &cgs.clientinfo[ i ];
+#endif
 		if ( !match->infoValid ) {
 			continue;
 		}
@@ -2633,3 +2638,35 @@ void CG_ResetPlayerEntity( centity_t *cent ) {
 	}
 }
 
+#if defined( QC )
+/*
+===============
+CG_RegisterChampionModels
+
+Load all the champion models
+===============
+*/
+
+qboolean CG_RegisterChampionModels( void ) {
+	int i;
+	memset( &cgs.media.championModels, 0, sizeof( cgs.media.championModels ) );
+	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
+		Q_strncpyz( cgs.media.championModels[i].modelName, champion_models[i], sizeof( cgs.media.championModels[i].modelName ) );
+		Q_strncpyz( cgs.media.championModels[i].skinName, "default", sizeof( cgs.media.championModels[i].skinName ) );
+		Q_strncpyz( cgs.media.championModels[i].headSkinName, "default", sizeof( cgs.media.championModels[i].headSkinName ) );
+		Q_strncpyz( cgs.media.championModels[i].headModelName, champion_models[i], sizeof( cgs.media.championModels[i].headModelName ) );
+		if ( !CG_RegisterClientModelname( 
+				&cgs.media.championModels[i],
+				cgs.media.championModels[i].modelName,
+				cgs.media.championModels[i].skinName,
+				cgs.media.championModels[i].headModelName,
+				cgs.media.championModels[i].headSkinName, "default" 
+		) ) {
+			CG_Error( "Failed to load champion model: %s", champion_names[i] );
+			return qfalse;
+		}
+		cgs.media.championModels[i].infoValid = qtrue;
+	}
+	return qtrue;
+}
+#endif

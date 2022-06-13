@@ -36,10 +36,18 @@ int demo_protocols[] =
 
 #define MAX_NUM_ARGVS	50
 
+#if defined( QC )
+// cmon, we can afford it
+#define MIN_DEDICATED_COMHUNKMEGS 32
+#define MIN_COMHUNKMEGS		512
+#define DEF_COMHUNKMEGS 	1024
+#define DEF_COMZONEMEGS		128
+#else
 #define MIN_DEDICATED_COMHUNKMEGS 1
 #define MIN_COMHUNKMEGS		56
 #define DEF_COMHUNKMEGS 	128
 #define DEF_COMZONEMEGS		24
+#endif
 #define DEF_COMHUNKMEGS_S	XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S	XSTRING(DEF_COMZONEMEGS)
 

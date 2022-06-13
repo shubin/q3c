@@ -25,13 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
-#include "bg_champions.h"
 
 champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // sarge
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -42,7 +41,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             100, // GT_CTF
         },
         .start_armor = {
-            0, // GT_FFA
+            75, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
@@ -59,9 +58,9 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // anarki
     {
         .base_health = 100,
-        .base_armour = 100,
-        .max_health = 200,
-        .max_armor = 200,
+        .base_armor = 75,
+        .max_health = 175,
+        .max_armor = 175,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -70,7 +69,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             100, // GT_CTF
         },
         .start_armor = {
-            0, // GT_FFA
+            50, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
@@ -87,7 +86,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // athena
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -115,7 +114,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // nyx
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -143,7 +142,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // slash
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -171,7 +170,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // bj
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -199,7 +198,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // dk
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -227,7 +226,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // doomguy
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -255,7 +254,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // eisen
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -283,7 +282,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // galena
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -311,7 +310,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // ranger
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -339,7 +338,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // strogg
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -367,7 +366,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // visor
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -395,7 +394,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // clutch
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -423,7 +422,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // keel
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -451,7 +450,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // scalebearer
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -479,7 +478,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // sorlag
     {
         .base_health = 100,
-        .base_armour = 100,
+        .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
         .start_health = {
@@ -523,6 +522,26 @@ char *champion_names[NUM_CHAMPIONS] = {
     "clutch",
     "keel",
     "scalebearer",
+    "sorlag",
+};
+
+char* champion_models[NUM_CHAMPIONS] = {
+    "sarge",
+    "anarki",
+    "hunter", //"athena",
+    "mynx", //"nyx",
+    "slash",
+    "tim", //"bj",
+    "klesk", //"dk",
+    "doom",
+    "razor", //"eisen",
+    "major", //"galena",
+    "ranger",
+    "xian", //"strogg",
+    "visor",
+    "tankjr",//"clutch",
+    "keel",
+    "brandon", //"scalebearer",
     "sorlag",
 };
 

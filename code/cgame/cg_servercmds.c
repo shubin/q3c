@@ -1104,6 +1104,11 @@ static void CG_ServerCommand( void ) {
         CG_ParseDamageDir();
         return;
     }
+	if ( !strcmp(cmd, "champmodel") ) {
+		trap_Cvar_Set( "model", CG_Argv(1) );
+		trap_Cvar_Set( "headmodel", CG_Argv(1) );
+		return;
+	}
 #endif
 
 	if ( !strcmp( cmd, "scores" ) ) {

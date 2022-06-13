@@ -342,11 +342,19 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	}
 	else
 #endif
+#if defined( QC )
+	if ( ent->item->quantity != 5 && ent->item->quantity != 100 ) {
+		max = other->client->ps.baseHealth;
+	} else {
+		max = other->client->ps.stats[STAT_MAX_HEALTH];
+	}
+#else
 	if ( ent->item->quantity != 5 && ent->item->quantity != 100 ) {
 		max = other->client->ps.stats[STAT_MAX_HEALTH];
 	} else {
 		max = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
 	}
+#endif
 
 	if ( ent->count ) {
 		quantity = ent->count;
@@ -383,6 +391,9 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 //======================================================================
 
 int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
+#if defined( QC )
+	int max;
+#endif
 #ifdef MISSIONPACK
 	int		upperBound;
 
@@ -400,9 +411,21 @@ int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 	}
 #else
 	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
+#if defined( QC )
+	if ( ent->item->quantity == 100 || ent->item->quantity == 5 ) {
+		max = other->client->ps.stats[STAT_MAX_ARMOR];
+	} else {
+		max = other->client->ps.baseArmor;
+	}
+
+	if ( other->client->ps.stats[STAT_ARMOR] > max ) {
+		other->client->ps.stats[STAT_ARMOR] = max;
+	}
+#else
 	if ( other->client->ps.stats[STAT_ARMOR] > other->client->ps.stats[STAT_MAX_HEALTH] * 2 ) {
 		other->client->ps.stats[STAT_ARMOR] = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
 	}
+#endif
 #endif
 #if defined( QC )
 	if ( ent->item->quantity == 5 ) {

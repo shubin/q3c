@@ -1116,7 +1116,12 @@ netField_t	playerStateFields[] =
 { PSF(loopSound), 16 },
 #if defined( QC )
 { PSF(weaponFiringState), 8 },
-{ PSF(champion), 8 },
+{ PSF(champion), 5 },
+{ PSF(ab_time), 6 }, // up to 64 seconds to recharge an ability
+{ PSF(ab_flags), 8 },
+{ PSF(ab_num), 32 },
+{ PSF(baseHealth), 8 }, // base health can't exceed 256
+{ PSF(baseArmor), 8 }, // base armor can't exceed 256
 #endif
 };
 

@@ -1001,6 +1001,10 @@ typedef struct {
 	sfxHandle_t	wstbimpdSound;
 	sfxHandle_t	wstbactvSound;
 
+#if defined( QC )
+	// champion models
+	clientInfo_t championModels[NUM_CHAMPIONS];
+#endif
 } cgMedia_t;
 
 
@@ -1339,6 +1343,9 @@ void CG_ResetPlayerEntity( centity_t *cent );
 void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int team );
 void CG_NewClientInfo( int clientNum );
 sfxHandle_t	CG_CustomSound( int clientNum, const char *soundName );
+#if defined( QC )
+qboolean CG_RegisterChampionModels( void );
+#endif
 
 //
 // cg_predict.c

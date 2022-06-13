@@ -21,9 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 #include "g_local.h"
-#if defined( QC )
-#include "bg_champions.h"
-#endif
 
 // g_client.c -- client functions that don't happen every frame
 
@@ -534,8 +531,14 @@ ClientRespawn
 ================
 */
 void ClientRespawn( gentity_t *ent ) {
-
 	CopyToBodyQue (ent);
+#if defined( QC )
+	if ( ent->client->ps.champion != ent->client->pers.champion ) {
+		ent->client->ps.ab_time = 0;
+		ent->client->ps.ab_flags = 0;
+		ent->client->ps.ab_num = 0;
+	}
+#endif
 	ClientSpawn(ent);
 }
 
@@ -857,6 +860,21 @@ void ClientUserinfoChanged( int clientNum ) {
 	
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
+#if defined( QC ) && 0
+	if (ent->r.svFlags & SVF_BOT)
+	{
+		s = va("n\\%s\\ch\\%s\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s\\tt\\%d\\tl\\%d",
+			client->pers.netname, champion_names[client->pers.champion], client->sess.sessionTeam, model, headModel, c1, c2,
+			client->pers.maxHealth, client->sess.wins, client->sess.losses,
+			Info_ValueForKey( userinfo, "skill" ), teamTask, teamLeader );
+	}
+	else
+	{
+		s = va("n\\%s\\ch\\%st\\%i\\model\\%s\\hmodel\\%s\\g_redteam\\%s\\g_blueteam\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
+			client->pers.netname, champion_names[client->pers.champion], client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
+			client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
+	}
+#else
 	if (ent->r.svFlags & SVF_BOT)
 	{
 		s = va("n\\%s\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s\\tt\\%d\\tl\\%d",
@@ -870,6 +888,7 @@ void ClientUserinfoChanged( int clientNum ) {
 			client->pers.netname, client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
 			client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
 	}
+#endif
 
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
 
@@ -1155,7 +1174,16 @@ void ClientSpawn(gentity_t *ent) {
 		client->pers.maxHealth = 100;
 	}
 	// clear entity values
+#if defined( QC )
+	client->ps.baseHealth = champion_stats[client->pers.champion].base_health;
+	client->ps.stats[STAT_MAX_HEALTH] = champion_stats[client->pers.champion].max_health;
+	client->ps.stats[STAT_HEALTH] = champion_stats[client->pers.champion].start_health[g_gametype.integer];
+	client->ps.baseArmor = champion_stats[client->pers.champion].base_armor;
+	client->ps.stats[STAT_MAX_ARMOR] = champion_stats[client->pers.champion].max_armor;
+	client->ps.stats[STAT_ARMOR] = champion_stats[client->pers.champion].start_armor[g_gametype.integer];
+#else
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+#endif
 	client->ps.eFlags = flags;
 
 #if defined( QC )
@@ -1209,7 +1237,11 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
 
 	// health will count down towards max_health
+#if defined( QC )
+	ent->health = client->ps.stats[STAT_HEALTH];
+#else
 	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
+#endif
 
 	G_SetOrigin( ent, spawn_origin );
 	VectorCopy( spawn_origin, client->ps.origin );
@@ -1283,6 +1315,9 @@ void ClientSpawn(gentity_t *ent) {
 
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
+#if defined( QC )
+	trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s", champion_models[client->ps.champion] ) );
+#endif
 }
 
 

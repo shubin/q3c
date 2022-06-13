@@ -3325,6 +3325,23 @@ void CL_SetModel_f( void ) {
 	}
 }
 
+#if defined( QC )
+
+//===========================================================================================
+void CL_SetChampion_f( void ) {
+	char	*arg;
+	char	name[256];
+
+	arg = Cmd_Argv( 1 );
+	if (arg[0]) {
+		Cvar_Set( "champion", arg );
+	} else {
+		Cvar_VariableStringBuffer( "champion", name, sizeof(name) );
+		Com_Printf("champion is set to %s\n", name);
+	}
+}
+
+#endif
 
 //===========================================================================================
 
@@ -3692,6 +3709,9 @@ void CL_Init( void ) {
 	Cmd_AddCommand ("fs_openedList", CL_OpenedPK3List_f );
 	Cmd_AddCommand ("fs_referencedList", CL_ReferencedPK3List_f );
 	Cmd_AddCommand ("model", CL_SetModel_f );
+#if defined( QC )
+	Cmd_AddCommand( "champion", CL_SetChampion_f );
+#endif
 	Cmd_AddCommand ("video", CL_Video_f );
 	Cmd_AddCommand ("stopvideo", CL_StopVideo_f );
 	if( !com_dedicated->integer ) {

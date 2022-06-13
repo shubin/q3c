@@ -440,6 +440,22 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 				G_AddEvent( ent, EV_POWERUP_REGEN, 0 );
 			}
 #else
+#if defined( QC )
+		if ( client->ps.powerups[PW_REGEN] ) {
+			if ( ent->health < client->ps.baseHealth) {
+				ent->health += 15;
+				if ( ent->health > client->ps.baseHealth * 1.1 ) {
+					ent->health = client->ps.baseHealth * 1.1;
+				}
+				G_AddEvent( ent, EV_POWERUP_REGEN, 0 );
+			} else if ( ent->health < client->ps.stats[STAT_MAX_HEALTH]) {
+				ent->health += 5;
+				if ( ent->health > client->ps.stats[STAT_MAX_HEALTH] ) {
+					ent->health = client->ps.stats[STAT_MAX_HEALTH];
+				}
+				G_AddEvent( ent, EV_POWERUP_REGEN, 0 );
+			}
+#else
 		if ( client->ps.powerups[PW_REGEN] ) {
 			if ( ent->health < client->ps.stats[STAT_MAX_HEALTH]) {
 				ent->health += 15;
@@ -455,17 +471,40 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 				G_AddEvent( ent, EV_POWERUP_REGEN, 0 );
 			}
 #endif
+#endif
 		} else {
 			// count down health when over max
+#if defined( QC )
+			if ( ent->health > client->ps.baseHealth ) {
+				ent->health--;
+			}
+#else
 			if ( ent->health > client->ps.stats[STAT_MAX_HEALTH] ) {
 				ent->health--;
 			}
+#endif
 		}
 
-		// count down armor when over max
+#if defined( QC )
+		if ( client->ps.stats[STAT_ARMOR] > client->ps.baseArmor ) {
+			client->ps.stats[STAT_ARMOR]--;
+		}
+#else
 		if ( client->ps.stats[STAT_ARMOR] > client->ps.stats[STAT_MAX_HEALTH] ) {
 			client->ps.stats[STAT_ARMOR]--;
 		}
+#endif
+#if defined( QC )
+		//// ability regeneration timer
+		//if ( !( client->ps.ab_flags & ABF_READY ) && ! ( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		//	if ( client->ps.ab_time < g_championAbilityTiming[client->ps.champion]) {
+		//		client->ps.ab_time++;
+		//		if ( client->ps.ab_time == g_abilityTiming[client->ps.champion] ) {
+		//			client->ps.ab_flags |= ABF_READY;
+		//		}
+		//	}
+		//}
+#endif
 	}
 #ifdef MISSIONPACK
 	if( bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN ) {
@@ -630,7 +669,15 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			break;
 
 		case EV_USE_ITEM2:		// medkit
+#if defined( QC )
+			if ( ent->health < ent->client->ps.baseHealth ) {
+				ent->health = ent->client->ps.baseHealth + 25;
+			} else {
+				ent->health = ent->health + 25;
+			}
+#else
 			ent->health = ent->client->ps.stats[STAT_MAX_HEALTH] + 25;
+#endif
 
 			break;
 

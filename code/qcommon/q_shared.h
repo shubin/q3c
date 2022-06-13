@@ -1194,6 +1194,12 @@ typedef struct playerState_s {
 #if defined( QC )
 	int			weaponFiringState; // for complex weapon behaviors (like tribolt)
 	int			champion;		// selected champion
+	int			baseHealth;
+	int			baseArmor;
+
+	int			ab_time;		// ability timer, semantic depends on the flags
+	int			ab_num;			// id of the entity associated with the champion (orb for Ranger)
+	int			ab_flags;		// some bits to know whats happening with ability progressing
 #endif
 
 	vec3_t		viewangles;		// for fixed views
@@ -1228,6 +1234,12 @@ typedef struct playerState_s {
 
 } playerState_t;
 
+#if defined( QC )
+typedef enum {
+	ABF_READY = 1,    // basically means that something is going to happen if we push the ability activation button
+	ABF_ENGAGED = 2,  // means that ability is already doing something, i.e. Ranger's orb is propelling
+} abFlag_t;
+#endif
 
 //====================================================================
 
@@ -1255,7 +1267,8 @@ typedef struct playerState_s {
 
 #if defined( QC )
 #define BUTTON_ZOOM			2048
-#define BUTTON_ANY			4096			// any key whatsoever
+#define BUTTON_ABILITY		4096
+#define BUTTON_ANY			8192			// any key whatsoever
 #else
 #define	BUTTON_ANY			2048			// any key whatsoever
 #endif

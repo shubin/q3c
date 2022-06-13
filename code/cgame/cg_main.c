@@ -1145,6 +1145,11 @@ static void CG_RegisterGraphics( void ) {
 	trap_R_RegisterModel( "models/players/heads/janet/janet.md3" );
 
 #endif
+
+#if defined( QC )
+	CG_RegisterChampionModels();
+#endif
+
 	CG_ClearParticles ();
 /*
 	for (i=1; i<MAX_PARTICLES_AREAS; i++)

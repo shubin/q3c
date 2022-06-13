@@ -214,7 +214,12 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH					// health / armor limit, changeable by handicap
+#if defined( QC )
+	STAT_MAX_HEALTH,				// ultimate maximum reachable by overhealing
+	STAT_MAX_ARMOR,
+#else
+	STAT_MAX_HEALTH,				// health / armor limit, changeable by handicap
+#endif
 } statIndex_t;
 
 
@@ -763,3 +768,6 @@ qboolean	BG_PlayerTouchesItem( playerState_t *ps, entityState_t *item, int atTim
 #define KAMI_BOOMSPHERE_MAXRADIUS		720
 #define KAMI_SHOCKWAVE2_MAXRADIUS		704
 
+#if defined( QC )
+#include "../game/bg_champions.h"
+#endif

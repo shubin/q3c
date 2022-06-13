@@ -52,7 +52,7 @@ typedef enum {
 
 typedef struct {
     int base_health;
-    int base_armour;
+    int base_armor;
     int max_health;
     int max_armor;
     int start_health[GT_MAX_GAME_TYPE];
@@ -62,6 +62,7 @@ typedef struct {
 
 extern champion_stat_t champion_stats[NUM_CHAMPIONS];
 extern char *champion_names[NUM_CHAMPIONS];
+extern char *champion_models[NUM_CHAMPIONS];
 
 int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );

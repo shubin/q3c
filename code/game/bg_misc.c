@@ -1238,6 +1238,18 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		if ( ps->stats[STAT_ARMOR] >= upperBound ) {
 			return qfalse;
 		}
+#elif defined( QC )
+		if ( item->quantity == 5 || item->quantity == 100 ) {
+			if ( ps->stats[STAT_ARMOR] >= ps->stats[STAT_MAX_ARMOR] ) {
+				return qfalse;
+			}
+			return qtrue;
+		}
+
+		if ( ps->stats[STAT_ARMOR] >= ps->baseArmor ) {
+			return qfalse;
+		}
+		return qtrue;
 #else
 		if ( ps->stats[STAT_ARMOR] >= ps->stats[STAT_MAX_HEALTH] * 2 ) {
 			return qfalse;
@@ -1253,6 +1265,19 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		}
 		else
 #endif
+#if defined( QC )
+		if ( item->quantity == 5 || item->quantity == 100 ) {
+			if ( ps->stats[STAT_HEALTH] >= ps->stats[STAT_MAX_HEALTH] ) {
+				return qfalse;
+			}
+			return qtrue;
+		}
+
+		if ( ps->stats[STAT_HEALTH] >= ps->baseHealth ) {
+			return qfalse;
+		}
+		return qtrue;
+#else
 		if ( item->quantity == 5 || item->quantity == 100 ) {
 			if ( ps->stats[STAT_HEALTH] >= ps->stats[STAT_MAX_HEALTH] * 2 ) {
 				return qfalse;
@@ -1264,6 +1289,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			return qfalse;
 		}
 		return qtrue;
+#endif
 
 	case IT_POWERUP:
 		return qtrue;	// powerups are always picked up
