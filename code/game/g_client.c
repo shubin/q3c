@@ -779,7 +779,12 @@ void ClientUserinfoChanged( int clientNum ) {
 		client->pers.maxHealth = 100;
 	}
 #endif
+
+#if defined( QC )
+	client->ps.stats[STAT_MAX_HEALTH] = champion_stats[client->ps.champion].max_health;
+#else
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+#endif
 
 #if defined( QC )
 	client->pers.champion = ParseChampionName( Info_ValueForKey( userinfo, "champion" ) );
@@ -1168,11 +1173,15 @@ void ClientSpawn(gentity_t *ent) {
 	client->airOutTime = level.time + 12000;
 
 	trap_GetUserinfo( index, userinfo, sizeof(userinfo) );
+#if defined( QC )
+	client->pers.maxHealth = champion_stats[client->pers.champion].max_health;
+#else
 	// set max health
 	client->pers.maxHealth = atoi( Info_ValueForKey( userinfo, "handicap" ) );
 	if ( client->pers.maxHealth < 1 || client->pers.maxHealth > 100 ) {
 		client->pers.maxHealth = 100;
 	}
+#endif
 	// clear entity values
 #if defined( QC )
 	client->ps.baseHealth = champion_stats[client->pers.champion].base_health;

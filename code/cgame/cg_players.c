@@ -814,8 +814,13 @@ static void CG_SetDeferredClientInfo( int clientNum, clientInfo_t *ci ) {
 
 	// if someone else is already the same models and skins we
 	// can just load the client info
+#if defined( QC )
+	for ( i = 0 ; i < NUM_CHAMPIONS + cgs.maxclients; i++ ) {
+		match = i < NUM_CHAMPIONS ? &cgs.media.championModels[ i ] : &cgs.clientinfo[ i - NUM_CHAMPIONS ];
+#else
 	for ( i = 0 ; i < cgs.maxclients ; i++ ) {
 		match = &cgs.clientinfo[ i ];
+#endif
 		if ( !match->infoValid || match->deferred ) {
 			continue;
 		}
