@@ -33,6 +33,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -61,6 +62,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 75,
         .max_health = 175,
         .max_armor = 175,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -89,6 +91,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -117,6 +120,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -145,6 +149,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -173,6 +178,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -201,6 +207,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -229,6 +236,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -257,6 +265,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -285,6 +294,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -313,6 +323,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -341,6 +352,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -369,6 +381,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -397,6 +410,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -425,6 +439,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -453,6 +468,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
@@ -481,6 +497,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 200,
         .max_armor = 200,
+        .ability_cooldown = 30,
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT
