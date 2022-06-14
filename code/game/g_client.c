@@ -532,13 +532,6 @@ ClientRespawn
 */
 void ClientRespawn( gentity_t *ent ) {
 	CopyToBodyQue (ent);
-#if defined( QC )
-	if ( ent->client->ps.champion != ent->client->pers.champion ) {
-		ent->client->ps.ab_time = 0;
-		ent->client->ps.ab_flags = 0;
-		ent->client->ps.ab_num = 0;
-	}
-#endif
 	ClientSpawn(ent);
 }
 
@@ -1092,6 +1085,10 @@ void ClientSpawn(gentity_t *ent) {
 	int		accuracy_hits, accuracy_shots;
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
+#if defined( QC )
+	qboolean champion_switched;
+	int		ab_flags, ab_time, ab_num;
+#endif
 
 	index = ent - g_entities;
 	client = ent->client;
@@ -1138,6 +1135,21 @@ void ClientSpawn(gentity_t *ent) {
 	// and never clear the voted flag
 	flags = ent->client->ps.eFlags & (EF_TELEPORT_BIT | EF_VOTED | EF_TEAMVOTED);
 	flags ^= EF_TELEPORT_BIT;
+
+#if defined( QC )
+
+	if ( client->ps.champion != client->pers.champion ) {
+		ab_time = 0;
+		ab_flags = 0;
+		ab_num = 0;
+		champion_switched = qtrue;
+	} else  {
+		ab_time = client->ps.ab_time;
+		ab_flags = client->ps.ab_flags;
+		ab_num = client->ps.ab_num;
+		champion_switched = qfalse;
+	}
+#endif
 
 	// clear everything but the persistant data
 
@@ -1201,6 +1213,10 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.attackerTime = 0;
 	client->ps.airTime = -1;
 	client->ps.ringoutKiller = -1;
+
+	client->ps.ab_flags = ab_flags;
+	client->ps.ab_time = ab_time;
+	client->ps.ab_num = ab_num;
 #endif
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
@@ -1325,7 +1341,9 @@ void ClientSpawn(gentity_t *ent) {
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 #if defined( QC )
-	trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s", champion_models[client->ps.champion] ) );
+	if ( champion_switched ) {
+		trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s", champion_models[client->ps.champion] ) );
+	}
 #endif
 }
 

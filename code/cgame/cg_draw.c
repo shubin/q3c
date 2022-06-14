@@ -641,6 +641,11 @@ static void CG_DrawStatusBar( void ) {
 		}
 
 	}
+#if defined( QC ) && defined( _DEBUG )
+	CG_DrawSmallString( 20, 20, va("ab_time  : %d", cg.snap->ps.ab_time), 1.0f );
+	CG_DrawSmallString( 20, 32, va("ab_flags : %d", cg.snap->ps.ab_flags), 1.0f );
+	CG_DrawSmallString( 20, 44, va("ab_num   : %d", cg.snap->ps.ab_num), 1.0f );
+#endif
 }
 #endif
 

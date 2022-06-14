@@ -641,6 +641,9 @@ typedef enum {
 	IT_AMMO,				// EFX: rotate
 	IT_ARMOR,				// EFX: rotate + minlight
 	IT_HEALTH,				// EFX: static external sphere + rotating internal
+#if defined( QC )
+	IT_HOURGLASS,
+#endif
 	IT_POWERUP,				// instant on, timer based
 							// EFX: rotate + external ring that rotates
 	IT_HOLDABLE,			// single use, holdable item

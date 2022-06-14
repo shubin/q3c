@@ -182,6 +182,24 @@ gitem_t	bg_itemlist[] =
 /* sounds */ ""
 	},
 
+#if defined( QC )
+/*QUAKED item_hourglass (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"item_hourglass",
+		"sound/items/s_health.wav",
+        { "models/powerups/hourglass/hourglass.md3", 
+		NULL, NULL, NULL },
+/* icon */		"icons/hourglass",
+/* pickup */	"Hourglass",
+		100,
+		IT_HOURGLASS,
+		0,
+/* precache */ "",
+/* sounds */ ""
+	},
+#endif
+
 
 	//
 	// WEAPONS 
