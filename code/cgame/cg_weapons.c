@@ -657,6 +657,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 	for ( ammo = bg_itemlist + 1 ; ammo->classname ; ammo++ ) {
 		if ( ammo->giType == IT_AMMO && ammo->giTag == weaponNum ) {
+#if defined( QC )
+			weaponInfo->ammoIcon = trap_R_RegisterShader( ammo->icon );
+#endif
 			break;
 		}
 	}
