@@ -307,6 +307,10 @@ struct gclient_s {
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
 
+#if defined( QC )
+	int			orbPassThroughTime;	// for preventing multiple orb hits while it passes through
+	int			orbEntityNum;
+#endif
 	int			switchTeamTime;		// time the player switched teams
 
 	// timeResidual is used to handle events that happen every second
@@ -596,6 +600,16 @@ qboolean G_FilterPacket (char *from);
 void FireWeapon( gentity_t *ent );
 #ifdef MISSIONPACK
 void G_StartKamikaze( gentity_t *ent );
+#endif
+
+#if defined( QC )
+//
+// g_ability.c
+//
+void G_GenerateDireOrbProbes( void );
+void G_ActivateAbility( gentity_t *ent );
+void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
+
 #endif
 
 //

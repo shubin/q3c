@@ -157,6 +157,9 @@ typedef enum {
 #define PMF_FOLLOW			4096	// spectate following another player
 #define PMF_SCOREBOARD		8192	// spectate as a scoreboard
 #define PMF_INVULEXPAND		16384	// invulnerability sphere set to full size
+#if defined( QC )
+#define PMF_ABILITY_ACTIVATED 32768
+#endif
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 
@@ -336,6 +339,9 @@ typedef enum {
 	WP_LOUSY_MACHINEGUN,
 	WP_LOUSY_SHOTGUN,
 	WP_LOUSY_PLASMAGUN,
+	// abilities
+	WP_DIRE_ORB,
+	//WP_ACID_SPIT,
 #endif
 	WP_NUM_WEAPONS
 } weapon_t;
@@ -422,6 +428,7 @@ typedef enum {
 	EV_GRENADE_BOUNCE,		// eventParm will be the soundindex
 
 #if defined( QC )
+	EV_ACTIVATE_ABILITY,
 	EV_BOLT_HIT,
 #endif
 
@@ -683,6 +690,9 @@ gitem_t	*BG_FindItem( const char *pickupName );
 gitem_t	*BG_FindItemForWeapon( weapon_t weapon );
 gitem_t	*BG_FindItemForPowerup( powerup_t pw );
 gitem_t	*BG_FindItemForHoldable( holdable_t pw );
+#if defined( QC )
+gitem_t	*BG_FindItemByClass( const char *classname );
+#endif
 #define	ITEM_INDEX(x) ((x)-bg_itemlist)
 
 qboolean	BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const playerState_t *ps );

@@ -437,6 +437,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
 	G_InitMemory();
 
+#if defined ( QC )
+	G_GenerateDireOrbProbes();
+#endif
+
 	// set some level globals
 	memset( &level, 0, sizeof( level ) );
 	level.time = levelTime;

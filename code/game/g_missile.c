@@ -448,8 +448,49 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		}
 	}
 
+#if defined( QC )
+	if ( !strcmp( ent->classname, "orb" ) ) {
+		// unlink the orb from its owner
+		ent->parent->client->ps.ab_num = 0;
+		ent->parent->client->ps.ab_flags = 0;
+		ent->parent->client->ps.ab_time = 0;
+	}
+#endif
+
 	trap_LinkEntity( ent );
 }
+
+#if defined( QC )
+/*
+================
+G_OrbImpact
+================
+*/
+void G_OrbPassThroughImpact( gentity_t *ent, trace_t *trace ) {
+	gentity_t		*other;
+	qboolean		hitClient = qfalse;
+	other = &g_entities[trace->entityNum];
+
+	if ( !other->client || !other->takedamage ) {
+		return;
+	}
+
+	// impact damage
+	if ( other->takedamage ) {
+		if ( ent->damage && ( level.time - other->client->orbPassThroughTime > 1000 ) ) { // don't let the same orb damage an enemy twice in less than 1000ms
+			vec3_t	velocity;
+			velocity[0] = 0.0f;
+			velocity[1] = 0.0f;
+			velocity[2] = 0.0f;
+
+			G_Damage( other, ent, &g_entities[ent->r.ownerNum], velocity, ent->s.origin, 73, 0, ent->methodOfDeath );
+			other->client->orbEntityNum = ent - g_entities;
+			other->client->orbPassThroughTime = level.time;
+		}
+	}
+
+}
+#endif
 
 /*
 ================
@@ -460,6 +501,10 @@ void G_RunMissile( gentity_t *ent ) {
 	vec3_t		origin;
 	trace_t		tr;
 	int			passent;
+#if defined( QC )
+	trace_t		tr_orb;
+	vec3_t		stoppos;
+#endif
 
 	// get current position
 	BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
@@ -493,6 +538,38 @@ void G_RunMissile( gentity_t *ent ) {
 	trap_LinkEntity( ent );
 
 	if ( tr.fraction != 1 ) {
+#if defined( QC )
+		if ( !strcmp( ent->classname, "orb" ) ) {
+			// run the trace again with different mask for the orb, as the orb should pass through an enemy but inflict some damage
+			trap_Trace( &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, MASK_SOLID );
+			if ( tr_orb.startsolid || tr_orb.allsolid ) {
+				// make sure the tr.entityNum is set to the entity we're stuck in
+				trap_Trace( &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask );
+				tr_orb.fraction = 0;
+			}
+			else {
+				VectorCopy( tr_orb.endpos, ent->r.currentOrigin );
+			}
+			if ( tr_orb.entityNum != tr.entityNum ) {
+				// orb is passing through something
+				G_OrbPassThroughImpact( ent, &tr );
+				//return;
+			}
+			if ( tr_orb.fraction != 1 ) {
+				// stop the orb
+				VectorCopy( ent->r.currentOrigin, stoppos );
+				vec3_t dir;
+				VectorSubtract( stoppos, ent->s.pos.trBase, dir);
+				VectorNormalize(dir);
+				VectorMA( stoppos, -10, dir, stoppos );
+				SnapVectorTowards( stoppos, ent->s.pos.trBase );
+				G_SetOrigin( ent, stoppos );
+				ent->speed = 0;
+				ent->nextthink = level.time + 500; // explode in 0.5s
+				return;
+			}
+		} else {
+#endif
 		// never explode or bounce on sky
 		if ( tr.surfaceFlags & SURF_NOIMPACT ) {
 			// If grapple, reset owner
@@ -507,6 +584,9 @@ void G_RunMissile( gentity_t *ent ) {
 			return;		// exploded
 		}
 	}
+#if defined( QC )
+	}
+#endif
 #ifdef MISSIONPACK
 	// if the prox mine wasn't yet outside the player body
 	if (ent->s.weapon == WP_PROX_LAUNCHER && !ent->count) {

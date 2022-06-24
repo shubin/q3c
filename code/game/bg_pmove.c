@@ -1574,6 +1574,28 @@ static void PM_Weapon( void ) {
 	}
 
 #if defined( QC )
+	if ( pm->cmd.buttons & BUTTON_ABILITY ) {
+		if ( ! ( pm->ps->pm_flags & PMF_ABILITY_ACTIVATED ) ) {
+
+			if ( pm->ps->ab_flags & ABF_READY ) {
+				BG_AddPredictableEventToPlayerstate( EV_ACTIVATE_ABILITY, pm->ps->champion, pm->ps );
+				if ( !( pm->ps->ab_flags & ABF_ENGAGED ) ) {
+					pm->ps->ab_time = 0;
+					pm->ps->ab_flags |= ABF_ENGAGED;
+
+					if ( pm->ps->champion == CHAMP_SORLAG ) {
+						pm->ps->ab_time = 150; // throw some spit each 0.5 sec
+						pm->ps->ab_num = 5;    // do it five times
+						pm->ps->ab_flags &= ~ABF_READY;
+					}
+				}
+				pm->ps->pm_flags |= PMF_ABILITY_ACTIVATED;
+			}
+		}
+	} else {
+		pm->ps->pm_flags &= ~PMF_ABILITY_ACTIVATED;
+	}
+
 	wepTime = pm->ps->weaponTime;
 #endif
 

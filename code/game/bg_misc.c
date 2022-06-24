@@ -192,7 +192,7 @@ gitem_t	bg_itemlist[] =
 		NULL, NULL, NULL },
 /* icon */		"icons/hourglass",
 /* pickup */	"Hourglass",
-		100,
+		5,
 		IT_HOURGLASS,
 		0,
 /* precache */ "",
@@ -1160,6 +1160,25 @@ gitem_t	*BG_FindItem( const char *pickupName ) {
 	return NULL;
 }
 
+#if defined( QC )
+/*
+===============
+BG_FindItemByClass
+
+===============
+*/
+gitem_t	*BG_FindItemByClass( const char *classname ) {
+	gitem_t	*it;
+	
+	for ( it = bg_itemlist + 1 ; it->classname ; it++ ) {
+		if ( !Q_stricmp( it->classname, classname ) )
+			return it;
+	}
+
+	return NULL;
+}
+#endif
+
 /*
 ============
 BG_PlayerTouchesItem
@@ -1307,6 +1326,11 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 			return qfalse;
 		}
 		return qtrue;
+#endif
+
+#if defined( QC )
+	case IT_HOURGLASS:
+		return ps->ab_time < champion_stats[ps->champion].ability_cooldown;
 #endif
 
 	case IT_POWERUP:

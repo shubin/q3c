@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define RESPAWN_HEALTH50	30
 #define RESPAWN_HEALTH25	30
 #define RESPANW_BUBBLE		30
+#define RESPAWN_HOURGLASS	15
 #define	RESPAWN_HOLDABLE	60
 #define	RESPAWN_POWERUP		120
 
@@ -388,6 +389,18 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 #endif
 }
 
+#if defined( QC )
+//======================================================================
+
+int Pickup_Hourglass(gentity_t* ent, gentity_t* other) {
+	other->client->ps.ab_time += ent->item->quantity;
+	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
+		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
+	}
+	return RESPAWN_HOURGLASS;
+}
+#endif
+
 //======================================================================
 
 int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
@@ -560,6 +573,11 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 	case IT_HEALTH:
 		respawn = Pickup_Health(ent, other);
 		break;
+#if defined( QC )
+	case IT_HOURGLASS:
+		respawn = Pickup_Hourglass(ent, other);
+		break;
+#endif
 	case IT_POWERUP:
 		respawn = Pickup_Powerup(ent, other);
 		predict = qfalse;

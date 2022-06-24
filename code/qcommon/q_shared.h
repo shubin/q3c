@@ -1266,8 +1266,8 @@ typedef enum {
 #define BUTTON_FOLLOWME		1024
 
 #if defined( QC )
-#define BUTTON_ZOOM			2048
-#define BUTTON_ABILITY		4096
+#define BUTTON_ABILITY		2048
+#define BUTTON_ZOOM			4096
 #define BUTTON_ANY			8192			// any key whatsoever
 #else
 #define	BUTTON_ANY			2048			// any key whatsoever

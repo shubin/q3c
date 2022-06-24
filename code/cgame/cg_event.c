@@ -971,6 +971,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		}
 		break;
 #if defined( QC )
+	case EV_ACTIVATE_ABILITY:
+		DEBUGNAME("EV_ACTIVATE_ABILITY");
+		break;
 	case EV_BOLT_HIT:
 		DEBUGNAME("EV_BOLT_HIT");
 		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.sfx_bolthitwall );

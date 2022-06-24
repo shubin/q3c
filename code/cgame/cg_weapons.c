@@ -806,6 +806,23 @@ void CG_RegisterWeapon( int weaponNum ) {
 		break;
 #endif
 
+#if defined( QC )
+	case WP_DIRE_ORB:
+		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/rocket/rocket.md3" );
+		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
+		weaponInfo->missileTrailFunc = CG_RocketTrail;
+		weaponInfo->missileDlight = 200;
+		weaponInfo->wiTrailTime = 2000;
+		weaponInfo->trailRadius = 64;
+		
+		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0 );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
+
+		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
+		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "bfgExplosion" );
+		break;
+#endif
+
 	case WP_GRENADE_LAUNCHER:
 		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/grenade1.md3" );
 		weaponInfo->missileTrailFunc = CG_GrenadeTrail;
@@ -918,6 +935,25 @@ void CG_RegisterItemVisuals( int itemNum ) {
 			itemInfo->models[1] = trap_R_RegisterModel( item->world_model[1] );
 		}
 	}
+#if defined( QC )	
+	cg_weapons[WP_DIRE_ORB].missileModel = trap_R_RegisterModel( "models/weaphits/crackle.md3" );
+	cg_weapons[WP_DIRE_ORB].missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
+	cg_weapons[WP_DIRE_ORB].missileTrailFunc = CG_RocketTrail;
+	cg_weapons[WP_DIRE_ORB].missileDlight = 200;
+	cg_weapons[WP_DIRE_ORB].wiTrailTime = 2000;
+	cg_weapons[WP_DIRE_ORB].trailRadius = 64;		
+	MAKERGB( cg_weapons[WP_DIRE_ORB].missileDlightColor, 1, 0.75f, 0 );
+	MAKERGB( cg_weapons[WP_DIRE_ORB].flashDlightColor, 1, 0.75f, 0 );
+	cg_weapons[WP_DIRE_ORB].flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
+
+	//cg_weapons[WP_ACID_SPIT].missileModel = trap_R_RegisterModel( "models/ammo/grenade1.md3" );
+	//cg_weapons[WP_ACID_SPIT].missileTrailFunc = CG_GrenadeTrail;
+	//cg_weapons[WP_ACID_SPIT].wiTrailTime = 700;
+	//cg_weapons[WP_ACID_SPIT].trailRadius = 32;
+	//MAKERGB( cg_weapons[WP_ACID_SPIT].flashDlightColor, 1, 0.70f, 0 );
+	//cg_weapons[WP_ACID_SPIT].flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
+	cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
+#endif
 }
 
 

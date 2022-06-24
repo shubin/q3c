@@ -990,8 +990,13 @@ void CL_InitInput( void ) {
 	Cmd_AddCommand ("-button9", IN_Button9Up);
 	Cmd_AddCommand ("+button10", IN_Button10Down);
 	Cmd_AddCommand ("-button10", IN_Button10Up);
+#if defined( QC )
+	Cmd_AddCommand ("+useability", IN_Button11Down);
+	Cmd_AddCommand ("-useability", IN_Button11Up);
+#else
 	Cmd_AddCommand ("+button11", IN_Button11Down);
 	Cmd_AddCommand ("-button11", IN_Button11Up);
+#endif
 	Cmd_AddCommand ("+button12", IN_Button12Down);
 	Cmd_AddCommand ("-button12", IN_Button12Up);
 	Cmd_AddCommand ("+button13", IN_Button13Down);

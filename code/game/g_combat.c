@@ -1050,6 +1050,12 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	// always give half damage if hurting self
 	// calculated after knockback, so rocket jumping works
 	if ( targ == attacker) {
+#if defined( QC )
+		// Ranger is even more resistant to the self damage
+		if ( attacker->client && attacker->client->ps.champion == CHAMP_RANGER ) {
+			damage *= 0.5f;
+		}
+#endif
 		damage *= 0.5;
 	}
 

@@ -499,9 +499,9 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 		if ( !( client->ps.ab_flags & ABF_READY ) && ! ( client->ps.ab_flags & ABF_ENGAGED ) ) {
 			if ( client->ps.ab_time < champion_stats[client->ps.champion].ability_cooldown) {
 				client->ps.ab_time++;
-				if ( client->ps.ab_time == champion_stats[client->ps.champion].ability_cooldown ) {
-					client->ps.ab_flags |= ABF_READY;
-				}
+			}
+			if ( client->ps.ab_time == champion_stats[client->ps.champion].ability_cooldown && !( client->ps.ab_flags & ABF_READY ) ) {
+				client->ps.ab_flags |= ABF_READY;
 			}
 		}
 #endif
@@ -699,6 +699,11 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			break;
 		case EV_USE_ITEM5:		// invulnerability
 			ent->client->invulnerabilityTime = level.time + 10000;
+			break;
+#endif
+#if defined( QC )
+		case EV_ACTIVATE_ABILITY:
+			G_ActivateAbility( ent );
 			break;
 #endif
 
