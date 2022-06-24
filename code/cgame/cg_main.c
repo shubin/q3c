@@ -113,6 +113,9 @@ vmCvar_t	cg_crosshairX;
 vmCvar_t	cg_crosshairY;
 vmCvar_t	cg_crosshairHealth;
 vmCvar_t	cg_draw2D;
+#if defined( QC )
+vmCvar_t	cg_drawQ3hud;
+#endif
 vmCvar_t	cg_drawStatus;
 vmCvar_t	cg_animSpeed;
 vmCvar_t	cg_debugAnim;
@@ -238,6 +241,9 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE  },
 #endif
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
+#if defined( QC )
+	{ &cg_drawQ3hud, "cg_drawQ3hud", "0", CVAR_ARCHIVE  },
+#endif
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
 	{ &cg_drawFPS, "cg_drawFPS", "0", CVAR_ARCHIVE  },
@@ -1999,6 +2005,9 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_InitLocalEntities();
 
 	CG_InitMarkPolys();
+#if defined( QC )
+	CG_InitQCHUD();
+#endif
 
 	// remove the last loading update
 	cg.infoScreenText[0] = 0;

@@ -1051,6 +1051,9 @@ typedef struct {
 	int				levelStartTime;
 
 	int				scores1, scores2;		// from configstrings
+#if defined( QC )
+	int				leader1, leader2;		// client numbers of the score owners
+#endif
 	int				redflag, blueflag;		// flag status from configstrings
 	int				flagStatus;
 
@@ -1132,6 +1135,9 @@ extern	vmCvar_t		cg_crosshairSize;
 extern	vmCvar_t		cg_crosshairHealth;
 extern	vmCvar_t		cg_drawStatus;
 extern	vmCvar_t		cg_draw2D;
+#if defined( QC )
+extern	vmCvar_t		cg_drawQ3hud;
+#endif
 extern	vmCvar_t		cg_animSpeed;
 extern	vmCvar_t		cg_debugAnim;
 extern	vmCvar_t		cg_debugPosition;
@@ -1522,6 +1528,15 @@ void CG_DrawDamagePlums( void );
 void CG_AddDamageDir( int clientnum, int damage, vec3_t position );
 void CG_ClearDamageDir( void );
 void CG_DrawDamageDir( void );
+
+
+//
+// cg_hud.c
+//
+
+void CG_InitQCHUD( void );
+void CG_Draw2DQC( stereoFrame_t stereoFrame );
+
 #endif
 
 //===============================================

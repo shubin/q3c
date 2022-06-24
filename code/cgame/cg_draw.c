@@ -2550,6 +2550,14 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 		return;
 	}
 */
+
+#if defined( QC )
+	if ( !cg_drawQ3hud.integer ) {
+		CG_Draw2DQC( stereoFrame );
+		return;
+	}
+#endif
+
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) {
 		CG_DrawSpectator();
 

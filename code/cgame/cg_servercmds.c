@@ -253,8 +253,14 @@ Called on load to set the initial values from configure strings
 void CG_SetConfigValues( void ) {
 	const char *s;
 
+#if defined( QC )
+	sscanf( CG_ConfigString( CS_SCORES1 ), "%d %d", &cgs.scores1, &cgs.leader1 );
+	sscanf( CG_ConfigString( CS_SCORES2 ), "%d %d", &cgs.scores2, &cgs.leader2 );
+#else
 	cgs.scores1 = atoi( CG_ConfigString( CS_SCORES1 ) );
 	cgs.scores2 = atoi( CG_ConfigString( CS_SCORES2 ) );
+#endif
+
 	cgs.levelStartTime = atoi( CG_ConfigString( CS_LEVEL_START_TIME ) );
 	if( cgs.gametype == GT_CTF ) {
 		s = CG_ConfigString( CS_FLAGSTATUS );
@@ -337,10 +343,19 @@ static void CG_ConfigStringModified( void ) {
 	} else if ( num == CS_WARMUP ) {
 		CG_ParseWarmup();
 	} else if ( num == CS_SCORES1 ) {
+#if defined( QC )
+		sscanf( CG_ConfigString( CS_SCORES1 ), "%d %d", &cgs.scores1, &cgs.leader1 );
+#else
 		cgs.scores1 = atoi( str );
+#endif
 	} else if ( num == CS_SCORES2 ) {
+#if defined( QC )
+		sscanf( CG_ConfigString( CS_SCORES2 ), "%d %d", &cgs.scores2, &cgs.leader2 );
+#else
 		cgs.scores2 = atoi( str );
-	} else if ( num == CS_LEVEL_START_TIME ) {
+#endif
+	}
+	else if ( num == CS_LEVEL_START_TIME ) {
 		cgs.levelStartTime = atoi( str );
 	} else if ( num == CS_VOTE_TIME ) {
 		cgs.voteTime = atoi( str );
