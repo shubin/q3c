@@ -41,6 +41,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define CINEMATICS_INTRO		"intro.roq"
 //  #define LEGACY_PROTOCOL	// You probably don't need this for your standalone game
 #else
+#if defined( QC )
+  #define PRODUCT_NAME				"Quake III Champions"
+  #define BASEGAME					"baseq3"
+  #define CLIENT_WINDOW_TITLE		"Quake3Champions"
+  #define CLIENT_WINDOW_MIN_TITLE	"Q3C"
+  #define HOMEPATH_NAME_UNIX		".q3a"
+  #define HOMEPATH_NAME_WIN			"Quake3"
+  #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
+  #define STEAMPATH_NAME			"Quake 3 Arena"
+  #define STEAMPATH_APPID			"2200"
+  #define GOGPATH_ID				"1441704920"
+  #define MSSTORE_PATH				"Quake 3"
+  #define GAMENAME_FOR_MASTER		"Quake3Arena"
+  //#define CINEMATICS_LOGO		"idlogo.RoQ"
+  //#define CINEMATICS_INTRO		"intro.RoQ"
+  #define LEGACY_PROTOCOL
+#else
   #define PRODUCT_NAME				"ioq3"
   #define BASEGAME					"baseq3"
   #define CLIENT_WINDOW_TITLE		"ioquake3"
@@ -56,6 +73,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define CINEMATICS_LOGO		"idlogo.RoQ"
   #define CINEMATICS_INTRO		"intro.RoQ"
   #define LEGACY_PROTOCOL
+#endif
 #endif
 
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
@@ -1268,9 +1286,9 @@ typedef enum {
 #if defined( QC )
 #define BUTTON_ABILITY		2048
 #define BUTTON_ZOOM			4096
-#define BUTTON_ANY			8192			// any key whatsoever
+#define BUTTON_ANY			8192		// any key whatsoever
 #else
-#define	BUTTON_ANY			2048			// any key whatsoever
+#define	BUTTON_ANY			2048		// any key whatsoever
 #endif
 
 #define	MOVE_RUN			120			// if forwardmove or rightmove are >= MOVE_RUN,
