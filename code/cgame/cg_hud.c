@@ -87,6 +87,8 @@ static struct {
 	qhandle_t	icon_armor;		// for player status
 	qhandle_t	icon_weapon[NUM_HUD_WEAPONS];	// weapon icons for the vertical ammo status bar
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
+	qhandle_t	ringgauge, ringglow, abbg;
+	qhandle_t	skillicon[NUM_CHAMPIONS];
 } media;
 
 typedef struct {
@@ -167,6 +169,12 @@ static void hud_initmedia( void ) {
 	media.ammobar_background = trap_R_RegisterShader( "hud/ammobar/background" );
 	media.ammobar_full = trap_R_RegisterShader( "hud/ammobar/full" );
 	media.ammobar_empty = trap_R_RegisterShader( "hud/ammobar/empty" );
+	media.ringgauge = trap_R_RegisterShader( "hud/ring" );
+	media.ringglow = trap_R_RegisterShader( "hud/ring_glow" );
+	media.abbg = trap_R_RegisterShader( "hud/abbg" );
+	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
+		media.skillicon[i] = trap_R_RegisterShader( va("hud/skill/%s", champion_names[i] ) );
+	}
 	//media.playernamebg_brief = trap_R_RegisterShader( "hud/scoreline_brief" );
 	//media.scoreline_brief = trap_R_RegisterShader( "hud/playernamebg_brief" );
 }
@@ -296,19 +304,7 @@ static float hud_drawstring( float x, float y, float valign, float scale, font_t
 }
 
 // advanced version of hud_drawstring, it handles q3 color codes
-static float hud_drawstring_ex( float x, float y, float valign, float scale, font_t *font, const char *string, const float *setColor, 
-		qboolean forceColor ) {
-
-#if 0
-	float advance;
-	const char *c;
-
-	advance = x;
-	for ( c = string; *c; c++ ) {
-		advance += hud_drawchar( advance, y, valign, scale, font, *c );
-	}
-	return advance - x;
-#endif
+static float hud_drawstring_ex( float x, float y, float valign, float scale, font_t *font, const char *string, const float *setColor, qboolean forceColor ) {
 	vec4_t		color;
 	const char	*s;
 	int			xx;
@@ -593,6 +589,148 @@ void hud_drawscores_brief_ffa( void ) {
 	hud_drawstring( centerx - 185, bounds.top + 100, 0.0f, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ) );
 }
 
+void calc_sector_point( float angle, float *x, float *y ) {
+	if ( ( angle > 315.0f ) || ( angle <= 45.0f ) ) {
+		*x = 1.0f;
+		*y = tanf( DEG2RAD( angle ) );
+		return;
+	}
+	if ( ( angle > 45.0f ) && ( angle <= 135.0f ) ) {
+		*x = tanf( DEG2RAD( 90.0f - angle ) );
+		*y = 1.0f;
+		return;
+	}
+	if ( ( angle > 135.0f ) && ( angle <= 225.0f ) ) {
+		*x = -1.0f;
+		*y = -tanf( DEG2RAD( angle ) );
+		return;
+	}
+	*x = -tanf( DEG2RAD( 90.0f - angle ) );
+	*y = -1.0f;
+}
+
+int get_next_corner( int angle ) {
+	angle /= 45;
+	angle *= 45;
+	angle += 45;
+	if ( angle % 90 == 0 ) {
+		angle += 45;
+	}
+	angle %= 360;
+	return angle;
+}
+
+void hud_draw_ability( void ) {
+	playerState_t *ps;
+	static float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
+	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	ps = &cg.snap->ps;
+	float overall = champion_stats[ps->champion].ability_cooldown;
+	float current = ps->ab_time;
+	float dim;
+	int sec_left, tens;
+
+	float gaugex, gaugey, gaugesize;
+
+	float x[16];
+	float y[16];
+	float s[16];
+	float t[16];
+	int num, pos;
+
+	int start_angle = 270;
+	int end_angle = (int)( 270 + current/overall * 360);
+	int angle, ta;
+
+	gaugex = ( bounds.left + bounds.right ) / 2;
+	gaugey = bounds.bottom - 160;
+	gaugesize = 128;
+
+	white[3] = 0.5f;
+	trap_R_SetColor( white );
+	hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.abbg );
+	trap_R_SetColor( NULL );
+
+	if ( ps->ab_time == champion_stats[ps->champion].ability_cooldown) {
+		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringgauge );
+		trap_R_SetColor( yellow );
+		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringglow );
+		trap_R_SetColor( NULL );
+		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
+		return;
+	} else {
+		white[3] = 0.5f;
+		trap_R_SetColor( white) ;
+		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringgauge );
+		trap_R_SetColor( NULL );
+	}
+
+	if ( ps->ab_flags & ABF_ENGAGED ) {
+		trap_R_SetColor( white );
+		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
+		trap_R_SetColor( NULL );
+		return;
+	}
+
+	num = 0;
+	angle = start_angle;
+
+	if ( end_angle < start_angle ) {
+		end_angle += 360;
+	}
+	while( 1 ) {
+		calc_sector_point( angle % 360, &x[num], &y[num] );
+		num++;
+		ta = get_next_corner( angle );
+		if ( ta < angle ) {
+			ta += 360;
+		}
+		angle = ta;
+		if ( angle >= end_angle ) {
+			calc_sector_point( end_angle % 360, &x[num], &y[num] );
+			num++;
+			break;
+		}
+	}
+
+	float scalex = gaugesize / 2, scaley = gaugesize / 2, offsetx = gaugex, offsety = gaugey;
+
+	float x0, y0, x1, y1, x2, y2, x3, y3;
+	float s0, t0, s1, t1, s2, t2, s3, t3;
+
+	pos = 0;
+	while ( 1 ) {
+		x0 = offsetx; y0 = offsety; s0 = 0.5f; t0 = 0.5f;
+		hud_translate_point( &x0, &y0 );
+		x1 = x[pos] * scalex + offsetx; s1 = x[pos] / 2.0f + 0.5f;
+		y1 = y[pos] * scaley + offsety; t1 = y[pos] / 2.0f + 0.5f;
+		hud_translate_point( &x1, &y1 );
+		x2 = x[pos + 1] * scalex + offsetx; s2 = x[pos + 1] / 2.0f + 0.5f;
+		y2 = y[pos + 1] * scaley + offsety;	t2 = y[pos + 1] / 2.0f + 0.5f;
+		hud_translate_point( &x2, &y2 );
+		if ( pos + 2 >= num ) {
+			x3 = x2;
+			y3 = y2;
+			s3 = s2;
+			t3 = t2;
+		} else {
+			x3 = x[pos + 2] * scalex + offsetx; s3 = x[pos + 2] / 2.0f + 0.5f;
+			y3 = y[pos + 2] * scaley + offsety;	t3 = y[pos + 2] / 2.0f + 0.5f;
+			hud_translate_point( &x3, &y3 );
+		}
+		trap_R_DrawQuad( x0, y0, s0, t0, x1, y1, s1, t1, x2, y2, s2, t2, x3, y3, s3, t3, media.ringgauge );
+		pos += 2;
+		if ( pos >= num - 1 ) {
+			break;
+		}
+	}
+	
+	sec_left = champion_stats[ps->champion].ability_cooldown - ps->ab_time;
+	dim = hud_measurestring( 0.5f, &font_qcde, va( "%d", sec_left ) );
+	hud_drawstring( gaugex - dim / 2, gaugey + 15, 0, 0.5f, &font_qcde, va( "%d", sec_left ) );
+}
+
 /*
 =================
 hud_drawcrosshair
@@ -704,6 +842,11 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	CG_DrawTeamVote();
 	CG_DrawLagometer();
 #endif
+
+	trap_R_SetColor( NULL );
+
+	hud_draw_ability();
+
 
 	hud_drawstatus();
 	hud_drawammo();
