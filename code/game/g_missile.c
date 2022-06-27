@@ -467,9 +467,18 @@ G_OrbImpact
 ================
 */
 void G_OrbPassThroughImpact( gentity_t *ent, trace_t *trace ) {
-	gentity_t		*other;
+	gentity_t		*other, *owner;
 	qboolean		hitClient = qfalse;
+	float			quadfactor;
 	other = &g_entities[trace->entityNum];
+	owner = &g_entities[ent->r.ownerNum];
+
+	if ( owner && owner->client && owner->client->ps.powerups[PW_QUAD] ) {
+		quadfactor = g_quadfactor.value;
+	}
+	else {
+		quadfactor = 1.0f;
+	}
 
 	if ( !other->client || !other->takedamage ) {
 		return;
@@ -483,7 +492,7 @@ void G_OrbPassThroughImpact( gentity_t *ent, trace_t *trace ) {
 			velocity[1] = 0.0f;
 			velocity[2] = 0.0f;
 
-			G_Damage( other, ent, &g_entities[ent->r.ownerNum], velocity, ent->s.origin, 73, 0, ent->methodOfDeath );
+			G_Damage( other, ent, &g_entities[ent->r.ownerNum], velocity, ent->s.origin, 75 * quadfactor, 0, ent->methodOfDeath );
 			other->client->orbEntityNum = ent - g_entities;
 			other->client->orbPassThroughTime = level.time;
 		}
