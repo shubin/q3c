@@ -204,6 +204,9 @@ void CG_Respawn( void ) {
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
+#if defined( QC )
+	cg.killerInfo.clientNum = -1;
+#endif
 }
 
 extern char *eventnames[];

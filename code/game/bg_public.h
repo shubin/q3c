@@ -461,6 +461,7 @@ typedef enum {
 #if defined( QC )
 	EV_DAMAGEPLUM,
 	EV_DAMAGEDIR,
+	EV_KILLEDBY,
 #endif
 
 //#ifdef MISSIONPACK

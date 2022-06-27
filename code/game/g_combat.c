@@ -78,6 +78,22 @@ void DamageDir( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
 	dir->s.eventParm = damage;
 	dir->s.generic1 = clientNum;
 }
+
+void KilledBy( gentity_t *ent, int killerNum, int weapon, int powerups, int health, int armor ) {
+	gentity_t *kb;
+
+	kb = G_TempEntity( ent->r.currentOrigin, EV_KILLEDBY );
+	// only send this temp entity to a single client
+	kb->r.svFlags |= SVF_SINGLECLIENT;
+	kb->r.singleClient = ent->s.number;
+	//
+	kb->s.otherEntityNum = ent->s.number;
+	kb->s.eventParm = killerNum;
+	kb->s.powerups = powerups;
+	kb->s.weapon = weapon;
+	kb->s.time = health;
+	kb->s.time2 = armor;
+}
 #endif
 
 /*
@@ -571,6 +587,12 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		ent->s.generic1 = attacker->s.number;
 	} else {
 		ent->s.generic1 = -1;
+	}
+	// send personalized killedby event
+	if ( attacker && attacker->client ) {
+		KilledBy( self, attacker->s.clientNum, attacker->s.weapon, attacker->s.powerups, attacker->client->ps.stats[STAT_HEALTH], attacker->client->ps.stats[STAT_ARMOR] );
+	} else {
+		KilledBy( self, killer, 0, 0, 0, 0 );
 	}
 #endif
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone

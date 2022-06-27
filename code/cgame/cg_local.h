@@ -433,6 +433,15 @@ typedef struct {
 	int				itemNum;
 } powerupInfo_t;
 
+#if defined( QC )
+typedef struct {
+	int	clientNum;
+	int weapon;
+	int powerups;
+	int health;
+	int armor;
+} killerInfo_t;
+#endif
 
 #define MAX_SKULLTRAIL		10
 
@@ -541,6 +550,7 @@ typedef struct {
 	qboolean	showScores;
 	qboolean	scoreBoardShowing;
 	int			scoreFadeTime;
+	killerInfo_t killerInfo;
 	char		killerName[MAX_NAME_LENGTH];
 	char			spectatorList[MAX_STRING_CHARS];		// list of names
 	int				spectatorLen;												// length of list
