@@ -643,6 +643,10 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	hud_drawstatus();
 	hud_drawammo();
 	hud_drawscores_brief_ffa();
+	if ( stereoFrame == STEREO_CENTER ) {
+		hud_drawcrosshair();
+	}
+
 	//hud_drawstring( bounds.left, bounds.bottom, 0.0f, 1.0f, &font_large, "Amazing ARCADII" );
 
 	//CG_DrawUpperRight(stereoFrame);
