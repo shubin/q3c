@@ -42,6 +42,44 @@ void ScorePlum( gentity_t *ent, vec3_t origin, int score ) {
 	plum->s.time = score;
 }
 
+#if defined( QC )
+/*
+============
+DamagePlum
+============
+*/
+void DamagePlum( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
+	gentity_t *plum;
+
+	plum = G_TempEntity( origin, EV_DAMAGEPLUM );
+	// only send this temp entity to a single client
+	plum->r.svFlags |= SVF_SINGLECLIENT;
+	plum->r.singleClient = ent->s.number;
+	//
+	plum->s.otherEntityNum = ent->s.number;
+	plum->s.eventParm = damage;
+	plum->s.generic1 = clientNum;
+}
+
+/*
+============
+DamageDir
+============
+*/
+void DamageDir( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
+	gentity_t *dir;
+
+	dir = G_TempEntity( origin, EV_DAMAGEDIR );
+	// only send this temp entity to a single client
+	dir->r.svFlags |= SVF_SINGLECLIENT;
+	dir->r.singleClient = ent->s.number;
+	//
+	dir->s.otherEntityNum = ent->s.number;
+	dir->s.eventParm = damage;
+	dir->s.generic1 = clientNum;
+}
+#endif
+
 /*
 ============
 AddScore
@@ -1027,23 +1065,13 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 #if defined( QC )
         if ( targ->client ) {
 			if ( attacker->client && attacker->client->ps.clientNum != targ->client->ps.clientNum && targ->health > 0 ) {
-				trap_SendServerCommand( attacker->client->ps.clientNum, 
-					va("dmgplum %d %d %.4f %.4f %.4f", client->ps.clientNum, damage, 
-						targ->client->ps.origin[0], 
-						targ->client->ps.origin[1], 
-						targ->client->ps.origin[2]
-				));
+				DamagePlum( attacker, client->ps.clientNum, targ->client->ps.origin, damage );
 			}
             int attackerClientNum = -1;
             if ( attacker->client != NULL ) {
                 attackerClientNum = attacker->client->ps.clientNum;
             }
-            trap_SendServerCommand( targ->client->ps.clientNum,
-                va("dmgdir %d %d %.4f %.4f %.4f", attackerClientNum, damage, 
-                    inflictor->r.currentOrigin[0],
-                    inflictor->r.currentOrigin[1],
-                    inflictor->r.currentOrigin[2]
-            ));
+			DamageDir( targ, attackerClientNum, inflictor->r.currentOrigin, damage );
         }
 #endif
 

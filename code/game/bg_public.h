@@ -458,6 +458,10 @@ typedef enum {
 
 	EV_GIB_PLAYER,			// gib a previously living player
 	EV_SCOREPLUM,			// score plum
+#if defined( QC )
+	EV_DAMAGEPLUM,
+	EV_DAMAGEDIR,
+#endif
 
 //#ifdef MISSIONPACK
 	EV_PROXIMITY_MINE_STICK,

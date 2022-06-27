@@ -110,25 +110,6 @@ static void CG_ParseScores( void ) {
 #if defined( QC )
 /*
 =================
-CG_ParseDamage
-
-=================
-*/
-
-static void CG_ParseDamage( void ) {
-    int		damage, clientnum;
-    vec3_t	position;
-
-    clientnum	= atoi( CG_Argv(1) );
-    damage		= atoi( CG_Argv(2) );
-    position[0] = atof( CG_Argv(3) );
-    position[1] = atof( CG_Argv(4) );
-    position[2] = atof( CG_Argv(5) );
-    CG_AddDamagePlum( clientnum, damage, position );
-}
-
-/*
-=================
 CG_ParseDamageDir
 
 =================
@@ -1111,14 +1092,6 @@ static void CG_ServerCommand( void ) {
 #endif
 
 #if defined( QC )
-    if ( !strcmp(cmd, "dmgplum") ) {
-        CG_ParseDamage();
-        return;
-    }
-    if ( !strcmp(cmd, "dmgdir") ) {
-        CG_ParseDamageDir();
-        return;
-    }
 	if ( !strcmp(cmd, "champmodel") ) {
 		trap_Cvar_Set( "model", CG_Argv(1) );
 		trap_Cvar_Set( "headmodel", CG_Argv(1) );

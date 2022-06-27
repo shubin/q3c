@@ -310,7 +310,6 @@ void	trap_R_DrawQuad(
 		PASSFLOAT(x2), PASSFLOAT(y2), PASSFLOAT(s2), PASSFLOAT(t2), PASSFLOAT(x3), PASSFLOAT(y3), PASSFLOAT(s3), PASSFLOAT(t3), 
 		hShader );
 }
-
 #endif
 
 void	trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {
