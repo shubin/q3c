@@ -123,6 +123,11 @@ typedef struct {
 //#include "font_large.inc"
 #include "font_qcde.inc"
 
+static char hud_fragmessage[256];
+static char hud_rankmessage[64];
+static int hud_fragtime = -1;
+//cg.centerPrintTime = cg.time;
+
 void hud_initbounds( void );
 void hud_initmedia( void );
 void hud_initfonts( void );
@@ -131,6 +136,34 @@ void CG_InitQCHUD( void ) {
 	hud_initbounds();
 	hud_initmedia();
 	hud_initfonts();
+}
+
+void CG_SetFragMessage( const char *who ) {
+	int rank, score;
+	char suffix[3];
+
+	score = cg.snap->ps.persistant[PERS_SCORE];
+	rank = ( cg.snap->ps.persistant[PERS_RANK] & ( RANK_TIED_FLAG - 1 ) ) + 1;
+
+	Com_sprintf( hud_fragmessage, sizeof( hud_fragmessage ), "YOU FRAGGED %s", who );
+	switch ( rank ) {
+		case 1:
+			Q_strncpyz( suffix, "st", sizeof( suffix ) );
+			break;
+		case 2:
+			Q_strncpyz( suffix, "nd", sizeof( suffix ) );
+			break;
+		case 3:
+			Q_strncpyz( suffix, "rd", sizeof( suffix ) );
+			break;
+		default:
+			Q_strncpyz( suffix, "th", sizeof( suffix ) );
+			break;
+	};
+	//Com_sprintf( hud_rankmessage,  );
+	//Q_strncpyz( hud_rankmessage, va( "%d%s place with %d", rank, suffix, score ), sizeof( hud_rankmessage ) );
+	Com_sprintf( hud_rankmessage, sizeof( hud_rankmessage ), "%d%s place with %d", rank, suffix, score );
+	hud_fragtime = cg.time;
 }
 
 // setup virtual coordinates
@@ -181,7 +214,6 @@ static void hud_initmedia( void ) {
 
 static void hud_initfont( font_t *font ) {
 	int i;
-	chardesc_t *chr;
 
 	for ( i = 0; i < sizeof( font->charmap ) / sizeof( font->charmap[0] ); i++ ) {
 		font->charmap[i] = NULL;
@@ -255,7 +287,7 @@ static chardesc_t* find_char( font_t *font, int c ) {
 }
 
 // returns horizontal advance
-static float hud_drawchar( float x, float y, float valign, float scale, font_t *font, int c ) {
+static float hud_drawchar( float x, float y, float scale, font_t *font, int c ) {
 	chardesc_t *chr;
 	float tx, ty;
 	hud_translate_point( &x, &y );
@@ -292,42 +324,95 @@ static float hud_measurestring( float scale, font_t *font, const char *string ) 
 }
 
 // draws the string using specified font
-static float hud_drawstring( float x, float y, float valign, float scale, font_t *font, const char *string ) {
+static float hud_drawstring( float x, float y, float scale, font_t *font, const char *string, float *shadow, float dx, float dy ) {
 	float advance;
+	float color[4];
 	const char *c;
 
+	if ( shadow != NULL ) {
+		memcpy( color, cg.lastColor, sizeof( color ) );
+		trap_R_SetColor( shadow );
+		advance = x + dx;
+		for ( c = string; *c; c++ ) {
+			advance += hud_drawchar( advance, y + dy, scale, font, *c );
+		}
+		trap_R_SetColor( color );
+	}
 	advance = x;
 	for ( c = string; *c; c++ ) {
-		advance += hud_drawchar( advance, y, valign, scale, font, *c );
+		advance += hud_drawchar( advance, y, scale, font, *c );
 	}
 	return advance - x;
 }
 
-// advanced version of hud_drawstring, it handles q3 color codes
-static float hud_drawstring_ex( float x, float y, float valign, float scale, font_t *font, const char *string, const float *setColor, qboolean forceColor ) {
-	vec4_t		color;
+static float hud_measurecolorstring(float scale, font_t *font, const char *string ) {
+	chardesc_t *chr;
 	const char	*s;
 	int			xx;
 	int			cnt;
 
 	// draw the colored text
 	s = string;
-	xx = x;
+	xx = 0;
 	cnt = 0;
-	trap_R_SetColor( setColor );
 	while ( *s && cnt < 32768 ) {
 		if ( Q_IsColorString( s ) ) {
-			if ( !forceColor ) {
-				memcpy( color, g_color_table[ColorIndex(*(s+1))], sizeof( color ) );
-				color[3] = setColor == NULL ? 1.0f : setColor[3];
-				trap_R_SetColor( color );
-			}
 			s += 2;
 			continue;
 		}
-		//CG_DrawChar( xx, y, charWidth, charHeight, *s );
-		xx += hud_drawchar( xx, y, valign, scale, font, *s );
-		//xx += charWidth;
+		chr = find_char( font, *s );
+		xx += chr->xadvance * scale;
+		cnt++;
+		s++;
+	}
+	trap_R_SetColor( NULL );
+	return xx;
+}
+
+// advanced version of hud_drawstring, it handles q3 color codes
+static float hud_drawcolorstring( float x, float y, float valign, float scale, font_t *font, const char *string, float *shadow, float dx, float dy ) {
+	vec4_t		color, shad;
+	const char	*s;
+	int			xx;
+	int			cnt;
+	float		alpha;
+
+	alpha = cg.lastColor[3];
+
+	// draw the shadow
+	if ( shadow != NULL ) {
+		memcpy( shad, shadow, sizeof( float ) * 3 );
+		shad[3] = alpha;
+		trap_R_SetColor( shad );
+		s = string;
+		xx = x;
+		cnt = 0;
+		while ( *s && cnt < 32768 ) {
+			if ( Q_IsColorString( s ) ) {
+				s += 2;
+				continue;
+			}
+			xx += hud_drawchar( xx + dx, y + dy, scale, font, *s );
+			cnt++;
+			s++;
+		}
+	}
+	// draw the colored text
+	s = string;
+	xx = x;
+	cnt = 0;
+	color[0] = color[1] = color[2] = 1.0f;
+	color[3] = alpha;
+	trap_R_SetColor( color );
+	while ( *s && cnt < 32768 ) {
+		if ( Q_IsColorString( s ) ) {
+				memcpy( color, g_color_table[ColorIndex(*(s+1))], sizeof( float ) * 3 );
+				color[3] = alpha;
+				trap_R_SetColor( color );
+			s += 2;
+			continue;
+		}
+		xx += hud_drawchar( xx, y, scale, font, *s );
 		cnt++;
 		s++;
 	}
@@ -384,7 +469,6 @@ void hud_drawstatus( void ) {
 	playerState_t *ps;
 	centity_t *cent;
 
-	int i;
 	float x;
 
 	static float whitecolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -406,8 +490,8 @@ void hud_drawstatus( void ) {
 		bounds.left + 280, bounds.bottom - 182, 
 		26, 16, 5, 
 		whitecolor, redcolor, bluecolor );
-	x = hud_drawstring( bounds.left + 277, bounds.bottom - 190, 0.0f, 0.78f, &font_qcde, va( "%d", ps->stats[STAT_HEALTH] > 0 ? ps->stats[STAT_HEALTH] : 0 ) );
-	hud_drawstring( bounds.left + 277 + x, bounds.bottom - 190, 0.0f, 0.45f, &font_qcde, va( "/%d", cs->base_health ) );
+	x = hud_drawstring( bounds.left + 277, bounds.bottom - 190, 0.78f, &font_qcde, va( "%d", ps->stats[STAT_HEALTH] > 0 ? ps->stats[STAT_HEALTH] : 0 ), NULL, 0, 0 );
+	hud_drawstring( bounds.left + 277 + x, bounds.bottom - 190, 0.45f, &font_qcde, va( "/%d", cs->base_health ), NULL, 0, 0 );
 
 	// draw armor
 	hud_drawpic( bounds.left + 230, bounds.bottom - 84, 40, 40, 0.5f, 0.5f, media.icon_armor );
@@ -415,8 +499,8 @@ void hud_drawstatus( void ) {
 		bounds.left + 253, bounds.bottom - 92,
 		26, 16, 5,
 		whitecolor, redcolor, greencolor );
-	x = hud_drawstring( bounds.left + 253, bounds.bottom - 99, 0.0f, 0.78f, &font_qcde, va( "%d", ps->stats[STAT_ARMOR] > 0 ? ps->stats[STAT_ARMOR] : 0 ) );
-	hud_drawstring( bounds.left + 253 + x, bounds.bottom - 99, 0.0f, 0.45f, &font_qcde, va( "/%d", cs->base_armor ) );
+	x = hud_drawstring( bounds.left + 253, bounds.bottom - 99, 0.0f, &font_qcde, va( "%d", ps->stats[STAT_ARMOR] > 0 ? ps->stats[STAT_ARMOR] : 0 ), NULL, 0, 0 );
+	hud_drawstring( bounds.left + 253 + x, bounds.bottom - 99, 0.0f, &font_qcde, va( "/%d", cs->base_armor ), NULL, 0, 0 );
 }
 
 // draws ammo information, big one in the bottom right corner displays the current weapon ammo, and there's also vertical bar with all the weapons
@@ -444,7 +528,7 @@ void hud_drawammo( void ) {
 			}
 			ammo = va( "%d", value );
 			ammow = hud_measurestring( 1.15f, &font_qcde, ammo );
-			hud_drawstring( bounds.right - 185 - ammow, bounds.bottom - 95, 0.0f, 1.15f, &font_qcde, va( "%d", value ));
+			hud_drawstring( bounds.right - 185 - ammow, bounds.bottom - 95, 1.15f, &font_qcde, va( "%d", value ), NULL, 0, 0 );
 		}
 		else {
 			icon = cg_weapons[weapon].weaponIcon;
@@ -517,7 +601,7 @@ void hud_drawammo( void ) {
 			ammo = va( "%d", value );
 			fontsize = ( weapon == current_weapon ? 0.4f : 0.32f );
 			ammow = hud_measurestring( fontsize, &font_regular, ammo );
-			hud_drawstring( bounds.right - 78 - ammow, bounds.bottom - y + ( weapon == current_weapon ? 40 : 36 ), 0.0f, fontsize, &font_regular, ammo );
+			hud_drawstring( bounds.right - 78 - ammow, bounds.bottom - y + ( weapon == current_weapon ? 40 : 36 ), fontsize, &font_regular, ammo, NULL, 0, 0 );
 		}
 		y -= 70;
 	}
@@ -536,12 +620,12 @@ void hud_drawscorebar_ffa( float y, float *color, const char *playername, int ra
 	hud_drawpic( centerx + 166, y, 43, 26, 0.0f, 0.0f, cgs.media.whiteShader );
 
 	trap_R_SetColor( NULL );
-	hud_drawstring_ex( centerx - 59, y + 21, 0.0f, 0.35f, &font_regular, playername, NULL, qfalse );
+	hud_drawcolorstring( centerx - 59, y + 21, 0.0f, 0.35f, &font_regular, playername, NULL, 0, 0 );
 	dim = hud_measurestring( 0.35f, &font_regular, va( "%d", score ) );
 	mdim = score < 0 ? hud_measurestring( 0.35f, &font_regular, "-" ) : 0;
-	hud_drawstring( centerx + 188 - dim/2 - mdim / 2, y + 21, 0.0f, 0.35f, &font_regular, va( "%d", score ) );
+	hud_drawstring( centerx + 188 - dim/2 - mdim / 2, y + 21, 0.35f, &font_regular, va( "%d", score ), NULL, 0, 0 );
 	dim = hud_measurestring( 0.35f, &font_regular, va( "%d", rank) );
-	hud_drawstring( centerx - 84 - dim/2, y + 21, 0.0f, 0.35f, &font_regular, va( "%d", rank ) );
+	hud_drawstring( centerx - 84 - dim/2, y + 21, 0.35f, &font_regular, va( "%d", rank ), NULL, 0, 0 );
 }
 
 // brief score bar for FFA, along with the timer
@@ -551,7 +635,6 @@ void hud_drawscores_brief_ffa( void ) {
 
 	playerState_t *ps;
 
-	char *time;
 	int	mins, seconds, tens, msec;
 	float dim, centerx;
 	int rank, other, otherscore;
@@ -585,8 +668,8 @@ void hud_drawscores_brief_ffa( void ) {
 		hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
 	}
 	dim = hud_measurestring( 0.65f, &font_qcde, va( "%d", mins ) );	
-	hud_drawstring( centerx - 185 - dim, bounds.top + 100, 0.0f, 0.65f, &font_qcde, va( "%d", mins ) );
-	hud_drawstring( centerx - 185, bounds.top + 100, 0.0f, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ) );
+	hud_drawstring( centerx - 185 - dim, bounds.top + 100, 0.65f, &font_qcde, va( "%d", mins ), NULL, 0, 0 );
+	hud_drawstring( centerx - 185, bounds.top + 100, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ), NULL, 0, 0 );
 }
 
 void calc_sector_point( float angle, float *x, float *y ) {
@@ -629,14 +712,12 @@ void hud_draw_ability( void ) {
 	float overall = champion_stats[ps->champion].ability_cooldown;
 	float current = ps->ab_time;
 	float dim;
-	int sec_left, tens;
+	int sec_left;
 
 	float gaugex, gaugey, gaugesize;
 
 	float x[16];
 	float y[16];
-	float s[16];
-	float t[16];
 	int num, pos;
 
 	int start_angle = 270;
@@ -728,8 +809,43 @@ void hud_draw_ability( void ) {
 	
 	sec_left = champion_stats[ps->champion].ability_cooldown - ps->ab_time;
 	dim = hud_measurestring( 0.5f, &font_qcde, va( "%d", sec_left ) );
-	hud_drawstring( gaugex - dim / 2, gaugey + 15, 0, 0.5f, &font_qcde, va( "%d", sec_left ) );
+	hud_drawstring( gaugex - dim / 2, gaugey + 15, 0.5f, &font_qcde, va( "%d", sec_left ), NULL, 0, 0 );
 }
+
+/*
+===================
+hud_drawcenterstring
+===================
+*/
+static void hud_drawfragmessage( void ) {
+	int		x, y, w;
+	float	*color;
+	float	shadow[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	if ( hud_fragtime == -1 ) {
+		return;
+	}
+
+	color = CG_FadeColor( hud_fragtime, 1000 * cg_centertime.value );
+	if ( !color ) {
+		return;
+	}
+	shadow[3] = color[3];
+	y = 436;
+	w = hud_measurecolorstring( 0.5f, &font_regular, hud_fragmessage );
+	x = ( bounds.right - bounds.left - w ) / 2.0f;
+
+	trap_R_SetColor( color );
+	hud_drawcolorstring( x, y, 0.0f, 0.5f, &font_regular, hud_fragmessage, shadow, 3, 3 );
+	w = hud_measurestring( 0.4f, &font_regular, hud_rankmessage );
+	x = ( bounds.right - bounds.left -w ) / 2.0f;
+	color[0] = color[1] = color[2] = 0.75f;
+
+	trap_R_SetColor( color );
+	hud_drawstring( x, y + 26, 0.4f, &font_regular, hud_rankmessage, shadow, 2, 2 );
+	trap_R_SetColor( NULL );
+}
+
 
 /*
 =================
@@ -741,7 +857,6 @@ static void hud_drawcrosshair(void)
 	float		w, h;
 	qhandle_t	hShader;
 	float		f;
-	float		x, y;
 	int			ca;
 
 	if ( !cg_drawCrosshair.integer ) {
@@ -854,6 +969,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	if ( stereoFrame == STEREO_CENTER ) {
 		hud_drawcrosshair();
 	}
+	hud_drawfragmessage();
 
 	//hud_drawstring( bounds.left, bounds.bottom, 0.0f, 1.0f, &font_large, "Amazing ARCADII" );
 

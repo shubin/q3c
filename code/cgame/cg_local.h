@@ -643,7 +643,9 @@ typedef struct {
 	refEntity_t		testModelEntity;
 	char			testModelName[MAX_QPATH];
 	qboolean		testGun;
-
+#if defined( QC )
+	float			lastColor[4]; // save the last color set to use it in colored text output (to keep alpha)
+#endif
 } cg_t;
 
 
@@ -1536,7 +1538,7 @@ void CG_DrawDamageDir( void );
 
 void CG_InitQCHUD( void );
 void CG_Draw2DQC( stereoFrame_t stereoFrame );
-
+void CG_SetFragMessage( const char *who );
 #endif
 
 //===============================================

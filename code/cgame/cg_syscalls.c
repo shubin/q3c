@@ -283,6 +283,13 @@ void	trap_R_RenderScene( const refdef_t *fd ) {
 }
 
 void	trap_R_SetColor( const float *rgba ) {
+#if defined( QC )
+	if ( rgba == NULL ) {
+		cg.lastColor[0] = cg.lastColor[1] = cg.lastColor[2] = cg.lastColor[3] = 1.0f;
+	} else {
+		memcpy( cg.lastColor, rgba, sizeof( cg.lastColor ) );
+	}
+#endif
 	syscall( CG_R_SETCOLOR, rgba );
 }
 

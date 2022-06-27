@@ -260,7 +260,15 @@ static void CG_Obituary( entityState_t *ent ) {
 			CG_CenterPrint( s, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH );
 		} 
 #else
+#if defined( QC )
+		if ( cg_drawQ3hud.value ) {
+			CG_CenterPrint( s, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH );
+		} else {
+			CG_SetFragMessage( targetName );
+		}
+#else
 		CG_CenterPrint( s, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH );
+#endif
 #endif
 
 		// print the text message as well
