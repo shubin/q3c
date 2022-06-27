@@ -571,6 +571,14 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 	case CG_R_DRAWSTRETCHPIC:
 		re.DrawStretchPic( VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9] );
 		return 0;
+#if defined( QC )
+	case CG_R_DRAWQUAD:
+		re.DrawQuad( 
+			VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), 
+			VMF(9), VMF(10), VMF(11), VMF(12), VMF(13), VMF(14), VMF(15), VMF(16), 
+			args[17] );
+		return 0;
+#endif
 	case CG_R_MODELBOUNDS:
 		re.ModelBounds( args[1], VMA(2), VMA(3) );
 		return 0;
