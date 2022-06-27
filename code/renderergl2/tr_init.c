@@ -1634,6 +1634,9 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 
 	re.SetColor = RE_SetColor;
 	re.DrawStretchPic = RE_StretchPic;
+#if defined( QC )
+	re.DrawQuad = RE_DrawQuad;
+#endif
 	re.DrawStretchRaw = RE_StretchRaw;
 	re.UploadCinematic = RE_UploadCinematic;
 

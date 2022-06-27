@@ -2666,6 +2666,14 @@ static void FixRenderCommandList( int newShader ) {
 				curCmd = (const void *)(sp_cmd + 1);
 				break;
 				}
+#if defined( QC )
+			case RC_DRAW_QUAD:
+				{
+				const drawQuadCommand_t *sp_cmd = (const drawQuadCommand_t *)curCmd;
+				curCmd = (const void *)(sp_cmd + 1);
+				break;
+				}
+#endif
 			case RC_DRAW_SURFS:
 				{
 				int i;

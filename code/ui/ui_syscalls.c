@@ -173,6 +173,22 @@ void trap_R_DrawStretchPic( float x, float y, float w, float h, float s1, float 
 	syscall( UI_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader );
 }
 
+#if defined( QC )
+void trap_R_DrawQuad( 
+	float x0, float y0, float s0, float t0,
+	float x1, float y1, float s1, float t1,
+	float x2, float y2, float s2, float t2,
+	float x3, float y3, float s3, float t3,
+	qhandle_t hShader ) {
+	syscall( UI_R_DRAWQUAD, 
+		PASSFLOAT(x0), PASSFLOAT(y0), PASSFLOAT(s0), PASSFLOAT(t0), 
+		PASSFLOAT(x1), PASSFLOAT(y1), PASSFLOAT(s1), PASSFLOAT(t1), 
+		PASSFLOAT(x2), PASSFLOAT(y2), PASSFLOAT(s2), PASSFLOAT(t2), 
+		PASSFLOAT(x3), PASSFLOAT(y3), PASSFLOAT(s3), PASSFLOAT(t3), 
+		hShader );
+}
+#endif
+
 void	trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {
 	syscall( UI_R_MODELBOUNDS, model, mins, maxs );
 }
