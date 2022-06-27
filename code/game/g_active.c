@@ -1016,7 +1016,11 @@ void ClientThink_real( gentity_t *ent ) {
 	} else if ( ent->client->ps.airTime == -1 ) {
 		ent->client->ps.airTime = level.time;
 		if ( level.time - ent->client->ps.attackerTime < 300 ) {
-			ent->client->ps.ringoutKiller = ent->client->ps.attackerNum;
+			if ( ent->client->ps.clientNum != ent->client->ps.attackerNum ) {
+				ent->client->ps.ringoutKiller = ent->client->ps.attackerNum;
+			} else {
+				ent->client->ps.ringoutKiller = -1;
+			}
 		}
 	}
 #endif
