@@ -1083,8 +1083,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			client->ps.attackerNum = attacker->s.number;
 			client->ps.attackerTime = level.time;
 			if ( client->ps.airTime != -1 ) {
-				if ( attacker->client ) {
-					client->ps.ringoutKiller = attacker->s.number;
+				if ( attacker->client && attacker->client->ps.clientNum != client->ps.clientNum ) {
+					client->ps.ringoutKiller = attacker->client->ps.clientNum;
 				}
 			}
 #endif
