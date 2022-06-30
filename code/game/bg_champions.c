@@ -63,6 +63,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .max_health = 175,
         .max_armor = 175,
         .ability_cooldown = 30,
+        .ability_duration = 20, // tenths of a second
         .start_health = {
             100, // GT_FFA
             100, // GT_TOURNAMENT

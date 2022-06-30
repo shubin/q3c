@@ -332,7 +332,11 @@ void G_PoisonPlayer(gentity_t* ent, gentity_t* other, qboolean direct) {
 
 static
  void ActivateInjection( gentity_t *ent ) {
-	ent->health = 175;
+	ent->health += 50;
+	if ( ent->health > champion_stats[CHAMP_ANARKI].max_health ) {
+		ent->health = champion_stats[CHAMP_ANARKI].max_health;
+	}
+	ent->client->ps.powerups[PW_SCOUT] = level.time + champion_stats[CHAMP_ANARKI].ability_duration * 100;
 	ent->client->ps.baseHealth++;
  }
 
@@ -346,9 +350,9 @@ void G_ActivateAbility( gentity_t *ent ) {
 
 	trap_SendServerCommand( -1, va( "print \"Ability engaged: %d\n\"", champ ) );
 	switch ( champ ) {		
-		//case CHAMP_ANARKI:
-		//	ActivateInjection( ent );
-		//	break;
+		case CHAMP_ANARKI:
+			ActivateInjection( ent );
+			break;
 		case CHAMP_RANGER:
 			if ( ent->client->ps.ab_num != 0 ) {
 				TeleportToTheOrb( ent );

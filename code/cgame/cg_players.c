@@ -1260,7 +1260,13 @@ static void CG_PlayerAnimation( centity_t *cent, int *legsOld, int *legs, float 
 
 	if ( cent->currentState.powerups & ( 1 << PW_HASTE ) ) {
 		speedScale = 1.5;
-	} else {
+	} 
+#if defined( QC )
+	else if ( cent->currentState.powerups & ( 1 << PW_SCOUT ) ) {
+		speedScale = 1.5;
+	}
+#endif
+	else {
 		speedScale = 1;
 	}
 
@@ -1905,6 +1911,11 @@ static void CG_PlayerPowerups( centity_t *cent, refEntity_t *torso ) {
 	if ( powerups & ( 1 << PW_HASTE ) ) {
 		CG_HasteTrail( cent );
 	}
+#if defined( QC )
+	if ( powerups & ( 1 << PW_SCOUT ) ) {
+		CG_HasteTrail( cent );
+	}
+#endif
 }
 
 

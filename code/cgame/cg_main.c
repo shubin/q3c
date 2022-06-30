@@ -2026,6 +2026,9 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_ShaderStateChanged();
 
 	trap_S_ClearLoopingSounds( qtrue );
+#if defined( QC )
+	cg.blurFactor = 0.0f;
+#endif
 }
 
 /*

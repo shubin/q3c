@@ -53,9 +53,38 @@ typedef struct {
 	int			previous_waterlevel;
 } pml_t;
 
+#if defined( QC )
 extern	pmove_t		*pm;
 extern	pml_t		pml;
+extern	int		c_pmove;
 
+typedef struct movement_parameters_s {
+	float	pm_stopspeed;
+	float	pm_duckScale;
+	float	pm_swimScale;
+
+	float	pm_accelerate;
+	float	pm_airaccelerate;
+	float	pm_wateraccelerate;
+	float	pm_flyaccelerate;
+
+	float	pm_friction;
+	float	pm_waterfriction;
+	float	pm_flightfriction;
+
+	/* Q4-style crouch sliding */
+	float	pm_slidefriction;
+	int		pm_slidevelocity;
+	float	pm_powerslide;
+
+	/* CPMA-style bunnyhopping */
+	float	cpm_pm_airstopaccelerate;
+	float	cpm_pm_aircontrol;
+	float	cpm_pm_strafeaccelerate;
+	float	cpm_pm_wishspeed;
+	float	cpm_pm_jump_z;
+} movement_parameters_t;
+#else
 // movement parameters
 extern	float	pm_stopspeed;
 extern	float	pm_duckScale;
@@ -69,10 +98,13 @@ extern	float	pm_flyaccelerate;
 extern	float	pm_friction;
 extern	float	pm_waterfriction;
 extern	float	pm_flightfriction;
-
-extern	int		c_pmove;
+#endif
 
 void PM_ClipVelocity( vec3_t in, vec3_t normal, vec3_t out, float overbounce );
+#if defined( QC )
+void PM_AdjustVertically( vec3_t in, vec3_t normal, vec3_t out, int forceLength, int pm_slidevelocity, float pm_powerslide );
+movement_parameters_t* PM_ChampionMovementParameters( int champion );
+#endif
 void PM_AddTouchEnt( int entityNum );
 void PM_AddEvent( int newEvent );
 

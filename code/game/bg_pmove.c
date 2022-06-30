@@ -26,9 +26,146 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
+#if defined( QC )
+#include "bg_promode.h"
+#endif
 
 pmove_t		*pm;
 pml_t		pml;
+
+#if defined( QC )
+
+typedef enum { MS_VQ3, MS_ANARKI, MS_SLASH } movement_style_t;
+
+static movement_parameters_t s_mp[] = {
+	{	// VQ3
+		.pm_stopspeed = 100.0f,
+		.pm_duckScale = 0.25f,
+		.pm_swimScale = 0.50f,
+
+		.pm_accelerate = 10.0f,
+		.pm_airaccelerate = 1.0f,
+		.pm_wateraccelerate = 4.0f,
+		.pm_flyaccelerate = 8.0f,
+
+		.pm_friction = 6.0f,
+		.pm_waterfriction = 1.0f,
+		.pm_flightfriction = 3.0f,
+
+		.pm_slidefriction = 0.0f,
+		.pm_slidevelocity = 1,
+		.pm_powerslide = 0.09f,
+
+		.cpm_pm_airstopaccelerate = 1.0f,
+		.cpm_pm_aircontrol = 0.0f,
+		.cpm_pm_strafeaccelerate = 1.0f,
+		.cpm_pm_wishspeed = 400.0f,
+		.cpm_pm_jump_z = 0.0f,
+	},
+	{	// Anarki CPM
+		.pm_stopspeed = 100.0f,
+		.pm_duckScale = 0.25f,
+		.pm_swimScale = 0.50f,
+
+		.pm_accelerate = 15.0f,
+		.pm_airaccelerate = 1.0f,
+		.pm_wateraccelerate = 4.0f,
+		.pm_flyaccelerate = 8.0f,
+
+		.pm_friction = 8.0f,
+		.pm_waterfriction = 1.0f,
+		.pm_flightfriction = 3.0f,
+
+		.pm_slidefriction = 0.0f,
+		.pm_slidevelocity = 1,
+		.pm_powerslide = 0.09f,
+
+		.cpm_pm_airstopaccelerate = 2.5f,
+		.cpm_pm_aircontrol = 150.0f,
+		.cpm_pm_strafeaccelerate = 70.0f,
+		.cpm_pm_wishspeed = 30.0f,
+		.cpm_pm_jump_z = 100.0f,
+	},
+	{
+		.pm_stopspeed = 100.0f,
+		.pm_duckScale = 0.25f,
+		.pm_swimScale = 0.50f,
+
+		.pm_accelerate = 10.0f,
+		.pm_airaccelerate = 1.0f,
+		.pm_wateraccelerate = 4.0f,
+		.pm_flyaccelerate = 8.0f,
+
+		.pm_friction = 6.0f,
+		.pm_waterfriction = 1.0f,
+		.pm_flightfriction = 3.0f,
+
+		.pm_slidefriction = 0.5f,
+		.pm_slidevelocity = 1,
+		.pm_powerslide = 0.09f,
+
+		.cpm_pm_airstopaccelerate = 1.0f,
+		.cpm_pm_aircontrol = 0.0f,
+		.cpm_pm_strafeaccelerate = 1.0f,
+		.cpm_pm_wishspeed = 400.0f,
+		.cpm_pm_jump_z = 0.0f,
+	},
+};
+
+static
+int PM_ChampionMovementStyle( int champion ) {
+	switch( champion ) {
+		case CHAMP_SORLAG:
+		case CHAMP_ANARKI: return MS_ANARKI;
+		case CHAMP_RANGER: return MS_VQ3;
+		case CHAMP_SLASH:
+		case CHAMP_STROGG: return MS_SLASH;
+	};
+	return MS_VQ3;
+}
+
+movement_parameters_t*
+PM_ChampionMovementParameters( int champion ) {
+	return &s_mp[PM_ChampionMovementStyle(champion)];
+}
+
+#define DEFINE_MOVEMENT_PARAMETERS \
+	float	pm_stopspeed;\
+	float	pm_duckScale;\
+	float	pm_swimScale;\
+	\
+	float	pm_accelerate;\
+	float	pm_airaccelerate;\
+	float	pm_wateraccelerate;\
+	float	pm_flyaccelerate;\
+	\
+	float	pm_friction;\
+	float	pm_waterfriction;\
+	float	pm_flightfriction;\
+	\
+	float	pm_slidefriction;\
+	float	pm_slidevelocity; \
+	float	pm_powerslide; \
+	\
+	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );\
+	\
+	pm_stopspeed = mp->pm_stopspeed;\
+	pm_duckScale = mp->pm_duckScale;\
+	pm_swimScale = mp->pm_swimScale;\
+	pm_accelerate = mp->pm_accelerate;\
+	pm_airaccelerate = mp->pm_airaccelerate;\
+	pm_wateraccelerate = mp->pm_wateraccelerate;\
+	pm_flyaccelerate = mp->pm_flyaccelerate;\
+	pm_friction = mp->pm_friction;\
+	pm_waterfriction = mp->pm_waterfriction;\
+	pm_flightfriction = mp->pm_flightfriction;\
+	pm_slidefriction = mp->pm_slidefriction;\
+	pm_slidevelocity = mp->pm_slidevelocity;\
+	pm_powerslide = mp->pm_powerslide;
+
+float pm_crouchspeed = 160.0f;
+
+#else
 
 // movement parameters
 float	pm_stopspeed = 100.0f;
@@ -43,6 +180,9 @@ float	pm_flyaccelerate = 8.0f;
 float	pm_friction = 6.0f;
 float	pm_waterfriction = 1.0f;
 float	pm_flightfriction = 3.0f;
+
+#endif
+
 float	pm_spectatorfriction = 5.0f;
 
 int		c_pmove = 0;
@@ -160,6 +300,66 @@ void PM_ClipVelocity( vec3_t in, vec3_t normal, vec3_t out, float overbounce ) {
 	}
 }
 
+#if defined( QC )
+void PM_AdjustVertically( vec3_t _in, vec3_t normal, vec3_t _out, int forceLength, int pm_slidevelocity, float pm_powerslide ) {
+	vec3_t out;
+	vec4_t in;
+	vec3_t hout;
+
+	VectorCopy(_in, in);
+
+	vec3_t velocityPlane;
+	velocityPlane[0] = in[1];
+	velocityPlane[1] = -in[0];
+	velocityPlane[2] = 0.0f;
+
+	// same length as horizontal input, and in the plane
+	CrossProduct( velocityPlane, normal, out );
+
+	// make sure direction is ok		
+	if ( DotProduct(in, out) < 0 ) {
+		VectorScale(out, -1.0f, out);
+	}
+
+	switch ( forceLength ) {
+		case 0: {
+			if ( pm_slidevelocity == 1 ) {
+				double inSpeed = VectorNormalize( in );
+				double hSpeed = VectorNormalize( out );
+				// incidence angle, between 0 (just touching, result speed at inSpeed) and M_PI/2 (perpendicular hit, result speed at hSpeed)
+				float angle = Q_acos( DotProduct( in, out ) );
+				double ratio = pow( angle * 2.0f / M_PI, pm_powerslide );
+				float targetSpeed = ratio * hSpeed + ( 1.0 - ratio ) * inSpeed;
+				VectorScale( out, targetSpeed, out );
+			}
+		break;
+		}
+		case 1: {
+			double inSpeed = VectorNormalize( in );
+			VectorNormalize( out );
+			VectorScale( out, inSpeed, out );
+			break;
+		}
+		case 2: {
+			// scale the out vector so horizontal speed is maintained
+			VectorCopy( out, hout );
+			hout[2] = 0.0f;
+			float ratio = VectorLength( velocityPlane ) / VectorLength( hout );
+			VectorScale( out, ratio, out );
+			break;
+		}
+	}
+
+	// and maintain an OVERCLIP
+	if ( out[2] >= 0 ) {
+		out[2] *= OVERCLIP;
+	} else {
+		out[2] /= OVERCLIP;
+	}
+
+	VectorCopy( out, _out );
+}
+#endif
 
 /*
 ==================
@@ -173,7 +373,9 @@ static void PM_Friction( void ) {
 	float	*vel;
 	float	speed, newspeed, control;
 	float	drop;
-	
+#if defined( QC )
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
 	vel = pm->ps->velocity;
 	
 	VectorCopy( vel, vec );
@@ -197,7 +399,18 @@ static void PM_Friction( void ) {
 			// if getting knocked back, no friction
 			if ( ! (pm->ps->pm_flags & PMF_TIME_KNOCKBACK) ) {
 				control = speed < pm_stopspeed ? pm_stopspeed : speed;
+#if defined( QC )
+				if ( pm->ps->crouchSlideTime > 0 && pm->ps->pm_flags & PMF_DUCKED ) {
+					drop += control*pm_slidefriction*pml.frametime;
+					pm->silentJump = qtrue;
+				}
+				else {
+					drop += control*pm_friction*pml.frametime;
+					pm->silentJump = qfalse;
+				}
+#else
 				drop += control*pm_friction*pml.frametime;
+#endif
 			}
 		}
 	}
@@ -226,6 +439,18 @@ static void PM_Friction( void ) {
 	vel[0] = vel[0] * newspeed;
 	vel[1] = vel[1] * newspeed;
 	vel[2] = vel[2] * newspeed;
+#if defined( QC )
+	// TTimo - snap to avoid denormals
+	if ( fabs(vel[0]) < 1.0e-5f ) {
+		vel[0] = 0.0f;
+	}
+	if ( fabs(vel[1]) < 1.0e-5f ) {
+		vel[1] = 0.0f;
+	}
+	if ( fabs(vel[2]) < 1.0e-5f ) {
+		vel[2] = 0.0f;
+	}
+#endif
 }
 
 
@@ -356,6 +581,10 @@ PM_CheckJump
 =============
 */
 static qboolean PM_CheckJump( void ) {
+#if defined( QC )
+	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );
+#endif
+
 	if ( pm->ps->pm_flags & PMF_RESPAWNED ) {
 		return qfalse;		// don't allow jump until all buttons are up
 	}
@@ -365,12 +594,14 @@ static qboolean PM_CheckJump( void ) {
 		return qfalse;
 	}
 
+#if !defined( QC )
 	// must wait for jump to be released
 	if ( pm->ps->pm_flags & PMF_JUMP_HELD ) {
 		// clear upmove so cmdscale doesn't lower running speed
 		pm->cmd.upmove = 0;
 		return qfalse;
 	}
+#endif
 
 	pml.groundPlane = qfalse;		// jumping away
 	pml.walking = qfalse;
@@ -378,7 +609,26 @@ static qboolean PM_CheckJump( void ) {
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	pm->ps->velocity[2] = JUMP_VELOCITY;
+#if defined( QC )
+	if ( mp->cpm_pm_jump_z ) {
+        if (pm->ps->jumpTime < 400) {
+            pm->ps->velocity[2] += mp->cpm_pm_jump_z;
+        }
+
+        pm->ps->jumpTime = 0;
+	}
+#endif
+#if defined( QC )
+	if ( VectorLength( pm->ps->velocity ) < pm_crouchspeed ) { 
+		pm->silentJump = qfalse;
+	}
+	if ( pm->ps->landTime < 100 ) {
+		pm->silentJump = qtrue;
+	}
+	BG_AddPredictableEventToPlayerstate( EV_JUMP, pm->silentJump, pm->ps );
+#else
 	PM_AddEvent( EV_JUMP );
+#endif
 
 	if ( pm->cmd.forwardmove >= 0 ) {
 		PM_ForceLegsAnim( LEGS_JUMP );
@@ -388,6 +638,9 @@ static qboolean PM_CheckJump( void ) {
 		pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
 	}
 
+#if defined( QC )
+	pm->ps->crouchSlideTime = 0;
+#endif
 	return qtrue;
 }
 
@@ -474,6 +727,9 @@ static void PM_WaterMove( void ) {
 	vec3_t	wishdir;
 	float	scale;
 	float	vel;
+#if defined( QC )
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
 
 	if ( PM_CheckWaterJump() ) {
 		PM_WaterJumpMove();
@@ -562,6 +818,9 @@ static void PM_FlyMove( void ) {
 	float	wishspeed;
 	vec3_t	wishdir;
 	float	scale;
+#if defined( QC )
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
 
 	// normal slowdown
 	PM_Friction ();
@@ -605,6 +864,24 @@ static void PM_AirMove( void ) {
 	float		wishspeed;
 	float		scale;
 	usercmd_t	cmd;
+#if defined( QC )
+    float		cpm_accel;			// CPM
+    float		cpm_wishspeed;		// CPM
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
+
+#if defined( QC )
+// if the player isnt pressing crouch and heading down then accumulate slide time
+//	if ( command.upmove >= 0 && current.velocity * gravityNormal > 0 ) {	
+//		current.crouchSlideTime = idMath::ClampInt( 0, 2000, current.crouchSlideTime + framemsec * 2 ); 
+//	}
+	if ( pm->cmd.upmove >= 0 && pm->ps->velocity[2] < 0 && pm_slidefriction > 0.0f ) {
+		pm->ps->crouchSlideTime += pml.msec * 2;
+		if ( pm->ps->crouchSlideTime > 2000 ) {
+			pm->ps->crouchSlideTime = 2000;
+		}
+	}
+#endif
 
 	PM_Friction();
 
@@ -632,8 +909,33 @@ static void PM_AirMove( void ) {
 	wishspeed = VectorNormalize(wishdir);
 	wishspeed *= scale;
 
+#if defined( QC )
+	if ( mp->cpm_pm_aircontrol ) {
+		cpm_wishspeed = wishspeed;
+		if ( DotProduct( pm->ps->velocity, wishdir ) < 0 )
+			cpm_accel = mp->cpm_pm_airstopaccelerate;
+		else
+			cpm_accel = pm_airaccelerate;
+		if ( pm->ps->movementDir == 2 || pm->ps->movementDir == 6 )
+		{
+			if ( wishspeed > mp->cpm_pm_wishspeed ) {
+				wishspeed = mp->cpm_pm_wishspeed;
+			}
+			cpm_accel = mp->cpm_pm_strafeaccelerate;
+		}
+		PM_Accelerate( wishdir, wishspeed, cpm_accel );
+		if ( mp->cpm_pm_aircontrol ) {
+			CPM_PM_Aircontrol( mp, pm, wishdir, cpm_wishspeed );
+		}
+	}
+	else {
+		// not on ground, so little effect on velocity
+		PM_Accelerate( wishdir, wishspeed, pm_airaccelerate );
+	}
+#else
 	// not on ground, so little effect on velocity
 	PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+#endif
 
 	// we may have a ground plane that is very steep, even
 	// though we don't have a groundentity
@@ -698,6 +1000,9 @@ static void PM_WalkMove( void ) {
 	usercmd_t	cmd;
 	float		accelerate;
 	float		vel;
+#if defined( QC )
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
 
 	if ( pm->waterlevel > 2 && DotProduct( pml.forward, pml.groundTrace.plane.normal ) > 0 ) {
 		// begin swimming
@@ -731,9 +1036,20 @@ static void PM_WalkMove( void ) {
 	pml.forward[2] = 0;
 	pml.right[2] = 0;
 
+#if defined( QC )
+	if ( pm_slidefriction && 0 ) {
+		PM_AdjustVertically( pml.forward, pml.groundTrace.plane.normal, pml.forward, 0, pm_slidevelocity, pm_powerslide );
+		PM_AdjustVertically( pml.right, pml.groundTrace.plane.normal, pml.right, 0, pm_slidevelocity, pm_powerslide );
+	} else {
+		// project the forward and right directions onto the ground plane
+		PM_ClipVelocity (pml.forward, pml.groundTrace.plane.normal, pml.forward, OVERCLIP );
+		PM_ClipVelocity (pml.right, pml.groundTrace.plane.normal, pml.right, OVERCLIP );
+	}
+#else
 	// project the forward and right directions onto the ground plane
 	PM_ClipVelocity (pml.forward, pml.groundTrace.plane.normal, pml.forward, OVERCLIP );
 	PM_ClipVelocity (pml.right, pml.groundTrace.plane.normal, pml.right, OVERCLIP );
+#endif
 	//
 	VectorNormalize (pml.forward);
 	VectorNormalize (pml.right);
@@ -748,12 +1064,14 @@ static void PM_WalkMove( void ) {
 	wishspeed = VectorNormalize(wishdir);
 	wishspeed *= scale;
 
+#if !defined( QC )
 	// clamp the speed lower if ducking
 	if ( pm->ps->pm_flags & PMF_DUCKED ) {
 		if ( wishspeed > pm->ps->speed * pm_duckScale ) {
 			wishspeed = pm->ps->speed * pm_duckScale;
 		}
 	}
+#endif
 
 	// clamp the speed lower if wading or walking on the bottom
 	if ( pm->waterlevel ) {
@@ -788,9 +1106,20 @@ static void PM_WalkMove( void ) {
 
 	vel = VectorLength(pm->ps->velocity);
 
+#if defined( QC )
+	// slide along the ground plane
+	if ( pm_slidefriction ) { 
+		PM_AdjustVertically(pm->ps->velocity, pml.groundTrace.plane.normal, 
+			pm->ps->velocity, 1, pm_slidevelocity, pm_powerslide );
+	} else {
+		PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, 
+			pm->ps->velocity, OVERCLIP );
+	}
+#else
 	// slide along the ground plane
 	PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, 
 		pm->ps->velocity, OVERCLIP );
+#endif
 
 	// don't decrease velocity when going up or down a slope
 	VectorNormalize(pm->ps->velocity);
@@ -846,6 +1175,9 @@ static void PM_NoclipMove( void ) {
 	vec3_t		wishdir;
 	float		wishspeed;
 	float		scale;
+#if defined( QC )
+	DEFINE_MOVEMENT_PARAMETERS
+#endif
 
 	pm->ps->viewheight = DEFAULT_VIEWHEIGHT;
 
@@ -1298,6 +1630,11 @@ static void PM_CheckDuck (void)
 
 	if (pm->ps->pm_flags & PMF_DUCKED)
 	{
+#if defined( QC )
+		if ( !pm->ps->crouchSlideTime ) {
+			pm->ps->speed = pm_crouchspeed;
+		}
+#endif
 		pm->maxs[2] = 16;
 		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
 	}
@@ -1360,6 +1697,11 @@ static void PM_Footsteps( void ) {
 
 	if ( pm->ps->pm_flags & PMF_DUCKED ) {
 		bobmove = 0.5;	// ducked characters bob much faster
+#if defined( QC )
+		if ( pm->ps->crouchSlideTime > 0 ) {
+			bobmove = 0.1f; // sliding characters bob much slower
+		}
+#endif
 		if ( pm->ps->pm_flags & PMF_BACKWARDS_RUN ) {
 			PM_ContinueLegsAnim( LEGS_BACKCR );
 		}
@@ -1784,6 +2126,11 @@ static void PM_Weapon( void ) {
 	}
 	else
 #endif
+#if defined( QC )
+	if ( pm->ps->powerups[PW_SCOUT] ) {
+		addTime /= 1.15;
+	}
+#endif
 	if ( pm->ps->powerups[PW_HASTE] ) {
 		addTime /= 1.3;
 	}
@@ -1855,6 +2202,16 @@ static void PM_DropTimers( void ) {
 			pm->ps->pm_time -= pml.msec;
 		}
 	}
+
+#if defined( QC )
+	if ( pml.groundPlane && pm->ps->crouchSlideTime ) {
+		if ( pml.msec >= pm->ps->crouchSlideTime ) {
+			pm->ps->crouchSlideTime = 0;
+		} else {
+			pm->ps->crouchSlideTime -= pml.msec;
+		}
+	}
+#endif
 
 	// drop animation counter
 	if ( pm->ps->legsTimer > 0 ) {
@@ -2053,6 +2410,15 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 
 	PM_DropTimers();
+#if defined( QC )
+	if ( pml.groundPlane ) {
+		pm->ps->landTime += pml.msec;
+	}
+	else {
+		pm->ps->landTime = 0;
+	}
+	pm->ps->jumpTime += pml.msec;
+#endif
 
 #ifdef MISSIONPACK
 	if ( pm->ps->powerups[PW_INVULNERABILITY] ) {

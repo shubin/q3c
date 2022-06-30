@@ -706,6 +706,11 @@ static void CG_PowerupTimerSounds( void ) {
 	// powerup timers going away
 	for ( i = 0 ; i < MAX_POWERUPS ; i++ ) {
 		t = cg.snap->ps.powerups[i];
+#if defined( QC )
+		if ( i == PW_SCOUT ) {
+			continue;
+		}
+#endif
 		if ( t <= cg.time ) {
 			continue;
 		}
@@ -759,6 +764,10 @@ Generates and draws a game scene and status information at the given time.
 =================
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {
+#if defined( QC )
+	refdefex_t	*refdefex;
+#endif
+
 	int		inwater;
 
 	cg.time = serverTime;
@@ -870,6 +879,18 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 			trap_Cvar_Set("timescale", va("%f", cg_timescale.value));
 		}
 	}
+
+#if defined( QC )
+	refdefex = (refdefex_t*)(&cg.refdef + 1);
+	if ( cg.blurFactor > 0 && cg.blurFactor <= 1 ) {
+		refdefex->blurFactor = cg.blurFactor;
+		cg.refdef.rdflags |= RDF_EXTRA;
+	}
+	else {
+		refdefex->blurFactor = 0.0f;
+		cg.refdef.rdflags &= ~RDF_EXTRA;
+	}
+#endif
 
 	// actually issue the rendering calls
 	CG_DrawActive( stereoView );

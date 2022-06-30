@@ -55,7 +55,8 @@ typedef struct {
     int base_armor;
     int max_health;
     int max_armor;
-    int ability_cooldown;
+    int ability_cooldown; // seconds
+    int ability_duration; // tenths of a second
     int start_health[GT_MAX_GAME_TYPE];
     int start_armor[GT_MAX_GAME_TYPE];
     int spawn_protection[GT_MAX_GAME_TYPE];

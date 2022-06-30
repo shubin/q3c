@@ -57,6 +57,13 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 	float		into;
 	vec3_t		endVelocity;
 	vec3_t		endClipVelocity;
+#if defined( QC )
+	qboolean	sliding;
+	int			forceLength;
+	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );
+	sliding = ( pm->ps->crouchSlideTime > 0 ) && ( pm->cmd.upmove < 0 ) && pml.groundPlane;
+	forceLength = sliding ? 2 : 0;
+#endif
 	
 	numbumps = 4;
 
@@ -68,9 +75,20 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 		pm->ps->velocity[2] = ( pm->ps->velocity[2] + endVelocity[2] ) * 0.5;
 		primal_velocity[2] = endVelocity[2];
 		if ( pml.groundPlane ) {
+#if defined( QC )
+			// slide along the ground plane
+			if ( pml.groundTrace.plane.normal[2] >= MIN_WALK_NORMAL && mp->pm_slidefriction ) {
+				PM_AdjustVertically( pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, forceLength, mp->pm_slidevelocity, mp->pm_powerslide );
+			}
+			else {
+				PM_ClipVelocity( pm->ps->velocity, pml.groundTrace.plane.normal, 
+					pm->ps->velocity, OVERCLIP );
+			}
+#else
 			// slide along the ground plane
 			PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, 
 				pm->ps->velocity, OVERCLIP );
+#endif
 		}
 	}
 
@@ -155,6 +173,22 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 				pml.impactSpeed = -into;
 			}
 
+#if defined ( QC )
+			if ( planes[i][2] >= MIN_WALK_NORMAL && mp->pm_slidefriction && 0 ) { // Q4 stuff here (&& 0 because something is not right when walking along some walls)
+				PM_AdjustVertically( pm->ps->velocity, planes[i], clipVelocity, forceLength, mp->pm_slidevelocity, mp->pm_powerslide );
+				if ( gravity ) {
+					PM_AdjustVertically( endVelocity, planes[i], endClipVelocity, forceLength, mp->pm_slidevelocity, mp->pm_powerslide );
+				}
+			} else {
+				// slide along the plane
+				PM_ClipVelocity (pm->ps->velocity, planes[i], clipVelocity, OVERCLIP );
+
+				if ( gravity ) {
+					// slide along the plane
+					PM_ClipVelocity (endVelocity, planes[i], endClipVelocity, OVERCLIP );
+				}
+			}
+#else
 			// slide along the plane
 			PM_ClipVelocity (pm->ps->velocity, planes[i], clipVelocity, OVERCLIP );
 
@@ -162,6 +196,7 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 				// slide along the plane
 				PM_ClipVelocity (endVelocity, planes[i], endClipVelocity, OVERCLIP );
 			}
+#endif
 
 			// see if there is a second plane that the new move enters
 			for ( j = 0 ; j < numplanes ; j++ ) {
@@ -172,12 +207,29 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 					continue;		// move doesn't interact with the plane
 				}
 
+#if defined( QC )
+				if ( planes[j][2] >= MIN_WALK_NORMAL && mp->pm_slidefriction ) {
+					PM_AdjustVertically( clipVelocity, planes[j], clipVelocity, forceLength, mp->pm_slidevelocity, mp->pm_powerslide );
+
+					if ( gravity ) {
+						PM_AdjustVertically( endClipVelocity, planes[j], endClipVelocity, forceLength, mp->pm_slidevelocity, mp->pm_powerslide );
+					}
+				} else {
+					// try clipping the move to the plane
+					PM_ClipVelocity( clipVelocity, planes[j], clipVelocity, OVERCLIP );
+
+					if ( gravity ) {
+						PM_ClipVelocity( endClipVelocity, planes[j], endClipVelocity, OVERCLIP );
+					}
+				}
+#else
 				// try clipping the move to the plane
 				PM_ClipVelocity( clipVelocity, planes[j], clipVelocity, OVERCLIP );
 
 				if ( gravity ) {
 					PM_ClipVelocity( endClipVelocity, planes[j], endClipVelocity, OVERCLIP );
 				}
+#endif
 
 				// see if it goes back into the first clip plane
 				if ( DotProduct( clipVelocity, planes[i] ) >= 0 ) {

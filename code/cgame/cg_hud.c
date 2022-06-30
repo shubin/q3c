@@ -535,7 +535,7 @@ void hud_drawstatus( void ) {
 		26, 16, 5, 
 		whitecolor, redcolor, bluecolor );
 	x = hud_drawstring( bounds.left + 277, bounds.bottom - 190, 0.78f, &font_qcde, va( "%d", ps->stats[STAT_HEALTH] > 0 ? ps->stats[STAT_HEALTH] : 0 ), NULL, 0, 0 );
-	hud_drawstring( bounds.left + 277 + x, bounds.bottom - 190, 0.45f, &font_qcde, va( "/%d", cs->base_health ), NULL, 0, 0 );
+	hud_drawstring( bounds.left + 277 + x, bounds.bottom - 190, 0.45f, &font_qcde, va( "/%d", ps->baseHealth ), NULL, 0, 0 );
 
 	// draw armor
 	hud_drawpic( bounds.left + 230, bounds.bottom - 84, 40, 40, 0.5f, 0.5f, media.icon_armor );
@@ -754,11 +754,16 @@ int get_next_corner( int angle ) {
 }
 
 void hud_draw_ability( void ) {
+	centity_t *cent;
 	playerState_t *ps;
+	clientInfo_t *ci;
 	static float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
 	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	ps = &cg.snap->ps;
+	cent = &cg_entities[cg.snap->ps.clientNum];
+	ci = &cgs.clientinfo[cg.snap->ps.clientNum];
+
 	float overall = champion_stats[ps->champion].ability_cooldown;
 	float current = ps->ab_time;
 	float dim;
@@ -806,7 +811,24 @@ void hud_draw_ability( void ) {
 		trap_R_SetColor( white );
 		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
-		return;
+		if ( ps->champion == CHAMP_ANARKI && ci->abilityActivationTime != NULL ) {
+			current = cg.time - ci->abilityActivationTime;
+			overall = champion_stats[CHAMP_ANARKI].ability_duration * 100;
+			if ( current < 0 || current > overall ) {
+				return;
+			}
+			start_angle = 270;
+			end_angle = (int)( 270 + ( 1.0f - current/overall ) * 360);
+
+			if ( current > 0 && current < 1000 ) {
+				cg.blurFactor = 1.0f - current/1000;
+			}
+			else {
+				cg.blurFactor = 0.0f;
+			}
+		} else {
+			return;
+		}
 	}
 
 	// calculate points along the rectangle perimeter which represent the needed ring sector
@@ -862,10 +884,13 @@ void hud_draw_ability( void ) {
 			break;
 		}
 	}
-	// draw the ability timer (how many seconds left to the full recharge)
-	sec_left = champion_stats[ps->champion].ability_cooldown - ps->ab_time;
-	dim = hud_measurestring( 0.5f, &font_qcde, va( "%d", sec_left ) );
-	hud_drawstring( gaugex - dim / 2, gaugey + 15, 0.5f, &font_qcde, va( "%d", sec_left ), NULL, 0, 0 );
+
+	if ( !( ps->ab_flags & ABF_ENGAGED ) ) {
+		// draw the ability timer (how many seconds left to the full recharge)
+		sec_left = champion_stats[ps->champion].ability_cooldown - ps->ab_time;
+		dim = hud_measurestring( 0.5f, &font_qcde, va( "%d", sec_left ) );
+		hud_drawstring( gaugex - dim / 2, gaugey + 15, 0.5f, &font_qcde, va( "%d", sec_left ), NULL, 0, 0 );
+	}
 }
 
 static void hud_purgepickups( void ) {

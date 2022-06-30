@@ -395,6 +395,27 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	return qtrue;
 }
 
+#if defined( QC )
+
+static void UpdateInjection( gclient_t *client ) {
+	client->ps.ab_time++;
+	if ( client->ps.ab_time > champion_stats[CHAMP_ANARKI].ability_duration ) {
+		client->ps.ab_flags = 0;
+		client->ps.ab_time = 0;
+	}
+}
+
+static void UpdateAbility( gclient_t *client ) {
+	if ( !( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		return;
+	}
+
+	switch ( client->ps.champion ) {
+		case CHAMP_ANARKI: UpdateInjection( client ); break;
+	}
+}
+#endif
+
 /*
 ==================
 ClientTimerActions
@@ -409,8 +430,16 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 #endif
 
 	client = ent->client;
-	client->timeResidual += msec;
 
+#if defined( QC )
+	client->timeResidualHiRes += msec;
+	while ( client->timeResidualHiRes >= 100 ) {
+		client->timeResidualHiRes -= 100;
+		UpdateAbility( client );
+	}
+#endif
+
+	client->timeResidual += msec;
 	while ( client->timeResidual >= 1000 ) {
 		client->timeResidual -= 1000;
 
@@ -905,7 +934,11 @@ void ClientThink_real( gentity_t *ent ) {
 	if ( client->ps.powerups[PW_HASTE] ) {
 		client->ps.speed *= 1.3;
 	}
-
+#if defined( QC )
+	if ( client->ps.powerups[PW_SCOUT] ) {
+		client->ps.speed *= 1.2;
+	}
+#endif
 	// Let go of the hook if we aren't firing
 	if ( client->ps.weapon == WP_GRAPPLING_HOOK &&
 		client->hook && !( ucmd->buttons & BUTTON_ATTACK ) ) {

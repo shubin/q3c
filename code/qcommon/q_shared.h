@@ -1215,6 +1215,11 @@ typedef struct playerState_s {
 	int			baseHealth;
 	int			baseArmor;
 
+	int			jumpTime;
+	int			landTime;
+	int			walljumps;
+	int			crouchSlideTime;
+
 	int			ab_time;		// ability timer, semantic depends on the flags
 	int			ab_num;			// id of the entity associated with the champion (orb for Ranger)
 	int			ab_flags;		// some bits to know whats happening with ability progressing

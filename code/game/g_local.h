@@ -317,6 +317,9 @@ struct gclient_s {
 	// timeResidual is used to handle events that happen every second
 	// like health / armor countdowns and regeneration
 	int			timeResidual;
+#if defined( QC )
+	int			timeResidualHiRes; // the same as above but 10 times faster
+#endif
 
 #ifdef MISSIONPACK
 	gentity_t	*persistantPowerup;

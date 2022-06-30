@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
+#if defined( QC )
+#include "../renderergl2/tr_extratypes.h"
+#endif
 #include "../game/bg_public.h"
 #include "cg_public.h"
 
@@ -342,6 +345,9 @@ typedef struct {
 	int				invulnerabilityStopTime;
 
 	int				breathPuffTime;
+#if defined( QC )
+	int				abilityActivationTime;
+#endif
 
 	// when clientinfo is changed, the loading of models/skins/sounds
 	// can be deferred until you are dead, to prevent hitches in
@@ -533,6 +539,9 @@ typedef struct {
 	// view rendering
 	refdef_t	refdef;
 	vec3_t		refdefViewAngles;		// will be converted to refdef.viewaxis
+#if defined( QC )
+	float		blurFactor;
+#endif
 
 	// zoom key
 	qboolean	zoomed;
