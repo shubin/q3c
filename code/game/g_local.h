@@ -308,6 +308,7 @@ struct gclient_s {
 	gentity_t	*hook;				// grapple hook if out
 
 #if defined( QC )
+	qboolean	forceRespawn;
 	int			orbPassThroughTime;	// for preventing multiple orb hits while it passes through
 	int			orbEntityNum;
 #endif

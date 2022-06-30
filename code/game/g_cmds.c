@@ -487,6 +487,23 @@ void Cmd_Kill_f( gentity_t *ent ) {
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 }
 
+#if defined( QC )
+/*
+=================
+Cmd_Respawn_f
+=================
+*/
+void Cmd_Respawn_f( gentity_t *ent ) {
+	if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+		return;
+	}
+	if (ent->health > 0) {
+		return;
+	}
+	ent->client->forceRespawn = qtrue;
+}
+#endif
+
 /*
 =================
 BroadcastTeamChange
@@ -1793,6 +1810,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_Noclip_f (ent);
 	else if (Q_stricmp (cmd, "kill") == 0)
 		Cmd_Kill_f (ent);
+#if defined( QC )
+	else if (Q_stricmp (cmd, "respawn") == 0)
+		Cmd_Respawn_f (ent);
+#endif
 	else if (Q_stricmp (cmd, "teamtask") == 0)
 		Cmd_TeamTask_f (ent);
 	else if (Q_stricmp (cmd, "levelshot") == 0)

@@ -89,8 +89,20 @@ Con_ToggleMenu_f
 ===================
 */
 void Con_ToggleMenu_f( void ) {
+	int menu = -1;
+#if defined( QC )
+	if ( Cmd_Argc() == 1 ) {
+		CL_KeyEvent( K_ESCAPE, qtrue, Sys_Milliseconds() );
+		CL_KeyEvent( K_ESCAPE, qfalse, Sys_Milliseconds() );
+	}
+	menu = atoi( Cmd_Argv(1) );
+	if ( menu >= 0 ) {
+		VM_Call( uivm, UI_SET_ACTIVE_MENU, menu );
+	}
+#else
 	CL_KeyEvent( K_ESCAPE, qtrue, Sys_Milliseconds() );
 	CL_KeyEvent( K_ESCAPE, qfalse, Sys_Milliseconds() );
+#endif
 }
 
 /*

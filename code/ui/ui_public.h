@@ -146,7 +146,11 @@ typedef enum {
 	UIMENU_NEED_CD,
 	UIMENU_BAD_CD_KEY,
 	UIMENU_TEAM,
-	UIMENU_POSTGAME
+	UIMENU_POSTGAME,
+#if defined( QC )
+	UIMENU_DEATH,
+	UIMENU_CHAMPIONS,
+#endif
 } uiMenuCommand_t;
 
 #define SORT_HOST			0

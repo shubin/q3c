@@ -481,7 +481,9 @@ static void CG_ItemPickup( int itemNum ) {
 		}
 #endif
 	}
-
+#if defined( QC )
+	CG_AddPickup( itemNum );
+#endif
 }
 
 /*
@@ -1050,6 +1052,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		cg.killerInfo.powerups = cent->currentState.powerups;
 		cg.killerInfo.health = cent->currentState.time;
 		cg.killerInfo.armor = cent->currentState.time2;
+		trap_SendConsoleCommand( "togglemenu 7"); // UIMENU_DEATH, see ui_local.h
 		break;
 #endif
 

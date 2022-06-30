@@ -123,9 +123,11 @@ static void UI_SetupMenu_Event( void *ptr, int event ) {
 		UI_PreferencesMenu();
 		break;
 
+#if !defined( QC )
 	case ID_CDKEY:
 		UI_CDKeyMenu();
 		break;
+#endif
 
 //	case ID_LOAD:
 //		UI_LoadConfigMenu();

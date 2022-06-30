@@ -531,6 +531,11 @@ ClientRespawn
 ================
 */
 void ClientRespawn( gentity_t *ent ) {
+#if defined( QC )
+	if ( ent->client != NULL ) {
+		ent->client->forceRespawn = qfalse;
+	}
+#endif
 	CopyToBodyQue (ent);
 	ClientSpawn(ent);
 }
@@ -1292,11 +1297,7 @@ void ClientSpawn(gentity_t *ent) {
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR) {
 			G_KillBox(ent);
 			// force the base weapon up
-#if defined( QC )
-			client->ps.weapon = client->pers.startingWeapon;
-#else
 			client->ps.weapon = WP_MACHINEGUN;
-#endif
 			client->ps.weaponstate = WEAPON_READY;
 			// fire the targets of the spawn point
 			G_UseTargets(spawnPoint, ent);
@@ -1304,12 +1305,6 @@ void ClientSpawn(gentity_t *ent) {
 			client->ps.weapon = 1;
 
 			for (i = WP_NUM_WEAPONS - 1 ; i > 0 ; i--) {
-#if defined( QC )
-				// skip starting weapons
-				if ( i == WP_LOUSY_MACHINEGUN || i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN ) {
-					continue;
-				}
-#endif
 				if (client->ps.stats[STAT_WEAPONS] & (1 << i)) {
 					client->ps.weapon = i;
 					break;

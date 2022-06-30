@@ -697,23 +697,23 @@ void hud_drawscores_brief_ffa( void ) {
 	seconds -= tens * 10;
 
 	if ( cg.predictedPlayerState.pm_type != PM_DEAD ) {
-	if ( rank == 0 ) {
-		// if we have rank 0, then always draw our name on top
-		hud_drawscorebar_ffa( bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
-		// choose the second leader
-		other = cgs.leader1;
-		otherscore = cgs.scores1;
-		if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
-			other = cgs.leader2;
-			otherscore = cgs.scores2;
+		if ( rank == 0 ) {
+			// if we have rank 0, then always draw our name on top
+			hud_drawscorebar_ffa( bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
+			// choose the second leader
+			other = cgs.leader1;
+			otherscore = cgs.scores1;
+			if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
+				other = cgs.leader2;
+				otherscore = cgs.scores2;
+			}
+			if ( other != -1 ) {
+				hud_drawscorebar_ffa( bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
+			}
+		} else {
+			hud_drawscorebar_ffa( bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
+			hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
 		}
-		if ( other != -1 ) {
-			hud_drawscorebar_ffa( bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
-		}
-	} else {
-		hud_drawscorebar_ffa( bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
-		hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
-	}
 	}
 
 	dim = hud_measurestring( 0.65f, &font_qcde, va( "%d", mins ) );	

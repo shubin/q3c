@@ -1330,7 +1330,7 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 
 #if defined( QC )
 	case IT_HOURGLASS:
-		return ps->ab_time < champion_stats[ps->champion].ability_cooldown;
+		return ( ps->ab_time < champion_stats[ps->champion].ability_cooldown ) && ( ( ps->ab_flags & ABF_ENGAGED ) == 0 ) ;
 #endif
 
 	case IT_POWERUP:

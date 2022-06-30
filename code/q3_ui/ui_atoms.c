@@ -82,7 +82,17 @@ void UI_PushMenu( menuframework_s *menu )
 {
 	int				i;
 	menucommon_s*	item;
+#if defined( QC )
+	menuframework_s *lastmenu;
+#endif
 
+#if defined( QC )
+	if ( uis.menusp > 0 ) {
+		lastmenu = uis.stack[uis.menusp - 1];
+	} else {
+		lastmenu = NULL;
+	}
+#endif
 	// avoid stacking menus invoked by hotkeys
 	for (i=0 ; i<uis.menusp ; i++)
 	{
@@ -124,6 +134,15 @@ void UI_PushMenu( menuframework_s *menu )
 	}
 
 	uis.firstdraw = qtrue;
+#if defined( QC )
+	if ( uis.menusp > 1 ) {
+		if ( uis.stack[uis.menusp - 2] != lastmenu ) {
+			if ( lastmenu->callback != NULL ) {
+				lastmenu->callback( lastmenu, menu, QM_SINK );
+			}
+		}
+	}
+#endif
 }
 
 /*
@@ -134,6 +153,14 @@ UI_PopMenu
 void UI_PopMenu (void)
 {
 	trap_S_StartLocalSound( menu_out_sound, CHAN_LOCAL_SOUND );
+
+	#if defined( QC )
+	if ( uis.menusp > 0 ) {
+		if ( uis.stack[uis.menusp - 1]->callback != NULL ) {
+			uis.stack[uis.menusp - 1]->callback( uis.stack[uis.menusp - 1], uis.menusp > 1 ? uis.stack[uis.menusp - 2] : NULL, QM_CLOSED );
+		}
+	}
+	#endif
 
 	uis.menusp--;
 
@@ -151,6 +178,13 @@ void UI_PopMenu (void)
 
 void UI_ForceMenuOff (void)
 {
+#if defined( QC )
+	if ( uis.menusp > 0 ) {
+		if ( uis.stack[uis.menusp - 1]->callback != NULL ) {
+			uis.stack[uis.menusp - 1]->callback( uis.stack[uis.menusp - 1], NULL, QM_CLOSED );
+		}
+	}
+#endif
 	uis.menusp     = 0;
 	uis.activemenu = NULL;
 
@@ -829,9 +863,19 @@ void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 		UI_RankingsMenu();
 		return;
 		*/
+#if !defined( QC )
 		trap_Cvar_Set( "cl_paused", "1" );
+#endif
 		UI_InGameMenu();
 		return;
+#if defined( QC )
+	case UIMENU_DEATH:
+		UI_DeathMenu();
+		break;
+	case UIMENU_CHAMPIONS:
+		UI_ChampionsMenu();
+		break;
+#endif
 		
 	case UIMENU_TEAM:
 	case UIMENU_POSTGAME:

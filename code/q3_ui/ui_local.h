@@ -146,6 +146,11 @@ extern vmCvar_t	ui_ioq3;
 #define QM_GOTFOCUS				1
 #define QM_LOSTFOCUS			2
 #define QM_ACTIVATED			3
+#if defined( QC )
+#define QM_OPEN					4
+#define QM_CLOSED				5
+#define QM_SINK					6
+#endif
 
 typedef struct _tag_menuframework
 {
@@ -156,6 +161,9 @@ typedef struct _tag_menuframework
 	void *items[MAX_MENUITEMS];
 
 	void (*draw) (void);
+#if defined( QC )
+	void (*callback)( void *self, void *next, int event );
+#endif
 	sfxHandle_t (*key) (int key);
 
 	qboolean	wrapAround;
@@ -329,6 +337,17 @@ extern void UI_CreditMenu( void );
 //
 extern void InGame_Cache( void );
 extern void UI_InGameMenu(void);
+
+#if defined( QC )
+//
+// ui_death.c
+///
+extern void UI_DeathMenu( void );
+//
+// ui_ingame_champions.c
+//
+extern void UI_ChampionsMenu( void );
+#endif
 
 //
 // ui_confirm.c

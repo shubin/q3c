@@ -558,7 +558,7 @@ char* champion_models[NUM_CHAMPIONS] = {
     "visor",
     "tankjr",//"clutch",
     "keel",
-    "brandon", //"scalebearer",
+    "biker", //"scalebearer",
     "sorlag",
 };
 

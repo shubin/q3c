@@ -1093,6 +1093,11 @@ void ClientThink_real( gentity_t *ent ) {
 			if ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) {
 				ClientRespawn( ent );
 			}
+#if defined( QC )
+			if ( client->forceRespawn ) {
+				ClientRespawn( ent );
+			}
+#endif
 		}
 		return;
 	}
