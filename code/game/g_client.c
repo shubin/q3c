@@ -863,18 +863,18 @@ void ClientUserinfoChanged( int clientNum ) {
 	
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-#if defined( QC ) && 0
+#if defined( QC )
 	if (ent->r.svFlags & SVF_BOT)
 	{
-		s = va("n\\%s\\ch\\%s\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s\\tt\\%d\\tl\\%d",
-			client->pers.netname, champion_names[client->pers.champion], client->sess.sessionTeam, model, headModel, c1, c2,
+		s = va("n\\%s\\ch\\%i\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s\\tt\\%d\\tl\\%d",
+			client->pers.netname, client->pers.champion, client->sess.sessionTeam, model, headModel, c1, c2,
 			client->pers.maxHealth, client->sess.wins, client->sess.losses,
 			Info_ValueForKey( userinfo, "skill" ), teamTask, teamLeader );
 	}
 	else
 	{
-		s = va("n\\%s\\ch\\%st\\%i\\model\\%s\\hmodel\\%s\\g_redteam\\%s\\g_blueteam\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
-			client->pers.netname, champion_names[client->pers.champion], client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
+		s = va("n\\%s\\ch\\%i\\t\\%i\\model\\%s\\hmodel\\%s\\g_redteam\\%s\\g_blueteam\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
+			client->pers.netname, client->pers.champion, client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
 			client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
 	}
 #else

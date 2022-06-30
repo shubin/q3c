@@ -333,6 +333,9 @@ typedef struct {
 	int				curWeapon;
 
 	int				handicap;
+#if defined( QC )
+	int				champion;
+#endif
 	int				wins, losses;	// in tourney mode
 
 	int				teamTask;		// task in teamplay (offence/defence)

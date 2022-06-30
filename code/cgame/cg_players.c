@@ -931,6 +931,12 @@ void CG_NewClientInfo( int clientNum ) {
 	v = Info_ValueForKey( configstring, "hc" );
 	newInfo.handicap = atoi( v );
 
+#if defined( QC )
+	// champion
+	v = Info_ValueForKey( configstring, "ch" );
+	newInfo.champion = atoi( v );
+#endif
+
 	// wins
 	v = Info_ValueForKey( configstring, "w" );
 	newInfo.wins = atoi( v );
