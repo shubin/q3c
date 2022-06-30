@@ -576,7 +576,20 @@ void CG_PainEvent( centity_t *cent, int health ) {
 	cent->pe.painDirection ^= 1;
 }
 
+#if defined( QC )
+static void PlayAbilitySound( void ) {
+	int champion;
 
+	champion = cg.snap->ps.champion;
+
+	switch ( champion ) {
+		case CHAMP_ANARKI:
+			trap_S_StartSound( NULL, cg.clientNum, CHAN_BODY, cgs.media.medkitSound );
+			break;
+	}
+	trap_S_StartSound (NULL, cg.clientNum, CHAN_VOICE, CG_CustomSound( cg.clientNum, "*taunt.wav" ) );
+}
+#endif
 
 /*
 ==============
@@ -983,6 +996,8 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 #if defined( QC )
 	case EV_ACTIVATE_ABILITY:
 		DEBUGNAME("EV_ACTIVATE_ABILITY");
+		ci->abilityActivationTime = cg.time;
+		PlayAbilitySound();
 		break;
 	case EV_BOLT_HIT:
 		DEBUGNAME("EV_BOLT_HIT");
@@ -1052,6 +1067,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		cg.killerInfo.powerups = cent->currentState.powerups;
 		cg.killerInfo.health = cent->currentState.time;
 		cg.killerInfo.armor = cent->currentState.time2;
+		cg.blurFactor = 0.0f;
 		trap_SendConsoleCommand( "togglemenu 7"); // UIMENU_DEATH, see ui_local.h
 		break;
 #endif
