@@ -1042,9 +1042,10 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		DEBUGNAME("EV_DAMAGEDIR");
 		CG_AddDamageDir( cent->currentState.generic1, cent->currentState.eventParm, cent->lerpOrigin );
 		break;
-	case EV_KILLEDBY:
-		DEBUGNAME("EV_KILLEDBY");
+	case EV_KILLERINFO:
+		DEBUGNAME("EV_KILLERINFO");
 		cg.killerInfo.clientNum = cent->currentState.eventParm;
+		cg.killerInfo.champion = cent->currentState.otherEntityNum2;
 		cg.killerInfo.weapon = cent->currentState.weapon;
 		cg.killerInfo.powerups = cent->currentState.powerups;
 		cg.killerInfo.health = cent->currentState.time;

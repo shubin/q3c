@@ -1605,7 +1605,7 @@ char *eventnames[] = {
 #if defined( QC )
 	"EV_DAMAGEPLUM",
 	"EV_DAMAGEDIR",
-	"EV_KILLEDBY",
+	"EV_KILLERINFO",
 #endif
 
 //#ifdef MISSIONPACK
