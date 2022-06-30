@@ -33,6 +33,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define VIRTUAL_HEIGHT 1080
 #define VIRTUAL_ASPECT (VIRTUAL_WIDTH/(float)(VIRTUAL_HEIGHT))
 
+#define MAX_PICKUPS 8
+#define PICKUP_TIMEOUT 1500
+#define PICKUP_FADEOUTTIME 1000
+
 // list of enabled weapons, grenade launcher can also be included
 static int hud_weapons[] = { 
 		WP_MACHINEGUN,
@@ -89,6 +93,8 @@ static struct {
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
 	qhandle_t	ringgauge, ringglow, abbg;
 	qhandle_t	skillicon[NUM_CHAMPIONS];
+	qhandle_t	gradient, radgrad;
+	qhandle_t	itemicons[MAX_ITEMS];
 } media;
 
 typedef struct {
@@ -128,6 +134,14 @@ static char hud_rankmessage[64];
 static int hud_fragtime = -1;
 //cg.centerPrintTime = cg.time;
 
+typedef struct {
+	int		itemNum;
+	int		time;
+} pickup_t;
+
+static pickup_t hud_pickups[MAX_PICKUPS];
+static int hud_numpickups;
+
 void hud_initbounds( void );
 void hud_initmedia( void );
 void hud_initfonts( void );
@@ -136,6 +150,7 @@ void CG_InitQCHUD( void ) {
 	hud_initbounds();
 	hud_initmedia();
 	hud_initfonts();
+	hud_numpickups = 0;
 }
 
 void CG_SetFragMessage( const char *who ) {
@@ -164,6 +179,27 @@ void CG_SetFragMessage( const char *who ) {
 	//Q_strncpyz( hud_rankmessage, va( "%d%s place with %d", rank, suffix, score ), sizeof( hud_rankmessage ) );
 	Com_sprintf( hud_rankmessage, sizeof( hud_rankmessage ), "%d%s place with %d", rank, suffix, score );
 	hud_fragtime = cg.time;
+}
+
+void CG_AddPickup( int itemNum ) {
+	int i;
+
+	if ( hud_numpickups == MAX_PICKUPS ) { // remove the top pickup if the list is full
+		for ( i = 0; i < MAX_PICKUPS - 1; i++ ) {
+			memcpy( &hud_pickups[i], &hud_pickups[i + 1], sizeof( pickup_t ) );
+		}
+		hud_numpickups--;
+	}
+	for ( i = 0; i < hud_numpickups; i++ ) {
+		if ( hud_pickups[i].itemNum == itemNum ) { // update item pickup time if i's already in the list
+			hud_pickups[i].time = cg.time;
+			return;
+		}
+	}
+	hud_pickups[hud_numpickups].itemNum = itemNum;
+	hud_pickups[hud_numpickups].time = cg.time;
+	hud_numpickups++;
+	hud_numpickups++;
 }
 
 // setup virtual coordinates
@@ -208,8 +244,16 @@ static void hud_initmedia( void ) {
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
 		media.skillicon[i] = trap_R_RegisterShader( va("hud/skill/%s", champion_names[i] ) );
 	}
-	//media.playernamebg_brief = trap_R_RegisterShader( "hud/scoreline_brief" );
-	//media.scoreline_brief = trap_R_RegisterShader( "hud/playernamebg_brief" );
+	media.gradient = trap_R_RegisterShaderNoMip( "hud/gradient" );
+	media.radgrad = trap_R_RegisterShaderNoMip( "hud/radgrad" );
+	for ( i = 0; i < bg_numItems; i++ ) {
+		if ( bg_itemlist[i].icon != NULL && bg_itemlist[i].icon[0] )
+		{
+			media.itemicons[i] = trap_R_RegisterShader( va("hud/item%s", bg_itemlist[i].icon ) );
+		} else {
+			media.itemicons[i] = -1;
+		}
+	}
 }
 
 static void hud_initfont( font_t *font ) {
@@ -370,7 +414,7 @@ static float hud_measurecolorstring(float scale, font_t *font, const char *strin
 }
 
 // advanced version of hud_drawstring, it handles q3 color codes
-static float hud_drawcolorstring( float x, float y, float valign, float scale, font_t *font, const char *string, float *shadow, float dx, float dy ) {
+static float hud_drawcolorstring( float x, float y, float scale, font_t *font, const char *string, float *shadow, float dx, float dy ) {
 	vec4_t		color, shad;
 	const char	*s;
 	int			xx;
@@ -499,8 +543,8 @@ void hud_drawstatus( void ) {
 		bounds.left + 253, bounds.bottom - 92,
 		26, 16, 5,
 		whitecolor, redcolor, greencolor );
-	x = hud_drawstring( bounds.left + 253, bounds.bottom - 99, 0.0f, &font_qcde, va( "%d", ps->stats[STAT_ARMOR] > 0 ? ps->stats[STAT_ARMOR] : 0 ), NULL, 0, 0 );
-	hud_drawstring( bounds.left + 253 + x, bounds.bottom - 99, 0.0f, &font_qcde, va( "/%d", cs->base_armor ), NULL, 0, 0 );
+	x = hud_drawstring( bounds.left + 253, bounds.bottom - 99, 0.78f, &font_qcde, va( "%d", ps->stats[STAT_ARMOR] > 0 ? ps->stats[STAT_ARMOR] : 0 ), NULL, 0, 0 );
+	hud_drawstring( bounds.left + 253 + x, bounds.bottom - 99, 0.45f, &font_qcde, va( "/%d", cs->base_armor ), NULL, 0, 0 );
 }
 
 // draws ammo information, big one in the bottom right corner displays the current weapon ammo, and there's also vertical bar with all the weapons
@@ -620,7 +664,7 @@ void hud_drawscorebar_ffa( float y, float *color, const char *playername, int ra
 	hud_drawpic( centerx + 166, y, 43, 26, 0.0f, 0.0f, cgs.media.whiteShader );
 
 	trap_R_SetColor( NULL );
-	hud_drawcolorstring( centerx - 59, y + 21, 0.0f, 0.35f, &font_regular, playername, NULL, 0, 0 );
+	hud_drawcolorstring( centerx - 59, y + 21, 0.35f, &font_regular, playername, NULL, 0, 0 );
 	dim = hud_measurestring( 0.35f, &font_regular, va( "%d", score ) );
 	mdim = score < 0 ? hud_measurestring( 0.35f, &font_regular, "-" ) : 0;
 	hud_drawstring( centerx + 188 - dim/2 - mdim / 2, y + 21, 0.35f, &font_regular, va( "%d", score ), NULL, 0, 0 );
@@ -632,6 +676,8 @@ void hud_drawscorebar_ffa( float y, float *color, const char *playername, int ra
 void hud_drawscores_brief_ffa( void ) {
 	static float color1[] = { 0.85f/1.5f, 0.46f/1.5f, 0.18f/1.5f, 0.5f };
 	static float color2[] = { 0.26f/1.5f, 0.70f/1.5f, 0.89f/1.5f, 0.5f };
+	static float shadow[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
 
 	playerState_t *ps;
 
@@ -650,6 +696,7 @@ void hud_drawscores_brief_ffa( void ) {
 	tens = seconds / 10;
 	seconds -= tens * 10;
 
+	if ( cg.predictedPlayerState.pm_type != PM_DEAD ) {
 	if ( rank == 0 ) {
 		// if we have rank 0, then always draw our name on top
 		hud_drawscorebar_ffa( bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
@@ -667,9 +714,12 @@ void hud_drawscores_brief_ffa( void ) {
 		hud_drawscorebar_ffa( bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
 		hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
 	}
+	}
+
 	dim = hud_measurestring( 0.65f, &font_qcde, va( "%d", mins ) );	
-	hud_drawstring( centerx - 185 - dim, bounds.top + 100, 0.65f, &font_qcde, va( "%d", mins ), NULL, 0, 0 );
-	hud_drawstring( centerx - 185, bounds.top + 100, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ), NULL, 0, 0 );
+	trap_R_SetColor( NULL );
+	hud_drawstring( centerx - 185 - dim, bounds.top + 100, 0.65f, &font_qcde, va( "%d", mins ), shadow, 1, 1 );
+	hud_drawstring( centerx - 185, bounds.top + 100, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ), shadow, 1, 1 );
 }
 
 void calc_sector_point( float angle, float *x, float *y ) {
@@ -728,19 +778,23 @@ void hud_draw_ability( void ) {
 	gaugey = bounds.bottom - 160;
 	gaugesize = 128;
 
+	// ability gauge background
 	white[3] = 0.5f;
 	trap_R_SetColor( white );
 	hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.abbg );
 	trap_R_SetColor( NULL );
 
 	if ( ps->ab_time == champion_stats[ps->champion].ability_cooldown) {
+		// ability is fully charged, draw the ring and its glow
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringgauge );
 		trap_R_SetColor( yellow );
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringglow );
 		trap_R_SetColor( NULL );
+		// draw the ability icon
 		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
 		return;
 	} else {
+		// ability is not fully charged, draw the full ring semi-transparently
 		white[3] = 0.5f;
 		trap_R_SetColor( white) ;
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, media.ringgauge );
@@ -748,15 +802,16 @@ void hud_draw_ability( void ) {
 	}
 
 	if ( ps->ab_flags & ABF_ENGAGED ) {
+		// ability is enaged, so draw the icon semi-transparently
 		trap_R_SetColor( white );
 		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
 		return;
 	}
 
+	// calculate points along the rectangle perimeter which represent the needed ring sector
 	num = 0;
 	angle = start_angle;
-
 	if ( end_angle < start_angle ) {
 		end_angle += 360;
 	}
@@ -775,8 +830,8 @@ void hud_draw_ability( void ) {
 		}
 	}
 
+	// convert the points calculated above into real coordinates and render them in groups of 4
 	float scalex = gaugesize / 2, scaley = gaugesize / 2, offsetx = gaugex, offsety = gaugey;
-
 	float x0, y0, x1, y1, x2, y2, x3, y3;
 	float s0, t0, s1, t1, s2, t2, s3, t3;
 
@@ -791,6 +846,7 @@ void hud_draw_ability( void ) {
 		y2 = y[pos + 1] * scaley + offsety;	t2 = y[pos + 1] / 2.0f + 0.5f;
 		hud_translate_point( &x2, &y2 );
 		if ( pos + 2 >= num ) {
+			// not enough geometry, so the last quad is a degenerate
 			x3 = x2;
 			y3 = y2;
 			s3 = s2;
@@ -806,10 +862,53 @@ void hud_draw_ability( void ) {
 			break;
 		}
 	}
-	
+	// draw the ability timer (how many seconds left to the full recharge)
 	sec_left = champion_stats[ps->champion].ability_cooldown - ps->ab_time;
 	dim = hud_measurestring( 0.5f, &font_qcde, va( "%d", sec_left ) );
 	hud_drawstring( gaugex - dim / 2, gaugey + 15, 0.5f, &font_qcde, va( "%d", sec_left ), NULL, 0, 0 );
+}
+
+static void hud_purgepickups( void ) {
+	static pickup_t pickups[MAX_PICKUPS];
+	int i, numpickups;
+	memcpy( pickups, hud_pickups, sizeof ( pickups ) );
+	numpickups = 0;
+	for ( i = 0; i < hud_numpickups; i ++ ) {
+		if ( cg.time - pickups[i].time > PICKUP_TIMEOUT ) {
+			continue;
+		}
+		memcpy( &hud_pickups[numpickups], &pickups[i], sizeof( pickup_t ) );
+		numpickups++;
+	}
+	hud_numpickups = numpickups;
+}
+
+static void hud_drawpickups( void ) {
+	static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static float shadow[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	int i;
+	float dim, y;
+	pickup_t *p;
+
+	hud_purgepickups();
+
+	y = 80;
+
+	for ( p = hud_pickups; p < hud_pickups + hud_numpickups; p++ ) {
+		if ( cg.time - p->time > PICKUP_FADEOUTTIME ) {
+			color[3] = 1.0f - ( (float)cg.time - p->time ) / ( PICKUP_TIMEOUT - PICKUP_FADEOUTTIME );
+		}
+		else {
+			color[3] = 1.0f;
+		}
+		shadow[3] = color[3];
+		trap_R_SetColor( color );
+		hud_drawpic( bounds.right - 60, y, 32, 32, 0.5f, 0.5f, media.itemicons[p->itemNum] );
+		dim = hud_measurestring( 0.4f, &font_regular, bg_itemlist[p->itemNum].pickup_name );
+		hud_drawstring( bounds.right - 88 - dim, y + 8, 0.4f, &font_regular, bg_itemlist[p->itemNum].pickup_name, shadow, 2, 2 );
+		y += 40;
+	}
+	trap_R_SetColor( NULL );
 }
 
 /*
@@ -831,12 +930,12 @@ static void hud_drawfragmessage( void ) {
 		return;
 	}
 	shadow[3] = color[3];
-	y = 436;
+	y = bounds.top + 436;
 	w = hud_measurecolorstring( 0.5f, &font_regular, hud_fragmessage );
 	x = ( bounds.right - bounds.left - w ) / 2.0f;
 
 	trap_R_SetColor( color );
-	hud_drawcolorstring( x, y, 0.0f, 0.5f, &font_regular, hud_fragmessage, shadow, 3, 3 );
+	hud_drawcolorstring( x, y, 0.5f, &font_regular, hud_fragmessage, shadow, 3, 3 );
 	w = hud_measurestring( 0.4f, &font_regular, hud_rankmessage );
 	x = ( bounds.right - bounds.left -w ) / 2.0f;
 	color[0] = color[1] = color[2] = 0.75f;
@@ -846,6 +945,118 @@ static void hud_drawfragmessage( void ) {
 	trap_R_SetColor( NULL );
 }
 
+// dir: gradient direction, 0: left to right, 1: right to left, 2: top to bottom, 3: bottom to top
+static void hud_drawgradient( float x, float y, float w, float h, int dir ) {
+	float px[4], py[4], ps[4], pt[4];
+
+	px[0] = x; py[0] = y;
+	hud_translate_point( &px[0], &py[0] );
+	px[1] = x + w; py[1] = y;
+	hud_translate_point( &px[1], &py[1] );
+	px[2] = x + w; py[2] = y + h;
+	hud_translate_point( &px[2], &py[2] );
+	px[3] = x; py[3] = y + h;
+	hud_translate_point( &px[3], &py[3] );
+	switch ( dir ) {
+		case 1:
+			ps[0] = 1; pt[0] = 0; ps[1] = 0; pt[1] = 0; ps[2] = 0; pt[2] = 1; ps[3] = 1; pt[3] = 1;
+			break;
+		case 2:
+			ps[0] = 0; pt[0] = 0; ps[1] = 0; pt[1] = 1; ps[2] = 1; pt[2] = 1;  ps[3] = 1; pt[3] = 0;
+			break;
+		case 3:
+			ps[0] = 1; pt[0] = 0; ps[1] = 1; pt[1] = 1; ps[2] = 0; pt[2] = 1;  ps[3] = 0; pt[3] = 0;
+			break;
+		default:
+			ps[0] = 0; pt[0] = 0; ps[1] = 1; pt[1] = 0; ps[2] = 1; pt[2] = 1; ps[3] = 0; pt[3] = 1;
+			break;
+
+	}
+	trap_R_DrawQuad( 
+		px[0], py[0], ps[0], pt[0],
+		px[1], py[1], ps[1], pt[1],
+		px[2], py[2], ps[2], pt[2],
+		px[3], py[3], ps[3], pt[3],
+		media.gradient 
+	);
+}
+
+/*
+===================
+hud_drawdeathmessage
+===================
+*/
+static void hud_drawdeathmessage( void ) {
+	float dim, dim1, dim2, centerx, top;
+	char *text;
+	static float bg[4] = { 0.0f, 0.0f, 0.0f, 0.5f };
+	static float bgline[4] = { 0.76f, 0.24f, 0.26f, 0.5f };
+	static float gray[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	int i;
+
+	if ( cg.killerInfo.clientNum < 0 || cg.killerInfo.clientNum >= MAX_CLIENTS || cg.predictedPlayerState.pm_type != PM_DEAD ) {
+		return;
+	}
+
+	// measure the text
+	centerx = ( bounds.left + bounds.right ) * 0.5f;
+	top = bounds.top + 250;
+
+	text = va( "FRAGGED BY ^1%s", cg.killerInfo.clientNum >= 0 ? cgs.clientinfo[cg.killerInfo.clientNum].name : "DJIGURDA" );
+	dim = hud_measurecolorstring( 0.5f, &font_regular, text );
+	dim += 80; // weapon icon spacing
+	// draw the background
+	hud_drawbar( centerx - dim/2 - 12, top, dim + 24, 56, 0.0f, 0.0f, bg );
+	hud_drawbar( centerx - dim/2 - 12, top - 3, dim + 24, 3, 0.0f, 0.0f, bgline );
+	hud_drawbar( centerx - dim/2 - 12, top + 56, dim + 24, 3, 0.0f, 0.0f, bgline );
+	trap_R_SetColor( bg );
+	hud_drawgradient( centerx - dim/2 - 150, top, 138, 56, 1 );
+	hud_drawgradient( centerx + dim/2 + 12, top, 138, 56, 0 );
+	trap_R_SetColor( bgline );
+	hud_drawgradient( centerx - dim/2 - 150, top - 3, 138, 3, 1 );
+	hud_drawgradient( centerx - dim/2 - 150, top + 56, 138, 3, 1 );
+	hud_drawgradient( centerx + dim/2 + 12, top - 3, 138, 3, 0 );
+	hud_drawgradient( centerx + dim/2 + 12, top + 56, 138, 3, 0 );
+	black[3] = 0.6f;
+	trap_R_SetColor( black );
+	hud_drawpic_ex( centerx - 384, top + 56 + 3, 768, 256, 0, 0.5f, 1.0f, 1.0f, media.radgrad );
+	hud_drawpic_ex( centerx - 384, top - 3 - 384, 768, 384, 0, 0, 1.0f, 0.5f, media.radgrad );
+	// draw the killer face
+	trap_R_SetColor( NULL );
+	if ( cg.killerInfo.clientNum >= 0 && cg.killerInfo.clientNum < cgs.maxclients ) {
+		hud_drawpic( centerx, top - 3, 128, 128, 0.5f, 1.0f, cgs.clientinfo[cg.killerInfo.clientNum].modelIcon );
+	}
+	// draw the text
+	trap_R_SetColor( NULL );
+	hud_drawcolorstring( centerx - dim/2, top + 40, 0.5f, &font_regular, text, NULL, 0, 0 );
+	// draw means of death icon (weapon icon, ability icon, etc)
+	for ( i = 0; i < NUM_HUD_WEAPONS; i++ ) {
+		if ( hud_weapons[i] == cg.killerInfo.weapon ) {
+			trap_R_SetColor( hud_weapon_colors[i] ) ;
+			hud_drawpic( centerx + dim/2 - 80 + 12, top + 30, 80, 64,  0.0f, 0.5f, media.icon_weapon[i] );
+			trap_R_SetColor( NULL );
+			break;
+		}
+	}
+	// draw stack left
+	text = va( "STACK LEFT", cg.killerInfo.health, cg.killerInfo.armor );
+	dim = hud_measurestring( 0.3f, &font_regular, text );
+	trap_R_SetColor( gray );
+	hud_drawstring( centerx - dim/2, top + 90, 0.3f, &font_regular, text, NULL, 0, 0 );
+	trap_R_SetColor( NULL );
+	dim1 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.health ) );
+	dim2 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ) );
+	dim = dim1 + dim2 + 2 * 24 + 2 * 4 + 44;
+	dim = centerx - dim/2;
+	hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_health );
+	dim += 24 + 4;
+	dim += hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.health ), NULL, 0, 0 );
+	dim += 44;
+	hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_armor );
+	dim += 24 + 4;
+	hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ), NULL, 0, 0 );
+}
 
 /*
 =================
@@ -931,7 +1142,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 #endif
 	} else {
 		// don't draw any status if dead or the scoreboard is being explicitly shown
-		if ( !cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0 ) {
+		if ( !cg.showScores && ( cg.predictedPlayerState.pm_type != PM_DEAD ) ) {
 #if 0x0
 			//CG_DrawStatusBar();
 
@@ -943,7 +1154,21 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 			CG_DrawHoldableItem();
 			CG_DrawReward();
 #endif
+			trap_R_SetColor( NULL );
+			hud_draw_ability();
+			hud_drawstatus();
+			hud_drawammo();
+			hud_drawfragmessage();
+			hud_drawpickups();
+
+			if ( stereoFrame == STEREO_CENTER ) {
+				hud_drawcrosshair();
+			}
 		}
+	}
+	if ( !cg.showScores ) {
+		hud_drawdeathmessage();
+		hud_drawscores_brief_ffa();
 	}
 
 	if ( cgs.gametype >= GT_TEAM ) {
@@ -958,18 +1183,6 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	CG_DrawLagometer();
 #endif
 
-	trap_R_SetColor( NULL );
-
-	hud_draw_ability();
-
-
-	hud_drawstatus();
-	hud_drawammo();
-	hud_drawscores_brief_ffa();
-	if ( stereoFrame == STEREO_CENTER ) {
-		hud_drawcrosshair();
-	}
-	hud_drawfragmessage();
 
 	//hud_drawstring( bounds.left, bounds.bottom, 0.0f, 1.0f, &font_large, "Amazing ARCADII" );
 

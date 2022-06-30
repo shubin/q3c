@@ -1550,6 +1550,7 @@ void CG_DrawDamageDir( void );
 void CG_InitQCHUD( void );
 void CG_Draw2DQC( stereoFrame_t stereoFrame );
 void CG_SetFragMessage( const char *who );
+void CG_AddPickup( int itemNum );
 #endif
 
 //===============================================
