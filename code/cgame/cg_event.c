@@ -576,17 +576,6 @@ void CG_PainEvent( centity_t *cent, int health ) {
 	cent->pe.painDirection ^= 1;
 }
 
-#if defined( QC )
-static void PlayAbilitySound( int champion, int clientNum ) {
-	switch ( champion ) {
-		case CHAMP_ANARKI:
-			trap_S_StartSound( NULL, cg.clientNum, CHAN_BODY, cgs.media.medkitSound );
-			break;
-	}
-	trap_S_StartSound (NULL, clientNum, CHAN_VOICE, CG_CustomSound( clientNum, "*taunt.wav" ) );
-}
-#endif
-
 /*
 ==============
 CG_EntityEvent
@@ -992,10 +981,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 #if defined( QC )
 	case EV_ACTIVATE_ABILITY:
 		DEBUGNAME("EV_ACTIVATE_ABILITY");
-		if ( ( cg.time - ci->abilityActivationTime > 3000 ) || ( ci->abilityActivationTime == 0 ) ) {
-			PlayAbilitySound( ci->champion, es->number );
-		}
-		ci->abilityActivationTime = cg.time;
+		CG_ActivateAbility( cent );
 		break;
 	case EV_BOLT_HIT:
 		DEBUGNAME("EV_BOLT_HIT");

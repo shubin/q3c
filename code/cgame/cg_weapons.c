@@ -1861,6 +1861,65 @@ void CG_FireWeapon( centity_t *cent ) {
 	}
 }
 
+#if defined( QC )
+static void PlayAbilitySound( int champion, int clientNum ) {
+	switch ( champion ) {
+		case CHAMP_ANARKI:
+			trap_S_StartSound( NULL, cg.clientNum, CHAN_BODY, cgs.media.medkitSound );
+			break;
+	}
+	trap_S_StartSound (NULL, clientNum, CHAN_VOICE, CG_CustomSound( clientNum, "*taunt.wav" ) );
+}
+
+/*
+================
+CG_ActivateAbility
+
+Caused by an EV_ACTIVTE_ABILITY event
+================
+*/
+void CG_ActivateAbility( centity_t *cent ) {
+	entityState_t	*es;
+	int				event, c;
+	vec3_t			dir;
+	const char		*s;
+	int				clientNum;
+	clientInfo_t	*ci;
+	weaponInfo_t	*weap;
+
+	es = &cent->currentState;
+	event = es->event & ~EV_EVENT_BITS;	
+	clientNum = es->clientNum;
+	ci = &cgs.clientinfo[cent->currentState.clientNum];
+
+	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
+		clientNum = 0;
+	}
+
+	if ( ( cg.time - ci->abilityActivationTime > 3000 ) || ( ci->abilityActivationTime == 0 ) ) {
+		PlayAbilitySound( ci->champion, es->number );
+	}
+	ci->abilityActivationTime = cg.time;
+	switch ( ci->champion ) {
+		case CHAMP_KEEL:
+			weap = &cg_weapons[ WP_GRENADE_LAUNCHER ];
+			// play a sound
+			for ( c = 0 ; c < 4 ; c++ ) {
+				if ( !weap->flashSound[c] ) {
+					break;
+				}
+			}
+			if ( c > 0 ) {
+				c = rand() % c;
+				if ( weap->flashSound[c] )
+				{
+					trap_S_StartSound( NULL, es->number, CHAN_WEAPON, weap->flashSound[c] );
+				}
+			}
+			break;
+	}
+}
+#endif
 
 /*
 =================

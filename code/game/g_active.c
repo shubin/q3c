@@ -398,6 +398,10 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 #if defined( QC )
 
 static void UpdateInjection( gclient_t *client ) {
+	if ( !( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		return;
+	}
+
 	client->ps.ab_time++;
 	if ( client->ps.ab_time > champion_stats[CHAMP_ANARKI].ability_duration ) {
 		client->ps.ab_flags = 0;
@@ -405,13 +409,19 @@ static void UpdateInjection( gclient_t *client ) {
 	}
 }
 
-static void UpdateAbility( gclient_t *client ) {
-	if ( !( client->ps.ab_flags & ABF_ENGAGED ) ) {
-		return;
+static void UpdateKeelGrenades( gclient_t *client ) {
+	if ( client->ps.ab_misctime != 0 ) {
+		client->ps.ab_misctime -= 100;
+		if ( client->ps.ab_misctime < 0 ) {
+			client->ps.ab_misctime = 0;
+		}
 	}
+}
 
+static void UpdateAbility( gclient_t *client ) {
 	switch ( client->ps.champion ) {
 		case CHAMP_ANARKI: UpdateInjection( client ); break;
+		case CHAMP_KEEL: UpdateKeelGrenades( client ); break;
 	}
 }
 #endif

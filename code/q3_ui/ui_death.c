@@ -117,7 +117,7 @@ void UI_DeathMenu( void ) {
 
 	// set menu cursor to a nice location
 	uis.cursorx = 319;
-	uis.cursory = 80;
+	uis.cursory = 219;
 
 	DeathMenu_MenuInit();
 	UI_PushMenu( &s_deathmenu.menu );

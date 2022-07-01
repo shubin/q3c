@@ -704,7 +704,9 @@ gitem_t	*BG_FindItemByClass( const char *classname );
 #define	ITEM_INDEX(x) ((x)-bg_itemlist)
 
 qboolean	BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const playerState_t *ps );
-
+#if defined( QC )
+qboolean	BG_CanAbilityBeActivated( const playerState_t *ps );
+#endif
 
 // g_dmflags->integer flags
 #define	DF_NO_FALLING			8

@@ -270,6 +270,15 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 	Add_Ammo (other, ent->item->giTag, quantity);
 
 #if defined( QC )
+	if ( ( other->client != NULL ) && ( other->client->ps.champion == CHAMP_KEEL ) ) { // Keel's ability can be recharged by picking up ammo boxes
+		other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 9 );
+		if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
+			other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
+		}
+	}
+#endif
+
+#if defined( QC )
 	if ( g_gametype.integer == GT_FFA ) {
 		return AMMO_RESPAWN_FFA;
 	}
@@ -393,7 +402,7 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 //======================================================================
 
 int Pickup_Hourglass(gentity_t* ent, gentity_t* other) {
-	other->client->ps.ab_time += ent->item->quantity;
+	other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 5 );
 	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
 		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
 	}

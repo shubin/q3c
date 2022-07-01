@@ -1221,6 +1221,7 @@ typedef struct playerState_s {
 	int			crouchSlideTime;
 
 	int			ab_time;		// ability timer, semantic depends on the flags
+	int			ab_misctime;	// additional timer for various purposes (i.e. grenade timing for Keel)
 	int			ab_num;			// id of the entity associated with the champion (orb for Ranger)
 	int			ab_flags;		// some bits to know whats happening with ability progressing
 #endif

@@ -91,6 +91,8 @@ static
 gentity_t *ThrowDireOrb( gentity_t *self, vec3_t start, vec3_t dir ) {
 	gentity_t	*orb;
 
+	self->client->ps.ab_time = 0;
+
 	VectorNormalize (dir);
 
 	orb = G_Spawn();
@@ -235,7 +237,7 @@ skip_normal_backtrace:
 			return;
 		}
 	}
-trace_along_dir:
+//trace_along_dir:
 	VectorCopy( orb->r.currentOrigin, destination );
 	VectorScale( dir, -diameter, v ); // stepping back along orb movement direction using Ranger's diameter
 	VectorCopy( destination, probe );	
@@ -332,6 +334,7 @@ void G_PoisonPlayer(gentity_t* ent, gentity_t* other, qboolean direct) {
 
 static
  void ActivateInjection( gentity_t *ent ) {
+	ent->client->ps.ab_time = 0;
 	ent->health += 50;
 	if ( ent->health > champion_stats[CHAMP_ANARKI].max_health ) {
 		ent->health = champion_stats[CHAMP_ANARKI].max_health;
@@ -340,15 +343,59 @@ static
 	ent->client->ps.baseHealth++;
  }
 
+static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
+	playerState_t *ps;
+	gentity_t	*m;
+	int quadFactor;
+
+	ps = &ent->client->ps;
+
+	if ( !BG_CanAbilityBeActivated( ps ) ) {
+		return;
+	}
+	ps->ab_time -= 9;
+	ps->ab_misctime = 400;
+	ps->ab_flags &= ~ABF_ENGAGED;
+	ps->ab_flags &= ~ABF_READY;
+
+	// extra vertical velocity
+	forward[2] += 0.2f;
+	VectorNormalize( forward );
+
+	m = fire_grenade( ent, muzzle, forward );
+
+	// NERF this grenade a bit
+	m->damage = 75;
+	m->splashDamage = 75;
+	m->splashRadius = 120;
+	m->s.constantLight = 255 | ( 16 << 24 ); // red glow
+
+	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
+	m->damage *= quadFactor;
+	m->splashDamage *= quadFactor;
+}
+
 void G_ActivateAbility( gentity_t *ent ) {
 	int champ;
 	vec3_t forward, right, up, muzzle;
 
 	champ = ent->client->ps.champion;
+
+	if ( !( pm->ps->ab_flags & ABF_ENGAGED ) ) {
+		pm->ps->ab_flags |= ABF_ENGAGED;
+#if 0
+		if ( champ == CHAMP_SORLAG ) {
+			pm->ps->ab_time = 150; // throw some spit each 0.15 sec
+			pm->ps->ab_num = 5;    // do it five times
+			pm->ps->ab_flags &= ~ABF_READY;
+		}
+#endif
+	}
+
+
  	AngleVectors( ent->client->ps.viewangles, forward, right, up );
 	CalcMuzzlePointOrigin ( ent, ent->client->oldOrigin, forward, right, up, muzzle );
-
-	trap_SendServerCommand( -1, va( "print \"Ability engaged: %d\n\"", champ ) );
+	//trap_SendServerCommand( -1, va( "print \"Ability engaged: %d\n\"", champ ) );
 	switch ( champ ) {		
 		case CHAMP_ANARKI:
 			ActivateInjection( ent );
@@ -359,6 +406,9 @@ void G_ActivateAbility( gentity_t *ent ) {
 			} else {
 				ThrowDireOrb( ent, muzzle, forward );
 			}
+			break;
+		case CHAMP_KEEL:
+			ThrowGrenade( ent, muzzle, forward );
 			break;
 		//case CHAMP_SORLAG:
 		//	ThrowAcidSpit( ent, muzzle, forward );

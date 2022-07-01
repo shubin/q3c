@@ -1417,6 +1417,22 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 	return qfalse;
 }
 
+#if defined( QC )
+/*
+================
+BG_AbilityBeActivated
+
+================
+*/
+qboolean	BG_CanAbilityBeActivated( const playerState_t *ps ) {
+	switch ( ps->champion ) {
+		case CHAMP_KEEL:
+			return ps->ab_time > 9 && ps->ab_misctime == 0;
+	}
+	return ps->ab_flags & ABF_READY;
+}
+#endif
+
 //======================================================================
 
 /*

@@ -71,9 +71,9 @@ void ChampionsMenu_Cache( void );
 ChampionsMenu_Event
 =================
 */
-void ChampionsMenu_Event( void *ptr, void *next, int notification ) {
+void ChampionsMenu_Event( void *ptr, void *other, int notification ) {
 	if ( notification == QM_CLOSED ) {
-		if ( next == NULL ) {
+		if ( other == NULL ) {
 			trap_Cmd_ExecuteText( EXEC_NOW, "respawn" );
 		}
 	}
@@ -289,12 +289,14 @@ UI_ChampionsMenu
 =================
 */
 void UI_ChampionsMenu( void ) {
+	if ( uis.menusp == 0 ) {
+		// set menu cursor to a nice location
+		uis.cursorx = 319;
+		uis.cursory = 219;
+	}
+
 	// force as top level menu
 	uis.menusp = 0;  
-
-	// set menu cursor to a nice location
-	uis.cursorx = 319;
-	uis.cursory = 80;
 
 	ChampionsMenu_MenuInit();
 	UI_PushMenu( &s_championsmenu.menu );
