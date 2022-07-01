@@ -334,6 +334,7 @@ void G_PoisonPlayer(gentity_t* ent, gentity_t* other, qboolean direct) {
 
 static
  void ActivateInjection( gentity_t *ent ) {
+	ent->client->ps.ab_flags &= ~ABF_READY;
 	ent->client->ps.ab_time = 0;
 	ent->health += 50;
 	if ( ent->health > champion_stats[CHAMP_ANARKI].max_health ) {

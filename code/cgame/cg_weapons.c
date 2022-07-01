@@ -1917,6 +1917,22 @@ void CG_ActivateAbility( centity_t *cent ) {
 				}
 			}
 			break;
+		case CHAMP_RANGER:
+			weap = &cg_weapons[ WP_BFG ];
+			// play a sound
+			for ( c = 0 ; c < 4 ; c++ ) {
+				if ( !weap->flashSound[c] ) {
+					break;
+				}
+			}
+			if ( c > 0 ) {
+				c = rand() % c;
+				if ( weap->flashSound[c] )
+				{
+					trap_S_StartSound( NULL, es->number, CHAN_WEAPON, weap->flashSound[c] );
+				}
+			}
+			break;
 	}
 }
 #endif
