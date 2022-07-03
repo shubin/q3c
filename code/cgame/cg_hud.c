@@ -414,7 +414,7 @@ static float hud_measurecolorstring(float scale, font_t *font, const char *strin
 }
 
 // advanced version of hud_drawstring, it handles q3 color codes
-static float hud_drawcolorstring( float x, float y, float scale, font_t *font, const char *string, float *shadow, float dx, float dy ) {
+static float hud_drawcolorstring( float x, float y, float scale, font_t *font, const char *string, float *shadow, float dx, float dy, qboolean forceColor ) {
 	vec4_t		color, shad;
 	const char	*s;
 	int			xx;
@@ -445,14 +445,20 @@ static float hud_drawcolorstring( float x, float y, float scale, font_t *font, c
 	s = string;
 	xx = x;
 	cnt = 0;
-	color[0] = color[1] = color[2] = 1.0f;
-	color[3] = alpha;
+	if ( forceColor ) {
+		memcpy( color, cg.lastColor, sizeof( float ) * 4 );
+	} else {
+		color[0] = color[1] = color[2] = 1.0f;
+		color[3] = alpha;
+	}
 	trap_R_SetColor( color );
 	while ( *s && cnt < 32768 ) {
 		if ( Q_IsColorString( s ) ) {
+			if ( !forceColor ) {
 				memcpy( color, g_color_table[ColorIndex(*(s+1))], sizeof( float ) * 3 );
 				color[3] = alpha;
 				trap_R_SetColor( color );
+			}
 			s += 2;
 			continue;
 		}
@@ -520,6 +526,10 @@ void hud_drawstatus( void ) {
 	static float bluecolor[] = { 0.25f, 0.8f, 1.0f, 1.0f };
 	static float greencolor[] = { 0.4f, 1.0f, 0.26f, 1.0f };
 
+	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
+
 	ps = &cg.snap->ps;
 	cent = &cg_entities[cg.snap->ps.clientNum];
 	ci = &cgs.clientinfo[ ps->clientNum ];
@@ -560,6 +570,10 @@ void hud_drawammo( void ) {
 
 	ps = &cg.snap->ps;
 	cent = &cg_entities[cg.snap->ps.clientNum];
+
+	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
 
 	// currently selected weapon
 	weapon = cent->currentState.weapon;
@@ -664,7 +678,7 @@ void hud_drawscorebar_ffa( float y, float *color, const char *playername, int ra
 	hud_drawpic( centerx + 166, y, 43, 26, 0.0f, 0.0f, cgs.media.whiteShader );
 
 	trap_R_SetColor( NULL );
-	hud_drawcolorstring( centerx - 59, y + 21, 0.35f, &font_regular, playername, NULL, 0, 0 );
+	hud_drawcolorstring( centerx - 59, y + 21, 0.35f, &font_regular, playername, NULL, 0, 0, qfalse );
 	dim = hud_measurestring( 0.35f, &font_regular, va( "%d", score ) );
 	mdim = score < 0 ? hud_measurestring( 0.35f, &font_regular, "-" ) : 0;
 	hud_drawstring( centerx + 188 - dim/2 - mdim / 2, y + 21, 0.35f, &font_regular, va( "%d", score ), NULL, 0, 0 );
@@ -672,23 +686,12 @@ void hud_drawscorebar_ffa( float y, float *color, const char *playername, int ra
 	hud_drawstring( centerx - 84 - dim/2, y + 21, 0.35f, &font_regular, va( "%d", rank ), NULL, 0, 0 );
 }
 
-// brief score bar for FFA, along with the timer
-void hud_drawscores_brief_ffa( void ) {
-	static float color1[] = { 0.85f/1.5f, 0.46f/1.5f, 0.18f/1.5f, 0.5f };
-	static float color2[] = { 0.26f/1.5f, 0.70f/1.5f, 0.89f/1.5f, 0.5f };
+void hud_drawtimer( float x, float y ) {
 	static float shadow[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-
-	playerState_t *ps;
-
 	int	mins, seconds, tens, msec;
-	float dim, centerx;
-	int rank, other, otherscore;
+	float dim;
 
-	ps = &cg.snap->ps;
-	rank = ps->persistant[PERS_RANK] & ( RANK_TIED_FLAG - 1 );
-
-	centerx = 0.5f * ( bounds.left + bounds.right );
 	msec = cg.time - cgs.levelStartTime;
 	seconds = msec / 1000;
 	mins = seconds / 60;
@@ -696,30 +699,143 @@ void hud_drawscores_brief_ffa( void ) {
 	tens = seconds / 10;
 	seconds -= tens * 10;
 
-	if ( cg.predictedPlayerState.pm_type != PM_DEAD ) {
-		if ( rank == 0 ) {
-			// if we have rank 0, then always draw our name on top
-			hud_drawscorebar_ffa( bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
-			// choose the second leader
-			other = cgs.leader1;
-			otherscore = cgs.scores1;
-			if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
-				other = cgs.leader2;
-				otherscore = cgs.scores2;
-			}
-			if ( other != -1 ) {
-				hud_drawscorebar_ffa( bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
-			}
-		} else {
-			hud_drawscorebar_ffa( bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
-			hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
-		}
-	}
-
 	dim = hud_measurestring( 0.65f, &font_qcde, va( "%d", mins ) );	
 	trap_R_SetColor( NULL );
-	hud_drawstring( centerx - 185 - dim, bounds.top + 100, 0.65f, &font_qcde, va( "%d", mins ), shadow, 1, 1 );
-	hud_drawstring( centerx - 185, bounds.top + 100, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ), shadow, 1, 1 );
+	hud_drawstring( x - dim, y, 0.65f, &font_qcde, va( "%d", mins ), shadow, 1, 1 );
+	hud_drawstring( x, y, 0.65f, &font_qcde, va( ":%d%d", tens, seconds ), shadow, 1, 1 );
+}
+
+// brief score bar for FFA, along with the timer
+void hud_drawscores_brief_ffa( void ) {
+	static float color1[] = { 0.85f/1.5f, 0.46f/1.5f, 0.18f/1.5f, 0.5f };
+	static float color2[] = { 0.26f/1.5f, 0.70f/1.5f, 0.89f/1.5f, 0.5f };
+
+	playerState_t *ps;
+
+	float centerx;
+	int rank, other, otherscore;
+
+	if ( cgs.gametype != GT_FFA ) {
+		return;
+	}
+
+	if ( cg.showScores ) {
+		return;
+	}
+
+	centerx = 0.5f * ( bounds.left + bounds.right );
+
+	if ( cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		hud_drawtimer( centerx - 8, bounds.top + 100 );
+		return;
+	}
+	hud_drawtimer( centerx - 185, bounds.top + 100 );
+
+	ps = &cg.snap->ps;
+	rank = ps->persistant[PERS_RANK] & ( RANK_TIED_FLAG - 1 );
+
+	if ( rank == 0 ) {
+		// if we have rank 0, then always draw our name on top
+		hud_drawscorebar_ffa( bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
+		// choose the second leader
+		other = cgs.leader1;
+		otherscore = cgs.scores1;
+		if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
+			other = cgs.leader2;
+			otherscore = cgs.scores2;
+		}
+		if ( other != -1 ) {
+			hud_drawscorebar_ffa( bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
+		}
+	} else {
+		hud_drawscorebar_ffa( bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
+		hud_drawscorebar_ffa( bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
+	}
+}
+
+void hud_drawscores_brief_tournament( void ) {
+	playerState_t *ps;
+	static float color1[] = { 0.12f, 0.38f, 0.53f, 0.8f };
+	static float color2[] = { 0.42f, 0.07f, 0.07f, 0.8f };
+	static float black[] = { 0.0f, 0.0f, 0.0f, 0.8f };
+	static float gray[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	const char *text;
+	float centerx, dim;
+	int enemyNum, enemyScore, myScore;
+	clientInfo_t *enemyInfo;
+
+	if ( cgs.gametype != GT_TOURNAMENT ) {
+		return;
+	}
+
+	if ( cg.showScores ) {
+		return;
+	}
+
+	centerx = ( bounds.left + bounds.right ) / 2;
+	hud_drawtimer( centerx - 8, bounds.top + 84 );
+	
+	//if ( cg.predictedPlayerState.pm_type == PM_DEAD ) {
+	//	return;
+	//}
+
+	ps = &cg.snap->ps;
+	if ( cgs.leader1 == cg.clientNum ) {
+		enemyNum = cgs.leader2;
+		enemyScore = cgs.scores2;
+		myScore = cgs.scores1;
+	} else {
+		enemyNum = cgs.leader1;
+		enemyScore = cgs.scores1;
+		myScore = cgs.scores2;
+	}
+
+	// big red bars with scores
+	hud_drawbar( centerx - 209, bounds.top + 23, 129, 69, 0.0f, 0.0f, color1 );
+	hud_drawbar( centerx + 80,  bounds.top + 23, 129, 69, 0.0f, 0.0f, color2 );
+	// small black bars for nicknames
+	hud_drawbar( centerx - 301, bounds.top + 92, 221, 21, 0.0f, 0.0f, black );
+	hud_drawbar( centerx + 80,  bounds.top + 92, 221, 21, 0.0f, 0.0f, black );
+
+	black[3] = 1.0f;
+	// left player icon backgound
+	hud_drawbar( centerx - 250, bounds.top + 55, 62, 62, 0.5f, 0.5f, gray );
+	hud_drawbar( centerx - 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, black );
+
+	// right player icon background
+	hud_drawbar( centerx + 250, bounds.top + 55, 62, 62, 0.5f, 0.5f, gray );
+	hud_drawbar( centerx + 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, black );
+
+	// player icons
+	hud_drawpic( centerx - 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, cgs.clientinfo[cg.clientNum].modelIcon );
+	if ( enemyScore != SCORE_NOT_PRESENT ) {
+		hud_drawpic( centerx + 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, cgs.clientinfo[enemyNum].modelIcon );
+	}
+
+	// player score
+	text = va( "%d", myScore );
+	dim = hud_measurestring( 1.0f, &font_qcde, text );
+	trap_R_SetColor( NULL );
+	hud_drawstring( centerx - 143 - dim/2, bounds.top + 84, 1.0f, &font_qcde, text, NULL, 0, 0 );
+
+	if ( enemyScore != SCORE_NOT_PRESENT ) {
+		// enemy score
+		text = va( "%d", enemyScore );
+		dim = hud_measurestring( 1.0f, &font_qcde, text );
+		trap_R_SetColor( NULL );
+		hud_drawstring( centerx + 143 - dim/2, bounds.top + 84, 1.0f, &font_qcde, text, NULL, 0, 0 );
+	}
+
+	// player name
+	dim = hud_measurecolorstring( 0.3f, &font_regular, cgs.clientinfo[cg.clientNum].name );
+	trap_R_SetColor( gray );
+	hud_drawcolorstring(centerx - 88 - dim, bounds.top + 108, 0.3f, &font_regular, cgs.clientinfo[cg.clientNum].name, NULL, 0, 0, qtrue );
+
+	if ( enemyScore != SCORE_NOT_PRESENT ) {
+		// enemy name
+		trap_R_SetColor( gray );
+		hud_drawcolorstring(centerx + 88, bounds.top + 108, 0.3f, &font_regular, cgs.clientinfo[enemyNum].name, NULL, 0, 0, qtrue );
+	}
 }
 
 void calc_sector_point( float angle, float *x, float *y ) {
@@ -759,6 +875,10 @@ void hud_draw_ability( void ) {
 	clientInfo_t *ci;
 	static float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
 	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
 
 	ps = &cg.snap->ps;
 	cent = &cg_entities[cg.snap->ps.clientNum];
@@ -811,7 +931,7 @@ void hud_draw_ability( void ) {
 		trap_R_SetColor( white );
 		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
-		if ( ps->champion == CHAMP_ANARKI && ci->abilityActivationTime != NULL ) {
+		if ( ps->champion == CHAMP_ANARKI && ci->abilityActivationTime != 0 ) {
 			current = cg.time - ci->abilityActivationTime;
 			overall = champion_stats[CHAMP_ANARKI].ability_duration * 100;
 			if ( current < 0 || current > overall ) {
@@ -915,6 +1035,10 @@ static void hud_drawpickups( void ) {
 	float dim, y;
 	pickup_t *p;
 
+	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
+
 	hud_purgepickups();
 
 	y = 80;
@@ -950,6 +1074,10 @@ static void hud_drawfragmessage( void ) {
 		return;
 	}
 
+	if ( cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
+
 	color = CG_FadeColor( hud_fragtime, 1000 * cg_centertime.value );
 	if ( !color ) {
 		return;
@@ -960,7 +1088,7 @@ static void hud_drawfragmessage( void ) {
 	x = ( bounds.right - bounds.left - w ) / 2.0f;
 
 	trap_R_SetColor( color );
-	hud_drawcolorstring( x, y, 0.5f, &font_regular, hud_fragmessage, shadow, 3, 3 );
+	hud_drawcolorstring( x, y, 0.5f, &font_regular, hud_fragmessage, shadow, 3, 3, qfalse );
 	w = hud_measurestring( 0.4f, &font_regular, hud_rankmessage );
 	x = ( bounds.right - bounds.left -w ) / 2.0f;
 	color[0] = color[1] = color[2] = 0.75f;
@@ -1020,7 +1148,11 @@ static void hud_drawdeathmessage( void ) {
 	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	int i;
 
-	if ( cg.killerInfo.clientNum < 0 || cg.killerInfo.clientNum >= MAX_CLIENTS || cg.predictedPlayerState.pm_type != PM_DEAD ) {
+	if ( cg.killerInfo.clientNum < 0 || 
+		cg.killerInfo.clientNum >= MAX_CLIENTS || 
+		cg.predictedPlayerState.pm_type != PM_DEAD || 
+		cg.showScores ) 
+	{
 		return;
 	}
 
@@ -1028,7 +1160,7 @@ static void hud_drawdeathmessage( void ) {
 	centerx = ( bounds.left + bounds.right ) * 0.5f;
 	top = bounds.top + 250;
 
-	text = va( "FRAGGED BY ^1%s", cg.killerInfo.clientNum >= 0 ? cgs.clientinfo[cg.killerInfo.clientNum].name : "DJIGURDA" );
+	text = va( "FRAGGED BY ^1%s", cgs.clientinfo[cg.killerInfo.clientNum].name );
 	dim = hud_measurecolorstring( 0.5f, &font_regular, text );
 	dim += 80; // weapon icon spacing
 	// draw the background
@@ -1054,7 +1186,7 @@ static void hud_drawdeathmessage( void ) {
 	}
 	// draw the text
 	trap_R_SetColor( NULL );
-	hud_drawcolorstring( centerx - dim/2, top + 40, 0.5f, &font_regular, text, NULL, 0, 0 );
+	hud_drawcolorstring( centerx - dim/2, top + 40, 0.5f, &font_regular, text, NULL, 0, 0, qfalse );
 	// draw means of death icon (weapon icon, ability icon, etc)
 	for ( i = 0; i < NUM_HUD_WEAPONS; i++ ) {
 		if ( hud_weapons[i] == cg.killerInfo.weapon ) {
@@ -1094,6 +1226,10 @@ static void hud_drawcrosshair(void)
 	qhandle_t	hShader;
 	float		f;
 	int			ca;
+
+	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+		return;
+	}
 
 	if ( !cg_drawCrosshair.integer ) {
 		return;
@@ -1165,36 +1301,21 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 			CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 #endif
-	} else {
-		// don't draw any status if dead or the scoreboard is being explicitly shown
-		if ( !cg.showScores && ( cg.predictedPlayerState.pm_type != PM_DEAD ) ) {
-#if 0x0
-			//CG_DrawStatusBar();
-
-			CG_DrawAmmoWarning();
-			if(stereoFrame == STEREO_CENTER)
-				CG_DrawCrosshair();
-			CG_DrawCrosshairNames();
-			CG_DrawWeaponSelect();
-			CG_DrawHoldableItem();
-			CG_DrawReward();
-#endif
-			trap_R_SetColor( NULL );
-			hud_draw_ability();
-			hud_drawstatus();
-			hud_drawammo();
-			hud_drawfragmessage();
-			hud_drawpickups();
-
-			if ( stereoFrame == STEREO_CENTER ) {
-				hud_drawcrosshair();
-			}
-		}
+		return;
 	}
-	if ( !cg.showScores ) {
-		hud_drawdeathmessage();
-		hud_drawscores_brief_ffa();
+
+	trap_R_SetColor( NULL );
+	hud_draw_ability();
+	hud_drawstatus();
+	hud_drawammo();
+	hud_drawfragmessage();
+	hud_drawpickups();
+	hud_drawscores_brief_tournament();
+	hud_drawscores_brief_ffa();
+	if ( stereoFrame == STEREO_CENTER ) {
+		hud_drawcrosshair();
 	}
+	hud_drawdeathmessage();
 
 	if ( cgs.gametype >= GT_TEAM ) {
 #if 0x0
