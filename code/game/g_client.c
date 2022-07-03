@@ -1055,7 +1055,7 @@ void ClientBegin( int clientNum ) {
 	ClientSpawn( ent );
 #if defined( QC )
 	client->ps.ab_time = champion_stats[client->ps.champion].ability_cooldown;
-	client->ps.ab_flags == ABF_READY;
+	client->ps.ab_flags = ABF_READY;
 #endif
 
 	if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
