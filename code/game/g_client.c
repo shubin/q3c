@@ -1092,6 +1092,9 @@ void ClientSpawn(gentity_t *ent) {
 	int		savedPing;
 //	char	*savedAreaBits;
 	int		accuracy_hits, accuracy_shots;
+#if defined( QC )
+	wepstat_t	wepstat[WP_NUM_WEAPONS];
+#endif
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
 #if defined( QC )
@@ -1168,6 +1171,9 @@ void ClientSpawn(gentity_t *ent) {
 //	savedAreaBits = client->areabits;
 	accuracy_hits = client->accuracy_hits;
 	accuracy_shots = client->accuracy_shots;
+#if defined( QC )
+	memcpy( wepstat, client->wepstat, sizeof( wepstat ) );
+#endif
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
 	}
@@ -1181,6 +1187,9 @@ void ClientSpawn(gentity_t *ent) {
 //	client->areabits = savedAreaBits;
 	client->accuracy_hits = accuracy_hits;
 	client->accuracy_shots = accuracy_shots;
+#if defined( QC )
+	memcpy( client->wepstat, wepstat, sizeof( wepstat ) );
+#endif
 	client->lastkilled_client = -1;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
@@ -1236,6 +1245,9 @@ void ClientSpawn(gentity_t *ent) {
 	ent->r.contents = CONTENTS_BODY;
 	ent->clipmask = MASK_PLAYERSOLID;
 	ent->die = player_die;
+#if defined( QC )
+	ent->pain = player_pain;
+#endif
 	ent->waterlevel = 0;
 	ent->watertype = 0;
 	ent->flags = 0;

@@ -1474,6 +1474,14 @@ typedef enum _flag_status {
 } flagStatus_t;
 
 
+#if defined( QC )
+typedef struct {
+	int shots;
+	int hits;
+	int damage;
+	int score;
+} wepstat_t;
+#endif
 
 #define	MAX_GLOBAL_SERVERS				4096
 #define	MAX_OTHER_SERVERS					128

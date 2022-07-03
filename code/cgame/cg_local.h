@@ -303,6 +303,9 @@ typedef struct {
 	int				captures;
 	qboolean	perfect;
 	int				team;
+#if defined( QC )
+	wepstat_t		wepstat[WP_NUM_WEAPONS];
+#endif
 } score_t;
 
 // each client has an associated clientInfo_t

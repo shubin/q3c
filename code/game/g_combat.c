@@ -500,6 +500,27 @@ void CheckAlmostScored( gentity_t *self, gentity_t *attacker ) {
 	}
 }
 
+#if defined( QC )
+/*
+==================
+player_pain
+==================
+*/
+void player_pain( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage ) {
+	if ( self->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+
+	if ( level.intermissiontime ) {
+		return;
+	}
+
+	if ( attacker != NULL && attacker->client != NULL ) {
+		attacker->client->wepstat[inflictor->s.weapon].damage += damage;
+	}
+}
+#endif
+
 /*
 ==================
 player_die
@@ -530,6 +551,10 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		ringout = qtrue;
 	} else {
 		ringout = qfalse;
+	}
+	if ( attacker != NULL && attacker->client != NULL ) {
+		attacker->client->wepstat[inflictor->s.weapon].score++;
+		attacker->client->wepstat[inflictor->s.weapon].damage += damage;
 	}
 #endif
 
@@ -1186,7 +1211,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			targ->die (targ, inflictor, attacker, take, mod);
 			return;
 		} else if ( targ->pain ) {
+#if defined( QC )
+			targ->pain (targ, inflictor, attacker, take);
+#else
 			targ->pain (targ, attacker, take);
+#endif
 		}
 	}
 
@@ -1302,10 +1331,17 @@ qboolean CanDamage (gentity_t *targ, vec3_t origin) {
 G_RadiusDamage
 ============
 */
+#if defined( QC )
+qboolean G_RadiusDamage ( vec3_t origin, gentity_t *inflictor, float damage, float radius,
+#else
 qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, float radius,
-					 gentity_t *ignore, int mod) {
+#endif
+	gentity_t *ignore, int mod) {
 	float		points, dist;
 	gentity_t	*ent;
+#if defined( QC )
+	gentity_t	*attacker = inflictor->parent;
+#endif
 	int			entityList[MAX_GENTITIES];
 	int			numListedEntities;
 	vec3_t		mins, maxs;
@@ -1313,6 +1349,7 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 	vec3_t		dir;
 	int			i, e;
 	qboolean	hitClient = qfalse;
+
 
 	if ( radius < 1 ) {
 		radius = 1;
@@ -1359,7 +1396,11 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 			// push the center of mass higher than the origin so players
 			// get knocked into the air more
 			dir[2] += 24;
+#if defined( QC )
+			G_Damage (ent, inflictor, attacker, dir, origin, (int)points, DAMAGE_RADIUS, mod);
+#else
 			G_Damage (ent, NULL, attacker, dir, origin, (int)points, DAMAGE_RADIUS, mod);
+#endif
 		}
 	}
 

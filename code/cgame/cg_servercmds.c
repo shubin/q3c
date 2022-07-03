@@ -64,6 +64,75 @@ CG_ParseScores
 
 =================
 */
+#if defined( QC )
+
+static int s_currentArg;
+
+static void CG_BeginParseScores( void ) {
+	s_currentArg = 1;
+}
+
+static const char *CG_NextScoreValue( void ) {
+	return CG_Argv( s_currentArg++ );
+}
+
+static void CG_ParseScores( void ) {
+	int		i, powerups;
+	int		w;
+
+	CG_BeginParseScores();
+
+	cg.numScores = atoi( CG_NextScoreValue() );
+	if ( cg.numScores > MAX_CLIENTS ) {
+		cg.numScores = MAX_CLIENTS;
+	}
+
+	cg.teamScores[0] = atoi( CG_NextScoreValue() );
+	cg.teamScores[1] = atoi( CG_NextScoreValue() );
+
+	memset( cg.scores, 0, sizeof( cg.scores ) );
+	for ( i = 0 ; i < cg.numScores ; i++ ) {
+		//
+		cg.scores[i].client =				atoi( CG_NextScoreValue() );
+		cg.scores[i].score =				atoi( CG_NextScoreValue() );
+		cg.scores[i].ping =					atoi( CG_NextScoreValue() );
+		cg.scores[i].time =					atoi( CG_NextScoreValue() );
+		cg.scores[i].scoreFlags =			atoi( CG_NextScoreValue() );
+		powerups =							atoi( CG_NextScoreValue() );
+		cg.scores[i].accuracy =				atoi( CG_NextScoreValue() );
+		cg.scores[i].impressiveCount =		atoi( CG_NextScoreValue() );
+		cg.scores[i].excellentCount =		atoi( CG_NextScoreValue() );
+		cg.scores[i].guantletCount =		atoi( CG_NextScoreValue() );
+		cg.scores[i].defendCount =			atoi( CG_NextScoreValue() );
+		cg.scores[i].assistCount =			atoi( CG_NextScoreValue() );
+		cg.scores[i].perfect =				atoi( CG_NextScoreValue() );
+		cg.scores[i].captures =				atoi( CG_NextScoreValue() );
+
+		if ( cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS ) {
+			cg.scores[i].client = 0;
+		}
+		cgs.clientinfo[ cg.scores[i].client ].score = cg.scores[i].score;
+		cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
+
+		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
+		//Com_Printf( "WEAPON STATS\n" );
+		for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
+			cg.scores[i].wepstat[w].shots =		atoi( CG_NextScoreValue() );
+			cg.scores[i].wepstat[w].hits =		atoi( CG_NextScoreValue() );
+			cg.scores[i].wepstat[w].damage =	atoi( CG_NextScoreValue() );
+			cg.scores[i].wepstat[w].score =		atoi( CG_NextScoreValue() );
+			//Com_Printf( "%d, %d: %d %d %d %d; acc: %d%c\n", i, w, 
+			//	cg.scores[i].wepstat[w].shots,
+			//	cg.scores[i].wepstat[w].hits,
+			//	cg.scores[i].wepstat[w].damage,
+			//	cg.scores[i].wepstat[w].score,
+			//	(int)(cg.scores[i].wepstat[w].hits/(float)cg.scores[i].wepstat[w].shots * 100),
+			//	'%'
+			//);
+		}
+	}
+}
+#else
 static void CG_ParseScores( void ) {
 	int		i, powerups;
 
@@ -106,6 +175,8 @@ static void CG_ParseScores( void ) {
 #endif
 
 }
+
+#endif
 
 #if defined( QC )
 /*

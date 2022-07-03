@@ -134,7 +134,11 @@ struct gentity_s {
 	void		(*blocked)(gentity_t *self, gentity_t *other);
 	void		(*touch)(gentity_t *self, gentity_t *other, trace_t *trace);
 	void		(*use)(gentity_t *self, gentity_t *other, gentity_t *activator);
+	#if defined( QC )
+	void		(*pain)(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage);
+	#else
 	void		(*pain)(gentity_t *self, gentity_t *attacker, int damage);
+	#endif
 	void		(*die)(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 
 	int			pain_debounce_time;
@@ -288,6 +292,9 @@ struct gclient_s {
 
 	int			accuracy_shots;		// total number of shots
 	int			accuracy_hits;		// total number of hits
+#if defined( QC )
+	wepstat_t	wepstat[WP_NUM_WEAPONS]; // per-weapon stats
+#endif
 
 	//
 	int			lastkilled_client;	// last client that this client killed
@@ -502,7 +509,11 @@ const char *BuildShaderStateConfig( void );
 //
 qboolean CanDamage (gentity_t *targ, vec3_t origin);
 void G_Damage (gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod);
+#if defined( QC )
+qboolean G_RadiusDamage (vec3_t origin, gentity_t *inflictor, float damage, float radius, gentity_t *ignore, int mod);
+#else
 qboolean G_RadiusDamage (vec3_t origin, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod);
+#endif
 int G_InvulnerabilityEffect( gentity_t *targ, vec3_t dir, vec3_t point, vec3_t impactpoint, vec3_t bouncedir );
 void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath );
 void TossClientItems( gentity_t *self );
@@ -587,6 +598,9 @@ void BeginIntermission (void);
 void InitBodyQue (void);
 void ClientSpawn( gentity_t *ent );
 void player_die (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
+#if defined( QC )
+void player_pain (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage);
+#endif
 void AddScore( gentity_t *ent, vec3_t origin, int score );
 void CalculateRanks( void );
 qboolean SpotWouldTelefrag( gentity_t *spot );

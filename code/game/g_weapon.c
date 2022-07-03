@@ -213,6 +213,9 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
 			tent->s.eventParm = traceEnt->s.number;
 			if( LogAccuracyHit( traceEnt, ent ) ) {
 				ent->client->accuracy_hits++;
+	#if defined( QC )
+				ent->client->wepstat[ent->s.weapon].hits++;
+	#endif
 			}
 		} else {
 			tent = G_TempEntity( tr.endpos, EV_BULLET_HIT_WALL );
@@ -389,7 +392,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	float		r, u, radius;
 	vec3_t		end;
 	vec3_t		forward, right, up;
-	qboolean	hitClient = qfalse;
+	qboolean	hitClient = qfalse, hit = qfalse;
 
 	// derive the right and up vectors from the forward vector, because
 	// the client won't have any other information
@@ -401,6 +404,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	if ( ShotgunPellet( origin, end, ent ) && !hitClient ) {
 		hitClient = qtrue;
 		ent->client->accuracy_hits++;
+		hit = qtrue;
 	}
 
 	radius = SHOTGUN_SPREAD / 3.0f;
@@ -414,8 +418,12 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 			if( ShotgunPellet( origin, end, ent ) && !hitClient ) {
 				hitClient = qtrue;
 				ent->client->accuracy_hits++;
+				hit = qtrue;
 			}
 		}
+	}
+	if ( hit ) {
+		ent->client->wepstat[ent->s.weapon].hits++;
 	}
 }
 
@@ -424,7 +432,7 @@ void LousyShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *en
 	float		r, u, radius;
 	vec3_t		end;
 	vec3_t		forward, right, up;
-	qboolean	hitClient = qfalse;
+	qboolean	hitClient = qfalse, hit = qfalse;
 
 	// derive the right and up vectors from the forward vector, because
 	// the client won't have any other information
@@ -436,6 +444,7 @@ void LousyShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *en
 	if ( ShotgunPellet( origin, end, ent ) && !hitClient ) {
 		hitClient = qtrue;
 		ent->client->accuracy_hits++;
+		hit = qtrue;
 	}
 
 	radius = SHOTGUN_SPREAD / 3.0f;
@@ -449,8 +458,12 @@ void LousyShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *en
 			if( ShotgunPellet( origin, end, ent ) && !hitClient ) {
 				hitClient = qtrue;
 				ent->client->accuracy_hits++;
+				hit = qtrue;
 			}
 		}
+	}
+	if ( hit ) {
+		ent->client->wepstat[ent->s.weapon].hits++;
 	}
 }
 
@@ -777,6 +790,9 @@ void weapon_railgun_fire (gentity_t *ent) {
 			ent->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 		}
 		ent->client->accuracy_hits++;
+#if defined( QC )
+		ent->client->wepstat[ent->s.weapon].hits++;
+#endif
 	}
 
 }
@@ -885,6 +901,9 @@ void Weapon_LightningFire( gentity_t *ent ) {
 #endif
 			if( LogAccuracyHit( traceEnt, ent ) ) {
 				ent->client->accuracy_hits++;
+#if defined( QC )
+				ent->client->wepstat[ent->s.weapon].hits++;
+#endif
 			}
 			G_Damage( traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_LIGHTNING);
 		}
@@ -1046,6 +1065,9 @@ void FireWeapon( gentity_t *ent ) {
 		}
 #else
 		ent->client->accuracy_shots++;
+#if defined( QC )
+		ent->client->wepstat[ent->s.weapon].shots++;
+#endif
 #endif
 	}
 

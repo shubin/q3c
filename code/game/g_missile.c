@@ -83,9 +83,17 @@ void G_ExplodeMissile( gentity_t *ent ) {
 
 	// splash damage
 	if ( ent->splashDamage ) {
+#if defined( QC )
+		if( G_RadiusDamage( ent->r.currentOrigin, ent, ent->splashDamage, ent->splashRadius, ent
+			, ent->splashMethodOfDeath ) ) {
+#else
 		if( G_RadiusDamage( ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent
 			, ent->splashMethodOfDeath ) ) {
+#endif
 			g_entities[ent->r.ownerNum].client->accuracy_hits++;
+	#if defined( QC )
+			g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
+	#endif
 		}
 	}
 
@@ -323,6 +331,9 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 			if( LogAccuracyHit( other, &g_entities[ent->r.ownerNum] ) ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
+	#if defined( QC )
+				g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
+	#endif
 				hitClient = qtrue;
 			}
 			BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, velocity );
@@ -440,10 +451,17 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 	// splash damage (doesn't apply to person directly hit)
 	if ( ent->splashDamage ) {
+#if defined( QC )
+		if( G_RadiusDamage( trace->endpos, ent, ent->splashDamage, ent->splashRadius, 
+#else
 		if( G_RadiusDamage( trace->endpos, ent->parent, ent->splashDamage, ent->splashRadius, 
+#endif
 			other, ent->splashMethodOfDeath ) ) {
 			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
+	#if defined( QC )
+				g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
+	#endif
 			}
 		}
 	}
@@ -631,6 +649,9 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_PLASMAGUN;
+#if defined( QC )
+	bolt->s.constantLight = 0x1F7F7F3F;
+#endif
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
 	bolt->damage = 20;
