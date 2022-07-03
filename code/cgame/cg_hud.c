@@ -1310,12 +1310,12 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	hud_drawammo();
 	hud_drawfragmessage();
 	hud_drawpickups();
+	hud_drawdeathmessage();
 	hud_drawscores_brief_tournament();
 	hud_drawscores_brief_ffa();
 	if ( stereoFrame == STEREO_CENTER ) {
 		hud_drawcrosshair();
 	}
-	hud_drawdeathmessage();
 
 	if ( cgs.gametype >= GT_TEAM ) {
 #if 0x0
