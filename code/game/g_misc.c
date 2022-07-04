@@ -96,6 +96,10 @@ void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 
 	VectorCopy ( origin, player->client->ps.origin );
 	player->client->ps.origin[2] += 1;
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #3 // NOT SURE IF THIS BIT IS RIGHTLY PLACED	
+	// we don't want players being backward-reconciled back through teleporters
+	G_ResetHistory( player );
+#endif
 	if (!noAngles) {
 	// spit the player out
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );

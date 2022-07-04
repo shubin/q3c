@@ -104,6 +104,10 @@ gentity_t *ThrowDireOrb( gentity_t *self, vec3_t start, vec3_t dir ) {
 	orb->s.weapon = WP_DIRE_ORB;
 	orb->r.ownerNum = self->s.number;
 	orb->parent = self;
+#if defined( UNLAGGED ) //unlagged - projectile nudge
+	// we'll need this for nudging projectiles later
+	orb->s.otherEntityNum = self->s.number;
+#endif
 	orb->damage = 100;
 	orb->splashDamage = 100;
 	orb->splashRadius = 120;

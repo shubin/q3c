@@ -1072,10 +1072,26 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 
 	memset( &beam, 0, sizeof( beam ) );
 
+#if defined( UNLAGGED ) //unlagged - attack prediction #1
+	// if the entity is us, unlagged is on server-side, and we've got it on for the lightning gun
+	if ( (cent->currentState.number == cg.predictedPlayerState.clientNum) && cgs.delagHitscan &&
+			( cg_delag.integer & 1 || cg_delag.integer & 8 ) ) {
+		// always shoot straight forward from our current position
+		AngleVectors( cg.predictedPlayerState.viewangles, forward, NULL, NULL );
+		VectorCopy( cg.predictedPlayerState.origin, muzzlePoint );
+	}
+	else
+#endif
 	// CPMA  "true" lightning
 	if ((cent->currentState.number == cg.predictedPlayerState.clientNum) && (cg_trueLightning.value != 0)) {
 		vec3_t angle;
 		int i;
+
+#if defined( UNLAGGED ) //unlagged - true lightning
+		// might as well fix up true lightning while we're at it
+		vec3_t viewangles;
+		VectorCopy( cg.predictedPlayerState.viewangles, viewangles );
+#endif
 
 		for (i = 0; i < 3; i++) {
 			float a = cent->lerpAngles[i] - cg.refdefViewAngles[i];
@@ -1096,8 +1112,13 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		}
 
 		AngleVectors(angle, forward, NULL, NULL );
+#if defined( UNLAGGED ) //unlagged - true lightning
+		// *this* is the correct origin for true lightning
+		VectorCopy(cg.predictedPlayerState.origin, muzzlePoint );
+#else
 		VectorCopy(cent->lerpOrigin, muzzlePoint );
 //		VectorCopy(cg.refdef.vieworg, muzzlePoint );
+#endif
 	} else {
 		// !CPMA
 		AngleVectors( cent->lerpAngles, forward, NULL, NULL );
@@ -1859,6 +1880,9 @@ void CG_FireWeapon( centity_t *cent ) {
 	if ( weap->ejectBrassFunc && cg_brassTime.integer > 0 ) {
 		weap->ejectBrassFunc( cent );
 	}
+#if defined( UNLAGGED ) //unlagged - attack prediction #1
+	CG_PredictWeaponEffects( cent );
+#endif
 }
 
 #if defined( QC )
@@ -2299,7 +2323,10 @@ hit splashes
 ================
 */
 #if defined( QC )
-static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
+#if !defined( UNLAGGED )
+static 
+#endif
+void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
 	int			i, k;
 	float		r, u, radius;
 	vec3_t		end;
@@ -2344,7 +2371,10 @@ static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int othe
 	}
 }
 #else
-static void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
+#if !defined( UNLAGGED )
+static 
+#endif
+void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum ) {
 	int			i;
 	float		r, u;
 	vec3_t		end;

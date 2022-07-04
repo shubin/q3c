@@ -102,6 +102,13 @@ vmCvar_t	g_triboltSubstitution;
 vmCvar_t	g_hourglassSubstition;
 vmCvar_t	g_noUniAmmo;
 #endif
+#if defined( UNLAGGED ) //unlagged - server options
+vmCvar_t	g_delagHitscan;
+vmCvar_t	g_unlaggedVersion;
+vmCvar_t	g_truePing;
+vmCvar_t	g_lightningDamage;
+vmCvar_t	sv_fps;
+#endif
 
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -196,6 +203,14 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_triboltSubstitution, "g_triboltSubstitution", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_hourglassSubstition, "g_hourglassSubstition", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_noUniAmmo, "g_noUniAmmo", "0", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, qfalse  },
+#endif
+#if defined( UNLAGGED ) //unlagged - server options
+	{ &g_delagHitscan, "g_delagHitscan", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qtrue },
+	{ &g_unlaggedVersion, "g_unlaggedVersion", "2.0", CVAR_ROM | CVAR_SERVERINFO, 0, qfalse },
+	{ &g_truePing, "g_truePing", "1", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_lightningDamage, "g_lightningDamage", "8", 0, 0, qtrue },
+	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
+	{ &sv_fps, "sv_fps", "20", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 #endif
 };
 
@@ -1879,10 +1894,14 @@ void G_RunFrame( int levelTime ) {
 			continue;
 		}
 
+#if !defined( UNLAGGED )//unlagged - backward reconciliation #2
+		// we'll run missiles separately to save CPU in backward reconciliation
+
 		if ( ent->s.eType == ET_MISSILE ) {
 			G_RunMissile( ent );
 			continue;
 		}
+#endif
 
 		if ( ent->s.eType == ET_ITEM || ent->physicsObject ) {
 			G_RunItem( ent );
@@ -1901,6 +1920,31 @@ void G_RunFrame( int levelTime ) {
 
 		G_RunThink( ent );
 	}
+
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #2
+	// NOW run the missiles, with all players backward-reconciled
+	// to the positions they were in exactly 50ms ago, at the end
+	// of the last server frame
+	G_TimeShiftAllClients( level.previousTime, NULL );
+
+	ent = &g_entities[0];
+	for (i=0 ; i<level.num_entities ; i++, ent++) {
+		if ( !ent->inuse ) {
+			continue;
+		}
+
+		// temporary entities don't think
+		if ( ent->freeAfterEvent ) {
+			continue;
+		}
+
+		if ( ent->s.eType == ET_MISSILE ) {
+			G_RunMissile( ent );
+		}
+	}
+
+	G_UnTimeShiftAllClients( NULL );
+#endif
 
 	// perform final fixups on the players
 	ent = &g_entities[0];
@@ -1935,4 +1979,10 @@ void G_RunFrame( int levelTime ) {
 		}
 		trap_Cvar_Set("g_listEntity", "0");
 	}
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #4
+	// record the time at the end of this frame - it should be about
+	// the time the next frame begins - when the server starts
+	// accepting commands from connected clients
+	level.frameStartTime = trap_Milliseconds();
+#endif
 }

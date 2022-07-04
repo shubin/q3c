@@ -9,6 +9,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3_ui", "q3_ui.vcxproj", "{D454C4C7-7765-4149-ABAD-05FDEB9D94F8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quake3", "quake3.vcxproj", "{81CB51C4-B434-4E12-B69B-BAEE102F2852}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D454C4C7-7765-4149-ABAD-05FDEB9D94F8} = {D454C4C7-7765-4149-ABAD-05FDEB9D94F8}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui", "ui.vcxproj", "{A8EAC38E-C7DA-42F8-811D-77FD092B9D19}"
 EndProject

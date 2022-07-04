@@ -473,7 +473,10 @@ typedef struct {
 // occurs, and they will have visible effects for #define STEP_TIME or whatever msec after
 
 #define MAX_PREDICTED_EVENTS	16
- 
+#if defined( UNLAGGED ) //unlagged - optimized prediction
+#define NUM_SAVED_STATES (CMD_BACKUP + 2)
+#endif
+
 typedef struct {
 	int			clientFrame;		// incremented each frame
 
@@ -671,6 +674,12 @@ typedef struct {
 	qboolean		testGun;
 #if defined( QC )
 	float			lastColor[4]; // save the last color set to use it in colored text output (to keep alpha)
+#endif
+#if defined( UNLAGGED ) //unlagged - optimized prediction
+	int			lastPredictedCommand;
+	int			lastServerTime;
+	playerState_t savedPmoveStates[NUM_SAVED_STATES];
+	int			stateHead, stateTail;
 #endif
 } cg_t;
 
@@ -1126,6 +1135,10 @@ typedef struct {
 	// media
 	cgMedia_t		media;
 
+#if defined( UNLAGGED ) //unlagged - client options
+	// this will be set to the server's g_delagHitscan
+	int				delagHitscan;
+#endif
 } cgs_t;
 
 //==============================================================================
@@ -1214,7 +1227,10 @@ extern	vmCvar_t		cg_noVoiceChats;
 extern	vmCvar_t		cg_noVoiceText;
 #endif
 extern  vmCvar_t		cg_scorePlum;
+#if !defined( UNLAGGED ) //unlagged - smooth clients #2
+// this is done server-side now
 extern	vmCvar_t		cg_smoothClients;
+#endif
 extern	vmCvar_t		pmove_fixed;
 extern	vmCvar_t		pmove_msec;
 //extern	vmCvar_t		cg_pmove_fixed;
@@ -1253,6 +1269,25 @@ extern  vmCvar_t        cg_damagePlumSize;
 extern  vmCvar_t        cg_damagePlumPulse;
 extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
+#endif
+#if defined( UNLAGGED ) //unlagged - client options
+extern	vmCvar_t		cg_delag;
+extern	vmCvar_t		cg_debugDelag;
+extern	vmCvar_t		cg_drawBBox;
+extern	vmCvar_t		cg_cmdTimeNudge;
+extern	vmCvar_t		sv_fps;
+extern	vmCvar_t		cg_projectileNudge;
+extern	vmCvar_t		cg_optimizePrediction;
+extern	vmCvar_t		cl_timeNudge;
+extern	vmCvar_t		cg_latentSnaps;
+extern	vmCvar_t		cg_latentCmds;
+extern	vmCvar_t		cg_plOut;
+#endif
+
+#if defined( UNLAGGED ) //unlagged - cg_unlagged.c
+void CG_PredictWeaponEffects( centity_t *cent );
+void CG_AddBoundingBox( centity_t *cent );
+qboolean CG_Cvar_ClampInt( const char *name, vmCvar_t *vmCvar, int min, int max );
 #endif
 
 //
@@ -1503,6 +1538,9 @@ localEntity_t *CG_MakeExplosion( vec3_t origin, vec3_t dir,
 // cg_snapshot.c
 //
 void CG_ProcessSnapshots( void );
+#if defined( UNLAGGED ) //unlagged - early transitioning
+void CG_TransitionEntity( centity_t *cent );
+#endif
 
 //
 // cg_info.c

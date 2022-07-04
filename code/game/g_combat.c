@@ -545,6 +545,11 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		return;
 	}
 
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #2
+	// make sure the body shows up in the client's current position
+	G_UnTimeShiftClient( self );
+#endif
+
 #if defined( QC )
 	if ( ( !attacker || !attacker->client ) && self->client->ps.ringoutKiller != -1 ) {
 		attacker = &g_entities[self->client->ps.ringoutKiller];

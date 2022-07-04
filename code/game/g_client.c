@@ -741,6 +741,41 @@ void ClientUserinfoChanged( int clientNum ) {
 		client->pers.predictItemPickup = qtrue;
 	}
 
+#if defined( UNLAGGED ) //unlagged - client options
+	// see if the player has opted out
+	s = Info_ValueForKey( userinfo, "cg_delag" );
+	if ( !atoi( s ) ) {
+		client->pers.delag = 0;
+	} else {
+		client->pers.delag = atoi( s );
+	}
+
+	// see if the player is nudging his shots
+	s = Info_ValueForKey( userinfo, "cg_cmdTimeNudge" );
+	client->pers.cmdTimeNudge = atoi( s );
+
+	// see if the player wants to debug the backward reconciliation
+	s = Info_ValueForKey( userinfo, "cg_debugDelag" );
+	if ( !atoi( s ) ) {
+		client->pers.debugDelag = qfalse;
+	}
+	else {
+		client->pers.debugDelag = qtrue;
+	}
+
+	// see if the player is simulating incoming latency
+	s = Info_ValueForKey( userinfo, "cg_latentSnaps" );
+	client->pers.latentSnaps = atoi( s );
+
+	// see if the player is simulating outgoing latency
+	s = Info_ValueForKey( userinfo, "cg_latentCmds" );
+	client->pers.latentCmds = atoi( s );
+
+	// see if the player is simulating outgoing packet loss
+	s = Info_ValueForKey( userinfo, "cg_plOut" );
+	client->pers.plOut = atoi( s );
+#endif
+
 	// set name
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
 	s = Info_ValueForKey (userinfo, "name");
@@ -1009,6 +1044,15 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 //	if ( !client->areabits )
 //		client->areabits = G_Alloc( (trap_AAS_PointReachabilityAreaIndex( NULL ) + 7) / 8 );
 
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #5
+	// announce it
+	if ( g_delagHitscan.integer ) {
+		trap_SendServerCommand( clientNum, "print \"This server is Unlagged: full lag compensation is ON!\n\"" );
+	}
+	else {
+		trap_SendServerCommand( clientNum, "print \"This server is Unlagged: full lag compensation is OFF!\n\"" );
+	}
+#endif
 	return NULL;
 }
 
@@ -1147,6 +1191,13 @@ void ClientSpawn(gentity_t *ent) {
 	// and never clear the voted flag
 	flags = ent->client->ps.eFlags & (EF_TELEPORT_BIT | EF_VOTED | EF_TEAMVOTED);
 	flags ^= EF_TELEPORT_BIT;
+
+#if defined( UNLAGGED ) //unlagged - backward reconciliation #3
+	// we don't want players being backward-reconciled to the place they died
+	G_ResetHistory( ent );
+	// and this is as good a time as any to clear the saved state
+	ent->client->saved.leveltime = 0;
+#endif
 
 #if defined( QC )
 

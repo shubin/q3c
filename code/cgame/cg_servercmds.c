@@ -263,6 +263,11 @@ void CG_ParseServerinfo( void ) {
 	trap_Cvar_Set("g_redTeam", cgs.redTeam);
 	Q_strncpyz( cgs.blueTeam, Info_ValueForKey( info, "g_blueTeam" ), sizeof(cgs.blueTeam) );
 	trap_Cvar_Set("g_blueTeam", cgs.blueTeam);
+#if defined( UNLAGGED ) //unlagged - server options
+	// we'll need this for deciding whether or not to predict weapon effects
+	cgs.delagHitscan = atoi( Info_ValueForKey( info, "g_delagHitscan" ) );
+	trap_Cvar_Set("g_delagHitscan", va("%i", cgs.delagHitscan));
+#endif
 }
 
 /*
