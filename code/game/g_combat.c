@@ -1144,10 +1144,14 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 #if defined( QC )
 		// Ranger is even more resistant to the self damage
 		if ( attacker->client && attacker->client->ps.champion == CHAMP_RANGER ) {
-			damage *= 0.5f;
+			damage *= 0.25f;
 		}
-#endif
+		else {
+			damage * 0.5f;
+		}
+#else
 		damage *= 0.5;
+#endif
 	}
 
 	if ( damage < 1 ) {

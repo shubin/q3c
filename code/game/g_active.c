@@ -647,6 +647,11 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 				damage = 5;
 			}
 			ent->pain_debounce_time = level.time + 200;	// no normal pain sound
+#if defined( QC )
+			if ( ent->client->ps.champion == CHAMP_RANGER ) { // Ranger's ability
+				damage /= 2;
+			}
+#endif
 			G_Damage (ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 			break;
 
@@ -1182,7 +1187,7 @@ void ClientThink_real( gentity_t *ent ) {
 		ent->eventTime = level.time;
 	}
 
-#if defined( UNLAGGED ) unlagged - smooth clients #2
+#if defined( UNLAGGED ) //unlagged - smooth clients #2
 	// clients no longer do extrapolation if cg_smoothClients is 1, because
 	// skip correction is all handled server-side now
 	// since that's the case, it makes no sense to store the extra info
