@@ -60,6 +60,10 @@ typedef struct {
     int start_health[GT_MAX_GAME_TYPE];
     int start_armor[GT_MAX_GAME_TYPE];
     int spawn_protection[GT_MAX_GAME_TYPE];
+    int speed;
+    int maxspeed;
+    // hitbox
+    vec3_t mins, maxs;
 } champion_stat_t;
 
 extern champion_stat_t champion_stats[NUM_CHAMPIONS];

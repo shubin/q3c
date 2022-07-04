@@ -54,7 +54,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 9999,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // anarki
     {
@@ -84,7 +88,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 640,
+        .mins = { -12, -12, -24 },
+        .maxs = { 12, 12, 32 },
     },
     // athena
     {
@@ -113,7 +121,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // nyx
     {
@@ -142,7 +154,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // slash
     {
@@ -171,7 +187,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 750,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // bj
     {
@@ -200,7 +220,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // dk
     {
@@ -229,7 +253,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // doomguy
     {
@@ -258,7 +286,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // eisen
     {
@@ -287,7 +319,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // galena
     {
@@ -316,7 +352,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // ranger
     {
@@ -345,7 +385,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // strogg
     {
@@ -374,7 +418,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 310,
+        .maxspeed = 750,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // visor
     {
@@ -403,7 +451,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 320,
+        .maxspeed = 2000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // clutch
     {
@@ -432,7 +484,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 300,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // keel
     {
@@ -461,7 +517,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 300,
+        .maxspeed = 1000,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
     // scalebearer
     {
@@ -490,7 +550,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 300,
+        .maxspeed = 1000,
+        .mins = { -18, -18, -24 },
+        .maxs = { 18, 18, 32 },
     },
     // sorlag
     {
@@ -519,7 +583,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
-        }
+        },
+        .speed = 300,
+        .maxspeed = 750,
+        .mins = { -15, -15, -24 },
+        .maxs = { 15, 15, 32 },
     },
 };
 

@@ -1038,7 +1038,11 @@ void ClientThink_real( gentity_t *ent ) {
 	client->ps.gravity = g_gravity.value;
 
 	// set speed
+#if defined( QC )
+	client->ps.speed = champion_stats[client->ps.champion].speed;
+#else
 	client->ps.speed = g_speed.value;
+#endif
 
 #ifdef MISSIONPACK
 	if( bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT ) {

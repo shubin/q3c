@@ -497,6 +497,15 @@ int CG_WaterLevel(centity_t *cent) {
 	vec3_t point;
 	int contents, sample1, sample2, anim, waterlevel;
 	int viewheight;
+#if defined( QC )
+	int champion = 0;
+	int mins_z;
+#endif
+
+#if defined( QC )
+	champion = cgs.clientinfo[cent->currentState.clientNum].champion;
+	mins_z = champion_stats[champion].mins[3];
+#endif
 
 	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
 
@@ -513,19 +522,35 @@ int CG_WaterLevel(centity_t *cent) {
 
 	point[0] = cent->lerpOrigin[0];
 	point[1] = cent->lerpOrigin[1];
+#if defined( QC )
+	point[2] = cent->lerpOrigin[2] + mins_z  + 1;
+#else
 	point[2] = cent->lerpOrigin[2] + MINS_Z + 1;
+#endif
 	contents = CG_PointContents(point, -1);
 
 	if (contents & MASK_WATER) {
+#if defined( QC )
+		sample2 = viewheight - mins_z;
+#else
 		sample2 = viewheight - MINS_Z;
+#endif
 		sample1 = sample2 / 2;
 		waterlevel = 1;
+#if defined( QC )
+		point[2] = cent->lerpOrigin[2] + mins_z + sample1;
+#else
 		point[2] = cent->lerpOrigin[2] + MINS_Z + sample1;
+#endif
 		contents = CG_PointContents(point, -1);
 
 		if (contents & MASK_WATER) {
 			waterlevel = 2;
+#if defined( QC )
+			point[2] = cent->lerpOrigin[2] + mins_z + sample2;
+#else
 			point[2] = cent->lerpOrigin[2] + MINS_Z + sample2;
+#endif
 			contents = CG_PointContents(point, -1);
 
 			if (contents & MASK_WATER) {

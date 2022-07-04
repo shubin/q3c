@@ -258,6 +258,10 @@ void CG_AddBoundingBox( centity_t *cent ) {
 	// if it's us
 	if ( cent->currentState.number == cg.predictedPlayerState.clientNum ) {
 		// use the view height
+#if defined( QC )
+		VectorCopy( champion_stats[cg.snap->ps.champion].mins, mins );
+		VectorCopy( champion_stats[cg.snap->ps.champion].maxs, maxs );
+#endif
 		maxs[2] = cg.predictedPlayerState.viewheight + 6;
 	}
 	else {

@@ -1538,6 +1538,15 @@ static void PM_SetWaterLevel( void ) {
 	int			cont;
 	int			sample1;
 	int			sample2;
+#if defined( QC )
+	int			champion;
+	int			mins_z;
+#endif
+
+#if defined( QC )
+	champion = pm->ps->champion;
+	mins_z = champion_stats[champion].mins[2];
+#endif
 
 	//
 	// get waterlevel, accounting for ducking
@@ -1547,20 +1556,36 @@ static void PM_SetWaterLevel( void ) {
 
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
+#if defined( QC )
+	point[2] = pm->ps->origin[2] + mins_z + 1;	
+#else
 	point[2] = pm->ps->origin[2] + MINS_Z + 1;	
+#endif
 	cont = pm->pointcontents( point, pm->ps->clientNum );
 
 	if ( cont & MASK_WATER ) {
+#if defined( QC )
+		sample2 = pm->ps->viewheight - mins_z;
+#else
 		sample2 = pm->ps->viewheight - MINS_Z;
+#endif
 		sample1 = sample2 / 2;
 
 		pm->watertype = cont;
 		pm->waterlevel = 1;
+#if defined( QC )
+		point[2] = pm->ps->origin[2] + mins_z + sample1;
+#else
 		point[2] = pm->ps->origin[2] + MINS_Z + sample1;
+#endif
 		cont = pm->pointcontents (point, pm->ps->clientNum );
 		if ( cont & MASK_WATER ) {
 			pm->waterlevel = 2;
+#if defined( QC )
+			point[2] = pm->ps->origin[2] + mins_z + sample2;
+#else
 			point[2] = pm->ps->origin[2] + MINS_Z + sample2;
+#endif
 			cont = pm->pointcontents (point, pm->ps->clientNum );
 			if ( cont & MASK_WATER ){
 				pm->waterlevel = 3;
@@ -1580,6 +1605,16 @@ Sets mins, maxs, and pm->ps->viewheight
 static void PM_CheckDuck (void)
 {
 	trace_t	trace;
+#if defined( QC )
+	int champion;
+	float *mins, *maxs;
+#endif
+
+#if defined( QC )
+	champion = pm->ps->champion;
+	mins = champion_stats[champion].mins;
+	maxs = champion_stats[champion].maxs;
+#endif
 
 	if ( pm->ps->powerups[PW_INVULNERABILITY] ) {
 		if ( pm->ps->pm_flags & PMF_INVULEXPAND ) {
@@ -1588,8 +1623,13 @@ static void PM_CheckDuck (void)
 			VectorSet( pm->maxs, 42, 42, 42 );
 		}
 		else {
+#if defined( QC )
+			VectorCopy( mins, pm->mins );
+			VectorCopy( maxs, pm->maxs );
+#else
 			VectorSet( pm->mins, -15, -15, MINS_Z );
 			VectorSet( pm->maxs, 15, 15, 16 );
+#endif
 		}
 		pm->ps->pm_flags |= PMF_DUCKED;
 		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
@@ -1597,6 +1637,15 @@ static void PM_CheckDuck (void)
 	}
 	pm->ps->pm_flags &= ~PMF_INVULEXPAND;
 
+#if defined( QC )
+	pm->mins[0] = mins[0];
+	pm->mins[1] = mins[1];
+
+	pm->maxs[0] = maxs[0];
+	pm->maxs[1] = maxs[1];
+
+	pm->mins[2] = mins[2];
+#else
 	pm->mins[0] = -15;
 	pm->mins[1] = -15;
 
@@ -1604,6 +1653,7 @@ static void PM_CheckDuck (void)
 	pm->maxs[1] = 15;
 
 	pm->mins[2] = MINS_Z;
+#endif
 
 	if (pm->ps->pm_type == PM_DEAD)
 	{
@@ -1621,7 +1671,11 @@ static void PM_CheckDuck (void)
 		if (pm->ps->pm_flags & PMF_DUCKED)
 		{
 			// try to stand up
+#if defined( QC )
+			pm->maxs[2] = maxs[2];
+#else
 			pm->maxs[2] = 32;
+#endif
 			pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, pm->ps->origin, pm->ps->clientNum, pm->tracemask );
 			if (!trace.allsolid)
 				pm->ps->pm_flags &= ~PMF_DUCKED;
@@ -1635,12 +1689,20 @@ static void PM_CheckDuck (void)
 			pm->ps->speed = pm_crouchspeed;
 		}
 #endif
+#if defined( QC )
+		pm->maxs[2] = maxs[2]/2;
+#else
 		pm->maxs[2] = 16;
+#endif
 		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
 	}
 	else
 	{
+#if defined( QC )
+		pm->maxs[2] = maxs[2];
+#else
 		pm->maxs[2] = 32;
+#endif
 		pm->ps->viewheight = DEFAULT_VIEWHEIGHT;
 	}
 }

@@ -24,8 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // g_client.c -- client functions that don't happen every frame
 
+#if !defined( QC )
 static vec3_t	playerMins = {-15, -15, -24};
 static vec3_t	playerMaxs = {15, 15, 32};
+#endif
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 32) initial
 potential spawning position for deathmatch games.
@@ -83,9 +85,13 @@ qboolean SpotWouldTelefrag( gentity_t *spot ) {
 	int			touch[MAX_GENTITIES];
 	gentity_t	*hit;
 	vec3_t		mins, maxs;
-
+#if defined( QC )
+	VectorAdd( spot->s.origin, champion_stats[CHAMP_CLUTCH].mins, mins );
+	VectorAdd( spot->s.origin, champion_stats[CHAMP_CLUTCH].maxs, maxs );
+#else
 	VectorAdd( spot->s.origin, playerMins, mins );
 	VectorAdd( spot->s.origin, playerMaxs, maxs );
+#endif
 	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
 
 	for (i=0 ; i<num ; i++) {
@@ -1302,9 +1308,14 @@ void ClientSpawn(gentity_t *ent) {
 	ent->waterlevel = 0;
 	ent->watertype = 0;
 	ent->flags = 0;
-	
+
+#if defined( QC )
+	VectorCopy (champion_stats[client->pers.champion].mins, ent->r.mins);
+	VectorCopy (champion_stats[client->pers.champion].maxs, ent->r.maxs);
+#else
 	VectorCopy (playerMins, ent->r.mins);
 	VectorCopy (playerMaxs, ent->r.maxs);
+#endif
 
 	client->ps.clientNum = index;
 
