@@ -1433,6 +1433,9 @@ void hud_drawscores_tournament( void ) {
 	hud_drawbar( centerx, bounds.top + 240, 1870, 45, 0.5f, 0.0f, black );
 	trap_R_SetColor( gray );
 
+	dim = hud_measurestring( 0.4f, &font_regular, "PING" );
+	hud_drawstring( centerx - 500 - dim/2, bounds.top + 272, 0.4f, &font_regular, "PING", NULL, 0, 0 );
+	hud_drawstring( centerx + 500 - dim/2, bounds.top + 272, 0.4f, &font_regular, "PING", NULL, 0, 0 );
 	dim = hud_measurestring( 0.4f, &font_regular, "HITS" );
 	hud_drawstring( centerx - 400 - dim/2, bounds.top + 272, 0.4f, &font_regular, "HITS", NULL, 0, 0 );
 	hud_drawstring( centerx + 400 - dim/2, bounds.top + 272, 0.4f, &font_regular, "HITS", NULL, 0, 0 );
@@ -1454,6 +1457,16 @@ void hud_drawscores_tournament( void ) {
 	}
 
 	trap_R_SetColor( NULL );
+	if ( myScores != NULL ) {
+		text = va( "%d", myScores->ping );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx - 500 - dim/2, bounds.top + 295 + 40, 0.4f, &font_regular, text, NULL, 0, 0 );
+	}
+	if ( enemyScores != NULL ) {
+		text = va( "%d", enemyScores->ping );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx + 500 - dim/2, bounds.top + 295 + 40, 0.4f, &font_regular, text, NULL, 0, 0 );
+	}
 	for ( i = 0; i < ARRAY_LEN( hud_stat_weapons ); i++ ) { 
 		if ( myScores != NULL ) {
 			hits = myScores->wepstat[hud_stat_weapons[i]].hits;

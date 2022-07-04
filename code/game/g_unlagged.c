@@ -401,10 +401,10 @@ qboolean G_PredictPlayerSlideMove( gentity_t *ent, float frametime ) {
 	qboolean	sliding;
 	int			forceLength;
 	movement_parameters_t *mp = NULL;
-	if ( pm != NULL ) {
-		mp = PM_ChampionMovementParameters( pm->ps->champion );
+	if ( ent->client != NULL ) {
+		mp = PM_ChampionMovementParameters( ent->client->ps.champion );
 	}
-	sliding = pm ? ( pm->ps->crouchSlideTime > 0 ) && ( pm->cmd.upmove < 0 ) && pml.groundPlane : qfalse;
+	sliding = ent->client ? ( ent->client->ps.crouchSlideTime > 0 ) && ( pm->cmd.upmove < 0 ) && pml.groundPlane : qfalse;
 	forceLength = sliding ? 2 : 0;
 #endif
 	

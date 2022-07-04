@@ -1026,6 +1026,17 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( knockback > 200 ) {
 		knockback = 200;
 	}
+
+#if defined( QC )
+	if ( inflictor->client != NULL ) {
+		switch ( inflictor->s.weapon ) {
+			case WP_LIGHTNING:
+				knockback *= 2;
+				break;
+		}
+	}
+#endif
+
 	if ( targ->flags & FL_NO_KNOCKBACK ) {
 		knockback = 0;
 	}
