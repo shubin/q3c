@@ -106,7 +106,9 @@ vmCvar_t	g_noUniAmmo;
 vmCvar_t	g_delagHitscan;
 vmCvar_t	g_unlaggedVersion;
 vmCvar_t	g_truePing;
+#if !defined( QC )
 vmCvar_t	g_lightningDamage;
+#endif
 vmCvar_t	sv_fps;
 #endif
 
@@ -208,7 +210,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_delagHitscan, "g_delagHitscan", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qtrue },
 	{ &g_unlaggedVersion, "g_unlaggedVersion", "2.0", CVAR_ROM | CVAR_SERVERINFO, 0, qfalse },
 	{ &g_truePing, "g_truePing", "1", CVAR_ARCHIVE, 0, qtrue },
+#if !defined( QC )
 	{ &g_lightningDamage, "g_lightningDamage", "8", 0, 0, qtrue },
+#endif
 	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
 	{ &sv_fps, "sv_fps", "20", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 #endif

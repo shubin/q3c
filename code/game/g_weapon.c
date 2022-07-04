@@ -945,6 +945,8 @@ void Weapon_LightningFire( gentity_t *ent ) {
 
 #if defined( QC )
 	damage = 6 * s_quadFactor;
+#elif defined( UNLAGGED )
+	damage = g_lightningDamage.value * s_quadFactor;
 #else
 	damage = 8 * s_quadFactor;
 #endif

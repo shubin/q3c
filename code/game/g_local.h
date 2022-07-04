@@ -869,6 +869,9 @@ extern vmCvar_t		g_noUniAmmo;
 extern	vmCvar_t	g_delagHitscan;
 extern	vmCvar_t	g_unlaggedVersion;
 extern	vmCvar_t	g_truePing;
+#if !defined( QC )
+extern  vmCvar_t	g_lightningDamage;
+#endif
 // this is for convenience - using "sv_fps.integer" is nice :)
 extern	vmCvar_t	sv_fps;
 #endif
