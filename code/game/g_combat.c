@@ -950,7 +950,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	int			take;
 	int			asave;
 	int			knockback;
+#if !defined( QC )
 	int			max;
+#endif
 #ifdef MISSIONPACK
 	vec3_t		bouncedir, impactpoint;
 #endif
@@ -1173,7 +1175,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			damage *= 0.25f;
 		}
 		else {
-			damage * 0.5f;
+			damage *= 0.5f;
 		}
 #else
 		damage *= 0.5;
