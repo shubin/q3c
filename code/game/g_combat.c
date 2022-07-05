@@ -954,6 +954,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 #ifdef MISSIONPACK
 	vec3_t		bouncedir, impactpoint;
 #endif
+#if defined( QC )
+	float		knockback_scale = 1.0f; // knokback scale factor for more powerful rocketjumps and plasmajumps to allow various QC tricks
+#endif
 
 	if (!targ->takedamage) {
 		return;
@@ -1023,15 +1026,34 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	}
 
 	knockback = damage;
+
+#if defined( QC )
+	if ( ( dflags & DAMAGE_RADIUS ) && !( dflags & DAMAGE_NO_KNOCKBACK ) ) {
+		if ( inflictor->client == NULL ) {
+			switch  ( inflictor->s.weapon ) {
+				case WP_PLASMAGUN:
+				case WP_LOUSY_PLASMAGUN:
+					knockback_scale = 2.0f;
+					break;
+				case WP_ROCKET_LAUNCHER:
+				case WP_GRENADE_LAUNCHER:
+				case WP_TRIBOLT:
+					knockback_scale = 1.15f;
+					break;
+			}
+		}
+	}
+#endif
+
 	if ( knockback > 200 ) {
 		knockback = 200;
 	}
 
-#if defined( QC )
+#if defined( QC ) && 0
 	if ( inflictor->client != NULL ) {
 		switch ( inflictor->s.weapon ) {
 			case WP_LIGHTNING:
-				knockback *= 2;
+//				knockback *= 1.3f;
 				break;
 		}
 	}
@@ -1051,7 +1073,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 		mass = 200;
 
+#if defined( QC )
+		VectorScale (dir, g_knockback.value * knockback_scale * (float)knockback / mass, kvel);
+#else
 		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
+#endif
 		VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// set the timer so that the other client can't cancel
