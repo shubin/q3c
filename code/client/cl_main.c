@@ -3333,7 +3333,7 @@ void CL_SetChampion_f( void ) {
 	char	name[256];
 
 	arg = Cmd_Argv( 1 );
-	if (arg[0]) {
+	if ( arg[0] ) {
 		Cvar_Set( "champion", arg );
 	} else {
 		Cvar_VariableStringBuffer( "champion", name, sizeof(name) );

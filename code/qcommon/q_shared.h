@@ -444,8 +444,15 @@ qboolean Q_IsColorString(const char *p);  // ^[0-9a-zA-Z]
 #define COLOR_CYAN	'5'
 #define COLOR_MAGENTA	'6'
 #define COLOR_WHITE	'7'
+
 #define ColorIndexForNumber(c) ((c) & 0x07)
+#if defined( QC )
+#define RGBA_TO_VEC4(hex) { ( ( hex >> 24 ) & 0xFF ) / 255.0f, ( ( hex >> 16 ) & 0xFF ) / 255.0f, ( ( hex >> 8 ) & 0xFF ) / 255.0f, ( hex & 0xFF ) / 255.0f }
+#define VEC4_TO_RGBA(v) ( (((int)( v[0] * 255.0f )) << 24) | (((int)( v[1] * 255.0f )) << 16) | (((int)( v[2] * 255.0f )) << 8) | ((int)( v[3] * 255.0f ))
+int ColorIndex( int c );
+#else
 #define ColorIndex(c) (ColorIndexForNumber((c) - '0'))
+#endif
 
 #define S_COLOR_BLACK	"^0"
 #define S_COLOR_RED	"^1"
@@ -456,7 +463,11 @@ qboolean Q_IsColorString(const char *p);  // ^[0-9a-zA-Z]
 #define S_COLOR_MAGENTA	"^6"
 #define S_COLOR_WHITE	"^7"
 
+#if defined( QC )
+extern vec4_t	g_color_table[34];
+#else
 extern vec4_t	g_color_table[8];
+#endif
 
 #define	MAKERGB( v, r, g, b ) v[0]=r;v[1]=g;v[2]=b
 #define	MAKERGBA( v, r, g, b, a ) v[0]=r;v[1]=g;v[2]=b;v[3]=a

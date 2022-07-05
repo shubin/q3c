@@ -29,7 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 displayContextDef_t cgDC;
 #endif
 
+#if !defined( QC )
 int forceModelModificationCount = -1;
+#endif
+#if defined( QC )
+int enemyColorsModificationCount = -1;
+#endif
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -152,7 +157,9 @@ vmCvar_t 	cg_teamChatTime;
 vmCvar_t 	cg_teamChatHeight;
 vmCvar_t 	cg_stats;
 vmCvar_t 	cg_buildScript;
+#if !defined( QC )
 vmCvar_t 	cg_forceModel;
+#endif
 vmCvar_t	cg_paused;
 vmCvar_t	cg_blood;
 vmCvar_t	cg_predictItems;
@@ -225,6 +232,7 @@ vmCvar_t    cg_damagePlumSize;		// size of that number
 vmCvar_t    cg_damagePlumPulse;     // whether to animate the popping up number or not to
 vmCvar_t    cg_damageDirection;		// damage indicator around the crosshair showing the direction the damage came from
 vmCvar_t    cg_hitCross;			// diagonal cross which blinks around the crosshair when you hit an enemy
+vmCvar_t	cg_enemyColors;
 #endif
 
 typedef struct {
@@ -307,7 +315,9 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_thirdPerson, "cg_thirdPerson", "0", 0 },
 	{ &cg_teamChatTime, "cg_teamChatTime", "3000", CVAR_ARCHIVE  },
 	{ &cg_teamChatHeight, "cg_teamChatHeight", "0", CVAR_ARCHIVE  },
+#if !defined( QC )
 	{ &cg_forceModel, "cg_forceModel", "0", CVAR_ARCHIVE  },
+#endif
 	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE },
 #ifdef MISSIONPACK
 	{ &cg_deferPlayers, "cg_deferPlayers", "0", CVAR_ARCHIVE },
@@ -392,6 +402,7 @@ static cvarTable_t cvarTable[] = {
     { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
     { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
     { &cg_hitCross, "cg_hitCross", "1", CVAR_ARCHIVE },
+	{ &cg_enemyColors, "cg_enemyColors", "2222", CVAR_ARCHIVE },
 #endif
 };
 
@@ -416,8 +427,9 @@ void CG_RegisterCvars( void ) {
 	trap_Cvar_VariableStringBuffer( "sv_running", var, sizeof( var ) );
 	cgs.localServer = atoi( var );
 
+#if !defined( QC)
 	forceModelModificationCount = cg_forceModel.modificationCount;
-
+#endif
 	trap_Cvar_Register(NULL, "model", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "headmodel", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "team_model", DEFAULT_TEAM_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
@@ -446,6 +458,51 @@ static void CG_ForceModelChange( void ) {
 		CG_NewClientInfo( i );
 	}
 }
+
+#if defined( QC )
+/*
+=================
+CG_UpdateEnemyColors
+=================
+*/
+static void CG_UpdateEnemyColors( void ) {
+	int len = strlen( cg_enemyColors.string );
+	int railcore, head, torso, legs, spiral;
+	if ( len == 0 ) {
+		railcore = head = torso = legs = spiral = 2;
+	}
+	else if ( len == 1 ) {
+		railcore = head = torso = legs = spiral = ColorIndex( cg_enemyColors.string[0] );
+	}
+	else {
+		railcore = ColorIndex( cg_enemyColors.string[0]);
+		head = ColorIndex( cg_enemyColors.string[1] );
+		if ( len > 2 ) {
+			torso = ColorIndex( cg_enemyColors.string[2] );
+		}
+		else {
+			torso = head;
+		}
+		if ( len > 3 ) {
+			legs = ColorIndex( cg_enemyColors.string[3] );
+		}
+		else {
+			legs = torso;
+		}
+		if ( len > 4 ) {
+			spiral = ColorIndex( cg_enemyColors.string[4] );
+		}
+		else {
+			spiral = railcore;
+		}
+	}
+	memcpy( cg.enemyColors[0], g_color_table[railcore], sizeof( vec4_t ) );
+	memcpy( cg.enemyColors[1], g_color_table[head], sizeof( vec4_t ) );
+	memcpy( cg.enemyColors[2], g_color_table[torso], sizeof( vec4_t ) );
+	memcpy( cg.enemyColors[3], g_color_table[legs], sizeof( vec4_t ) );
+	memcpy( cg.enemyColors[4], g_color_table[spiral], sizeof( vec4_t ) );
+}
+#endif
 
 /*
 =================
@@ -501,11 +558,20 @@ void CG_UpdateCvars( void ) {
 		}
 	}
 
+#if !defined( QC )
 	// if force model changed
 	if ( forceModelModificationCount != cg_forceModel.modificationCount ) {
 		forceModelModificationCount = cg_forceModel.modificationCount;
 		CG_ForceModelChange();
 	}
+#endif
+
+#if defined( QC )
+	if ( enemyColorsModificationCount != cg_enemyColors.modificationCount ) {
+		enemyColorsModificationCount = cg_enemyColors.modificationCount;
+		CG_UpdateEnemyColors();
+	}
+#endif
 }
 
 int CG_CrosshairPlayer( void ) {

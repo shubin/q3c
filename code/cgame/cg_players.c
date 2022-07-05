@@ -965,6 +965,7 @@ void CG_NewClientInfo( int clientNum ) {
 
 	// model
 	v = Info_ValueForKey( configstring, "model" );
+#if !defined( QC )
 	if ( cg_forceModel.integer ) {
 		// forcemodel makes everyone use a single model
 		// to prevent load hitches
@@ -994,6 +995,9 @@ void CG_NewClientInfo( int clientNum ) {
 			}
 		}
 	} else {
+#else
+	{
+#endif
 		Q_strncpyz( newInfo.modelName, v, sizeof( newInfo.modelName ) );
 
 		slash = strchr( newInfo.modelName, '/' );
@@ -1009,6 +1013,7 @@ void CG_NewClientInfo( int clientNum ) {
 
 	// head model
 	v = Info_ValueForKey( configstring, "hmodel" );
+#if !defined( QC )
 	if ( cg_forceModel.integer ) {
 		// forcemodel makes everyone use a single model
 		// to prevent load hitches
@@ -1038,6 +1043,9 @@ void CG_NewClientInfo( int clientNum ) {
 			}
 		}
 	} else {
+#else
+	{
+#endif
 		Q_strncpyz( newInfo.headModelName, v, sizeof( newInfo.headModelName ) );
 
 		slash = strchr( newInfo.headModelName, '/' );
@@ -2352,6 +2360,12 @@ void CG_Player( centity_t *cent ) {
 	legs.shadowPlane = shadowPlane;
 	legs.renderfx = renderfx;
 	VectorCopy (legs.origin, legs.oldorigin);	// don't positionally lerp at all
+#if defined( QC )
+	legs.shaderRGBA[0] = (int)(cg.enemyColors[3][0] * 255.0f);
+	legs.shaderRGBA[1] = (int)(cg.enemyColors[3][1] * 255.0f);
+	legs.shaderRGBA[2] = (int)(cg.enemyColors[3][2] * 255.0f);
+	legs.shaderRGBA[3] = (int)(cg.enemyColors[3][3] * 255.0f);
+#endif
 
 	CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
 
@@ -2377,6 +2391,12 @@ void CG_Player( centity_t *cent ) {
 	torso.shadowPlane = shadowPlane;
 	torso.renderfx = renderfx;
 
+#if defined( QC )
+	torso.shaderRGBA[0] = (int)(cg.enemyColors[2][0] * 255.0f);
+	torso.shaderRGBA[1] = (int)(cg.enemyColors[2][1] * 255.0f);
+	torso.shaderRGBA[2] = (int)(cg.enemyColors[2][2] * 255.0f);
+	torso.shaderRGBA[3] = (int)(cg.enemyColors[2][3] * 255.0f);
+#endif
 	CG_AddRefEntityWithPowerups( &torso, &cent->currentState, ci->team );
 
 #ifdef MISSIONPACK
@@ -2603,6 +2623,12 @@ void CG_Player( centity_t *cent ) {
 	head.shadowPlane = shadowPlane;
 	head.renderfx = renderfx;
 
+#if defined( QC )
+	head.shaderRGBA[0] = (int)(cg.enemyColors[1][0] * 255.0f);
+	head.shaderRGBA[1] = (int)(cg.enemyColors[1][1] * 255.0f);
+	head.shaderRGBA[2] = (int)(cg.enemyColors[1][2] * 255.0f);
+	head.shaderRGBA[3] = (int)(cg.enemyColors[1][3] * 255.0f);
+#endif
 	CG_AddRefEntityWithPowerups( &head, &cent->currentState, ci->team );
 
 #ifdef MISSIONPACK
@@ -2678,8 +2704,8 @@ qboolean CG_RegisterChampionModels( void ) {
 	memset( &cgs.media.championModels, 0, sizeof( cgs.media.championModels ) );
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
 		Q_strncpyz( cgs.media.championModels[i].modelName, champion_models[i], sizeof( cgs.media.championModels[i].modelName ) );
-		Q_strncpyz( cgs.media.championModels[i].skinName, "default", sizeof( cgs.media.championModels[i].skinName ) );
-		Q_strncpyz( cgs.media.championModels[i].headSkinName, "default", sizeof( cgs.media.championModels[i].headSkinName ) );
+		Q_strncpyz( cgs.media.championModels[i].skinName, champion_skins[i], sizeof( cgs.media.championModels[i].skinName ) );
+		Q_strncpyz( cgs.media.championModels[i].headSkinName, champion_skins[i], sizeof( cgs.media.championModels[i].headSkinName ) );
 		Q_strncpyz( cgs.media.championModels[i].headModelName, champion_models[i], sizeof( cgs.media.championModels[i].headModelName ) );
 		if ( !CG_RegisterClientModelname( 
 				&cgs.media.championModels[i],

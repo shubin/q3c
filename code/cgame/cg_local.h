@@ -674,6 +674,7 @@ typedef struct {
 	qboolean		testGun;
 #if defined( QC )
 	float			lastColor[4]; // save the last color set to use it in colored text output (to keep alpha)
+	vec4_t			enemyColors[5];
 #endif
 #if defined( UNLAGGED ) //unlagged - optimized prediction
 	int			lastPredictedCommand;
@@ -1214,7 +1215,9 @@ extern	vmCvar_t		cg_synchronousClients;
 extern	vmCvar_t		cg_teamChatTime;
 extern	vmCvar_t		cg_teamChatHeight;
 extern	vmCvar_t		cg_stats;
+#if !defined( QC )
 extern	vmCvar_t 		cg_forceModel;
+#endif
 extern	vmCvar_t 		cg_buildScript;
 extern	vmCvar_t		cg_paused;
 extern	vmCvar_t		cg_blood;
@@ -1269,6 +1272,7 @@ extern  vmCvar_t        cg_damagePlumSize;
 extern  vmCvar_t        cg_damagePlumPulse;
 extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
+extern	vmCvar_t		cg_enemyColors;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

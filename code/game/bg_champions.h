@@ -69,6 +69,7 @@ typedef struct {
 extern champion_stat_t champion_stats[NUM_CHAMPIONS];
 extern char *champion_names[NUM_CHAMPIONS];
 extern char *champion_models[NUM_CHAMPIONS];
+extern char *champion_skins[NUM_CHAMPIONS];
 
 int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );

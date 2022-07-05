@@ -55,6 +55,20 @@ float Com_Clamp( float min, float max, float value ) {
 	return value;
 }
 
+#if defined( QC ) // enhanced CPMA colors
+int ColorIndex(int c) {
+	if ( c >= '0' && c <= '7' ) {
+		return c - '0';
+	}
+	if ( c >= 'a' && c <= 'z' ) {
+		return c - 'a' + 8;
+	}
+	if ( c >= 'A' && c <= 'Z' ) {
+		return c - 'A' + 8;
+	}
+	return 0;
+}
+#endif
 
 /*
 ============

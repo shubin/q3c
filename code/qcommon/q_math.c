@@ -47,7 +47,11 @@ vec4_t		colorLtGrey	= {0.75, 0.75, 0.75, 1};
 vec4_t		colorMdGrey	= {0.5, 0.5, 0.5, 1};
 vec4_t		colorDkGrey	= {0.25, 0.25, 0.25, 1};
 
+#if defined( QC )
+vec4_t	g_color_table[34] =
+#else
 vec4_t	g_color_table[8] =
+#endif
 	{
 	{0.0, 0.0, 0.0, 1.0},
 	{1.0, 0.0, 0.0, 1.0},
@@ -57,6 +61,34 @@ vec4_t	g_color_table[8] =
 	{0.0, 1.0, 1.0, 1.0},
 	{1.0, 0.0, 1.0, 1.0},
 	{1.0, 1.0, 1.0, 1.0},
+#if defined( QC ) // CPMA colors
+	RGBA_TO_VEC4( 0xFF0000FF ), // A
+	RGBA_TO_VEC4( 0xFF4000FF ), // B
+	RGBA_TO_VEC4( 0xFF8000FF ), // C
+	RGBA_TO_VEC4( 0xFFC000FF ), // D
+	RGBA_TO_VEC4( 0xFFFF00FF ), // E
+	RGBA_TO_VEC4( 0xC0FF00FF ), // F
+	RGBA_TO_VEC4( 0x80FF00FF ), // G
+	RGBA_TO_VEC4( 0x40FF00FF ), // H
+	RGBA_TO_VEC4( 0x00FF00FF ), // I
+	RGBA_TO_VEC4( 0x00FF40FF ), // J
+	RGBA_TO_VEC4( 0x00FF80FF ), // K
+	RGBA_TO_VEC4( 0x00FFC0FF ), // L
+	RGBA_TO_VEC4( 0x00FFFFFF ), // M
+	RGBA_TO_VEC4( 0x00C0FFFF ), // N
+	RGBA_TO_VEC4( 0x0080FFFF ), // O
+	RGBA_TO_VEC4( 0x0040FFFF ), // P
+	RGBA_TO_VEC4( 0x0000FFFF ), // Q
+	RGBA_TO_VEC4( 0x4000FFFF ), // R
+	RGBA_TO_VEC4( 0x8000FFFF ), // S
+	RGBA_TO_VEC4( 0xC000FFFF ), // T
+	RGBA_TO_VEC4( 0xFF00FFFF ), // U
+	RGBA_TO_VEC4( 0xFF00C0FF ), // V
+	RGBA_TO_VEC4( 0xFF0080FF ), // W
+	RGBA_TO_VEC4( 0xFF0040FF ), // X
+	RGBA_TO_VEC4( 0x595959FF ), // Y
+	RGBA_TO_VEC4( 0x949494FF ), // Z
+#endif
 	};
 
 

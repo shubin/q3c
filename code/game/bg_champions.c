@@ -631,6 +631,26 @@ char* champion_models[NUM_CHAMPIONS] = {
     "sorlag",
 };
 
+char* champion_skins[NUM_CHAMPIONS] = {
+    "default",
+    "pm",
+    "default", //"athena",
+    "default", //"nyx",
+    "default",
+    "default", //"bj",
+    "default", //"dk",
+    "default",
+    "default", //"eisen",
+    "default", //"galena",
+    "pm",
+    "default", //"strogg",
+    "default",
+    "default",//"clutch",
+    "pm",
+    "default", //"scalebearer",
+    "default",
+};
+
 int ParseChampionName( const char* name ) {
     for ( int i = 0; i < NUM_CHAMPIONS; i++ ) {
         if ( !Q_stricmp( name, champion_names[i] ) ) {

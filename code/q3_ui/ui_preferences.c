@@ -47,7 +47,9 @@ GAME OPTIONS MENU
 #define ID_DYNAMICLIGHTS		132
 #define ID_IDENTIFYTARGET		133
 #define ID_SYNCEVERYFRAME		134
+#if !defined( QC )
 #define ID_FORCEMODEL			135
+#endif
 #define ID_DRAWTEAMOVERLAY		136
 #define ID_ALLOWDOWNLOAD			137
 #define ID_BACK					138
@@ -98,7 +100,9 @@ static void Preferences_SetMenuItems( void ) {
 	s_preferences.dynamiclights.curvalue	= trap_Cvar_VariableValue( "r_dynamiclight" ) != 0;
 	s_preferences.highqualitysky.curvalue	= trap_Cvar_VariableValue ( "r_fastsky" ) == 0;
 	s_preferences.synceveryframe.curvalue	= trap_Cvar_VariableValue( "r_finish" ) != 0;
+#if !defined( QC )
 	s_preferences.forcemodel.curvalue		= trap_Cvar_VariableValue( "cg_forcemodel" ) != 0;
+#endif
 	s_preferences.drawteamoverlay.curvalue	= Com_Clamp( 0, 3, trap_Cvar_VariableValue( "cg_drawTeamOverlay" ) );
 	s_preferences.allowdownload.curvalue	= trap_Cvar_VariableValue( "cl_allowDownload" ) != 0;
 }
@@ -145,9 +149,11 @@ static void Preferences_Event( void* ptr, int notification ) {
 		trap_Cvar_SetValue( "r_finish", s_preferences.synceveryframe.curvalue );
 		break;
 
+#if !defined( QC )
 	case ID_FORCEMODEL:
 		trap_Cvar_SetValue( "cg_forcemodel", s_preferences.forcemodel.curvalue );
 		break;
+#endif
 
 	case ID_DRAWTEAMOVERLAY:
 		trap_Cvar_SetValue( "cg_drawTeamOverlay", s_preferences.drawteamoverlay.curvalue );
@@ -325,6 +331,7 @@ static void Preferences_MenuInit( void ) {
 	s_preferences.synceveryframe.generic.x	      = PREFERENCES_X_POS;
 	s_preferences.synceveryframe.generic.y	      = y;
 
+#if !defined( QC )
 	y += BIGCHAR_HEIGHT+2;
 	s_preferences.forcemodel.generic.type     = MTYPE_RADIOBUTTON;
 	s_preferences.forcemodel.generic.name	  = "Force Player Models:";
@@ -333,6 +340,7 @@ static void Preferences_MenuInit( void ) {
 	s_preferences.forcemodel.generic.id       = ID_FORCEMODEL;
 	s_preferences.forcemodel.generic.x	      = PREFERENCES_X_POS;
 	s_preferences.forcemodel.generic.y	      = y;
+#endif
 
 	y += BIGCHAR_HEIGHT+2;
 	s_preferences.drawteamoverlay.generic.type     = MTYPE_SPINCONTROL;
