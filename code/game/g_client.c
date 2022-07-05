@@ -1415,7 +1415,7 @@ void ClientSpawn(gentity_t *ent) {
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 #if defined( QC )
 	if ( champion_switched ) {
-		trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s", champion_models[client->ps.champion] ) );
+		trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s/%s", champion_models[client->ps.champion], champion_skins[client->ps.champion] ) );
 	}
 #endif
 }
