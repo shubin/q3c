@@ -53,9 +53,10 @@ typedef struct {
 	int			previous_waterlevel;
 } pml_t;
 
-#if defined( QC )
 extern	pmove_t		*pm;
 extern	pml_t		pml;
+
+#if defined( QC )
 extern	int		c_pmove;
 
 typedef struct movement_parameters_s {
