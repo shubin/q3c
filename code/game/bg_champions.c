@@ -66,11 +66,11 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 75,
         .max_health = 150,
         .max_armor = 150,
-        .ability_cooldown = 30,
+        .ability_cooldown = 45,
         .ability_duration = 30, // tenths of a second
         .start_health = {
-            100, // GT_FFA
-            100, // GT_TOURNAMENT
+            125, // GT_FFA
+            125, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
@@ -364,17 +364,17 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .base_armor = 100,
         .max_health = 175,
         .max_armor = 150,
-        .ability_cooldown = 30,
+        .ability_cooldown = 45,
         .start_health = {
-            100, // GT_FFA
-            100, // GT_TOURNAMENT
+            125, // GT_FFA
+            125, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_CTF
         },
         .start_armor = {
-            0, // GT_FFA
-            0, // GT_TOURNAMENT
+            50, // GT_FFA
+            50, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
@@ -500,9 +500,9 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .start_health = {
             125, // GT_FFA
             125, // GT_TOURNAMENT
-            100, // GT_SINGLE_PLAYER
-            100, // GT_TEAM
-            100, // GT_CTF
+            125, // GT_SINGLE_PLAYER
+            125, // GT_TEAM
+            125, // GT_CTF
         },
         .start_armor = {
             100, // GT_FFA

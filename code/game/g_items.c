@@ -402,7 +402,7 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 //======================================================================
 
 int Pickup_Hourglass(gentity_t* ent, gentity_t* other) {
-	other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 5 );
+	other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 9 );
 	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
 		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
 	}
