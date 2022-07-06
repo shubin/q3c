@@ -160,7 +160,8 @@ typedef enum {
 #define PMF_SCOREBOARD		8192	// spectate as a scoreboard
 #define PMF_INVULEXPAND		16384	// invulnerability sphere set to full size
 #if defined( QC )
-#define PMF_ABILITY_ACTIVATED 32768
+#define PMF_ABILITY_ACTIVATED	32768
+#define PMF_JUMPPAD				65536 // if the bit is set then player is launched by a jumppad
 #endif
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)

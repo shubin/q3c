@@ -147,6 +147,11 @@ void trigger_push_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
 	}
 
 	BG_TouchJumpPad( &other->client->ps, &self->s );
+#if defined( QC )
+	if ( other->client->ps.jumppad_frame == other->client->ps.pmove_framecount ) {
+		other->client->ps.pm_flags |= PMF_JUMPPAD;
+	}
+#endif
 }
 
 

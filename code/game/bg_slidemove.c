@@ -287,6 +287,10 @@ qboolean	PM_SlideMove( qboolean gravity ) {
 	return ( bumpcount != 0 );
 }
 
+#if defined( QC )
+float PM_CmdScale( usercmd_t *cmd );
+#endif
+
 /*
 ==================
 PM_StepSlideMove
@@ -301,6 +305,32 @@ void PM_StepSlideMove( qboolean gravity ) {
 //	vec3_t		delta, delta2;
 	vec3_t		up, down;
 	float		stepSize;
+#if defined( QC )
+	qboolean	dograb = qfalse;
+	float		scale;
+	vec3_t		wishvel, wishdir;
+	float		wishspeed;
+	int i;
+
+	scale = PM_CmdScale( &pm->cmd );
+	//
+	// user intentions
+	//
+	if ( !scale ) {
+		wishvel[0] = 0;
+		wishvel[1] = 0;
+		wishvel[2] = 0;
+	} else {
+		for (i=0 ; i<3 ; i++) {
+			wishvel[i] = scale * pml.forward[i]*abs(pm->cmd.forwardmove);// + scale * ( pm->cmd.forwardmove ? pml.right[i]*pm->cmd.rightmove : 0 );
+		}
+		VectorScale( wishvel, 0.5f, wishvel );
+		wishvel[2] += pm->ps->velocity[2];
+	}
+
+	VectorCopy (wishvel, wishdir);
+	wishspeed = VectorNormalize(wishdir);
+#endif
 
 	VectorCopy (pm->ps->origin, start_o);
 	VectorCopy (pm->ps->velocity, start_v);
@@ -310,20 +340,45 @@ void PM_StepSlideMove( qboolean gravity ) {
 	}
 
 	VectorCopy(start_o, down);
+#if defined( QC )
+	if ( dograb ) {
+		down[2] -= STEPSIZE/2;
+	} else {
+		down[2] -= STEPSIZE;
+	}
+#else
 	down[2] -= STEPSIZE;
+#endif
 	pm->trace (&trace, start_o, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
 	if ( pm->ps->velocity[2] > 0 && (trace.fraction == 1.0 ||
 										DotProduct(trace.plane.normal, up) < 0.7)) {
+#if defined( QC )
+		if ( ( pm->ps->pm_flags & ( PMF_DUCKED | PMF_JUMPPAD ) ) == ( PMF_DUCKED | PMF_JUMPPAD ) ) {
+			dograb = qtrue;
+		}
+		else {
+			return;
+		}
+#else
 		return;
+#endif
 	}
 
 	//VectorCopy (pm->ps->origin, down_o);
 	//VectorCopy (pm->ps->velocity, down_v);
 
 	VectorCopy (start_o, up);
+#if defined( QC )
+	if ( dograb ) {
+		up[2] += STEPSIZE/2;
+	} else {
+		up[2] += STEPSIZE;
+	}
+#else
 	up[2] += STEPSIZE;
+#endif
 
 	// test the player position if they were a stepheight higher
 	pm->trace (&trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask);
@@ -337,7 +392,15 @@ void PM_StepSlideMove( qboolean gravity ) {
 	stepSize = trace.endpos[2] - start_o[2];
 	// try slidemove from this position
 	VectorCopy (trace.endpos, pm->ps->origin);
+#if defined( QC )
+	if ( dograb ) {
+		VectorCopy (wishvel, pm->ps->velocity);
+	} else {
+		VectorCopy (start_v, pm->ps->velocity);
+	}
+#else
 	VectorCopy (start_v, pm->ps->velocity);
+#endif
 
 	PM_SlideMove( gravity );
 

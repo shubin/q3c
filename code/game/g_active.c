@@ -1166,6 +1166,7 @@ void ClientThink_real( gentity_t *ent ) {
 #if defined( QC )
 	// tracking when the player goes airborne
 	if ( pml.groundPlane ) {
+		ent->client->ps.pm_flags &= ~PMF_JUMPPAD;
 		if ( level.time - ent->client->ps.airTime > 700 ) { // have to stay at least 700 ms to get rid of the "ringouter"
 			ent->client->ps.airTime = -1;
 			ent->client->ps.ringoutKiller = -1;
