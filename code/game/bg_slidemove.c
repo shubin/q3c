@@ -307,6 +307,7 @@ void PM_StepSlideMove( qboolean gravity ) {
 	float		stepSize;
 #if defined( QC )
 	qboolean	dograb = qfalse;
+	qboolean	dostepjump = qfalse;
 	float		scale;
 	vec3_t		wishvel, wishdir;
 	float		wishspeed;
@@ -343,6 +344,8 @@ void PM_StepSlideMove( qboolean gravity ) {
 #if defined( QC )
 	if ( dograb ) {
 		down[2] -= STEPSIZE/2;
+	} else if ( dostepjump ) {
+		down[2] -= STEPSIZE;
 	} else {
 		down[2] -= STEPSIZE;
 	}
@@ -357,6 +360,9 @@ void PM_StepSlideMove( qboolean gravity ) {
 #if defined( QC )
 		if ( ( pm->ps->pm_flags & ( PMF_DUCKED | PMF_JUMPPAD ) ) == ( PMF_DUCKED | PMF_JUMPPAD ) ) {
 			dograb = qtrue;
+		}
+		else if ((pm->ps->pm_flags & PMF_JUMP_HELD) && (pm->ps->pm_flags & ~PMF_JUMPPAD)) {
+			dostepjump = qtrue;
 		}
 		else {
 			return;
@@ -373,6 +379,8 @@ void PM_StepSlideMove( qboolean gravity ) {
 #if defined( QC )
 	if ( dograb ) {
 		up[2] += STEPSIZE/2;
+	} else if ( dostepjump ) {
+		up[2] += STEPSIZE;
 	} else {
 		up[2] += STEPSIZE;
 	}
@@ -395,6 +403,9 @@ void PM_StepSlideMove( qboolean gravity ) {
 #if defined( QC )
 	if ( dograb ) {
 		VectorCopy (wishvel, pm->ps->velocity);
+	} else if ( dostepjump ) {
+		//start_v[2] /= 2;
+		VectorCopy (start_v, pm->ps->velocity);
 	} else {
 		VectorCopy (start_v, pm->ps->velocity);
 	}

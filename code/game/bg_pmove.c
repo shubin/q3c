@@ -60,7 +60,7 @@ static movement_parameters_t s_mp[] = {
 		.cpm_pm_aircontrol = 0.0f,
 		.cpm_pm_strafeaccelerate = 1.0f,
 		.cpm_pm_wishspeed = 400.0f,
-		.cpm_pm_jump_z = 0.0f,
+		.cpm_pm_jump_z = 50.0f,
 	},
 	{	// Anarki CPM
 		.pm_stopspeed = 100.0f,
@@ -84,7 +84,7 @@ static movement_parameters_t s_mp[] = {
 		.cpm_pm_aircontrol = 150.0f,
 		.cpm_pm_strafeaccelerate = 70.0f,
 		.cpm_pm_wishspeed = 30.0f,
-		.cpm_pm_jump_z = 100.0f,
+		.cpm_pm_jump_z = 50.0f,
 	},
 	{
 		.pm_stopspeed = 100.0f,
@@ -108,7 +108,7 @@ static movement_parameters_t s_mp[] = {
 		.cpm_pm_aircontrol = 0.0f,
 		.cpm_pm_strafeaccelerate = 1.0f,
 		.cpm_pm_wishspeed = 400.0f,
-		.cpm_pm_jump_z = 0.0f,
+		.cpm_pm_jump_z = 50.0f,
 	},
 };
 
