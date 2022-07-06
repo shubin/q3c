@@ -55,9 +55,9 @@ typedef struct {
 
 extern	pmove_t		*pm;
 extern	pml_t		pml;
+extern	int		c_pmove;
 
 #if defined( QC )
-extern	int		c_pmove;
 
 typedef struct movement_parameters_s {
 	float	pm_stopspeed;
