@@ -436,6 +436,19 @@ CL_MouseMove
 void CL_MouseMove(usercmd_t *cmd)
 {
 	float mx, my;
+#if defined( QC )
+	qboolean zoomed;
+	cvar_t *sensitivity = cl_sensitivity;
+	cvar_t *mouseAccel = cl_mouseAccel;
+
+	zoomed = ( cl.cgameUserCmdValue & 128 ) != 0;
+	if ( zoomed && cl_zoomSensitivity->value > 0 ) {
+		sensitivity = cl_zoomSensitivity;
+		if ( cl_zoomMouseAccel->value >= 0 ) {
+			mouseAccel = cl_zoomMouseAccel;
+		}
+	}
+#endif
 
 	// allow mouse smoothing
 	if (m_filter->integer)
@@ -456,6 +469,56 @@ void CL_MouseMove(usercmd_t *cmd)
 	if (mx == 0.0f && my == 0.0f)
 		return;
 	
+#if defined( QC )
+	if (mouseAccel->value != 0.0f)
+	{
+		if(cl_mouseAccelStyle->integer == 0)
+		{
+			float accelSensitivity;
+			float rate;
+			
+			rate = sqrt(mx * mx + my * my) / (float) frame_msec;
+			accelSensitivity = sensitivity->value + rate * mouseAccel->value;
+			mx *= accelSensitivity;
+			my *= accelSensitivity;
+			
+			if(cl_showMouseRate->integer)
+				Com_Printf("rate: %f, accelSensitivity: %f\n", rate, accelSensitivity);
+		}
+		else
+		{
+			float rate[2];
+			float power[2];
+
+			// sensitivity remains pretty much unchanged at low speeds
+			// cl_mouseAccel is a power value to how the acceleration is shaped
+			// cl_mouseAccelOffset is the rate for which the acceleration will have doubled the non accelerated amplification
+			// NOTE: decouple the config cvars for independent acceleration setup along X and Y?
+
+			rate[0] = fabs(mx) / (float) frame_msec;
+			rate[1] = fabs(my) / (float) frame_msec;
+			power[0] = powf(rate[0] / cl_mouseAccelOffset->value, mouseAccel->value);
+			power[1] = powf(rate[1] / cl_mouseAccelOffset->value, mouseAccel->value);
+
+			mx = sensitivity->value * (mx + ((mx < 0) ? -power[0] : power[0]) * cl_mouseAccelOffset->value);
+			my = sensitivity->value * (my + ((my < 0) ? -power[1] : power[1]) * cl_mouseAccelOffset->value);
+
+			if(cl_showMouseRate->integer)
+				Com_Printf("ratex: %f, ratey: %f, powx: %f, powy: %f\n", rate[0], rate[1], power[0], power[1]);
+		}
+	}
+	else
+	{
+		mx *= sensitivity->value;
+		my *= sensitivity->value;
+	}
+
+	if ( zoomed && cl_zoomSensitivity->value <= 0 ) {
+		// ingame FOV
+		mx *= cl.cgameSensitivity;
+		my *= cl.cgameSensitivity;
+	}
+#else
 	if (cl_mouseAccel->value != 0.0f)
 	{
 		if(cl_mouseAccelStyle->integer == 0)
@@ -464,7 +527,6 @@ void CL_MouseMove(usercmd_t *cmd)
 			float rate;
 			
 			rate = sqrt(mx * mx + my * my) / (float) frame_msec;
-
 			accelSensitivity = cl_sensitivity->value + rate * cl_mouseAccel->value;
 			mx *= accelSensitivity;
 			my *= accelSensitivity;
@@ -503,6 +565,7 @@ void CL_MouseMove(usercmd_t *cmd)
 	// ingame FOV
 	mx *= cl.cgameSensitivity;
 	my *= cl.cgameSensitivity;
+#endif
 
 	// add mouse X/Y movement to cmd
 	if(in_strafe.active)

@@ -386,6 +386,10 @@ extern	cvar_t	*cl_run;
 extern	cvar_t	*cl_anglespeedkey;
 
 extern	cvar_t	*cl_sensitivity;
+#if defined( QC )
+extern cvar_t	*cl_zoomSensitivity;
+extern cvar_t	*cl_zoomMouseAccel;
+#endif
 extern	cvar_t	*cl_freelook;
 
 extern	cvar_t	*cl_mouseAccel;
