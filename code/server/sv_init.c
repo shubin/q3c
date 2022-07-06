@@ -650,7 +650,11 @@ void SV_Init (void)
 	// systeminfo
 	Cvar_Get ("sv_cheats", "1", CVAR_SYSTEMINFO | CVAR_ROM );
 	sv_serverid = Cvar_Get ("sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM );
+#if defined( QC )
+	sv_pure = Cvar_Get ("sv_pure", "0", CVAR_SYSTEMINFO );
+#else
 	sv_pure = Cvar_Get ("sv_pure", "1", CVAR_SYSTEMINFO );
+#endif
 #ifdef USE_VOIP
 	sv_voip = Cvar_Get("sv_voip", "1", CVAR_LATCH);
 	Cvar_CheckRange(sv_voip, 0, 1, qtrue);

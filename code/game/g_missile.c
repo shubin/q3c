@@ -650,7 +650,7 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_PLASMAGUN;
 #if defined( QC )
-	bolt->s.constantLight = 0x1F7F7F3F;
+//	bolt->s.constantLight = 0x1F7F7F3F;
 #endif
 	bolt->r.ownerNum = self->s.number;
 #if defined( UNLAGGED ) //unlagged - projectile nudge

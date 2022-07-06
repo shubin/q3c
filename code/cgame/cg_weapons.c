@@ -2239,6 +2239,7 @@ void CG_MissileHitPlayer( int weapon, vec3_t origin, vec3_t dir, int entityNum )
 	case WP_ROCKET_LAUNCHER:
 #if defined( QC )
 	case WP_TRIBOLT:
+	case WP_LOUSY_PLASMAGUN:
 #endif
 	case WP_PLASMAGUN:
 	case WP_BFG:

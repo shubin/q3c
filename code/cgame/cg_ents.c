@@ -532,7 +532,16 @@ static void CG_Missile( centity_t *cent ) {
 		trap_R_AddRefEntityToScene( &ent );
 		return;
 	}
-
+#if defined( QC )
+	if ( cent->currentState.weapon == WP_LOUSY_PLASMAGUN ) {
+		ent.reType = RT_SPRITE;
+		ent.radius = 12;
+		ent.rotation = 0;
+		ent.customShader = cgs.media.plasmaBallShader;
+		trap_R_AddRefEntityToScene( &ent );
+		return;
+	}
+#endif
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
 	ent.hModel = weapon->missileModel;

@@ -3330,7 +3330,11 @@ static void FS_Startup( const char *gameName )
 		homePath = fs_basepath->string;
 	}
 	fs_homepath = Cvar_Get ("fs_homepath", homePath, CVAR_INIT|CVAR_PROTECTED );
+#if defined( QC )
+	fs_gamedirvar = Cvar_Get ("fs_game", "q3c", CVAR_INIT|CVAR_SYSTEMINFO );
+#else
 	fs_gamedirvar = Cvar_Get ("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO );
+#endif
 
 	if (!gameName[0]) {
 		Cvar_ForceReset( "com_basegame" );
@@ -3989,7 +3993,11 @@ void FS_InitFilesystem( void ) {
 	Com_StartupVariable("fs_game");
 
 	if(!FS_FilenameCompare(Cvar_VariableString("fs_game"), com_basegame->string))
+#if defined( QC )
+		Cvar_Set("fs_game", "q3c");
+#else
 		Cvar_Set("fs_game", "");
+#endif
 
 	// try to start up normally
 	FS_Startup(com_basegame->string);

@@ -3311,7 +3311,11 @@ static void UI_RunMenuScript(char **args) {
 		} else if (Q_stricmp(name, "RunDemo") == 0) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("demo %s\n", uiInfo.demoList[uiInfo.demoIndex]));
 		} else if (Q_stricmp(name, "Quake3") == 0) {
+#if defined( QC )
+			trap_Cvar_Set( "fs_game", "q3c");
+#else
 			trap_Cvar_Set( "fs_game", "");
+#endif
 			trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart;" );
 		} else if (Q_stricmp(name, "closeJoin") == 0) {
 			if (uiInfo.serverStatus.refreshActive) {
