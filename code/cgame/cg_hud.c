@@ -143,8 +143,10 @@ static struct {
 } bounds;
 
 static struct {
-	qhandle_t	icon_health;	// for player status
-	qhandle_t	icon_armor;		// for player status
+	qhandle_t	icon_health;	// for player status & item stats
+	qhandle_t	icon_armor;		// for player status & item stats
+	qhandle_t	icon_yellow_armor; // for item stats
+	qhandle_t	icon_hourglass; // for item stats
 	qhandle_t	icon_weapon[NUM_HUD_WEAPONS];	// weapon icons for the vertical ammo status bar
 	qhandle_t	icon_stat_weapon[NUM_STAT_WEAPONS];	// weapon icons for scoreboard stats
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
@@ -289,6 +291,8 @@ static void hud_initmedia( void ) {
 
 	media.icon_health = cg_items[BG_FindItemByClass( "item_health_mega" ) - bg_itemlist].icon;
 	media.icon_armor = cg_items[BG_FindItemByClass( "item_armor_body" ) - bg_itemlist].icon;
+	media.icon_yellow_armor = cg_items[BG_FindItemByClass( "item_armor_combat") - bg_itemlist].icon;
+	media.icon_hourglass = cg_items[BG_FindItemByClass( "item_hourglass") - bg_itemlist].icon;
 	for ( i = 0; i < NUM_HUD_WEAPONS; i++ ) {
 		media.icon_weapon[i] = trap_R_RegisterShader( hud_weapon_icons[i] );
 	}
@@ -1575,6 +1579,44 @@ void hud_drawscores_tournament( void ) {
 		text = va( "%d", enemyScore );
 		dim = hud_measurestring( 0.4f, &font_regular, text );
 		hud_drawstring( centerx + 100 - dim/2, y + 32, 0.4f, &font_regular, text, NULL, 0, 0 );
+	}
+	trap_R_SetColor( NULL );
+	// item stats
+	if ( myScores != NULL) { 
+		y = bounds.top + 295 + 3 * 60 + 10;
+		hud_drawpic( centerx - 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_health );
+		hud_drawstring( centerx - 800 + 32, y + 32, 0.4f, &font_regular, va( "%d", myScores->itemstat.mega ), NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx - 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_armor );
+		hud_drawstring( centerx - 800 + 32, y + 32, 0.4f, &font_regular, va( "%d", myScores->itemstat.red ), NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx - 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_yellow_armor );
+		hud_drawstring( centerx - 800 + 32, y + 32, 0.4f, &font_regular, va( "%d", myScores->itemstat.yellow ), NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx - 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_hourglass );
+		hud_drawstring( centerx - 800 + 32, y + 32, 0.4f, &font_regular, va( "%d", myScores->itemstat.hourglass ), NULL, 0, 0);
+	}
+	if ( enemyScores != NULL) { 
+		y = bounds.top + 295 + 3 * 60 + 10;
+		hud_drawpic( centerx + 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_health );
+		text = va( "%d", enemyScores->itemstat.mega );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx + 800 - 32 - dim, y + 32, 0.4f, &font_regular, text, NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx + 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_armor );
+		text = va( "%d", enemyScores->itemstat.red );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx + 800 - 32 - dim, y + 32, 0.4f, &font_regular, text, NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx + 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_yellow_armor );
+		text = va( "%d", enemyScores->itemstat.yellow );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx + 800 - 32 - dim, y + 32, 0.4f, &font_regular, text, NULL, 0, 0);
+		y += 60;
+		hud_drawpic( centerx + 800, y + 6, 32, 32, 0.5f, 0.0f, media.icon_hourglass );
+		text = va( "%d", enemyScores->itemstat.hourglass );
+		dim = hud_measurestring( 0.4f, &font_regular, text );
+		hud_drawstring( centerx + 800 - 32 - dim, y + 32, 0.4f, &font_regular, text, NULL, 0, 0);
 	}
 }
 

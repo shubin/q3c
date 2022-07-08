@@ -130,6 +130,12 @@ static void CG_ParseScores( void ) {
 			//	'%'
 			//);
 		}
+		cg.scores[i].itemstat.health =		atoi( CG_NextScoreValue () );
+		cg.scores[i].itemstat.armor =		atoi( CG_NextScoreValue () );
+		cg.scores[i].itemstat.mega =		atoi( CG_NextScoreValue () );
+		cg.scores[i].itemstat.red =			atoi( CG_NextScoreValue () );
+		cg.scores[i].itemstat.yellow =		atoi( CG_NextScoreValue () );
+		cg.scores[i].itemstat.hourglass =	atoi( CG_NextScoreValue () );
 	}
 }
 #else

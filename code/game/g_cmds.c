@@ -106,6 +106,18 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			strcpy( string + stringlength, entry );
 			stringlength += j;
 		}
+		Com_sprintf( entry, sizeof( entry ),
+			" %i %i %i %i %i %i",
+			cl->itemstat.health, cl->itemstat.armor, 
+			cl->itemstat.mega, cl->itemstat.red, 
+			cl->itemstat.yellow, cl->itemstat.hourglass
+		);
+		j = strlen( entry );
+		if ( stringlength + j >= sizeof( string ) ) {
+			break;
+		}
+		strcpy( string + stringlength, entry );
+		stringlength += j;
 #endif
 	}
 

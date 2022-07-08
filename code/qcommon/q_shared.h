@@ -1500,6 +1500,15 @@ typedef struct {
 	int damage;
 	int score;
 } wepstat_t;
+
+typedef struct {
+	int	health;
+	int	armor;
+	int	mega;
+	int	red;
+	int yellow;
+	int hourglass;
+} itemstat_t;
 #endif
 
 #define	MAX_GLOBAL_SERVERS				4096

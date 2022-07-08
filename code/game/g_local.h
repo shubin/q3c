@@ -330,6 +330,7 @@ struct gclient_s {
 	int			accuracy_hits;		// total number of hits
 #if defined( QC )
 	wepstat_t	wepstat[WP_NUM_WEAPONS]; // per-weapon stats
+	itemstat_t	itemstat;			// per-item stat
 #endif
 
 	//

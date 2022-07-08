@@ -305,6 +305,7 @@ typedef struct {
 	int				team;
 #if defined( QC )
 	wepstat_t		wepstat[WP_NUM_WEAPONS];
+	itemstat_t		itemstat;
 #endif
 } score_t;
 

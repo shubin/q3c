@@ -379,7 +379,14 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	}
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 
+#if defined( QC )
+	other->client->itemstat.health += ent->item->quantity;
+#endif
+
 	if ( ent->item->quantity == 100 ) {		// mega health respawns slow
+#if defined( QC )
+		other->client->itemstat.mega++;
+#endif
 		return RESPAWN_MEGAHEALTH;
 	}
 #if defined( QC )
@@ -406,6 +413,7 @@ int Pickup_Hourglass(gentity_t* ent, gentity_t* other) {
 	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
 		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
 	}
+	other->client->itemstat.hourglass++;
 	return RESPAWN_HOURGLASS;
 }
 #endif
@@ -450,6 +458,7 @@ int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 #endif
 #endif
 #if defined( QC )
+	other->client->itemstat.armor += ent->item->quantity;
 	if ( ent->item->quantity == 5 ) {
 		return RESPAWN_SHARD;
 	}
@@ -457,8 +466,10 @@ int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 		return RESPAWN_GREENARMOR;
 	}
 	if ( ent->item->quantity == 50 ) {
+		other->client->itemstat.yellow++;
 		return RESPAWN_YELLOWARMOR;
 	}
+	other->client->itemstat.red++;
 	return RESPAWN_REDARMOR;
 #else
 	return RESPAWN_ARMOR;
