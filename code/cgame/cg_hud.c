@@ -1210,7 +1210,9 @@ static void hud_drawdeathmessage( void ) {
 	if ( cg.killerInfo.clientNum < 0 || 
 		cg.killerInfo.clientNum >= MAX_CLIENTS || 
 		cg.predictedPlayerState.pm_type != PM_DEAD || 
-		cg.showScores ) 
+		cg.showScores ||
+		cg.killerInfo.clientNum == cg.clientNum
+		) 
 	{
 		return;
 	}
@@ -1255,23 +1257,25 @@ static void hud_drawdeathmessage( void ) {
 			break;
 		}
 	}
-	// draw stack left
-	text = va( "STACK LEFT", cg.killerInfo.health, cg.killerInfo.armor );
-	dim = hud_measurestring( 0.3f, &font_regular, text );
-	trap_R_SetColor( gray );
-	hud_drawstring( centerx - dim/2, top + 90, 0.3f, &font_regular, text, NULL, 0, 0 );
-	trap_R_SetColor( NULL );
-	dim1 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.health ) );
-	dim2 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ) );
-	dim = dim1 + dim2 + 2 * 24 + 2 * 4 + 44;
-	dim = centerx - dim/2;
-	hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_health );
-	dim += 24 + 4;
-	dim += hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.health ), NULL, 0, 0 );
-	dim += 44;
-	hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_armor );
-	dim += 24 + 4;
-	hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ), NULL, 0, 0 );
+	if ( cg.killerInfo.health != -9999 ) {
+		// draw stack left
+		text = va( "STACK LEFT", cg.killerInfo.health, cg.killerInfo.armor );
+		dim = hud_measurestring( 0.3f, &font_regular, text );
+		trap_R_SetColor( gray );
+		hud_drawstring( centerx - dim/2, top + 90, 0.3f, &font_regular, text, NULL, 0, 0 );
+		trap_R_SetColor( NULL );
+		dim1 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.health ) );
+		dim2 = hud_measurestring( 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ) );
+		dim = dim1 + dim2 + 2 * 24 + 2 * 4 + 44;
+		dim = centerx - dim/2;
+		hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_health );
+		dim += 24 + 4;
+		dim += hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.health ), NULL, 0, 0 );
+		dim += 44;
+		hud_drawpic( dim, top + 124, 24, 24, 0.0f, 0.5f, media.icon_armor );
+		dim += 24 + 4;
+		hud_drawstring( dim, top + 133, 0.4f, &font_regular, va( "%d", cg.killerInfo.armor ), NULL, 0, 0 );
+	}
 }
 
 /*

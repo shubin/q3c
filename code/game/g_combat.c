@@ -92,8 +92,12 @@ void KillerInfo( gentity_t *ent, int killerNum, int champion, int weapon, int po
 	kb->s.eventParm = killerNum;
 	kb->s.powerups = powerups;
 	kb->s.weapon = weapon;
-	kb->s.time = health;
-	kb->s.time2 = armor;
+	if ( g_gametype.value != GT_TOURNAMENT ) {
+		kb->s.time = health;
+		kb->s.time2 = armor;
+	} else {
+		kb->s.time = kb->s.time2 = -9999;
+	}
 }
 #endif
 
@@ -515,7 +519,7 @@ void player_pain( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, in
 		return;
 	}
 
-	if ( attacker != NULL && attacker->client != NULL ) {
+	if ( attacker != NULL && attacker->client != NULL && self->client->ps.clientNum != attacker->client->ps.clientNum ) {
 		attacker->client->wepstat[inflictor->s.weapon].damage += damage;
 	}
 }
@@ -557,7 +561,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	} else {
 		ringout = qfalse;
 	}
-	if ( attacker != NULL && attacker->client != NULL ) {
+	if ( attacker != NULL && attacker->client != NULL && self->client->ps.clientNum != attacker->client->ps.clientNum ) {
 		attacker->client->wepstat[inflictor->s.weapon].score++;
 		attacker->client->wepstat[inflictor->s.weapon].damage += damage;
 	}
