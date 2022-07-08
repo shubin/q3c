@@ -32,13 +32,21 @@ MAIN MENU
 #include "ui_local.h"
 
 
+#if !defined( QC )
 #define ID_SINGLEPLAYER			10
 #define ID_MULTIPLAYER			11
+#endif
+#if defined( QC )
+#define ID_HOST_GAME			10
+#define ID_JOIN_GAME			11
+#endif
 #define ID_SETUP				12
 #define ID_DEMOS				13
+#if !defined( QC )
 #define ID_CINEMATICS			14
-#define ID_TEAMARENA		15
+#define ID_TEAMARENA			15
 #define ID_MODS					16
+#endif
 #define ID_EXIT					17
 
 #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner5.md3"
@@ -48,13 +56,21 @@ MAIN MENU
 typedef struct {
 	menuframework_s	menu;
 
+#if !defined( QC )
 	menutext_s		singleplayer;
 	menutext_s		multiplayer;
+#endif
+#if defined( QC )
+	menutext_s		hostgame;
+	menutext_s		joingame;
+#endif
 	menutext_s		setup;
 	menutext_s		demos;
+#if !defined( QC )
 	menutext_s		cinematics;
 	menutext_s		teamArena;
 	menutext_s		mods;
+#endif
 	menutext_s		exit;
 
 	qhandle_t		bannerModel;
@@ -96,12 +112,21 @@ void Main_MenuEvent (void* ptr, int event) {
 	}
 
 	switch( ((menucommon_s*)ptr)->id ) {
+#if !defined( QC )
 	case ID_SINGLEPLAYER:
 		UI_SPLevelMenu();
 		break;
 
 	case ID_MULTIPLAYER:
 		UI_ArenaServersMenu();
+		break;
+#endif
+	case ID_HOST_GAME:
+		UI_StartServerMenu( qtrue );
+		break;
+
+	case ID_JOIN_GAME:
+		UI_SpecifyServerMenu();
 		break;
 
 	case ID_SETUP:
@@ -111,7 +136,7 @@ void Main_MenuEvent (void* ptr, int event) {
 	case ID_DEMOS:
 		UI_DemosMenu();
 		break;
-
+#if !defined( QC )
 	case ID_CINEMATICS:
 		UI_CinematicsMenu();
 		break;
@@ -124,6 +149,7 @@ void Main_MenuEvent (void* ptr, int event) {
 		trap_Cvar_Set( "fs_game", BASETA);
 		trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart;" );
 		break;
+#endif
 
 	case ID_EXIT:
 		UI_ConfirmMenu( "EXIT GAME?", 0, MainMenu_ExitAction );
@@ -230,6 +256,7 @@ static void Main_MenuDraw( void ) {
 }
 
 
+#if !defined( QC )
 /*
 ===============
 UI_TeamArenaExists
@@ -255,7 +282,7 @@ static qboolean UI_TeamArenaExists( void ) {
 	}
 	return qfalse;
 }
-
+#endif
 
 /*
 ===============
@@ -312,6 +339,32 @@ void UI_MainMenu( void ) {
 	s_main.menu.wrapAround = qtrue;
 	s_main.menu.showlogo = qtrue;
 
+#if defined( QC )
+	y = 180;
+	s_main.hostgame.generic.type		= MTYPE_PTEXT;
+	s_main.hostgame.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_main.hostgame.generic.x			= 320;
+	s_main.hostgame.generic.y			= y;
+	s_main.hostgame.generic.id			= ID_HOST_GAME;
+	s_main.hostgame.generic.callback	= Main_MenuEvent; 
+	s_main.hostgame.string				= "START GAME";
+	s_main.hostgame.color				= color_red;
+	s_main.hostgame.style				= style;
+
+	y += MAIN_MENU_VERTICAL_SPACING;
+
+	s_main.joingame.generic.type		= MTYPE_PTEXT;
+	s_main.joingame.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_main.joingame.generic.x			= 320;
+	s_main.joingame.generic.y			= y;
+	s_main.joingame.generic.id			= ID_JOIN_GAME;
+	s_main.joingame.generic.callback	= Main_MenuEvent; 
+	s_main.joingame.string				= "JOIN GAME";
+	s_main.joingame.color				= color_red;
+	s_main.joingame.style				= style;
+
+	y += MAIN_MENU_VERTICAL_SPACING;
+#else
 	y = 134;
 	s_main.singleplayer.generic.type		= MTYPE_PTEXT;
 	s_main.singleplayer.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -335,6 +388,7 @@ void UI_MainMenu( void ) {
 	s_main.multiplayer.style				= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
+#endif
 	s_main.setup.generic.type				= MTYPE_PTEXT;
 	s_main.setup.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_main.setup.generic.x					= 320;
@@ -356,6 +410,7 @@ void UI_MainMenu( void ) {
 	s_main.demos.color						= color_red;
 	s_main.demos.style						= style;
 
+#if !defined( QC )
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.cinematics.generic.type			= MTYPE_PTEXT;
 	s_main.cinematics.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -393,7 +448,7 @@ void UI_MainMenu( void ) {
 		s_main.mods.color					= color_red;
 		s_main.mods.style					= style;
 	}
-
+#endif
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.exit.generic.type				= MTYPE_PTEXT;
 	s_main.exit.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -405,6 +460,14 @@ void UI_MainMenu( void ) {
 	s_main.exit.color						= color_red;
 	s_main.exit.style						= style;
 
+#if defined( QC )
+	Menu_AddItem( &s_main.menu,	&s_main.hostgame);
+	Menu_AddItem( &s_main.menu,	&s_main.joingame );
+	Menu_AddItem( &s_main.menu,	&s_main.setup );
+	Menu_AddItem( &s_main.menu,	&s_main.demos );
+	Menu_AddItem( &s_main.menu,	&s_main.exit );             
+#else
+	Menu_AddItem( &s_main.menu,	&s_main.multiplayer );
 	Menu_AddItem( &s_main.menu,	&s_main.singleplayer );
 	Menu_AddItem( &s_main.menu,	&s_main.multiplayer );
 	Menu_AddItem( &s_main.menu,	&s_main.setup );
@@ -417,6 +480,7 @@ void UI_MainMenu( void ) {
 		Menu_AddItem( &s_main.menu,	&s_main.mods );
 	}
 	Menu_AddItem( &s_main.menu,	&s_main.exit );             
+#endif
 
 	trap_Key_SetCatcher( KEYCATCH_UI );
 	uis.menusp = 0;
