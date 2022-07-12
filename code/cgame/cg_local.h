@@ -1239,6 +1239,9 @@ extern	vmCvar_t		cg_smoothClients;
 #endif
 extern	vmCvar_t		pmove_fixed;
 extern	vmCvar_t		pmove_msec;
+#if defined( QC )
+extern	vmCvar_t pmove_float;
+#endif
 //extern	vmCvar_t		cg_pmove_fixed;
 extern	vmCvar_t		cg_cameraOrbit;
 extern	vmCvar_t		cg_cameraOrbitDelay;

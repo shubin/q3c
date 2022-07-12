@@ -1125,6 +1125,7 @@ netField_t	playerStateFields[] =
 { PSF(ab_misctime), 8 }, // up to 25.6 seconds to count
 { PSF(ab_flags), 8 },
 { PSF(ab_num), 32 },
+{ PSF(overbounce), 1 },
 { PSF(baseHealth), 8 }, // base health can't exceed 256
 { PSF(baseArmor), 8 }, // base armor can't exceed 256
 #endif

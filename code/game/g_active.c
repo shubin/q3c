@@ -1143,6 +1143,10 @@ void ClientThink_real( gentity_t *ent ) {
 
 	pm.pmove_fixed = pmove_fixed.integer | client->pers.pmoveFixed;
 	pm.pmove_msec = pmove_msec.integer;
+#if defined( QC )
+	pm.pmove_float = pmove_float.integer;
+	pm.pmove_flags = g_dmflags.integer;
+#endif
 
 	VectorCopy( client->ps.origin, client->oldOrigin );
 

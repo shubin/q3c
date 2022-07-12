@@ -870,6 +870,7 @@ static void PM_AirMove( void ) {
 #if defined( QC )
     float		cpm_accel;			// CPM
     float		cpm_wishspeed;		// CPM
+	float		vspeed;				// overbounce fix
 	DEFINE_MOVEMENT_PARAMETERS
 #endif
 
@@ -940,6 +941,9 @@ static void PM_AirMove( void ) {
 	PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
 #endif
 
+#if defined( QC )
+	vspeed = pm->ps->velocity[2];
+#endif
 	// we may have a ground plane that is very steep, even
 	// though we don't have a groundentity
 	// slide along the steep plane
@@ -959,6 +963,18 @@ static void PM_AirMove( void ) {
 #endif
 
 	PM_StepSlideMove ( qtrue );
+#if defined( QC )
+	// Did we collide with the ground? No? Set the overbounce flag.
+	// zspeed and pm->ps->velocity[2] are both negative in a fall.
+	// If they are both positive, the result shouldn't matter.
+	/* The above is a lie. Collisions with ramps can still happen when vertical
+	velocity is slightly positve. */
+	if ( vspeed < pm->ps->velocity[2] ) {
+		pm->ps->overbounce = qfalse;
+	} else {
+		pm->ps->overbounce = qtrue;
+	}
+#endif
 }
 
 /*
@@ -1013,13 +1029,19 @@ static void PM_WalkMove( void ) {
 		return;
 	}
 
-
+#if defined( QC )
+	if ( PM_CheckJump() || pm->ps->overbounce ) {
+#else
 	if ( PM_CheckJump () ) {
+#endif
 		// jumped away
 		if ( pm->waterlevel > 1 ) {
 			PM_WaterMove();
 		} else {
 			PM_AirMove();
+#if defined( QC )
+			pm->ps->overbounce = qfalse;
+#endif
 		}
 		return;
 	}
@@ -2518,7 +2540,14 @@ void PmoveSingle (pmove_t *pmove) {
 	PM_WaterEvents();
 
 	// snap some parts of playerstate to save network bandwidth
+#if defined( QC )
+	//But only if pmove_float is not enabled. We always snap on slick surfaces to prevent acceleration.
+	if ( !( pm->pmove_float ) || pml.groundTrace.surfaceFlags & SURF_SLICK ) {
+		trap_SnapVector( pm->ps->velocity );
+	}
+#else
 	trap_SnapVector( pm->ps->velocity );
+#endif
 }
 
 
