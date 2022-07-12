@@ -617,6 +617,10 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->s.otherEntityNum = self->s.number;
 	ent->s.otherEntityNum2 = killer;
 #if defined( QC )
+	// additional death event info
+	if ( killer >= 0 && killer < MAX_CLIENTS ) {
+		ent->s.weapon = inflictor->s.weapon;
+	}
 	// send ringout killer id so cgame can properly display the event
 	if  ( ringout ) {
 		ent->s.generic1 = attacker->s.number;

@@ -84,6 +84,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	int			target, attacker;
 #if defined( QC )
 	int			ringoutKiller;
+	int			weapon;
 #endif
 	char		*message;
 	char		*message2;
@@ -105,6 +106,7 @@ static void CG_Obituary( entityState_t *ent ) {
 	mod = ent->eventParm;
 #if defined( QC )
 	ringoutKiller = ent->generic1;
+	weapon = ent->weapon;
 #endif
 
 	if ( target < 0 || target >= MAX_CLIENTS ) {
@@ -134,6 +136,7 @@ static void CG_Obituary( entityState_t *ent ) {
 		Q_strncpyz( ringoutKillerName, Info_ValueForKey( ringoutKillerInfo, "n" ), sizeof(ringoutKillerName) - 2);
 		strcat( ringoutKillerName, S_COLOR_WHITE );
 	}
+	CG_AddObituary( attacker, target, weapon, mod );
 #endif
 
 	message2 = "";
