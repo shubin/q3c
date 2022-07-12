@@ -49,7 +49,7 @@ static void UI_DeathMenu_ChampionsEvent( void* ptr, int notification ) {
 		return;
 	}
 	s_deathmenu.exit_to_champions_menu = qtrue;
-	UI_SetActiveMenu( UIMENU_CHAMPIONS );
+	UI_SetActiveMenu( UIMENU_CHAMPIONS_INGAME );
 }
 
 /*

@@ -150,6 +150,7 @@ typedef enum {
 #if defined( QC )
 	UIMENU_DEATH,
 	UIMENU_CHAMPIONS,
+	UIMENU_CHAMPIONS_INGAME,
 #endif
 } uiMenuCommand_t;
 

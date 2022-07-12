@@ -344,9 +344,9 @@ extern void UI_InGameMenu(void);
 ///
 extern void UI_DeathMenu( void );
 //
-// ui_ingame_champions.c
+// ui_champions.c
 //
-extern void UI_ChampionsMenu( void );
+extern void UI_ChampionsMenu( qboolean ingame );
 #endif
 
 //

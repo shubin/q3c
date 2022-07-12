@@ -873,7 +873,10 @@ void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 		UI_DeathMenu();
 		break;
 	case UIMENU_CHAMPIONS:
-		UI_ChampionsMenu();
+		UI_ChampionsMenu( qfalse );
+		break;
+	case UIMENU_CHAMPIONS_INGAME:
+		UI_ChampionsMenu( qtrue );
 		break;
 #endif
 		

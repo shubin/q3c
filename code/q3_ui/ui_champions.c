@@ -14,6 +14,7 @@ CHAMPIONS & STARTING WEAPONS MENU
 #define MODEL_SELECTED		"menu/art/opponents_selected"
 
 #define ID_RESPAWN		1
+#define ID_BACK			2
 #define ID_CHAMPION		100
 #define ID_WEAPON		200
 
@@ -52,6 +53,7 @@ static qboolean champ_locked[NUM_CHAMPIONS] = {
 typedef struct {
 	menuframework_s	menu;
 	menutext_s		item_respawn;
+	menutext_s		item_back;
 	char			names[NUM_CHAMPIONS][MAX_QPATH];
 	menubitmap_s	pics[NUM_CHAMPIONS];
 	menubitmap_s	picbuttons[NUM_CHAMPIONS];
@@ -59,6 +61,9 @@ typedef struct {
 	menubitmap_s	wpics[ARRAY_LEN(weapons)];
 	menubitmap_s	wpicbuttons[ARRAY_LEN(weapons)];
 
+	playerInfo_t	playerinfo;
+
+	qboolean		ingame;
 	int champion, weapon;
 } championsmenu_t;
 
@@ -73,7 +78,7 @@ ChampionsMenu_Event
 */
 void ChampionsMenu_Event( void *ptr, void *other, int notification ) {
 	if ( notification == QM_CLOSED ) {
-		if ( other == NULL ) {
+		if ( other == NULL && s_championsmenu.ingame ) {
 			trap_Cmd_ExecuteText( EXEC_NOW, "respawn" );
 		}
 	}
@@ -86,7 +91,32 @@ static void UI_ChampionsMenu_RespawnEvent( void* ptr, int notification ) {
 	UI_SetActiveMenu( UIMENU_NONE );
 }
 
-void ChampionsMenu_PicEvent( void *ptr, int notification ) {
+static void UI_ChampionsMenu_BackEvent( void* ptr, int notification ) {
+	if (notification != QM_ACTIVATED) {
+		return;
+	}
+	UI_PopMenu();
+}
+
+static void ChampionsMenu_LoadModel( void ) {
+	memset( &s_championsmenu.playerinfo, 0, sizeof( s_championsmenu.playerinfo ) );
+	UI_PlayerInfo_SetModel( &s_championsmenu.playerinfo, champion_models[s_championsmenu.champion] );
+}
+
+static void ChampionsMenu_UpdateModel( void ) {
+	vec3_t	viewangles;
+	vec3_t	moveangles;
+	int weapons[] = { WP_LOUSY_MACHINEGUN, WP_LOUSY_SHOTGUN, WP_LOUSY_PLASMAGUN };
+
+	viewangles[YAW]   = 180 - 30;
+	viewangles[PITCH] = 0;
+	viewangles[ROLL]  = 0;
+	VectorClear( moveangles );
+
+	UI_PlayerInfo_SetInfo( &s_championsmenu.playerinfo, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, s_championsmenu.weapon, qfalse );
+}
+
+static void ChampionsMenu_PicEvent( void *ptr, int notification ) {
 	int i;
 
 	if ( notification != QM_ACTIVATED )
@@ -107,11 +137,14 @@ void ChampionsMenu_PicEvent( void *ptr, int notification ) {
 		s_championsmenu.pics[i].generic.flags       |= QMF_HIGHLIGHT;
 		s_championsmenu.picbuttons[i].generic.flags &= ~QMF_PULSEIFFOCUS;
 		trap_Cvar_Set( "champion", champion_names[i] );
+		ChampionsMenu_LoadModel();
+		ChampionsMenu_UpdateModel();
 	}
 }
 
 void ChampionsMenu_WPicEvent( void *ptr, int notification ) {
 	static char *wep[] = { "machinegun", "shotgun", "plasmagun" };
+	static weapon_t wwep[] = { WP_LOUSY_MACHINEGUN, WP_LOUSY_SHOTGUN, WP_LOUSY_PLASMAGUN };
 	int i;
 
 	if ( notification != QM_ACTIVATED )
@@ -127,12 +160,16 @@ void ChampionsMenu_WPicEvent( void *ptr, int notification ) {
 	i = ((menucommon_s*)ptr)->id - ID_WEAPON;
 
 	if ( i >= 0 && i < 3 ) {
-		s_championsmenu.weapon = i;
+		trap_Cvar_Set( "starting_weapon", wep[i] );
+		s_championsmenu.weapon = wwep[i];
 		s_championsmenu.wpics[i].generic.flags       |= QMF_HIGHLIGHT;
 		s_championsmenu.wpicbuttons[i].generic.flags &= ~QMF_PULSEIFFOCUS;
-		trap_Cvar_Set( "starting_weapon", wep[i] );
+	}
+	if ( !s_championsmenu.ingame ) {
+		ChampionsMenu_UpdateModel();
 	}
 }
+
 
 static void ChampionsMenu_Draw( void ) {
 	static float shade[] = { 0.0f, 0.0f, 0.0f, 0.5f };
@@ -144,6 +181,10 @@ static void ChampionsMenu_Draw( void ) {
 	Q_strupr( buf );
 	UI_DrawString( 20 + 40 * ( s_championsmenu.champion - 1 ), 342, buf, UI_CENTER|UI_SMALLFONT, color_red );
 	UI_DrawString( 320, 370, "CHOOSE WEAPON", UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, color_white );
+
+	if ( !s_championsmenu.ingame ) {
+		UI_DrawPlayer( 170, 20, 280, 280, &s_championsmenu.playerinfo, uis.realtime/2 );
+	}
 }
 
 /*
@@ -151,7 +192,7 @@ static void ChampionsMenu_Draw( void ) {
 ChampionsMenu_MenuInit
 =================
 */
-void ChampionsMenu_MenuInit( void ) {
+void ChampionsMenu_MenuInit( qboolean ingame ) {
 	int		x, y;
 	uiClientState_t	cs;
 	char	info[MAX_INFO_STRING];
@@ -162,23 +203,38 @@ void ChampionsMenu_MenuInit( void ) {
 
 	ChampionsMenu_Cache();
 
+	s_championsmenu.ingame = ingame;
 	s_championsmenu.menu.wrapAround = qtrue;
-	s_championsmenu.menu.fullscreen = qfalse;
+	s_championsmenu.menu.fullscreen = !ingame;
 	s_championsmenu.menu.callback = ChampionsMenu_Event;
 	s_championsmenu.menu.draw = ChampionsMenu_Draw;
 
-	y = 440;
-	s_championsmenu.item_respawn.generic.type			= MTYPE_PTEXT;
-	s_championsmenu.item_respawn.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_championsmenu.item_respawn.generic.x				= 320;
-	s_championsmenu.item_respawn.generic.y				= y;
-	s_championsmenu.item_respawn.generic.id				= ID_RESPAWN;
-	s_championsmenu.item_respawn.generic.callback		= UI_ChampionsMenu_RespawnEvent; 
-	s_championsmenu.item_respawn.string					= "RESPAWN";
-	s_championsmenu.item_respawn.color					= color_red;
-	s_championsmenu.item_respawn.style					= UI_CENTER|UI_SMALLFONT;
+	y = 440;	
+	if ( ingame ) {
+		s_championsmenu.item_respawn.generic.type			= MTYPE_PTEXT;
+		s_championsmenu.item_respawn.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+		s_championsmenu.item_respawn.generic.x				= 320;
+		s_championsmenu.item_respawn.generic.y				= y;
+		s_championsmenu.item_respawn.generic.id				= ID_RESPAWN;
+		s_championsmenu.item_respawn.generic.callback		= UI_ChampionsMenu_RespawnEvent; 
+		s_championsmenu.item_respawn.string					= "RESPAWN";
+		s_championsmenu.item_respawn.color					= color_red;
+		s_championsmenu.item_respawn.style					= UI_CENTER|UI_SMALLFONT;
+		Menu_AddItem( &s_championsmenu.menu, &s_championsmenu.item_respawn );
+	}
+	else {
+		s_championsmenu.item_back.generic.type			= MTYPE_PTEXT;
+		s_championsmenu.item_back.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+		s_championsmenu.item_back.generic.x				= 320;
+		s_championsmenu.item_back.generic.y				= y;
+		s_championsmenu.item_back.generic.id			= ID_BACK;
+		s_championsmenu.item_back.generic.callback		= UI_ChampionsMenu_BackEvent; 
+		s_championsmenu.item_back.string				= "BACK";
+		s_championsmenu.item_back.color					= color_red;
+		s_championsmenu.item_back.style					= UI_CENTER|UI_SMALLFONT;
+		Menu_AddItem( &s_championsmenu.menu, &s_championsmenu.item_back );
+	}
 
-	Menu_AddItem( &s_championsmenu.menu, &s_championsmenu.item_respawn );
 
 	x = 4;
 	y = 310;
@@ -270,6 +326,11 @@ void ChampionsMenu_MenuInit( void ) {
 		Menu_AddItem( &s_championsmenu.menu, &s_championsmenu.wpics[i] );
 		Menu_AddItem( &s_championsmenu.menu, &s_championsmenu.wpicbuttons[i] );
 	}
+
+	if ( !ingame ) {
+		ChampionsMenu_LoadModel();
+		ChampionsMenu_UpdateModel();
+	}
 }
 
 /*
@@ -288,16 +349,18 @@ void ChampionsMenu_Cache( void ) {
 UI_ChampionsMenu
 =================
 */
-void UI_ChampionsMenu( void ) {
-	if ( uis.menusp == 0 ) {
-		// set menu cursor to a nice location
-		uis.cursorx = 319;
-		uis.cursory = 219;
+void UI_ChampionsMenu( qboolean ingame ) {
+	if ( !ingame ) {
+		if ( uis.menusp == 0 ) {
+			// set menu cursor to a nice location
+			uis.cursorx = 319;
+			uis.cursory = 219;
+		}
+
+		// force as top level menu
+		uis.menusp = 0;
 	}
 
-	// force as top level menu
-	uis.menusp = 0;  
-
-	ChampionsMenu_MenuInit();
+	ChampionsMenu_MenuInit( ingame );
 	UI_PushMenu( &s_championsmenu.menu );
 }

@@ -39,6 +39,7 @@ MAIN MENU
 #if defined( QC )
 #define ID_HOST_GAME			10
 #define ID_JOIN_GAME			11
+#define ID_CHAMPIONS			14
 #endif
 #define ID_SETUP				12
 #define ID_DEMOS				13
@@ -63,6 +64,7 @@ typedef struct {
 #if defined( QC )
 	menutext_s		hostgame;
 	menutext_s		joingame;
+	menutext_s		champions;
 #endif
 	menutext_s		setup;
 	menutext_s		demos;
@@ -136,6 +138,11 @@ void Main_MenuEvent (void* ptr, int event) {
 	case ID_DEMOS:
 		UI_DemosMenu();
 		break;
+#if defined( QC )
+	case ID_CHAMPIONS:
+		UI_ChampionsMenu( qfalse );
+		break;
+#endif
 #if !defined( QC )
 	case ID_CINEMATICS:
 		UI_CinematicsMenu();
@@ -247,12 +254,14 @@ static void Main_MenuDraw( void ) {
 		Menu_Draw( &s_main.menu );		
 	}
 
+#if !defined( QC )
 	if (uis.demoversion) {
 		UI_DrawProportionalString( 320, 372, "DEMO      FOR MATURE AUDIENCES      DEMO", UI_CENTER|UI_SMALLFONT, color );
 		UI_DrawString( 320, 400, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
 	} else {
 		UI_DrawString( 320, 450, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
 	}
+#endif
 }
 
 
@@ -364,6 +373,18 @@ void UI_MainMenu( void ) {
 	s_main.joingame.style				= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
+
+	s_main.champions.generic.type		= MTYPE_PTEXT;
+	s_main.champions.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_main.champions.generic.x			= 320;
+	s_main.champions.generic.y			= y;
+	s_main.champions.generic.id			= ID_CHAMPIONS;
+	s_main.champions.generic.callback	= Main_MenuEvent; 
+	s_main.champions.string				= "CHAMPIONS";
+	s_main.champions.color				= color_red;
+	s_main.champions.style				= style;
+
+	y += MAIN_MENU_VERTICAL_SPACING;
 #else
 	y = 134;
 	s_main.singleplayer.generic.type		= MTYPE_PTEXT;
@@ -463,6 +484,7 @@ void UI_MainMenu( void ) {
 #if defined( QC )
 	Menu_AddItem( &s_main.menu,	&s_main.hostgame);
 	Menu_AddItem( &s_main.menu,	&s_main.joingame );
+	Menu_AddItem( &s_main.menu, &s_main.champions );
 	Menu_AddItem( &s_main.menu,	&s_main.setup );
 	Menu_AddItem( &s_main.menu,	&s_main.demos );
 	Menu_AddItem( &s_main.menu,	&s_main.exit );             
