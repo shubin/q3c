@@ -3314,6 +3314,7 @@ void CL_InitRef( void ) {
 }
 
 
+#if !defined( QC )
 //===========================================================================================
 
 
@@ -3330,6 +3331,7 @@ void CL_SetModel_f( void ) {
 		Com_Printf("model is set to %s\n", name);
 	}
 }
+#endif
 
 #if defined( QC )
 
@@ -3648,10 +3650,12 @@ void CL_Init( void ) {
 	Cvar_Get ("name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE );
 	cl_rate = Cvar_Get ("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE );
+#if !defined( QC )
 	Cvar_Get ("model", "sarge", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("headmodel", "sarge", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("team_model", "james", CVAR_USERINFO | CVAR_ARCHIVE );
 	Cvar_Get ("team_headmodel", "*james", CVAR_USERINFO | CVAR_ARCHIVE );
+#endif
 	Cvar_Get ("g_redTeam", "Stroggs", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	Cvar_Get ("g_blueTeam", "Pagans", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	Cvar_Get ("color1",  "4", CVAR_USERINFO | CVAR_ARCHIVE );
@@ -3718,7 +3722,9 @@ void CL_Init( void ) {
 	Cmd_AddCommand ("showip", CL_ShowIP_f );
 	Cmd_AddCommand ("fs_openedList", CL_OpenedPK3List_f );
 	Cmd_AddCommand ("fs_referencedList", CL_ReferencedPK3List_f );
+#if !defined( QC )
 	Cmd_AddCommand ("model", CL_SetModel_f );
+#endif
 #if defined( QC )
 	Cmd_AddCommand( "champion", CL_SetChampion_f );
 #endif

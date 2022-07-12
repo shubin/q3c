@@ -674,6 +674,7 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 			CG_Error( "CG_RegisterClientModelname( %s, %s, %s, %s %s ) failed", ci->modelName, ci->skinName, ci->headModelName, ci->headSkinName, teamname );
 		}
 
+#if !defined( QC )
 		// fall back to default team name
 		if( cgs.gametype >= GT_TEAM) {
 			// keep skin name
@@ -686,6 +687,9 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 				CG_Error( "DEFAULT_TEAM_MODEL / skin (%s/%s) failed to register", DEFAULT_TEAM_MODEL, ci->skinName );
 			}
 		} else {
+#else
+		{
+#endif
 			if ( !CG_RegisterClientModelname( ci, DEFAULT_MODEL, "default", DEFAULT_MODEL, "default", teamname ) ) {
 				CG_Error( "DEFAULT_MODEL (%s) failed to register", DEFAULT_MODEL );
 			}
@@ -704,7 +708,11 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 
 	// sounds
 	dir = ci->modelName;
+#if defined( QC )
+	fallback = DEFAULT_MODEL;
+#else
 	fallback = (cgs.gametype >= GT_TEAM) ? DEFAULT_TEAM_MODEL : DEFAULT_MODEL;
+#endif
 
 	for ( i = 0 ; i < MAX_CUSTOM_SOUNDS ; i++ ) {
 		s = cg_customSoundNames[i];
@@ -964,7 +972,11 @@ void CG_NewClientInfo( int clientNum ) {
 	Q_strncpyz(newInfo.blueTeam, v, MAX_TEAMNAME);
 
 	// model
+#if defined( QC )
+	v = va( "%s/%s", champion_models[newInfo.champion], champion_skins[newInfo.champion] );
+#else
 	v = Info_ValueForKey( configstring, "model" );
+#endif
 #if !defined( QC )
 	if ( cg_forceModel.integer ) {
 		// forcemodel makes everyone use a single model
@@ -1012,7 +1024,11 @@ void CG_NewClientInfo( int clientNum ) {
 	}
 
 	// head model
+#if defined( QC )
+	v = va( "%s/%s", champion_models[newInfo.champion], champion_skins[newInfo.champion] );
+#else
 	v = Info_ValueForKey( configstring, "hmodel" );
+#endif
 #if !defined( QC )
 	if ( cg_forceModel.integer ) {
 		// forcemodel makes everyone use a single model

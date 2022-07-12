@@ -156,6 +156,7 @@ static struct {
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
 	qhandle_t	ringgauge, ringglow, abbg;
 	qhandle_t	skillicon[NUM_CHAMPIONS];
+	qhandle_t	face[NUM_CHAMPIONS];
 	qhandle_t	gradient, radgrad;
 	qhandle_t	itemicons[MAX_ITEMS];
 } media;
@@ -339,6 +340,7 @@ static void hud_initmedia( void ) {
 	media.abbg = trap_R_RegisterShader( "hud/abbg" );
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
 		media.skillicon[i] = trap_R_RegisterShader( va("hud/skill/%s", champion_names[i] ) );
+		media.face[i] = trap_R_RegisterShader( va("gfx/champions/faces/%s", champion_names[i] ) );
 	}
 	media.gradient = trap_R_RegisterShaderNoMip( "hud/gradient" );
 	media.radgrad = trap_R_RegisterShaderNoMip( "hud/radgrad" );
@@ -630,7 +632,7 @@ void hud_drawstatus( void ) {
 	cs = &champion_stats[ ps->champion ];
 
 	// draw head
-	hud_drawpic( bounds.left + 160, bounds.bottom - 160, 160, 160, 0.5f, 0.5f, ci->modelIcon );
+	hud_drawpic( bounds.left + 160, bounds.bottom - 160, 160, 160, 0.5f, 0.5f, media.face[cg.predictedPlayerState.champion] );
 
 	// draw health
 	hud_drawpic( bounds.left + 256, bounds.bottom - 174, 40, 40, 0.5f, 0.5f, media.icon_health );
@@ -901,9 +903,9 @@ void hud_drawscores_brief_tournament( void ) {
 	hud_drawbar( centerx + 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, black );
 
 	// player icons
-	hud_drawpic( centerx - 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, cgs.clientinfo[cg.clientNum].modelIcon );
+	hud_drawpic( centerx - 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, media.face[cg.predictedPlayerState.champion] );
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx + 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, cgs.clientinfo[enemyNum].modelIcon );
+		hud_drawpic( centerx + 250, bounds.top + 55, 58, 58, 0.5f, 0.5f, media.face[cgs.clientinfo[enemyNum].champion] );
 	}
 
 	// player score
@@ -1348,7 +1350,7 @@ static void hud_drawdeathmessage( void ) {
 	// draw the killer face
 	trap_R_SetColor( NULL );
 	if ( cg.killerInfo.clientNum >= 0 && cg.killerInfo.clientNum < cgs.maxclients ) {
-		hud_drawpic( centerx, top - 3, 128, 128, 0.5f, 1.0f, cgs.clientinfo[cg.killerInfo.clientNum].modelIcon );
+		hud_drawpic( centerx, top - 3, 128, 128, 0.5f, 1.0f, media.face[cgs.clientinfo[cg.killerInfo.clientNum].champion] );
 	}
 	// draw the text
 	trap_R_SetColor( NULL );
@@ -1506,9 +1508,9 @@ void hud_drawscores_tournament( void ) {
 	hud_drawbar( centerx + 160, bounds.top + 90, 62, 62, 0.5f, 0.5f, gray );
 	hud_drawbar( centerx - 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
 	hud_drawbar( centerx + 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
-	hud_drawpic( centerx - 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, cgs.clientinfo[cg.clientNum].modelIcon );
+	hud_drawpic( centerx - 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, media.face[cg.predictedPlayerState.champion] );
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx + 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, cgs.clientinfo[enemyNum].modelIcon );
+		hud_drawpic( centerx + 160, bounds.top + 90, 58, 58, 0.5f, 0.5f, media.face[cgs.clientinfo[enemyNum].champion] );
 	}
 	
 	hud_drawbar( centerx - 5, bounds.top + 152, 935, 60, 1.0f, 0.0f, header );

@@ -436,10 +436,12 @@ void CG_RegisterCvars( void ) {
 #if !defined( QC)
 	forceModelModificationCount = cg_forceModel.modificationCount;
 #endif
+#if !defined( QC )
 	trap_Cvar_Register(NULL, "model", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "headmodel", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "team_model", DEFAULT_TEAM_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "team_headmodel", DEFAULT_TEAM_HEAD, CVAR_USERINFO | CVAR_ARCHIVE );
+#endif
 #if defined( QC )
 	trap_Cvar_Register( NULL, "champion", DEFAULT_CHAMPION, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register( NULL, "starting_weapon", DEFAULT_STARTING_WEAPON, CVAR_USERINFO | CVAR_ARCHIVE );

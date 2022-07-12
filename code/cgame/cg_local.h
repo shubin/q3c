@@ -87,8 +87,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	DEFAULT_TEAM_MODEL		"james"
 #define	DEFAULT_TEAM_HEAD		"*james"
 #else
+#if !defined( QC )
 #define	DEFAULT_TEAM_MODEL		"sarge"
 #define	DEFAULT_TEAM_HEAD		"sarge"
+#endif
 #endif
 
 #define DEFAULT_REDTEAM_NAME		"Stroggs"
