@@ -243,7 +243,7 @@ void ChampionsMenu_MenuInit( qboolean ingame ) {
 	s_championsmenu.champion = ParseChampionName( buf );
 
 	for ( i = 1; i < NUM_CHAMPIONS; i++ ) {
-		Q_strncpyz( s_championsmenu.names[i], va( "models/players/%s/icon_default", champion_models[i] ), sizeof( s_championsmenu.names[i] ) );
+		Q_strncpyz( s_championsmenu.names[i], va( "gfx/champions/faces/%s", champion_names[i] ), sizeof( s_championsmenu.names[i] ) );
 
 		s_championsmenu.pics[i].generic.type	= MTYPE_BITMAP;
 		s_championsmenu.pics[i].generic.name	= s_championsmenu.names[i];
