@@ -53,9 +53,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined( QC )
 #define	MINS_Z				-24
 #endif
+#if defined( QC )
+#define	DEFAULT_VIEWHEIGHT	28
+#define CROUCH_VIEWHEIGHT	14
+#define	DEAD_VIEWHEIGHT		-16
+#else
 #define	DEFAULT_VIEWHEIGHT	26
 #define CROUCH_VIEWHEIGHT	12
 #define	DEAD_VIEWHEIGHT		-16
+#endif
 
 //
 // config strings are a general means of communicating variable length strings

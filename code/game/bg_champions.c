@@ -58,7 +58,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .speed = 320,
         .maxspeed = 9999,
         .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        .maxs = { 15, 15, 40 },
     },
     // anarki
     {
@@ -92,7 +92,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .speed = 320,
         .maxspeed = 640,
         .mins = { -12, -12, -24 },
-        .maxs = { 12, 12, 32 },
+        .maxs = { 12, 12, 40 },
     },
     // athena
     {
@@ -389,7 +389,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .speed = 310,
         .maxspeed = 1000,
         .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        .maxs = { 15, 15, 40 },
     },
     // strogg
     {
@@ -521,7 +521,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         .speed = 300,
         .maxspeed = 1000,
         .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        .maxs = { 15, 15, 40 },
     },
     // scalebearer
     {
