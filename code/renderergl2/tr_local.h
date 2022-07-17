@@ -471,6 +471,9 @@ typedef struct shader_s {
 	qboolean	polygonOffset;			// set for decals and other items that must be offset 
 	qboolean	noMipMaps;				// for console fonts, 2D elements, etc.
 	qboolean	noPicMip;				// for images that must always be full resolution
+#if defined( QC )
+	float		lineWidth;
+#endif
 
 	fogPass_t	fogPass;				// draw a blended pass, possibly with depth test equals
 

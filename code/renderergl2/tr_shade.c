@@ -1453,7 +1453,39 @@ static void RB_RenderShadowmap( shaderCommands_t *input )
 	}
 }
 
+#if defined( QC )
+/*
+================
+DrawWireframe
 
+Draws triangle outlines for special effects
+================
+*/
+static void DrawWireframe( shaderCommands_t *input, float lineWidth ) {
+	GL_BindToTMU( tr.whiteImage, TB_COLORMAP );
+
+	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
+	//glEnable( GL_POLYGON_OFFSET_LINE );
+	//qglDepthMask( GL_FALSE );
+	//glPolygonOffset( 5, 5 );
+	//qglDepthRange( 1, 1 );
+	qglLineWidth( 4 );
+	{
+		shaderProgram_t *sp = &tr.textureColorShader;
+		vec4_t color;
+
+		GLSL_BindProgram(sp);
+		
+		GLSL_SetUniformMat4(sp, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+		VectorSet4(color, 1, 1, 1, 1);
+		GLSL_SetUniformVec4(sp, UNIFORM_COLOR, color);
+		GLSL_SetUniformInt(sp, UNIFORM_ALPHATEST, 0);
+
+		R_DrawElements(input->numIndexes, input->firstIndex);
+	}
+	//qglDepthRange( 0, 1 );
+}
+#endif
 
 /*
 ** RB_StageIteratorGeneric
@@ -1495,6 +1527,13 @@ void RB_StageIteratorGeneric( void )
 		// a call to va() every frame!
 		GLimp_LogComment( va("--- RB_StageIteratorGeneric( %s ) ---\n", tess.shader->name) );
 	}
+
+#if defined( QC )
+	if ( input->shader->lineWidth ) {
+		DrawWireframe( input, input->shader->lineWidth );
+		return;
+	}
+#endif
 
 	//
 	// set face culling appropriately

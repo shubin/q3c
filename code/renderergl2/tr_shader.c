@@ -2003,6 +2003,18 @@ static qboolean ParseShader( char **text )
 			ParseSort( text );
 			continue;
 		}
+#if defined( QC )
+		else if ( !Q_stricmp( token, "wireframe" ) )
+		{
+			COM_ParseExt( text, qfalse );
+			if ( token[0] == 0 ) {
+				shader.lineWidth = 1.0f;
+				continue;
+			}
+			shader.lineWidth = atof( token );
+			continue;
+		}
+#endif
 		else
 		{
 			ri.Printf( PRINT_WARNING, "WARNING: unknown general shader parameter '%s' in '%s'\n", token, shader.name );
@@ -2013,7 +2025,12 @@ static qboolean ParseShader( char **text )
 	//
 	// ignore shaders that don't have any stages, unless it is a sky or fog
 	//
+#if defined( QC )
+	// or wireframe
+	if ( s == 0 && !shader.isSky && !shader.lineWidth && !(shader.contentFlags & CONTENTS_FOG ) ) {
+#else
 	if ( s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG ) ) {
+#endif
 		return qfalse;
 	}
 
