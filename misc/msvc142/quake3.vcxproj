@@ -293,7 +293,9 @@ copy "$(SolutionDir)..\..\code\libs\win32\sdl2.dll" "$(TargetDir)"</Command>
     <PostBuildEvent>
       <Message>Post build processing..</Message>
       <Command>rem bash -c "perl ./unix/cons -- debug"
-copy "$(SolutionDir)..\..\code\libs\win32\sdl2.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)..\..\code\libs\win32\sdl2.dll" "$(SolutionDir)..\..\..\workdir"
+xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\" /K /D /H /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

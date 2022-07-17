@@ -392,6 +392,10 @@
       <ImportLibrary>$(IntDir)uix86.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\q3c\" /K /D /H /Y
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\game\bg_champions.c">

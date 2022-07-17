@@ -266,6 +266,10 @@
       <ImportLibrary>$(IntDir)cgamex86.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\q3c\" /K /D /H /Y
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -788,6 +792,18 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release QC|Win32'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\code\cgame\hud_ability.c" />
+    <ClCompile Include="..\..\code\cgame\hud_ammo.c" />
+    <ClCompile Include="..\..\code\cgame\hud_crosshair.c" />
+    <ClCompile Include="..\..\code\cgame\hud_deathmessage.c" />
+    <ClCompile Include="..\..\code\cgame\hud_fragmessage.c" />
+    <ClCompile Include="..\..\code\cgame\hud_obituary.c" />
+    <ClCompile Include="..\..\code\cgame\hud_pickups.c" />
+    <ClCompile Include="..\..\code\cgame\hud_playerstatus.c" />
+    <ClCompile Include="..\..\code\cgame\hud_ffa_scores.c" />
+    <ClCompile Include="..\..\code\cgame\hud_shared.c" />
+    <ClCompile Include="..\..\code\cgame\hud_timer.c" />
+    <ClCompile Include="..\..\code\cgame\hud_tournament_scores.c" />
     <ClCompile Include="..\..\code\game\bg_champions.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug TA|Win32'">true</ExcludedFromBuild>
@@ -876,6 +892,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release QC|Win32'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\code\hudlib\hudlib.c" />
     <ClCompile Include="..\..\code\qcommon\q_math.c" />
     <ClCompile Include="..\..\code\qcommon\q_shared.c" />
     <ClCompile Include="..\..\code\ui\ui_shared.c">
