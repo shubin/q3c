@@ -123,6 +123,7 @@ void Main_MenuEvent (void* ptr, int event) {
 		UI_ArenaServersMenu();
 		break;
 #endif
+#if defined( QC )
 	case ID_HOST_GAME:
 		UI_StartServerMenu( qtrue );
 		break;
@@ -130,7 +131,7 @@ void Main_MenuEvent (void* ptr, int event) {
 	case ID_JOIN_GAME:
 		UI_SpecifyServerMenu();
 		break;
-
+#endif
 	case ID_SETUP:
 		UI_SetupMenu();
 		break;
