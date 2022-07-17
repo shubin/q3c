@@ -185,7 +185,7 @@ typedef struct damage_plum_data_s {
 #define DAMAGE_PLUM_PULSE_SCALE				1.5f
 #define DAMAGE_PLUM_DEFAULT_SCALE			1.0f
 #define DAMAGE_PLUM_DISSOLVE_TIME			2500
-#define DAMAGE_PLUM_WORLD_OFFSET			30.0f
+#define DAMAGE_PLUM_WORLD_OFFSET			50.0f
 #define DAMAGE_PLUM_TRAVEL_DISTANCE			60.0f
 #define DAMAGE_PLUM_ACCUMULATION_THRESHOLD	500
 #define DAMAGE_CROSS_TIME					200
@@ -329,10 +329,16 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 		if ( x > cg.refdef.width - char_width*2 ) x = cg.refdef.width - char_width*2;
 		if ( y > cg.refdef.height - char_height*2 ) y = cg.refdef.height - char_height*2;
 		if ( k > 1.0f ) k = 1.0f;
+#if 1
 		y -= char_height * pulsezoom / 2.0f;
+#endif
 		float color[] = { 1, 1, 1, 1.0f - k };
 		trap_R_SetColor( color );
+#if 1
 		PlumDrawString( x, y, char_width * pulsezoom, char_height * pulsezoom, va( "%d", dn->damage ), 0 );
+#else
+		hud_drawdamageplum( x, y, pulsezoom, dn->damage );
+#endif
 	}
 }
 
