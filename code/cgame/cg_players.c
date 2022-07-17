@@ -2306,6 +2306,9 @@ void CG_Player( centity_t *cent ) {
 	float			angle;
 	vec3_t			dir, angles;
 #endif
+#if defined( QC )
+	float			scale = cg_playerScale.value;
+#endif
 
 	// the client number is stored in clientNum.  It can't be derived
 	// from the entity number, because a single client may have
@@ -2377,6 +2380,11 @@ void CG_Player( centity_t *cent ) {
 	legs.renderfx = renderfx;
 	VectorCopy (legs.origin, legs.oldorigin);	// don't positionally lerp at all
 #if defined( QC )
+	legs.origin[2] += 24 * scale - 24;
+	VectorScale( legs.axis[0], scale, legs.axis[0] );
+	VectorScale( legs.axis[1], scale, legs.axis[1] );
+	VectorScale( legs.axis[2], scale, legs.axis[2] );
+	legs.nonNormalizedAxes = ( scale != 1.0f );
 	legs.shaderRGBA[0] = (int)(cg.enemyColors[3][0] * 255.0f);
 	legs.shaderRGBA[1] = (int)(cg.enemyColors[3][1] * 255.0f);
 	legs.shaderRGBA[2] = (int)(cg.enemyColors[3][2] * 255.0f);
@@ -2408,10 +2416,17 @@ void CG_Player( centity_t *cent ) {
 	torso.renderfx = renderfx;
 
 #if defined( QC )
+	//VectorScale( torso.axis[0], 2, torso.axis[0] );
+	//VectorScale( torso.axis[1], 2, torso.axis[1] );
+	//VectorScale( torso.axis[2], 2, torso.axis[2] );
+	//torso.nonNormalizedAxes = qtrue;
 	torso.shaderRGBA[0] = (int)(cg.enemyColors[2][0] * 255.0f);
 	torso.shaderRGBA[1] = (int)(cg.enemyColors[2][1] * 255.0f);
 	torso.shaderRGBA[2] = (int)(cg.enemyColors[2][2] * 255.0f);
 	torso.shaderRGBA[3] = (int)(cg.enemyColors[2][3] * 255.0f);
+	//torso.customShader = cgs.media.wireframeShader;
+	//trap_R_AddRefEntityToScene( &torso );
+	//torso.customShader = 0;
 #endif
 	CG_AddRefEntityWithPowerups( &torso, &cent->currentState, ci->team );
 
@@ -2640,6 +2655,10 @@ void CG_Player( centity_t *cent ) {
 	head.renderfx = renderfx;
 
 #if defined( QC )
+	//VectorScale( head.axis[0], 2, head.axis[0] );
+	//VectorScale( head.axis[1], 2, head.axis[1] );
+	//VectorScale( head.axis[2], 2, head.axis[2] );
+	//head.nonNormalizedAxes = qtrue;
 	head.shaderRGBA[0] = (int)(cg.enemyColors[1][0] * 255.0f);
 	head.shaderRGBA[1] = (int)(cg.enemyColors[1][1] * 255.0f);
 	head.shaderRGBA[2] = (int)(cg.enemyColors[1][2] * 255.0f);

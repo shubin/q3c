@@ -120,6 +120,7 @@ vmCvar_t	cg_crosshairHealth;
 vmCvar_t	cg_draw2D;
 #if defined( QC )
 vmCvar_t	cg_drawQ3hud;
+vmCvar_t	cg_playerScale;
 #endif
 vmCvar_t	cg_drawStatus;
 vmCvar_t	cg_animSpeed;
@@ -270,6 +271,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
 #if defined( QC )
 	{ &cg_drawQ3hud, "cg_drawQ3hud", "0", CVAR_ARCHIVE  },
+	{ &cg_playerScale, "cg_playerScale", "1.05", CVAR_ARCHIVE | CVAR_CHEAT },
 #endif
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
@@ -1181,6 +1183,9 @@ static void CG_RegisterGraphics( void ) {
 #else
 	cgs.media.teleportEffectModel = trap_R_RegisterModel( "models/misc/telep.md3" );
 	cgs.media.teleportEffectShader = trap_R_RegisterShader( "teleportEffect" );
+#endif
+#if defined( QC )
+	cgs.media.wireframeShader = trap_R_RegisterShader( "wireframe" );
 #endif
 #ifdef MISSIONPACK
 	cgs.media.kamikazeEffectModel = trap_R_RegisterModel( "models/weaphits/kamboom2.md3" );
