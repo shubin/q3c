@@ -840,6 +840,9 @@ typedef struct {
 	// special effects models
 	qhandle_t	teleportEffectModel;
 	qhandle_t	teleportEffectShader;
+#if defined( QC )
+	qhandle_t	wireframeShader;
+#endif
 #ifdef MISSIONPACK
 	qhandle_t	kamikazeEffectModel;
 	qhandle_t	kamikazeShockWave;
@@ -938,7 +941,11 @@ typedef struct {
 	sfxHandle_t twoFragSound;
 	sfxHandle_t oneFragSound;
 
+#if defined( QC )
+	sfxHandle_t hitSound[3];
+#else
 	sfxHandle_t hitSound;
+#endif
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
 	sfxHandle_t hitTeamSound;
@@ -1184,6 +1191,7 @@ extern	vmCvar_t		cg_drawStatus;
 extern	vmCvar_t		cg_draw2D;
 #if defined( QC )
 extern	vmCvar_t		cg_drawQ3hud;
+extern	vmCvar_t		cg_playerScale;
 #endif
 extern	vmCvar_t		cg_animSpeed;
 extern	vmCvar_t		cg_debugAnim;
@@ -1620,6 +1628,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame );
 void CG_SetFragMessage( const char *who );
 void CG_AddPickup( int itemNum );
 void CG_AddObituary( int killer, int victim, weapon_t weapon, meansOfDeath_t mod );
+void hud_drawdamageplum( int x, int y, float pulse, int value ); // TODO: some refactoring is already needed
 #endif
 
 //===============================================
