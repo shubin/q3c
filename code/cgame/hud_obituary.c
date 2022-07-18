@@ -66,6 +66,7 @@ void hud_drawobituary( void ) {
 		trap_R_SetColor( color );
 		if ( p->killer == p->victim || p->killer == ENTITYNUM_WORLD ) {
 			hud_drawcolorstring( x, y, 0.4f, hud_media.font_regular, va( "%s ^7%s", cgs.clientinfo[p->victim].name, "suicides" ), shadow, 2, 2, qfalse );
+			y += 40;
 			continue;
 		}
 		deathicon = hud_media.icon_death;
