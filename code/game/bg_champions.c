@@ -632,7 +632,7 @@ char* champion_models[NUM_CHAMPIONS] = {
 };
 
 char* champion_skins[NUM_CHAMPIONS] = {
-    "default",
+    "pm",
     "pm",
     "default", //"athena",
     "default", //"nyx",
