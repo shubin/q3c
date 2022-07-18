@@ -453,6 +453,7 @@ typedef struct {
 #if defined( QC )
 typedef struct {
 	int	clientNum;
+	meansOfDeath_t mod;
 	int champion;
 	int weapon;
 	int powerups;

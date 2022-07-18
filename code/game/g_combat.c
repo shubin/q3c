@@ -66,7 +66,7 @@ void DamagePlum( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
 DamageDir
 ============
 */
-void DamageDir( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
+static void DamageDir( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
 	gentity_t *dir;
 
 	dir = G_TempEntity( origin, EV_DAMAGEDIR );
@@ -79,7 +79,7 @@ void DamageDir( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
 	dir->s.generic1 = clientNum;
 }
 
-void KillerInfo( gentity_t *ent, int killerNum, int champion, int weapon, int powerups, int health, int armor ) {
+static void KillerInfo( gentity_t *ent, int killerNum, int mod, int champion, int weapon, int powerups, int health, int armor ) {
 	gentity_t *kb;
 
 	kb = G_TempEntity( ent->r.currentOrigin, EV_KILLERINFO );
@@ -91,7 +91,8 @@ void KillerInfo( gentity_t *ent, int killerNum, int champion, int weapon, int po
 	kb->s.otherEntityNum2 = champion;
 	kb->s.eventParm = killerNum;
 	kb->s.powerups = powerups;
-	kb->s.weapon = weapon;
+	kb->s.weapon = mod < MOD_WATER ? weapon : WP_NONE;
+	kb->s.generic1 = mod;
 	if ( g_gametype.value != GT_TOURNAMENT ) {
 		kb->s.time = health;
 		kb->s.time2 = armor;
@@ -620,7 +621,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->s.otherEntityNum2 = killer;
 #if defined( QC )
 	// additional death event info
-	if ( killer >= 0 && killer < MAX_CLIENTS ) {
+	if ( killer >= 0 && killer < MAX_CLIENTS && meansOfDeath < MOD_WATER ) {
 		ent->s.weapon = inflictor->s.weapon;
 	}
 	// send ringout killer id so cgame can properly display the event
@@ -631,9 +632,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	}
 	// send personalized killedby event
 	if ( attacker && attacker->client ) {
-		KillerInfo( self, attacker->s.clientNum, attacker->client->ps.champion, attacker->s.weapon, attacker->s.powerups, attacker->client->ps.stats[STAT_HEALTH], attacker->client->ps.stats[STAT_ARMOR] );
+		KillerInfo( self, attacker->s.clientNum, meansOfDeath, attacker->client->ps.champion, attacker->s.weapon, attacker->s.powerups, attacker->client->ps.stats[STAT_HEALTH], attacker->client->ps.stats[STAT_ARMOR] );
 	} else {
-		KillerInfo( self, killer, -1, 0, 0, 0, 0 );
+		KillerInfo( self, killer, meansOfDeath, -1, 0, 0, 0, 0 );
 	}
 #endif
 	ent->r.svFlags = SVF_BROADCAST;	// send to everyone

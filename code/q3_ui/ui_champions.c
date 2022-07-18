@@ -25,9 +25,9 @@ static int weapons[] = {
 };
 
 static char* weapon_names[] = {
-	"menu/art/machinegun",
-	"menu/art/shotgun",
-	"menu/art/plasmagun",
+	"menu/art/machinegunl",
+	"menu/art/shotgunl",
+	"menu/art/plasmagunl",
 };
 
 static qboolean champ_locked[NUM_CHAMPIONS] = {

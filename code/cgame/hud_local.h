@@ -14,6 +14,7 @@
 
 extern vec4_t       hud_weapon_colors[WP_NUM_WEAPONS];
 extern const char   *hud_weapon_icons[WP_NUM_WEAPONS];
+extern const char	*hud_mod_icons[MOD_NUM];
 
 typedef struct {
 	font_t* font_qcde;
@@ -25,6 +26,7 @@ typedef struct {
 	qhandle_t	icon_death; // for generic kill message
 
 	qhandle_t	icon_weapon[WP_NUM_WEAPONS];	// weapon icons for the vertical ammo status bar
+	qhandle_t	icon_mod[MOD_NUM];				// means of death icons
 
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
 	qhandle_t	ringgauge, ringglow, abbg;

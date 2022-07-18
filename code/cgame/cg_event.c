@@ -1074,6 +1074,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 	case EV_KILLERINFO:
 		DEBUGNAME("EV_KILLERINFO");
 		cg.killerInfo.clientNum = cent->currentState.eventParm;
+		cg.killerInfo.mod = cent->currentState.generic1;
 		cg.killerInfo.champion = cent->currentState.otherEntityNum2;
 		cg.killerInfo.weapon = cent->currentState.weapon;
 		cg.killerInfo.powerups = cent->currentState.powerups;

@@ -59,7 +59,11 @@ void hud_drawdeathmessage( void ) {
 	hud_drawcolorstring( centerx - dim/2, top + 40, 0.5f, hud_media.font_regular, text, NULL, 0, 0, qfalse );
 	// draw means of death icon (weapon icon, ability icon, etc)
 	trap_R_SetColor( hud_weapon_colors[cg.killerInfo.weapon] ) ;
-	hud_drawpic( centerx + dim/2 - 80 + 12, top + 30, 80, 64,  0.0f, 0.5f, hud_media.icon_weapon[cg.killerInfo.weapon] );
+	if ( cg.killerInfo.weapon > WP_NONE && cg.killerInfo.weapon < WP_NUM_WEAPONS ) {
+		hud_drawpic( centerx + dim / 2 - 80 + 12, top + 30, 80, 64, 0.0f, 0.5f, hud_media.icon_weapon[ cg.killerInfo.weapon ] );
+	} else {
+		hud_drawpic( centerx + dim / 2 - 80 + 12, top + 30, 80, 64, 0.0f, 0.5f, hud_media.icon_mod[ cg.killerInfo.mod ] );
+	}
 	trap_R_SetColor( NULL );
 	if ( cg.killerInfo.health != -9999 ) {
 		// draw stack left

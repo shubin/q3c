@@ -75,6 +75,10 @@ void hud_drawobituary( void ) {
 			wepcolor[1] = hud_weapon_colors[p->weapon][1];
 			wepcolor[2] = hud_weapon_colors[p->weapon][2];
 			wepcolor[3] = color[3];
+		} else {
+			deathicon = hud_media.icon_mod[p->mod];
+			wepcolor[0] = wepcolor[1] = wepcolor[2] = 1.0f;
+			wepcolor[3] = color[3];
 		}
 		dim = hud_measurecolorstring( 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name );
 		hud_drawcolorstring( x, y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name, shadow, 2, 2, qfalse );

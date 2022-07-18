@@ -638,6 +638,11 @@ typedef enum {
 	MOD_LIGHTNING,
 	MOD_BFG,
 	MOD_BFG_SPLASH,
+#if defined( QC )
+	MOD_TRIBOLT,
+	MOD_TRIBOLT_SPLASH,
+	MOD_DIRE_ORB,
+#endif
 	MOD_WATER,
 	MOD_SLIME,
 	MOD_LAVA,
@@ -656,8 +661,7 @@ typedef enum {
 #endif
 	MOD_GRAPPLE,
 #if defined( QC )
-	MOD_TRIBOLT,
-	MOD_TRIBOLT_SPLASH,
+	MOD_NUM,
 #endif
 } meansOfDeath_t;
 

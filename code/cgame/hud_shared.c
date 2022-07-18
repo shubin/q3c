@@ -46,10 +46,47 @@ const char *hud_weapon_icons[WP_NUM_WEAPONS] = {
     "", // WP_CHAINGUN,
 #endif
     "hud/weapon/tribolt",
-    "hud/weapon/machinegun",    // WP_LOUSY_MACHINEGUN,
-    "hud/weapon/shotgun",       // WP_LOUSY_SHOTGUN,
-    "hud/weapon/plasmagun",     // WP_LOUSY_PLASMAGUN
-	"", // WP_DIRE_ORB
+    "hud/weapon/machinegunl",    // WP_LOUSY_MACHINEGUN,
+    "hud/weapon/shotgunl",       // WP_LOUSY_SHOTGUN,
+    "hud/weapon/plasmagunl",     // WP_LOUSY_PLASMAGUN
+	"hud/mod/direorb",			 // WP_DIRE_ORB
+};
+
+const char *hud_mod_icons[ MOD_NUM ] = {
+	"hud/mod/generic",		// MOD_UNKNOWN
+	"hud/weapon/shotgun",	// MOD_SHOTGUN
+	"hud/weapon/gauntlet",  // MOD_GAUNTLET
+	"hud/weapon/machinegun",// MOD_MACHINEGUN
+	"hud/weapon/grenade",	// MOD_GRENADE
+	"hud/weapon/grenade",   // MOD_GRENADE_SPLASH
+	"hud/weapon/rocket",	// MOD_ROCKET
+	"hud/weapon/rocket",	// MOD_ROCKET_SPLASH
+	"hud/weapon/plasmagun", // MOD_PLASMA
+	"hud/weapon/plasmagun",	// MOD_PLASMA_SPLASH
+	"hud/weapon/railgun",	// MOD_RAILGUN
+	"hud/weapon/lightning",	// MOD_LIGHTNING
+	"hud/weapon/bfg",		// MOD_BFG
+	"hud/weapon/bfg",		// MOD_BFG_SPLASH
+	"hud/weapon/tribolt",	// MOD_TRIBOLT
+	"hud/weapon/tribolt",	// MOD_TRIBOLT_SPLASH
+	"hud/mod/direorb",		// MOD_DIRE_ORB
+	"hud/mod/generic",		// MOD_WATER
+	"hud/mod/generic",		// MOD_SLIME
+	"hud/mod/generic",		// MOD_LAVA
+	"hud/mod/generic",		// MOD_CRUSH
+	"hud/mod/telefrag",		// MOD_TELEFRAG
+	"hud/mod/generic",		// MOD_FALLING
+	"hud/mod/generic",		// MOD_SUICIDE
+	"hud/mod/generic",		// MOD_TARGET_LASER
+	"hud/mod/generic",		// MOD_TRIGGER_HURT
+#ifdef MISSIONPACK
+	MOD_NAIL,
+	MOD_CHAINGUN,
+	MOD_PROXIMITY_MINE,
+	MOD_KAMIKAZE,
+	MOD_JUICED,
+#endif
+	"hud/mod/generic",		// MOD_GRAPPLE
 };
 
 hud_media_t hud_media;
@@ -66,6 +103,9 @@ void hud_initmedia( void ) {
 	hud_media.icon_hourglass = cg_items[BG_FindItemByClass( "item_hourglass" ) - bg_itemlist].icon;
 	for ( i = 0; i < WP_NUM_WEAPONS; i++ ) {
 		hud_media.icon_weapon[i] = trap_R_RegisterShader( hud_weapon_icons[i] );
+	}
+	for ( i = 0; i < MOD_NUM; i++ ) {
+		hud_media.icon_mod[i] = trap_R_RegisterShader( hud_mod_icons[i] );
 	}
 	hud_media.ammobar_background = trap_R_RegisterShader( "hud/ammobar/background" );
 	hud_media.ammobar_full = trap_R_RegisterShader( "hud/ammobar/full" );
