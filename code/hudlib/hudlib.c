@@ -202,13 +202,14 @@ float hud_measurecolorstring(float scale, font_t *font, const char *string ) {
 
 // advanced version of hud_drawstring, it handles q3 color codes
 float hud_drawcolorstring( float x, float y, float scale, font_t *font, const char *string, float *shadow, float dx, float dy, qboolean forceColor ) {
-	vec4_t		color, shad;
+	vec4_t		color, shad, save;
 	const char	*s;
 	int			xx;
 	int			cnt;
 	float		alpha;
 
 	alpha = cg.lastColor[3];
+	Vector4Copy( cg.lastColor, save );
 
 	// draw the shadow
 	if ( shadow != NULL ) {
@@ -253,6 +254,7 @@ float hud_drawcolorstring( float x, float y, float scale, font_t *font, const ch
 		cnt++;
 		s++;
 	}
+	trap_R_SetColor( save );
 	return xx - x;
 }
 
