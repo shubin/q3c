@@ -564,7 +564,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	if ( attacker != NULL && attacker->client != NULL && self->client->ps.clientNum != attacker->client->ps.clientNum ) {
 		attacker->client->wepstat[inflictor->s.weapon].score++;
 		attacker->client->wepstat[inflictor->s.weapon].damage += damage;
+		attacker->client->kills++;
 	}
+	self->client->deaths++;
 #endif
 
 	// check for an almost capture

@@ -308,6 +308,8 @@ typedef struct {
 #if defined( QC )
 	wepstat_t		wepstat[WP_NUM_WEAPONS];
 	itemstat_t		itemstat;
+	int				kills;
+	int				deaths;
 #endif
 } score_t;
 

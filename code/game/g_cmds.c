@@ -96,6 +96,14 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		strcpy (string + stringlength, entry);
 		stringlength += j;
 #if defined( QC )
+		// kills and deaths
+		Com_sprintf( entry, sizeof( entry ), " %i %i", cl->kills, cl->deaths );
+		j = strlen( entry );
+		if ( stringlength + j >= sizeof( string ) ) {
+			break;
+		}
+		strcpy( string + stringlength, entry );
+		stringlength += j;
 		// per-weapon stats
 		for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
 			Com_sprintf( entry, sizeof( entry ), " %i %i %i %i", cl->wepstat[w].shots, cl->wepstat[w].hits, cl->wepstat[w].damage, cl->wepstat[w].score );

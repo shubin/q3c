@@ -1145,6 +1145,7 @@ void ClientSpawn(gentity_t *ent) {
 #if defined( QC )
 	wepstat_t	wepstat[WP_NUM_WEAPONS];
 	itemstat_t	itemstat;
+	int			kills, deaths;
 #endif
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
@@ -1232,6 +1233,8 @@ void ClientSpawn(gentity_t *ent) {
 #if defined( QC )
 	memcpy( wepstat, client->wepstat, sizeof( wepstat ) );
 	memcpy( &itemstat, &client->itemstat, sizeof( itemstat ) );
+	kills = client->kills;
+	deaths = client->deaths;
 #endif
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -1249,6 +1252,8 @@ void ClientSpawn(gentity_t *ent) {
 #if defined( QC )
 	memcpy( client->wepstat, wepstat, sizeof( wepstat ) );
 	memcpy( &client->itemstat, &itemstat, sizeof( itemstat ) );
+	client->kills = kills;
+	client->deaths = deaths;
 #endif
 	client->lastkilled_client = -1;
 

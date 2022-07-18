@@ -331,6 +331,7 @@ struct gclient_s {
 #if defined( QC )
 	wepstat_t	wepstat[WP_NUM_WEAPONS]; // per-weapon stats
 	itemstat_t	itemstat;			// per-item stat
+	int			kills, deaths;
 #endif
 
 	//

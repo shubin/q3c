@@ -115,6 +115,8 @@ static void CG_ParseScores( void ) {
 		cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
 
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
+		cg.scores[i].kills = atoi( CG_NextScoreValue() );
+		cg.scores[i].deaths = atoi( CG_NextScoreValue() );
 		//Com_Printf( "WEAPON STATS\n" );
 		for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
 			cg.scores[i].wepstat[w].shots =		atoi( CG_NextScoreValue() );
