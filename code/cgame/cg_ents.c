@@ -469,45 +469,45 @@ CG_Missile
 */
 static void CG_Missile( centity_t *cent ) {
 	refEntity_t			ent;
-	entityState_t		*s1;
-	const weaponInfo_t		*weapon;
-//	int	col;
+	entityState_t *s1;
+	const weaponInfo_t *weapon;
+	//	int	col;
 
 	s1 = &cent->currentState;
 	if ( s1->weapon >= WP_NUM_WEAPONS ) {
 		s1->weapon = 0;
 	}
-	weapon = &cg_weapons[s1->weapon];
+	weapon = &cg_weapons[ s1->weapon ];
 
 	// calculate the axis
-	VectorCopy( s1->angles, cent->lerpAngles);
+	VectorCopy( s1->angles, cent->lerpAngles );
 
 	// add trails
 	if ( weapon->missileTrailFunc ) 
 	{
 		weapon->missileTrailFunc( cent, weapon );
 	}
-/*
-	if ( cent->currentState.modelindex == TEAM_RED ) {
-		col = 1;
-	}
-	else if ( cent->currentState.modelindex == TEAM_BLUE ) {
-		col = 2;
-	}
-	else {
-		col = 0;
-	}
+	/*
+		if ( cent->currentState.modelindex == TEAM_RED ) {
+			col = 1;
+		}
+		else if ( cent->currentState.modelindex == TEAM_BLUE ) {
+			col = 2;
+		}
+		else {
+			col = 0;
+		}
 
+		// add dynamic light
+		if ( weapon->missileDlight ) {
+			trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight,
+				weapon->missileDlightColor[col][0], weapon->missileDlightColor[col][1], weapon->missileDlightColor[col][2] );
+		}
+	*/
 	// add dynamic light
 	if ( weapon->missileDlight ) {
-		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 
-			weapon->missileDlightColor[col][0], weapon->missileDlightColor[col][1], weapon->missileDlightColor[col][2] );
-	}
-*/
-	// add dynamic light
-	if ( weapon->missileDlight ) {
-		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 
-			weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2] );
+		trap_R_AddLightToScene( cent->lerpOrigin, weapon->missileDlight,
+			weapon->missileDlightColor[ 0 ], weapon->missileDlightColor[ 1 ], weapon->missileDlightColor[ 2 ] );
 	}
 
 	// add missile sound
@@ -520,9 +520,9 @@ static void CG_Missile( centity_t *cent ) {
 	}
 
 	// create the render entity
-	memset (&ent, 0, sizeof(ent));
-	VectorCopy( cent->lerpOrigin, ent.origin);
-	VectorCopy( cent->lerpOrigin, ent.oldorigin);
+	memset( &ent, 0, sizeof( ent ) );
+	VectorCopy( cent->lerpOrigin, ent.origin );
+	VectorCopy( cent->lerpOrigin, ent.oldorigin );
 
 	if ( cent->currentState.weapon == WP_PLASMAGUN ) {
 		ent.reType = RT_SPRITE;
@@ -549,16 +549,29 @@ static void CG_Missile( centity_t *cent ) {
 
 #ifdef MISSIONPACK
 	if ( cent->currentState.weapon == WP_PROX_LAUNCHER ) {
-		if (s1->generic1 == TEAM_BLUE) {
+		if ( s1->generic1 == TEAM_BLUE ) {
 			ent.hModel = cgs.media.blueProxMine;
 		}
 	}
 #endif
 
+#if defined( QC )
+	if ( s1->pos.trType == TR_STATIONARY ) {
+		if ( VectorNormalize2( s1->angles2, ent.axis[ 0 ] ) == 0 ) {
+			ent.axis[ 0 ][ 2 ] = 1;
+		}
+	}  else {
+		// convert direction of travel into axis
+		if ( VectorNormalize2( s1->pos.trDelta, ent.axis[ 0 ] ) == 0 ) {
+			ent.axis[ 0 ][ 2 ] = 1;
+		}
+	}
+#else
 	// convert direction of travel into axis
 	if ( VectorNormalize2( s1->pos.trDelta, ent.axis[0] ) == 0 ) {
 		ent.axis[0][2] = 1;
 	}
+#endif
 
 	// spin as it moves
 	if ( s1->pos.trType != TR_STATIONARY ) {

@@ -295,7 +295,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 #if defined( QC )
 	if ( !other->takedamage && !strcmp(ent->classname, "bolt")) {
 		// bolt sticks into walls/ground
-		// TODO: fix bolt orientation when stuck
+		VectorCopy( ent->s.pos.trDelta, ent->s.angles2 ); // cgame infers missile orientation from trDelta, so keep it in the angles2
 		G_SetOrigin( ent, trace->endpos );
 		ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
 		G_AddEvent( ent, EV_BOLT_HIT, 0 );
