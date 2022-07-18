@@ -323,7 +323,7 @@ void PM_StepSlideMove( qboolean gravity ) {
 		wishvel[2] = 0;
 	} else {
 		for (i=0 ; i<3 ; i++) {
-			wishvel[i] = scale * pml.forward[i]*abs(pm->cmd.forwardmove);// + scale * ( pm->cmd.forwardmove ? pml.right[i]*pm->cmd.rightmove : 0 );
+			wishvel[i] = scale * pml.forward[i]*pm->cmd.forwardmove;// + scale * ( pm->cmd.forwardmove ? pml.right[i]*pm->cmd.rightmove : 0 );
 		}
 		VectorScale( wishvel, 0.5f, wishvel );
 		wishvel[2] += pm->ps->velocity[2];
@@ -416,11 +416,11 @@ void PM_StepSlideMove( qboolean gravity ) {
 	PM_SlideMove( gravity );
 
 	// push down the final amount
-	VectorCopy (pm->ps->origin, down);
-	down[2] -= stepSize;
-	pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	VectorCopy( pm->ps->origin, down );
+	down[ 2 ] -= stepSize;
+	pm->trace( &trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask );
 	if ( !trace.allsolid ) {
-		VectorCopy (trace.endpos, pm->ps->origin);
+		VectorCopy( trace.endpos, pm->ps->origin );
 	}
 	if ( trace.fraction < 1.0 ) {
 		PM_ClipVelocity( pm->ps->velocity, trace.plane.normal, pm->ps->velocity, OVERCLIP );
