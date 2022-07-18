@@ -66,6 +66,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	hud_drawscores_brief_tournament();
 	hud_drawscores_brief_ffa();
 	hud_drawscores_tournament();
+	hud_drawscores_ffa();
 	if ( stereoFrame == STEREO_CENTER ) {
 		hud_drawcrosshair();
 	}

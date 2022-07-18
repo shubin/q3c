@@ -49,6 +49,8 @@ void hud_drawammo( void );
 void hud_drawstatus( void );
 // brief score bar for FFA, along with the timer
 void hud_drawscores_brief_ffa( void );
+// ffa scores
+void hud_drawscores_ffa( void );
 // brief tournament scores with timer
 void hud_drawscores_brief_tournament( void );
 // tournament scores with weapon usage stats, item stats etc.
