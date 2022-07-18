@@ -3,8 +3,8 @@
 #include "hud_local.h"
 
 #define MAX_OBITUARY 16
-#define OBITUARY_TIMEOUT 1500
-#define OBITUARY_FADEOUTTIME 1000
+#define OBITUARY_TIMEOUT 2500
+#define OBITUARY_FADEOUTTIME 2000
 
 typedef struct {
 	int	killer;
@@ -52,12 +52,12 @@ void hud_drawobituary( void ) {
 
 	hud_purgeobituary();
 
-	x = 50;
-	y = 165;
+	x = hud_bounds.left + 50;
+	y = hud_bounds.top + 165;
 
 	for ( p = hud_obituary; p < hud_obituary + hud_numobituary; p++ ) {
 		if ( cg.time - p->time > OBITUARY_FADEOUTTIME ) {
-			color[3] = 1.0f - ( (float)cg.time - p->time ) / ( OBITUARY_TIMEOUT - OBITUARY_FADEOUTTIME );
+			color[3] = 1.0f - ( (float)cg.time - p->time - OBITUARY_FADEOUTTIME ) / ( OBITUARY_TIMEOUT - OBITUARY_FADEOUTTIME );
 		}
 		else {
 			color[3] = 1.0f;
@@ -65,7 +65,7 @@ void hud_drawobituary( void ) {
 		shadow[3] = color[3];
 		trap_R_SetColor( color );
 		if ( p->killer == p->victim || p->killer == ENTITYNUM_WORLD ) {
-			hud_drawcolorstring( hud_bounds.left + x, hud_bounds.top + y, 0.4f, hud_media.font_regular, va( "%s ^7%s", cgs.clientinfo[p->victim].name, "suicides" ), shadow, 2, 2, qfalse );
+			hud_drawcolorstring( x, y, 0.4f, hud_media.font_regular, va( "%s ^7%s", cgs.clientinfo[p->victim].name, "suicides" ), shadow, 2, 2, qfalse );
 			continue;
 		}
 		deathicon = hud_media.icon_death;
@@ -77,12 +77,12 @@ void hud_drawobituary( void ) {
 			wepcolor[3] = color[3];
 		}
 		dim = hud_measurecolorstring( 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name );
-		hud_drawcolorstring( hud_bounds.left + x, hud_bounds.top + y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name, shadow, 2, 2, qfalse );
-		hud_drawcolorstring( hud_bounds.left + x + dim + 64, hud_bounds.top + y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->victim].name, shadow, 2, 2, qfalse );
+		hud_drawcolorstring( x, y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name, shadow, 2, 2, qfalse );
+		hud_drawcolorstring( x + dim + 64, y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->victim].name, shadow, 2, 2, qfalse );
 		if ( hud_media.icon_death != deathicon ) {
 			trap_R_SetColor( wepcolor );
 		}
-		hud_drawpic( hud_bounds.left + x + dim + 32, hud_bounds.top + y - 8, 48, 48, 0.5f, 0.5f, deathicon );
+		hud_drawpic( x + dim + 32, y - 8, 48, 48, 0.5f, 0.5f, deathicon );
 		y += 40;
 	}
 	trap_R_SetColor( NULL );

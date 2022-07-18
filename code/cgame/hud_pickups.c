@@ -45,11 +45,11 @@ void hud_drawpickups( void ) {
 
 	hud_purgepickups();
 
-	y = 80;
+	y = hud_bounds.top + 165;
 
 	for ( p = hud_pickups; p < hud_pickups + hud_numpickups; p++ ) {
 		if ( cg.time - p->time > PICKUP_FADEOUTTIME ) {
-			color[3] = 1.0f - ( (float)cg.time - p->time ) / ( PICKUP_TIMEOUT - PICKUP_FADEOUTTIME );
+			color[3] = 1.0f - ( (float)cg.time - p->time - PICKUP_FADEOUTTIME ) / ( PICKUP_TIMEOUT - PICKUP_FADEOUTTIME );
 		}
 		else {
 			color[3] = 1.0f;
