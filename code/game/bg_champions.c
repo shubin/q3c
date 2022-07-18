@@ -612,43 +612,43 @@ char *champion_names[NUM_CHAMPIONS] = {
 };
 
 char* champion_models[NUM_CHAMPIONS] = {
-    "sarge",
-    "anarki",
-    "hunter", //"athena",
-    "mynx", //"nyx",
-    "slash",
-    "tim", //"bj",
-    "klesk", //"dk",
-    "doom",
-    "razor", //"eisen",
-    "major", //"galena",
-    "ranger",
-    "xian", //"strogg",
-    "visor",
-    "tankjr",//"clutch",
-    "keel",
-    "biker", //"scalebearer",
-    "sorlag",
+    "sarge",  // sarge
+    "anarki", // anarki
+    "hunter", // athena
+    "mynx",   // nyx
+    "slash",  // slash
+    "tim",    // bj
+    "klesk",  // dk
+    "doom",   // doom
+    "razor",  // eisen
+    "major",  // galena
+    "ranger", // ranger
+    "xian",   // strogg
+    "visor",  // visor
+    "tankjr", // clutch
+    "keel",   // keel
+    "biker",  // scalebearer
+    "sorlag", // sorlag
 };
 
 char* champion_skins[NUM_CHAMPIONS] = {
-    "pm",
-    "pm",
-    "default", //"athena",
-    "default", //"nyx",
-    "default",
-    "default", //"bj",
-    "default", //"dk",
-    "default",
-    "default", //"eisen",
-    "default", //"galena",
-    "pm",
-    "default", //"strogg",
-    "default",
-    "default",//"clutch",
-    "pm",
-    "default", //"scalebearer",
-    "default",
+    "pm",      // sarge
+    "pm",      // anarki
+    "default", // athena
+    "default", // nyx
+    "default", // slash
+    "default", // bj
+    "default", // dk
+    "default", // doom
+    "default", // eisen
+    "default", // galena
+    "pm",      // ranger
+    "default", // strogg
+    "default", // visor
+    "default", // clutch
+    "pm",      // keel
+    "default", // scalebearer
+    "default", // sorlag
 };
 
 int ParseChampionName( const char* name ) {
