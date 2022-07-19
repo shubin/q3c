@@ -38,10 +38,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ART_FX_YELLOW		"menu/art/fx_yel"
 
 #define ID_NAME			10
+#if !defined( QC )
 #define ID_HANDICAP		11
+#endif
 #define ID_EFFECTS		12
 #define ID_BACK			13
+#if !defined( QC )
 #define ID_MODEL		14
+#endif
 
 #define MAX_NAMELENGTH	20
 
@@ -55,11 +59,15 @@ typedef struct {
 	menubitmap_s		player;
 
 	menufield_s			name;
+#if !defined( QC )
 	menulist_s			handicap;
+#endif
 	menulist_s			effects;
 
 	menubitmap_s		back;
+#if !defined( QC )
 	menubitmap_s		model;
+#endif
 	menubitmap_s		item_null;
 
 	qhandle_t			fxBasePic;
@@ -74,6 +82,7 @@ static playersettings_t	s_playersettings;
 static int gamecodetoui[] = {4,2,3,0,5,1,6};
 static int uitogamecode[] = {4,6,2,3,1,5,7};
 
+#if !defined( QC )
 static const char *handicap_items[] = {
 	"None",
 	"95",
@@ -97,7 +106,7 @@ static const char *handicap_items[] = {
 	"5",
 	NULL
 };
-
+#endif
 
 /*
 =================
@@ -171,6 +180,7 @@ static void PlayerSettings_DrawName( void *self ) {
 }
 
 
+#if !defined( QC )
 /*
 =================
 PlayerSettings_DrawHandicap
@@ -195,7 +205,7 @@ static void PlayerSettings_DrawHandicap( void *self ) {
 	UI_DrawProportionalString( item->generic.x, item->generic.y, "Handicap", style, color );
 	UI_DrawProportionalString( item->generic.x + 64, item->generic.y + PROP_HEIGHT, handicap_items[item->curvalue], style, color );
 }
-
+#endif
 
 /*
 =================
@@ -259,9 +269,10 @@ PlayerSettings_SaveChanges
 static void PlayerSettings_SaveChanges( void ) {
 	// name
 	trap_Cvar_Set( "name", s_playersettings.name.field.buffer );
-
+#if !defined( QC )
 	// handicap
 	trap_Cvar_SetValue( "handicap", 100 - s_playersettings.handicap.curvalue * 5 );
+#endif
 
 	// effects color
 	trap_Cvar_SetValue( "color1", uitogamecode[s_playersettings.effects.curvalue] );
@@ -311,9 +322,11 @@ static void PlayerSettings_SetMenuItems( void ) {
 	UI_PlayerInfo_SetModel( &s_playersettings.playerinfo, UI_Cvar_VariableString( "model" ) );
 	UI_PlayerInfo_SetInfo( &s_playersettings.playerinfo, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse );
 
+#if !defined( QC )
 	// handicap
 	h = Com_Clamp( 5, 100, trap_Cvar_VariableValue("handicap") );
 	s_playersettings.handicap.curvalue = 20 - h / 5;
+#endif
 }
 
 
@@ -328,14 +341,15 @@ static void PlayerSettings_MenuEvent( void* ptr, int event ) {
 	}
 
 	switch( ((menucommon_s*)ptr)->id ) {
+#if !defined( QC )
 	case ID_HANDICAP:
 		trap_Cvar_Set( "handicap", va( "%i", 100 - 25 * s_playersettings.handicap.curvalue ) );
 		break;
-
 	case ID_MODEL:
 		PlayerSettings_SaveChanges();
 		UI_PlayerModelMenu();
 		break;
+#endif
 
 	case ID_BACK:
 		PlayerSettings_SaveChanges();
@@ -397,6 +411,7 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.name.generic.right			= 192 + 200;
 	s_playersettings.name.generic.bottom		= y + 2 * PROP_HEIGHT;
 
+#if !defined( QC )
 	y += 3 * PROP_HEIGHT;
 	s_playersettings.handicap.generic.type		= MTYPE_SPINCONTROL;
 	s_playersettings.handicap.generic.flags		= QMF_NODEFAULTINIT;
@@ -409,6 +424,7 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.handicap.generic.right		= 192 + 200;
 	s_playersettings.handicap.generic.bottom	= y + 2 * PROP_HEIGHT;
 	s_playersettings.handicap.numitems			= 20;
+#endif
 
 	y += 3 * PROP_HEIGHT;
 	s_playersettings.effects.generic.type		= MTYPE_SPINCONTROL;
@@ -423,6 +439,7 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.effects.generic.bottom		= y + 2* PROP_HEIGHT;
 	s_playersettings.effects.numitems			= 7;
 
+#if !defined( QC )
 	s_playersettings.model.generic.type			= MTYPE_BITMAP;
 	s_playersettings.model.generic.name			= ART_MODEL0;
 	s_playersettings.model.generic.flags		= QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -433,6 +450,7 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.model.width				= 128;
 	s_playersettings.model.height				= 64;
 	s_playersettings.model.focuspic				= ART_MODEL1;
+#endif
 
 	s_playersettings.player.generic.type		= MTYPE_BITMAP;
 	s_playersettings.player.generic.flags		= QMF_INACTIVE;
@@ -465,9 +483,13 @@ static void PlayerSettings_MenuInit( void ) {
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.framer );
 
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.name );
+#if !defined( QC )
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.handicap );
+#endif
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.effects );
+#if !defined( QC )
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.model );
+#endif
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.back );
 
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.player );
