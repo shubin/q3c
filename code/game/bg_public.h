@@ -54,8 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	MINS_Z				-24
 #endif
 #if defined( QC )
-#define	DEFAULT_VIEWHEIGHT	28
-#define CROUCH_VIEWHEIGHT	14
+#define	DEFAULT_VIEWHEIGHT	30
+#define CROUCH_VIEWHEIGHT	15
 #define	DEAD_VIEWHEIGHT		-16
 #else
 #define	DEFAULT_VIEWHEIGHT	26
