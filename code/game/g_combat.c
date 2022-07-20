@@ -199,6 +199,13 @@ void TossClientItems( gentity_t *self ) {
 			}
 		}
 	}
+#if defined( QC )
+	// drop armor shards
+	item = BG_FindItemByClass( "item_armor_shard" );
+	for ( i = 0; i < 3; i++ ) {
+		Drop_Item( self, item, random() * 360 );
+	}
+#endif
 }
 
 #ifdef MISSIONPACK
