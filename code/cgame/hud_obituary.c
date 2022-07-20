@@ -46,7 +46,7 @@ void hud_drawobituary( void ) {
 	weapon_t weapon = WP_NONE;
 	qhandle_t deathicon;
 
-	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
+	if ( cg.showScores ) {
 		return;
 	}
 
