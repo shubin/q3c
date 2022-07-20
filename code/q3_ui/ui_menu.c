@@ -50,7 +50,11 @@ MAIN MENU
 #endif
 #define ID_EXIT					17
 
+#if defined( QC )
+#define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner_champions.md3"
+#else
 #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner5.md3"
+#endif
 #define MAIN_MENU_VERTICAL_SPACING		34
 
 
