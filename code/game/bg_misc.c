@@ -139,7 +139,11 @@ gitem_t	bg_itemlist[] =
         { "models/powerups/health/medium_cross.md3", 
 		"models/powerups/health/medium_sphere.md3", 
 		NULL, NULL },
+#if defined( QC )
+/* icon */		"icons/iconh_blue",
+#else
 /* icon */		"icons/iconh_yellow",
+#endif
 /* pickup */	"25 Health",
 		25,
 		IT_HEALTH,
