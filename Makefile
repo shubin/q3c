@@ -3187,11 +3187,8 @@ $(B)/$(QC)/ui/bg_%.o: $(GDIR)/bg_%.c
 $(B)/$(QC)/ui/%.o: $(Q3UIDIR)/%.c
 	$(DO_UI_CC_QC)
 
-$(B)/$(QC)/ui/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
-	$(DO_UI_Q3LCC_QC)
-
-$(B)/$(QC)/ui/%.asm: $(Q3UIDIR)/%.c $(Q3LCC)
-	$(DO_UI_Q3LCC_QC)
+$(B)/$(QC)/ui/ui_syscalls.o: $(UIDIR)/ui_syscalls.c
+	$(DO_UI_CC_QC)
 
 $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.c
 	$(DO_SHLIB_CC)
