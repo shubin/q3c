@@ -2615,7 +2615,7 @@ QCCGOBJ_ = \
   $(B)/$(QC)/cgame/cg_view.o \
   $(B)/$(QC)/cgame/cg_weapons.o \
   \
-  $(B)/$(QC)/game/cg_champions.o \
+  $(B)/$(QC)/cgame/cg_champions.o \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/bg_champions.o \
   $(B)/$(QC)/game/hudlib.o \

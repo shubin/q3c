@@ -507,7 +507,7 @@ int CG_WaterLevel(centity_t *cent) {
 
 #if defined( QC )
 	champion = cgs.clientinfo[cent->currentState.clientNum].champion;
-	mins_z = champion_stats[champion].mins[3];
+	mins_z = champion_stats[champion].mins[2];
 #endif
 
 	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
