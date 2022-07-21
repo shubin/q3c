@@ -3126,6 +3126,9 @@ $(B)/$(MISSIONPACK)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
 $(B)/$(QC)/cgame/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_CGAME_CC_QC)
 
+$(B)/$(QC)/hudlib/%.o: $(GDIR)/%.c
+	$(DO_CGAME_CC_QC)
+
 $(B)/$(QC)/cgame/%.o: $(CGDIR)/%.c
 	$(DO_CGAME_CC_QC)
 
