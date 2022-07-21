@@ -2635,16 +2635,16 @@ QCCGOBJ_ = \
   $(B)/$(QC)/qcommon/q_math.o \
   $(B)/$(QC)/qcommon/q_shared.o
 
-Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(BASEGAME)/cgame/cg_syscalls.o
-Q3CGVMOBJ = $(Q3CGOBJ_:%.o=%.asm)
+QCCGOBJ = $(QCCGOBJ_) $(B)/$(QC)/cgame/cg_syscalls.o
+QCCGVMOBJ = $(QCCGOBJ_:%.o=%.asm)
 
-$(B)/$(BASEGAME)/cgame$(SHLIBNAME): $(Q3CGOBJ)
+$(B)/$(QC)/cgame$(SHLIBNAME): $(QCCGOBJ)
 	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3CGOBJ)
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(QCCGOBJ)
 
-$(B)/$(BASEGAME)/vm/cgame.qvm: $(Q3CGVMOBJ) $(CGDIR)/cg_syscalls.asm $(Q3ASM)
+$(B)/$(QC)/vm/cgame.qvm: $(QCCGVMOBJ) $(CGDIR)/cg_syscalls.asm $(Q3ASM)
 	$(echo_cmd) "Q3ASM $@"
-	$(Q)$(Q3ASM) -o $@ $(Q3CGVMOBJ) $(CGDIR)/cg_syscalls.asm
+	$(Q)$(Q3ASM) -o $@ $(QCCGVMOBJ) $(CGDIR)/cg_syscalls.asm
 
 #############################################################################
 ## BASEQ3 GAME
