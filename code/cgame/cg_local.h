@@ -27,7 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #include "../game/bg_public.h"
 #include "cg_public.h"
-
+#if defined( QC )
+#include "cg_champions.h"
+#endif
 
 // The entire cgame module is unloaded and reloaded on each level change,
 // so there is NO persistant data between levels on the client side.
@@ -1057,6 +1059,7 @@ typedef struct {
 #if defined( QC )
 	// champion models
 	clientInfo_t championModels[NUM_CHAMPIONS];
+	sfxHandle_t	abilitySounds[NUM_CHAMPIONS];
 #endif
 } cgMedia_t;
 

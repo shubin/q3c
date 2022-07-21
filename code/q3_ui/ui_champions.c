@@ -9,6 +9,9 @@ CHAMPIONS & STARTING WEAPONS MENU
 
 
 #include "ui_local.h"
+#if defined( QC )
+#include "../game/bg_champions.h"
+#endif
 
 #define MODEL_SELECT		"menu/art/opponents_select"
 #define MODEL_SELECTED		"menu/art/opponents_selected"

@@ -23,7 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // g_combat.c
 
 #include "g_local.h"
-
+#if defined( QC )
+#include "bg_champions.h"
+#endif
 
 /*
 ============

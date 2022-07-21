@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 #if defined( QC )
+#include "bg_champions.h"
 #include "bg_local.h" // for accessing the pml
 #endif
 

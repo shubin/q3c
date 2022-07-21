@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "bg_local.h"
+#include "bg_champions.h"
 
 champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // sarge

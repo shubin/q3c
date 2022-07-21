@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 displayContextDef_t cgDC;
 #endif
 
+
 #if !defined( QC )
 int forceModelModificationCount = -1;
 #endif
@@ -951,6 +952,13 @@ static void CG_RegisterSounds( void ) {
 #if defined( QC )
 	cgs.media.sfx_boltexp = trap_S_RegisterSound("sound/weapons/tribolt/explode.wav", qfalse);
 	cgs.media.sfx_bolthitwall = trap_S_RegisterSound("sound/weapons/tribolt/hitwall.wav", qfalse);
+	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
+		if ( champion_ability_sounds[i] != NULL ) {
+			cgs.media.abilitySounds[i] = trap_S_RegisterSound( champion_ability_sounds[i], qfalse );
+		} else {
+			cgs.media.abilitySounds[i] = 0;
+		}
+	}
 #endif
 
 #ifdef MISSIONPACK
