@@ -748,7 +748,7 @@ netField_t	entityStateFields[] =
 { NETF(pos.trBase[1]), 0 },
 { NETF(pos.trDelta[0]), 0 },
 { NETF(pos.trDelta[1]), 0 },
-#if defined( QC ) && 0
+#if defined( QC )
 { NETF(pos.trGravity), 0 },
 #endif
 { NETF(pos.trBase[2]), 0 },
@@ -791,7 +791,7 @@ netField_t	entityStateFields[] =
 { NETF(apos.trDelta[0]), 0 },
 { NETF(apos.trDelta[1]), 0 },
 { NETF(apos.trDelta[2]), 0 },
-#if defined( QC ) && 0
+#if defined( QC )
 { NETF(apos.trGravity), 0 },
 #endif
 { NETF(time2), 32 },

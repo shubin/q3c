@@ -1349,7 +1349,7 @@ typedef struct {
 	int		trDuration;			// if non 0, trTime + trDuration = stop time
 	vec3_t	trBase;
 	vec3_t	trDelta;			// velocity, etc
-#if defined( QC ) && 0
+#if defined( QC )
 	int		trGravity;
 #endif
 } trajectory_t;

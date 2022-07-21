@@ -753,9 +753,7 @@ gentity_t *fire_bolt (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-#if defined( QC ) && 0
 	bolt->s.pos.trGravity = 400; // flat trajectory for bolts
-#endif
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 1600, bolt->s.pos.trDelta );
@@ -802,7 +800,7 @@ gentity_t *fire_grenade (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-#if defined( QC ) && 0
+#if defined( QC )
 	bolt->s.pos.trGravity = DEFAULT_GRAVITY;
 #endif
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
