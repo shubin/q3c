@@ -2586,7 +2586,65 @@ $(B)/$(MISSIONPACK)/vm/cgame.qvm: $(MPCGVMOBJ) $(CGDIR)/cg_syscalls.asm $(Q3ASM)
 	$(echo_cmd) "Q3ASM $@"
 	$(Q)$(Q3ASM) -o $@ $(MPCGVMOBJ) $(CGDIR)/cg_syscalls.asm
 
+#############################################################################
+## QC CGAME
+#############################################################################
 
+QCCGOBJ_ = \
+  $(B)/$(QC)/cgame/cg_main.o \
+  $(B)/$(QC)/cgame/bg_misc.o \
+  $(B)/$(QC)/cgame/bg_pmove.o \
+  $(B)/$(QC)/cgame/bg_slidemove.o \
+  $(B)/$(QC)/cgame/bg_lib.o \
+  $(B)/$(QC)/cgame/cg_consolecmds.o \
+  $(B)/$(QC)/cgame/cg_draw.o \
+  $(B)/$(QC)/cgame/cg_drawtools.o \
+  $(B)/$(QC)/cgame/cg_effects.o \
+  $(B)/$(QC)/cgame/cg_ents.o \
+  $(B)/$(QC)/cgame/cg_event.o \
+  $(B)/$(QC)/cgame/cg_info.o \
+  $(B)/$(QC)/cgame/cg_localents.o \
+  $(B)/$(QC)/cgame/cg_marks.o \
+  $(B)/$(QC)/cgame/cg_particles.o \
+  $(B)/$(QC)/cgame/cg_players.o \
+  $(B)/$(QC)/cgame/cg_playerstate.o \
+  $(B)/$(QC)/cgame/cg_predict.o \
+  $(B)/$(QC)/cgame/cg_scoreboard.o \
+  $(B)/$(QC)/cgame/cg_servercmds.o \
+  $(B)/$(QC)/cgame/cg_snapshot.o \
+  $(B)/$(QC)/cgame/cg_view.o \
+  $(B)/$(QC)/cgame/cg_weapons.o \
+  \
+  $(B)/$(QC)/game/cg_champions.o \
+  $(B)/$(QC)/game/bg_promode.o \
+  $(B)/$(QC)/game/bg_champions.o \
+  $(B)/$(QC)/game/hudlib.o \
+  $(B)/$(QC)/game/hud_ability.o \
+  $(B)/$(QC)/game/hud_ammo.o \
+  $(B)/$(QC)/game/hud_crosshair.o \
+  $(B)/$(QC)/game/hud_deathmessage.o \
+  $(B)/$(QC)/game/hud_ffa_scores.o \
+  $(B)/$(QC)/game/hud_fragmessage.o \
+  $(B)/$(QC)/game/hud_obituary.o \
+  $(B)/$(QC)/game/hud_pickups.o \
+  $(B)/$(QC)/game/hud_playerstatus.o \
+  $(B)/$(QC)/game/hud_shared.o \
+  $(B)/$(QC)/game/hud_timer.o \
+  $(B)/$(QC)/game/hud_tournament_scores.o \
+  \
+  $(B)/$(QC)/qcommon/q_math.o \
+  $(B)/$(QC)/qcommon/q_shared.o
+
+Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(BASEGAME)/cgame/cg_syscalls.o
+Q3CGVMOBJ = $(Q3CGOBJ_:%.o=%.asm)
+
+$(B)/$(BASEGAME)/cgame$(SHLIBNAME): $(Q3CGOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3CGOBJ)
+
+$(B)/$(BASEGAME)/vm/cgame.qvm: $(Q3CGVMOBJ) $(CGDIR)/cg_syscalls.asm $(Q3ASM)
+	$(echo_cmd) "Q3ASM $@"
+	$(Q)$(Q3ASM) -o $@ $(Q3CGVMOBJ) $(CGDIR)/cg_syscalls.asm
 
 #############################################################################
 ## BASEQ3 GAME
