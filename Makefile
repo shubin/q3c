@@ -2615,22 +2615,22 @@ QCCGOBJ_ = \
   $(B)/$(QC)/cgame/cg_view.o \
   $(B)/$(QC)/cgame/cg_weapons.o \
   \
-  $(B)/$(QC)/cgame/cg_champions.o \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/bg_champions.o \
-  $(B)/$(QC)/game/hudlib.o \
-  $(B)/$(QC)/game/hud_ability.o \
-  $(B)/$(QC)/game/hud_ammo.o \
-  $(B)/$(QC)/game/hud_crosshair.o \
-  $(B)/$(QC)/game/hud_deathmessage.o \
-  $(B)/$(QC)/game/hud_ffa_scores.o \
-  $(B)/$(QC)/game/hud_fragmessage.o \
-  $(B)/$(QC)/game/hud_obituary.o \
-  $(B)/$(QC)/game/hud_pickups.o \
-  $(B)/$(QC)/game/hud_playerstatus.o \
-  $(B)/$(QC)/game/hud_shared.o \
-  $(B)/$(QC)/game/hud_timer.o \
-  $(B)/$(QC)/game/hud_tournament_scores.o \
+  $(B)/$(QC)/cgame/cg_champions.o \
+  $(B)/$(QC)/cgame/hudlib.o \
+  $(B)/$(QC)/cgame/hud_ability.o \
+  $(B)/$(QC)/cgame/hud_ammo.o \
+  $(B)/$(QC)/cgame/hud_crosshair.o \
+  $(B)/$(QC)/cgame/hud_deathmessage.o \
+  $(B)/$(QC)/cgame/hud_ffa_scores.o \
+  $(B)/$(QC)/cgame/hud_fragmessage.o \
+  $(B)/$(QC)/cgame/hud_obituary.o \
+  $(B)/$(QC)/cgame/hud_pickups.o \
+  $(B)/$(QC)/cgame/hud_playerstatus.o \
+  $(B)/$(QC)/cgame/hud_shared.o \
+  $(B)/$(QC)/cgame/hud_timer.o \
+  $(B)/$(QC)/cgame/hud_tournament_scores.o \
   \
   $(B)/$(QC)/qcommon/q_math.o \
   $(B)/$(QC)/qcommon/q_shared.o
