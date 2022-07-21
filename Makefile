@@ -272,6 +272,7 @@ SDLDIR=$(MOUNT_DIR)/sdl
 ASMDIR=$(MOUNT_DIR)/asm
 SYSDIR=$(MOUNT_DIR)/sys
 GDIR=$(MOUNT_DIR)/game
+HUDLIBDIR=$(MOUNT_DIR)/hudlib
 CGDIR=$(MOUNT_DIR)/cgame
 BLIBDIR=$(MOUNT_DIR)/botlib
 NDIR=$(MOUNT_DIR)/null
@@ -3126,7 +3127,7 @@ $(B)/$(MISSIONPACK)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
 $(B)/$(QC)/cgame/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_CGAME_CC_QC)
 
-$(B)/$(QC)/hudlib/%.o: $(GDIR)/%.c
+$(B)/$(QC)/hudlib/%.o: $(HUDLIBDIR)/%.c
 	$(DO_CGAME_CC_QC)
 
 $(B)/$(QC)/cgame/%.o: $(CGDIR)/%.c
