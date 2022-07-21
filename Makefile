@@ -2619,7 +2619,7 @@ QCCGOBJ_ = \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/bg_champions.o \
   $(B)/$(QC)/cgame/cg_champions.o \
-  $(B)/$(QC)/hudlib/hudlib.o \
+  $(B)/$(QC)/cgame/hudlib.o \
   $(B)/$(QC)/cgame/hud_ability.o \
   $(B)/$(QC)/cgame/hud_ammo.o \
   $(B)/$(QC)/cgame/hud_crosshair.o \
@@ -3127,7 +3127,7 @@ $(B)/$(MISSIONPACK)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
 $(B)/$(QC)/cgame/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_CGAME_CC_QC)
 
-$(B)/$(QC)/hudlib/%.o: $(HUDLIBDIR)/%.c
+$(B)/$(QC)/cgame/hudlib.o: $(HUDLIBDIR)/hudlib.c
 	$(DO_CGAME_CC_QC)
 
 $(B)/$(QC)/cgame/%.o: $(CGDIR)/%.c
