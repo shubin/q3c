@@ -40,6 +40,9 @@ endif
 ifndef BUILD_MISSIONPACK
   BUILD_MISSIONPACK=
 endif
+ifndef BUILD_QC
+  BUILD_QC=
+endif
 ifndef BUILD_RENDERER_OPENGL2
   BUILD_RENDERER_OPENGL2=
 endif
@@ -135,8 +138,16 @@ ifndef MISSIONPACK
 MISSIONPACK=missionpack
 endif
 
+ifndef QC
+QC=q3c
+endif
+
 ifndef MISSIONPACK_CFLAGS
 MISSIONPACK_CFLAGS=-DMISSIONPACK
+endif
+
+ifndef QC_CFLAGS
+QC_CFLAGS=-DQC
 endif
 
 ifndef COPYDIR
@@ -1073,6 +1084,12 @@ ifneq ($(BUILD_GAME_SO),0)
       $(B)/$(MISSIONPACK)/qagame$(SHLIBNAME) \
       $(B)/$(MISSIONPACK)/ui$(SHLIBNAME)
   endif
+  ifneq ($(BUILD_QC),0)
+    TARGETS += \
+      $(B)/$(QC)/cgame$(SHLIBNAME) \
+      $(B)/$(QC)/qagame$(SHLIBNAME) \
+      $(B)/$(QC)/ui$(SHLIBNAME)
+  endif
 endif
 
 ifneq ($(BUILD_GAME_QVM),0)
@@ -1087,6 +1104,12 @@ ifneq ($(BUILD_GAME_QVM),0)
       $(B)/$(MISSIONPACK)/vm/cgame.qvm \
       $(B)/$(MISSIONPACK)/vm/qagame.qvm \
       $(B)/$(MISSIONPACK)/vm/ui.qvm
+  endif
+  ifneq ($(BUILD_QC),0)
+    TARGETS += \
+      $(B)/$(QC)/vm/cgame.qvm \
+      $(B)/$(QC)/vm/qagame.qvm \
+      $(B)/$(QC)/vm/ui.qvm
   endif
 endif
 
@@ -1339,6 +1362,30 @@ $(Q)$(CC) $(MISSIONPACK_CFLAGS) -DUI $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $
 $(Q)$(DO_QVM_DEP)
 endef
 
+define DO_SHLIB_CC_QC
+$(echo_cmd) "SHLIB_CC_QC $<"
+$(Q)$(CC) $(QC_CFLAGS) $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+$(Q)$(DO_QVM_DEP)
+endef
+
+define DO_GAME_CC_QC
+$(echo_cmd) "GAME_CC_QC $<"
+$(Q)$(CC) $(QC_CFLAGS) -DQAGAME $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+$(Q)$(DO_QVM_DEP)
+endef
+
+define DO_CGAME_CC_QC
+$(echo_cmd) "CGAME_CC_QC $<"
+$(Q)$(CC) $(QC_CFLAGS) -DCGAME $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+$(Q)$(DO_QVM_DEP)
+endef
+
+define DO_UI_CC_QC
+$(echo_cmd) "UI_CC_QC $<"
+$(Q)$(CC) $(QC_CFLAGS) -DUI $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+$(Q)$(DO_QVM_DEP)
+endef
+
 define DO_AS
 $(echo_cmd) "AS $<"
 $(Q)$(CC) $(CFLAGS) $(OPTIMIZE) -x assembler-with-cpp -o $@ -c $<
@@ -1495,6 +1542,11 @@ makedirs:
 	@$(MKDIR) $(B)/$(MISSIONPACK)/ui
 	@$(MKDIR) $(B)/$(MISSIONPACK)/qcommon
 	@$(MKDIR) $(B)/$(MISSIONPACK)/vm
+	@$(MKDIR) $(B)/$(QC)/cgame
+	@$(MKDIR) $(B)/$(QC)/game
+	@$(MKDIR) $(B)/$(QC)/ui
+	@$(MKDIR) $(B)/$(QC)/qcommon
+	@$(MKDIR) $(B)/$(QC)/vm
 	@$(MKDIR) $(B)/tools/asm
 	@$(MKDIR) $(B)/tools/etc
 	@$(MKDIR) $(B)/tools/rcc
@@ -1684,6 +1736,26 @@ endef
 define DO_UI_Q3LCC_MISSIONPACK
 $(echo_cmd) "UI_Q3LCC_MISSIONPACK $<"
 $(Q)$(Q3LCC) $(MISSIONPACK_CFLAGS) -DUI -o $@ $<
+endef
+
+define DO_Q3LCC_QC
+$(echo_cmd) "Q3LCC_QC $<"
+$(Q)$(Q3LCC) $(QC_CFLAGS) -o $@ $<
+endef
+
+define DO_CGAME_Q3LCC_QC
+$(echo_cmd) "CGAME_Q3LCC_QC $<"
+$(Q)$(Q3LCC) $(QC_CFLAGS) -DCGAME -o $@ $<
+endef
+
+define DO_GAME_Q3LCC_QC
+$(echo_cmd) "GAME_Q3LCC_QC $<"
+$(Q)$(Q3LCC) $(QC_CFLAGS) -DQAGAME -o $@ $<
+endef
+
+define DO_UI_Q3LCC_QC
+$(echo_cmd) "UI_Q3LCC_QC $<"
+$(Q)$(Q3LCC) $(QC_CFLAGS) -DUI -o $@ $<
 endef
 
 
@@ -2619,6 +2691,61 @@ $(B)/$(MISSIONPACK)/vm/qagame.qvm: $(MPGVMOBJ) $(GDIR)/g_syscalls.asm $(Q3ASM)
 	$(Q)$(Q3ASM) -o $@ $(MPGVMOBJ) $(GDIR)/g_syscalls.asm
 
 
+#############################################################################
+## QC GAME
+#############################################################################
+
+QCGOBJ_ = \
+  $(B)/$(QC)/game/g_main.o \
+  $(B)/$(QC)/game/ai_chat.o \
+  $(B)/$(QC)/game/ai_cmd.o \
+  $(B)/$(QC)/game/ai_dmnet.o \
+  $(B)/$(QC)/game/ai_dmq3.o \
+  $(B)/$(QC)/game/ai_main.o \
+  $(B)/$(QC)/game/ai_team.o \
+  $(B)/$(QC)/game/ai_vcmd.o \
+  $(B)/$(QC)/game/bg_misc.o \
+  $(B)/$(QC)/game/bg_pmove.o \
+  $(B)/$(QC)/game/bg_slidemove.o \
+  $(B)/$(QC)/game/bg_lib.o \
+  $(B)/$(QC)/game/g_active.o \
+  $(B)/$(QC)/game/g_arenas.o \
+  $(B)/$(QC)/game/g_bot.o \
+  $(B)/$(QC)/game/g_client.o \
+  $(B)/$(QC)/game/g_cmds.o \
+  $(B)/$(QC)/game/g_combat.o \
+  $(B)/$(QC)/game/g_items.o \
+  $(B)/$(QC)/game/g_mem.o \
+  $(B)/$(QC)/game/g_misc.o \
+  $(B)/$(QC)/game/g_missile.o \
+  $(B)/$(QC)/game/g_mover.o \
+  $(B)/$(QC)/game/g_session.o \
+  $(B)/$(QC)/game/g_spawn.o \
+  $(B)/$(QC)/game/g_svcmds.o \
+  $(B)/$(QC)/game/g_target.o \
+  $(B)/$(QC)/game/g_team.o \
+  $(B)/$(QC)/game/g_trigger.o \
+  $(B)/$(QC)/game/g_utils.o \
+  $(B)/$(QC)/game/g_weapon.o \
+  \
+  $(B)/$(QC)/game/bg_champions.o \
+  $(B)/$(QC)/game/bg_promode.o \
+  $(B)/$(QC)/game/g_unlagged.o \
+  \
+  $(B)/$(QC)/qcommon/q_math.o \
+  $(B)/$(QC)/qcommon/q_shared.o
+
+QCGOBJ = $(QCGOBJ_) $(B)/$(QC)/game/g_syscalls.o
+QCGVMOBJ = $(QCGOBJ_:%.o=%.asm)
+
+$(B)/$(QCGAME)/qagame$(SHLIBNAME): $(QCGOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(QCGOBJ)
+
+$(B)/$(QCGAME)/vm/qagame.qvm: $(QCGVMOBJ) $(GDIR)/g_syscalls.asm $(Q3ASM)
+	$(echo_cmd) "Q3ASM $@"
+	$(Q)$(Q3ASM) -o $@ $(QCGVMOBJ) $(GDIR)/g_syscalls.asm
+
 
 #############################################################################
 ## BASEQ3 UI
@@ -2708,6 +2835,72 @@ $(B)/$(MISSIONPACK)/ui$(SHLIBNAME): $(MPUIOBJ)
 $(B)/$(MISSIONPACK)/vm/ui.qvm: $(MPUIVMOBJ) $(UIDIR)/ui_syscalls.asm $(Q3ASM)
 	$(echo_cmd) "Q3ASM $@"
 	$(Q)$(Q3ASM) -o $@ $(MPUIVMOBJ) $(UIDIR)/ui_syscalls.asm
+
+
+#############################################################################
+## QC UI
+#############################################################################
+
+QCUIOBJ_ = \
+  $(B)/$(QC)/ui/ui_main.o \
+  $(B)/$(QC)/ui/bg_misc.o \
+  $(B)/$(QC)/ui/bg_lib.o \
+  $(B)/$(QC)/ui/ui_addbots.o \
+  $(B)/$(QC)/ui/ui_atoms.o \
+  $(B)/$(QC)/ui/ui_cdkey.o \
+  $(B)/$(QC)/ui/ui_cinematics.o \
+  $(B)/$(QC)/ui/ui_confirm.o \
+  $(B)/$(QC)/ui/ui_connect.o \
+  $(B)/$(QC)/ui/ui_controls2.o \
+  $(B)/$(QC)/ui/ui_credits.o \
+  $(B)/$(QC)/ui/ui_demo2.o \
+  $(B)/$(QC)/ui/ui_display.o \
+  $(B)/$(QC)/ui/ui_gameinfo.o \
+  $(B)/$(QC)/ui/ui_ingame.o \
+  $(B)/$(QC)/ui/ui_loadconfig.o \
+  $(B)/$(QC)/ui/ui_menu.o \
+  $(B)/$(QC)/ui/ui_mfield.o \
+  $(B)/$(QC)/ui/ui_mods.o \
+  $(B)/$(QC)/ui/ui_network.o \
+  $(B)/$(QC)/ui/ui_options.o \
+  $(B)/$(QC)/ui/ui_playermodel.o \
+  $(B)/$(QC)/ui/ui_players.o \
+  $(B)/$(QC)/ui/ui_playersettings.o \
+  $(B)/$(QC)/ui/ui_preferences.o \
+  $(B)/$(QC)/ui/ui_qmenu.o \
+  $(B)/$(QC)/ui/ui_removebots.o \
+  $(B)/$(QC)/ui/ui_saveconfig.o \
+  $(B)/$(QC)/ui/ui_serverinfo.o \
+  $(B)/$(QC)/ui/ui_servers2.o \
+  $(B)/$(QC)/ui/ui_setup.o \
+  $(B)/$(QC)/ui/ui_sound.o \
+  $(B)/$(QC)/ui/ui_sparena.o \
+  $(B)/$(QC)/ui/ui_specifyserver.o \
+  $(B)/$(QC)/ui/ui_splevel.o \
+  $(B)/$(QC)/ui/ui_sppostgame.o \
+  $(B)/$(QC)/ui/ui_spskill.o \
+  $(B)/$(QC)/ui/ui_startserver.o \
+  $(B)/$(QC)/ui/ui_team.o \
+  $(B)/$(QC)/ui/ui_teamorders.o \
+  $(B)/$(QC)/ui/ui_video.o \
+  \
+  $(B)/$(QC)/ui/ui_champions.o \
+  $(B)/$(QC)/ui/ui_death.o \
+  $(B)/$(QC)/game/bg_champions.o \
+  \
+  $(B)/$(QC)/qcommon/q_math.o \
+  $(B)/$(QC)/qcommon/q_shared.o
+
+QCUIOBJ = $(QCUIOBJ_) $(B)/$(QC)/ui/ui_syscalls.o
+QCUIVMOBJ = $(QCUIOBJ_:%.o=%.asm)
+
+$(B)/$(BASEGAME)/ui$(SHLIBNAME): $(QCUIOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(QCUIOBJ)
+
+$(B)/$(QC)/vm/ui.qvm: $(QCUIVMOBJ) $(UIDIR)/ui_syscalls.asm $(Q3ASM)
+	$(echo_cmd) "Q3ASM $@"
+	$(Q)$(Q3ASM) -o $@ $(QCUIVMOBJ) $(UIDIR)/ui_syscalls.asm
 
 
 
@@ -2872,6 +3065,17 @@ $(B)/$(MISSIONPACK)/cgame/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
 $(B)/$(MISSIONPACK)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
 	$(DO_CGAME_Q3LCC_MISSIONPACK)
 
+$(B)/$(QC)/cgame/bg_%.o: $(GDIR)/bg_%.c
+	$(DO_CGAME_CC_QC)
+
+$(B)/$(QC)/cgame/%.o: $(CGDIR)/%.c
+	$(DO_CGAME_CC_QC)
+
+$(B)/$(QC)/cgame/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
+	$(DO_CGAME_Q3LCC_QC)
+
+$(B)/$(QC)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
+	$(DO_CGAME_Q3LCC_QC)
 
 $(B)/$(BASEGAME)/game/%.o: $(GDIR)/%.c
 	$(DO_GAME_CC)
@@ -2885,6 +3089,11 @@ $(B)/$(MISSIONPACK)/game/%.o: $(GDIR)/%.c
 $(B)/$(MISSIONPACK)/game/%.asm: $(GDIR)/%.c $(Q3LCC)
 	$(DO_GAME_Q3LCC_MISSIONPACK)
 
+$(B)/$(QC)/game/%.o: $(GDIR)/%.c
+	$(DO_GAME_CC_QC)
+
+$(B)/$(QC)/game/%.asm: $(GDIR)/%.c $(Q3LCC)
+	$(DO_GAME_Q3LCC_QC)
 
 $(B)/$(BASEGAME)/ui/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_UI_CC)
@@ -2904,12 +3113,23 @@ $(B)/$(MISSIONPACK)/ui/bg_%.o: $(GDIR)/bg_%.c
 $(B)/$(MISSIONPACK)/ui/%.o: $(UIDIR)/%.c
 	$(DO_UI_CC_MISSIONPACK)
 
-$(B)/$(MISSIONPACK)/ui/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
-	$(DO_UI_Q3LCC_MISSIONPACK)
+$(B)/$(QC)/ui/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
+	$(DO_UI_Q3LCC_QC)
 
-$(B)/$(MISSIONPACK)/ui/%.asm: $(UIDIR)/%.c $(Q3LCC)
-	$(DO_UI_Q3LCC_MISSIONPACK)
+$(B)/$(QC)/ui/%.asm: $(UIDIR)/%.c $(Q3LCC)
+	$(DO_UI_Q3LCC_QC)
 
+$(B)/$(QC)/ui/bg_%.o: $(GDIR)/bg_%.c
+	$(DO_UI_CC_QC)
+
+$(B)/$(QC)/ui/%.o: $(UIDIR)/%.c
+	$(DO_UI_CC_QC)
+
+$(B)/$(QC)/ui/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
+	$(DO_UI_Q3LCC_QC)
+
+$(B)/$(QC)/ui/%.asm: $(UIDIR)/%.c $(Q3LCC)
+	$(DO_UI_Q3LCC_QC)
 
 $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.c
 	$(DO_SHLIB_CC)
@@ -2923,6 +3143,11 @@ $(B)/$(MISSIONPACK)/qcommon/%.o: $(CMDIR)/%.c
 $(B)/$(MISSIONPACK)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 	$(DO_Q3LCC_MISSIONPACK)
 
+$(B)/$(QC)/qcommon/%.o: $(CMDIR)/%.c
+	$(DO_SHLIB_CC_QC)
+
+$(B)/$(QC)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
+	$(DO_Q3LCC_QC)
 
 #############################################################################
 # MISC
@@ -2943,6 +3168,9 @@ ifneq ($(BUILD_GAME_SO),0)
   endif
   ifneq ($(BUILD_MISSIONPACK),0)
 	-$(MKDIR) -m 0755 $(COPYDIR)/$(MISSIONPACK)
+  endif
+  ifneq ($(BUILD_QC),0)
+	-$(MKDIR) -m 0755 $(COPYDIR)/$(QC)
   endif
 endif
 
@@ -2982,6 +3210,14 @@ ifneq ($(BUILD_GAME_SO),0)
 					$(COPYDIR)/$(MISSIONPACK)/.
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(MISSIONPACK)/ui$(SHLIBNAME) \
 					$(COPYDIR)/$(MISSIONPACK)/.
+  endif
+  ifneq ($(BUILD_QC),0)
+	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(QC)/cgame$(SHLIBNAME) \
+					$(COPYDIR)/$(QC)/.
+	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(QC)/qagame$(SHLIBNAME) \
+					$(COPYDIR)/$(QC)/.
+	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(QC)/ui$(SHLIBNAME) \
+					$(COPYDIR)/$(QC)/.
   endif
 endif
 
