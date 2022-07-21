@@ -2950,7 +2950,7 @@ QCUIOBJ_ = \
   $(B)/$(QC)/qcommon/q_math.o \
   $(B)/$(QC)/qcommon/q_shared.o
 
-QCUIOBJ = $(QCUIOBJ_) $(B)/$(QC)/ui/ui_syscalls.o
+QCUIOBJ = $(QCUIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 QCUIVMOBJ = $(QCUIOBJ_:%.o=%.asm)
 
 $(B)/$(QC)/ui$(SHLIBNAME): $(QCUIOBJ)
