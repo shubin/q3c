@@ -3190,7 +3190,7 @@ $(B)/$(QC)/ui/%.o: $(UIDIR)/%.c
 $(B)/$(QC)/ui/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
 	$(DO_UI_Q3LCC_QC)
 
-$(B)/$(QC)/ui/%.asm: $(UIDIR)/%.c $(Q3LCC)
+$(B)/$(QC)/ui/%.asm: $(Q3UIDIR)/%.c $(Q3LCC)
 	$(DO_UI_Q3LCC_QC)
 
 $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.c
