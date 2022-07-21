@@ -2738,11 +2738,11 @@ QCGOBJ_ = \
 QCGOBJ = $(QCGOBJ_) $(B)/$(QC)/game/g_syscalls.o
 QCGVMOBJ = $(QCGOBJ_:%.o=%.asm)
 
-$(B)/$(QCGAME)/qagame$(SHLIBNAME): $(QCGOBJ)
+$(B)/$(QC)/qagame$(SHLIBNAME): $(QCGOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(QCGOBJ)
 
-$(B)/$(QCGAME)/vm/qagame.qvm: $(QCGVMOBJ) $(GDIR)/g_syscalls.asm $(Q3ASM)
+$(B)/$(QC)/vm/qagame.qvm: $(QCGVMOBJ) $(GDIR)/g_syscalls.asm $(Q3ASM)
 	$(echo_cmd) "Q3ASM $@"
 	$(Q)$(Q3ASM) -o $@ $(QCGVMOBJ) $(GDIR)/g_syscalls.asm
 
@@ -2894,7 +2894,7 @@ QCUIOBJ_ = \
 QCUIOBJ = $(QCUIOBJ_) $(B)/$(QC)/ui/ui_syscalls.o
 QCUIVMOBJ = $(QCUIOBJ_:%.o=%.asm)
 
-$(B)/$(BASEGAME)/ui$(SHLIBNAME): $(QCUIOBJ)
+$(B)/$(QC)/ui$(SHLIBNAME): $(QCUIOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(QCUIOBJ)
 
