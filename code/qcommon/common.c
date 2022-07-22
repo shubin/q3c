@@ -36,7 +36,7 @@ int demo_protocols[] =
 
 #define MAX_NUM_ARGVS	50
 
-#if defined( QC )
+#if defined( QC ) && !defined( DEDICATED )
 // cmon, we can afford it
 #define MIN_DEDICATED_COMHUNKMEGS 32
 #define MIN_COMHUNKMEGS		512
