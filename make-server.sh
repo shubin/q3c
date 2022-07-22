@@ -1,0 +1,13 @@
+#! /usr/bin/bash
+
+BUILD_GAME_QVM=0 \
+BUILD_MISSIONPACK=0 \
+BUILD_BASEGAME=0 \
+BUILD_QC=1 \
+BUILD_CLIENT=0 \
+BUILD_SERVER=1 \
+USE_VOIP=0 \
+USE_CODEC_OPUS=0 \
+CFLAGS="-DQC -DUNLAGGED" \
+make $*
+#CFLAGS="-m32 -O0 -fstack-protector-all" \
