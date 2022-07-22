@@ -306,10 +306,10 @@ void PM_AdjustVertically( vec3_t _in, vec3_t normal, vec3_t _out, int forceLengt
 	vec3_t out;
 	vec4_t in;
 	vec3_t hout;
+	vec3_t velocityPlane;
 
 	VectorCopy(_in, in);
 
-	vec3_t velocityPlane;
 	velocityPlane[0] = in[1];
 	velocityPlane[1] = -in[0];
 	velocityPlane[2] = 0.0f;
