@@ -2620,6 +2620,7 @@ QCCGOBJ_ = \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/bg_champions.o \
   $(B)/$(QC)/cgame/cg_champions.o \
+  $(B)/$(QC)/cgame/cg_unlagged.o \
   $(B)/$(QC)/cgame/hudlib.o \
   $(B)/$(QC)/cgame/hud_ability.o \
   $(B)/$(QC)/cgame/hud_ammo.o \
