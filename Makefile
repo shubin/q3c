@@ -5,6 +5,7 @@
 #
 COMPILE_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
 COMPILE_ARCH=$(shell uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')
+#COMPILE_ARCH=x86
 
 #arm64 hack!
 ifeq ($(shell uname -m), arm64)
@@ -2790,6 +2791,7 @@ QCGOBJ_ = \
   $(B)/$(QC)/game/bg_champions.o \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/g_unlagged.o \
+  $(B)/$(QC)/game/g_ability.o \
   \
   $(B)/$(QC)/qcommon/q_math.o \
   $(B)/$(QC)/qcommon/q_shared.o
@@ -3185,9 +3187,6 @@ $(B)/$(QC)/ui/bg_%.o: $(GDIR)/bg_%.c
 	$(DO_UI_CC_QC)
 
 $(B)/$(QC)/ui/%.o: $(Q3UIDIR)/%.c
-	$(DO_UI_CC_QC)
-
-$(B)/$(QC)/ui/ui_syscalls.o: $(UIDIR)/ui_syscalls.c
 	$(DO_UI_CC_QC)
 
 $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.c
