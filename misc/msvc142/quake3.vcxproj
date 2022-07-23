@@ -110,7 +110,7 @@
     <OutDir>..\..\build\debug-msvc142-x86\</OutDir>
     <IntDir>..\..\build\debug-msvc142-x86\client\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>q3c.debug.x86</TargetName>
+    <TargetName>qc.debug.x86</TargetName>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,7 +124,7 @@
     <OutDir>..\..\build\release-msvc142-x86\</OutDir>
     <IntDir>..\..\build\release-msvc142-x86\client\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>q3c.x86</TargetName>
+    <TargetName>qc.x86</TargetName>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug TA|Win32'">

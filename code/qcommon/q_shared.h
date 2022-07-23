@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #define PRODUCT_NAME				"Quake III Champions"
   #define BASEGAME					"baseq3"
   #define CLIENT_WINDOW_TITLE		"Quake3Champions"
-  #define CLIENT_WINDOW_MIN_TITLE	"Q3C"
+  #define CLIENT_WINDOW_MIN_TITLE	"QC"
   #define HOMEPATH_NAME_UNIX		".q3a"
   #define HOMEPATH_NAME_WIN			"Quake3"
   #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN

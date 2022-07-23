@@ -3312,7 +3312,7 @@ static void UI_RunMenuScript(char **args) {
 			trap_Cmd_ExecuteText( EXEC_APPEND, va("demo %s\n", uiInfo.demoList[uiInfo.demoIndex]));
 		} else if (Q_stricmp(name, "Quake3") == 0) {
 #if defined( QC )
-			trap_Cvar_Set( "fs_game", "q3c");
+			trap_Cvar_Set( "fs_game", "qc");
 #else
 			trap_Cvar_Set( "fs_game", "");
 #endif

@@ -106,8 +106,8 @@
     <TargetName>cgamex86</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug QC|Win32'">
-    <OutDir>..\..\build\debug-msvc142-x86\q3c\</OutDir>
-    <IntDir>..\..\build\debug-msvc142-x86\q3c\cgame\</IntDir>
+    <OutDir>..\..\build\debug-msvc142-x86\qc\</OutDir>
+    <IntDir>..\..\build\debug-msvc142-x86\qc\cgame\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>cgamex86</TargetName>
   </PropertyGroup>
@@ -267,7 +267,7 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\q3c\" /K /D /H /Y
+      <Command>xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\qc\" /K /D /H /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
