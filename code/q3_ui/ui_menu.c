@@ -133,7 +133,7 @@ void Main_MenuEvent (void* ptr, int event) {
 		break;
 
 	case ID_JOIN_GAME:
-		UI_SpecifyServerMenu();
+		UI_ArenaServersMenu();
 		break;
 #endif
 	case ID_SETUP:
