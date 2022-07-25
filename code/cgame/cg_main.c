@@ -406,7 +406,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
 //	{ &cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO | CVAR_ARCHIVE }
 #if defined( QC )
-    { &cg_damagePlum, "cg_damagePlum", "1", CVAR_ARCHIVE },
+    { &cg_damagePlum, "cg_damagePlum", "2", CVAR_ARCHIVE },
     { &cg_damagePlumSize, "cg_damagePlumSize", "12", CVAR_ARCHIVE },
     { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
     { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
