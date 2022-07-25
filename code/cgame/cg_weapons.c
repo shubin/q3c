@@ -1888,9 +1888,9 @@ void CG_FireWeapon( centity_t *cent ) {
 #if defined( QC )
 static void PlayAbilitySound( int champion, int clientNum ) {
 	if ( cgs.media.abilitySounds[champion] != 0 ) {
-		trap_S_StartSound( NULL, clientNum, CHAN_VOICE, cgs.media.abilitySounds[champion] );
+		trap_S_StartSound( NULL, clientNum, CHAN_BODY, cgs.media.abilitySounds[champion] );
 	} else {
-		trap_S_StartSound( NULL, clientNum, CHAN_VOICE, CG_CustomSound( clientNum, "*taunt.wav" ) );
+		trap_S_StartSound( NULL, clientNum, CHAN_BODY, CG_CustomSound( clientNum, "*taunt.wav" ) );
 	}
 }
 
