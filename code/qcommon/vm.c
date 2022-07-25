@@ -591,6 +591,10 @@ vm_t *VM_Create( const char *module, intptr_t (*systemCalls)(intptr_t *),
 		Com_Error( ERR_FATAL, "VM_Create: bad parms" );
 	}
 
+#if defined( QC )
+	interpret = VMI_NATIVE; // Some day I'll compile QVMs...
+#endif
+
 	remaining = Hunk_MemoryRemaining();
 
 	// see if we already have the VM
