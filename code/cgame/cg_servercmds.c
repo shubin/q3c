@@ -117,27 +117,20 @@ static void CG_ParseScores( void ) {
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 		cg.scores[i].kills = atoi( CG_NextScoreValue() );
 		cg.scores[i].deaths = atoi( CG_NextScoreValue() );
-		//Com_Printf( "WEAPON STATS\n" );
-		for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
-			cg.scores[i].wepstat[w].shots =		atoi( CG_NextScoreValue() );
-			cg.scores[i].wepstat[w].hits =		atoi( CG_NextScoreValue() );
-			cg.scores[i].wepstat[w].damage =	atoi( CG_NextScoreValue() );
-			cg.scores[i].wepstat[w].score =		atoi( CG_NextScoreValue() );
-			//Com_Printf( "%d, %d: %d %d %d %d; acc: %d%c\n", i, w, 
-			//	cg.scores[i].wepstat[w].shots,
-			//	cg.scores[i].wepstat[w].hits,
-			//	cg.scores[i].wepstat[w].damage,
-			//	cg.scores[i].wepstat[w].score,
-			//	(int)(cg.scores[i].wepstat[w].hits/(float)cg.scores[i].wepstat[w].shots * 100),
-			//	'%'
-			//);
+		if ( cgs.gametype == GT_TOURNAMENT ) {
+			for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
+				cg.scores[ i ].wepstat[ w ].shots = atoi( CG_NextScoreValue() );
+				cg.scores[ i ].wepstat[ w ].hits = atoi( CG_NextScoreValue() );
+				cg.scores[ i ].wepstat[ w ].damage = atoi( CG_NextScoreValue() );
+				cg.scores[ i ].wepstat[ w ].score = atoi( CG_NextScoreValue() );
+			}
+			cg.scores[ i ].itemstat.health = atoi( CG_NextScoreValue() );
+			cg.scores[ i ].itemstat.armor = atoi( CG_NextScoreValue() );
+			cg.scores[ i ].itemstat.mega = atoi( CG_NextScoreValue() );
+			cg.scores[ i ].itemstat.red = atoi( CG_NextScoreValue() );
+			cg.scores[ i ].itemstat.yellow = atoi( CG_NextScoreValue() );
+			cg.scores[ i ].itemstat.hourglass = atoi( CG_NextScoreValue() );
 		}
-		cg.scores[i].itemstat.health =		atoi( CG_NextScoreValue () );
-		cg.scores[i].itemstat.armor =		atoi( CG_NextScoreValue () );
-		cg.scores[i].itemstat.mega =		atoi( CG_NextScoreValue () );
-		cg.scores[i].itemstat.red =			atoi( CG_NextScoreValue () );
-		cg.scores[i].itemstat.yellow =		atoi( CG_NextScoreValue () );
-		cg.scores[i].itemstat.hourglass =	atoi( CG_NextScoreValue () );
 	}
 }
 #else

@@ -104,9 +104,23 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		}
 		strcpy( string + stringlength, entry );
 		stringlength += j;
-		// per-weapon stats
-		for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
-			Com_sprintf( entry, sizeof( entry ), " %i %i %i %i", cl->wepstat[w].shots, cl->wepstat[w].hits, cl->wepstat[w].damage, cl->wepstat[w].score );
+		if ( g_gametype.integer == GT_TOURNAMENT ) { // only send it for duels, otherwise there are too much data
+			// per-weapon stats
+			for ( w = 0; w < WP_NUM_WEAPONS; w++ ) {
+				Com_sprintf( entry, sizeof( entry ), " %i %i %i %i", cl->wepstat[ w ].shots, cl->wepstat[ w ].hits, cl->wepstat[ w ].damage, cl->wepstat[ w ].score );
+				j = strlen( entry );
+				if ( stringlength + j >= sizeof( string ) ) {
+					break;
+				}
+				strcpy( string + stringlength, entry );
+				stringlength += j;
+			}
+			Com_sprintf( entry, sizeof( entry ),
+				" %i %i %i %i %i %i",
+				cl->itemstat.health, cl->itemstat.armor,
+				cl->itemstat.mega, cl->itemstat.red,
+				cl->itemstat.yellow, cl->itemstat.hourglass
+			);
 			j = strlen( entry );
 			if ( stringlength + j >= sizeof( string ) ) {
 				break;
@@ -114,18 +128,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			strcpy( string + stringlength, entry );
 			stringlength += j;
 		}
-		Com_sprintf( entry, sizeof( entry ),
-			" %i %i %i %i %i %i",
-			cl->itemstat.health, cl->itemstat.armor, 
-			cl->itemstat.mega, cl->itemstat.red, 
-			cl->itemstat.yellow, cl->itemstat.hourglass
-		);
-		j = strlen( entry );
-		if ( stringlength + j >= sizeof( string ) ) {
-			break;
-		}
-		strcpy( string + stringlength, entry );
-		stringlength += j;
 #endif
 	}
 
