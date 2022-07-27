@@ -626,7 +626,11 @@ void CM_LoadMap( const char *name, qboolean clientload, int *checksum ) {
 		((int *)&header)[i] = LittleLong ( ((int *)&header)[i]);
 	}
 
+#if defined( QC ) // let it load QL maps, why not
+	if ( header.version != BSP_VERSION && header.version != BSP_VERSION_QL ) {
+#else
 	if ( header.version != BSP_VERSION ) {
+#endif
 		Com_Error (ERR_DROP, "CM_LoadMap: %s has wrong version number (%i should be %i)"
 		, name, header.version, BSP_VERSION );
 	}

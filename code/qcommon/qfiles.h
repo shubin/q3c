@@ -314,6 +314,9 @@ typedef struct {
 		// little-endian "IBSP"
 
 #define BSP_VERSION			46
+#if defined( QC )
+#define BSP_VERSION_QL		47
+#endif
 
 
 // there shouldn't be any problem with increasing these values at the
