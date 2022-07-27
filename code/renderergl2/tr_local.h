@@ -472,6 +472,7 @@ typedef struct shader_s {
 	qboolean	noMipMaps;				// for console fonts, 2D elements, etc.
 	qboolean	noPicMip;				// for images that must always be full resolution
 #if defined( QC )
+	qboolean	noVLCollapse;			// prevent ignoring lightmaps if vertex lighting is enabled
 	float		lineWidth;
 #endif
 
