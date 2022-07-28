@@ -145,4 +145,5 @@ void hud_drawscores_ffa( void ) {
 
 		y += 72;
 	}
+	trap_R_SetColor( NULL );
 }

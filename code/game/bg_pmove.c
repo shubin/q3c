@@ -1322,6 +1322,13 @@ static void PM_CrashLand( void ) {
 		return;
 	}
 
+#if defined( QC )
+	// this is edge grabbing, not a crash landing
+	if ( dist > 0 && pm->ps->pm_flags & PMF_JUMPPAD ) {
+		return;
+	}
+#endif
+
 	// reduce falling damage if there is standing water
 	if ( pm->waterlevel == 2 ) {
 		delta *= 0.25;
