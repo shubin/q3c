@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderercommon/tr_types.h"
 #if defined( QC )
 #include "../renderergl2/tr_extratypes.h"
+#include "../qcommon/qfiles.h"  // MAX_MAP_ADVERTISEMENTS
 #endif
 #include "../game/bg_public.h"
 #include "cg_public.h"
@@ -1060,6 +1061,13 @@ typedef struct {
 	// champion models
 	clientInfo_t championModels[NUM_CHAMPIONS];
 	sfxHandle_t	abilitySounds[NUM_CHAMPIONS];
+	// QL ads
+	qhandle_t	adbox1x1;
+	qhandle_t	adbox2x1;
+	qhandle_t	adbox2x1_trans;
+	qhandle_t	adbox4x1;
+	qhandle_t	adbox8x1;
+	qhandle_t	adboxblack;
 #endif
 } cgMedia_t;
 
@@ -1157,6 +1165,13 @@ typedef struct {
 #if defined( UNLAGGED ) //unlagged - client options
 	// this will be set to the server's g_delagHitscan
 	int				delagHitscan;
+#endif
+#if defined( QC )
+	qboolean		adsLoaded;
+	int 			numAds;
+	qboolean		transAds[MAX_MAP_ADVERTISEMENTS];  // transparent add
+	float 			adverts[MAX_MAP_ADVERTISEMENTS * 16];  // fu
+	char adShaders[MAX_MAP_ADVERTISEMENTS][MAX_QPATH];
 #endif
 } cgs_t;
 

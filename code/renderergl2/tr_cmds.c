@@ -614,3 +614,44 @@ void RE_TakeVideoFrame( int width, int height,
 	cmd->encodeBuffer = encodeBuffer;
 	cmd->motionJpeg = motionJpeg;
 }
+
+#if defined( QC )
+void RE_GetAdvertisements (int *num, float *verts, char shaders[][MAX_QPATH])
+{
+	int i;
+	float *pts;
+
+	if( !tr.registered ) {
+		return;
+	}
+
+	pts = verts;
+
+	for (i = 0;  i < tr.world->numAds;  i++) {
+		pts[0 + i * 16] = tr.world->ads[i].rect[0][0];
+		pts[1 + i * 16] = tr.world->ads[i].rect[0][1];
+		pts[2 + i * 16] = tr.world->ads[i].rect[0][2];
+		pts[3 + i * 16] = tr.world->ads[i].rect[1][0];
+		pts[4 + i * 16] = tr.world->ads[i].rect[1][1];
+		pts[5 + i * 16] = tr.world->ads[i].rect[1][2];
+		pts[6 + i * 16] = tr.world->ads[i].rect[2][0];
+		pts[7 + i * 16] = tr.world->ads[i].rect[2][1];
+		pts[8 + i * 16] = tr.world->ads[i].rect[2][2];
+		pts[9 + i * 16] = tr.world->ads[i].rect[3][0];
+		pts[10 + i * 16] = tr.world->ads[i].rect[3][1];
+		pts[11 + i * 16] = tr.world->ads[i].rect[3][2];
+
+		pts[12 + i * 16] = tr.world->ads[i].normal[0];
+		pts[13 + i * 16] = tr.world->ads[i].normal[1];
+		pts[14 + i * 16] = tr.world->ads[i].normal[2];
+		//FIXME hack
+		//pts[14 + i * 16] = tr.world->adsLightmap[i];
+
+		pts[15 + i * 16] = (float)tr.world->ads[i].cellId;
+		//Q_strncpy(shaders[i], s_worldData.adShaders[i], MAX_QPATH);
+		Q_strncpyz(&(shaders[i][0]), tr.world->adShaders[i], MAX_QPATH);
+	}
+
+	*num = tr.world->numAds;
+}
+#endif

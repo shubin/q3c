@@ -120,6 +120,7 @@ typedef enum {
 	CG_R_SETCOLOR,
 	CG_R_DRAWSTRETCHPIC,
 #if defined( QC )
+	CG_GET_ADVERTISEMENTS,
 	CG_R_DRAWQUAD,
 #endif
 	CG_R_MODELBOUNDS,

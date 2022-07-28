@@ -2353,6 +2353,10 @@ void R_LoadEntities( lump_t *l ) {
 	}
 }
 
+#if defined( QC )
+#include "../renderercommon/inc_tr_bsp.c"
+#endif
+
 /*
 =================
 R_GetEntityToken
@@ -2777,6 +2781,12 @@ void RE_LoadWorldMap( const char *name ) {
 	}
 
 	// load into heap
+#if defined( QC )
+	i = LittleLong( header->version );
+	if ( i == BSP_VERSION_QL ) {
+		R_LoadAdvertisements( &header->lumps[LUMP_ADVERTISEMENTS] );
+	}
+#endif
 	R_LoadEntities( &header->lumps[LUMP_ENTITIES] );
 	R_LoadShaders( &header->lumps[LUMP_SHADERS] );
 	R_LoadLightmaps( &header->lumps[LUMP_LIGHTMAPS], &header->lumps[LUMP_SURFACES] );

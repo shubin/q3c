@@ -107,6 +107,9 @@ typedef struct {
 	qboolean (*inPVS)( const vec3_t p1, const vec3_t p2 );
 
 	void (*TakeVideoFrame)( int h, int w, byte* captureBuffer, byte *encodeBuffer, qboolean motionJpeg );
+#if defined( QC )
+	void (*GetAdvertisements)(int *num, float *verts, char shaders[][MAX_QPATH]);
+#endif
 } refexport_t;
 
 //

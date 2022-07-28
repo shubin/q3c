@@ -384,7 +384,12 @@ typedef struct {
 #define	LUMP_LIGHTMAPS		14
 #define	LUMP_LIGHTGRID		15
 #define	LUMP_VISIBILITY		16
+#if defined( QC )
+#define LUMP_ADVERTISEMENTS 17
+#define	HEADER_LUMPS		18
+#else
 #define	HEADER_LUMPS		17
+#endif
 
 typedef struct {
 	int			ident;
@@ -490,5 +495,17 @@ typedef struct {
 	int			patchHeight;
 } dsurface_t;
 
+#if defined( QC )
+
+#define MAX_MAP_ADVERTISEMENTS  30
+
+typedef struct {
+	int			cellId;
+	vec3_t		normal;
+	vec3_t		rect[4];
+	char		model[ MAX_QPATH ];
+	//char shader[MAX_QPATH];
+} dadvertisement_t;
+#endif
 
 #endif

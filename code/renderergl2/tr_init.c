@@ -1647,5 +1647,9 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 
 	re.TakeVideoFrame = RE_TakeVideoFrame;
 
+#if defined( QC )
+	re.GetAdvertisements = RE_GetAdvertisements;
+#endif
+
 	return &re;
 }

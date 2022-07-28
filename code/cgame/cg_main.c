@@ -816,6 +816,17 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.scoutSound = trap_S_RegisterSound("sound/items/cl_scout.wav", qfalse);
 #endif
 
+#if defined( QC )
+	// QL ads
+	cgs.media.adbox1x1 = trap_R_RegisterShader("adbox1x1");
+    cgs.media.adbox2x1 = trap_R_RegisterShader("adbox2x1");
+	cgs.media.adbox2x1_trans = trap_R_RegisterShader("adbox2x1_trans");
+    //cgs.media.adbox2x1 = trap_R_RegisterShader("textures/ad_content/2x1_trans_sfx");
+    cgs.media.adbox4x1 = trap_R_RegisterShader("adbox4x1");
+    cgs.media.adbox8x1 = trap_R_RegisterShader("adbox8x1");
+    cgs.media.adboxblack = trap_R_RegisterShader("adboxblack");
+#endif
+
 	cgs.media.teleInSound = trap_S_RegisterSound( "sound/world/telein.wav", qfalse );
 	cgs.media.teleOutSound = trap_S_RegisterSound( "sound/world/teleout.wav", qfalse );
 	cgs.media.respawnSound = trap_S_RegisterSound( "sound/items/respawn1.wav", qfalse );
