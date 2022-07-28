@@ -1166,6 +1166,11 @@ typedef enum
 } dialogType_t;
 
 dialogResult_t Sys_Dialog( dialogType_t type, const char *message, const char *title );
+#if defined( QC )
+const char *Sys_LocateDir( const char *title, const char *initialDir );
+const char *Sys_GetConfigurationValue( const char *key, const char *defaultValue );
+qboolean Sys_SetConfigurationValue( const char *key, const char *value );
+#endif
 
 void Sys_RemovePIDFile( const char *gamedir );
 void Sys_InitPIDFile( const char *gamedir );

@@ -3317,6 +3317,9 @@ FS_Startup
 static void FS_Startup( const char *gameName )
 {
 	const char *homePath;
+#if defined( QC )
+	const char *q3path;
+#endif
 
 	Com_Printf( "----- FS_Startup -----\n" );
 
@@ -3373,6 +3376,12 @@ static void FS_Startup( const char *gameName )
 	if (fs_basepath->string[0]) {
 		FS_AddGameDirectory( fs_basepath->string, gameName );
 	}
+#if defined( QC )
+	q3path = Sys_GetConfigurationValue( "QuakeIIIArenaPath", NULL );
+	if ( q3path != NULL ) {
+		FS_AddGameDirectory( q3path, gameName );
+	}
+#endif
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
 
 #ifdef __APPLE__
@@ -3608,7 +3617,25 @@ static void FS_CheckPak0( void )
 	if(!com_standalone->integer && (foundPak & 0x1ff) != 0x1ff)
 	{
 		char errorText[MAX_STRING_CHARS] = "";
-
+#if defined( QC ) && defined( _WINDOWS )
+		if ( ( foundPak & 0x01 ) != 0x01 ) {
+			if ( Sys_Dialog( DT_YES_NO,
+				"Quake III Arena installation path is not found.\n"
+				"You must have Quake III Arena installed to play Quake III Champions.\n"
+				"Please Install Quake III Arena from Steam, Galaxy or Microsoft Store.\n"
+				"Alternatively, you can provide Quake III Arena installation directory.\n"
+				"Would you like to choose Quake III Arena installation directory?",
+				"Quake III Arena not found"
+			) == DR_YES ) {
+				char *quake3path = Sys_GetConfigurationValue( "QuakeIIIArenaPath", NULL );
+				char *selectedPath = Sys_LocateDir( "Please choose your Quake III Arena installation path", quake3path );
+				Sys_SetConfigurationValue( "QuakeIIIArenaPath", selectedPath );
+				Com_Error( ERR_FATAL, "Please restart the game" );
+			} else {
+				Com_Error( ERR_FATAL, "Please install Quake III Arena and restart the game" );
+			}
+		}
+#else
 		if((foundPak & 0x01) != 0x01)
 		{
 			Q_strcat(errorText, sizeof(errorText),
@@ -3629,6 +3656,7 @@ static void FS_CheckPak0( void )
 					"in the \"%s\" directory is present and readable", BASEGAME));
 
 		Com_Error(ERR_FATAL, "%s", errorText);
+#endif
 	}
 
 	if(!com_standalone->integer && foundTA && (foundTA & 0x0f) != 0x0f)

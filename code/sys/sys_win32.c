@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "sys_local.h"
 
 #include <windows.h>
+#if defined( QC )
+#include <ShlObj.h>
+#endif
 #include <lmerr.h>
 #include <lmcons.h>
 #include <lmwksta.h>
@@ -777,6 +780,108 @@ dialogResult_t Sys_Dialog( dialogType_t type, const char *message, const char *t
 		case IDNO:      return DR_NO;
 	}
 }
+
+#if defined( QC )
+/*
+==============
+Sys_LocateDir
+
+Display directory selection window
+==============
+*/
+
+static char *s_locateDirInitialFolder = NULL;
+
+static int FAR PASCAL BrowseNotify( HWND hWnd, UINT iMessage, long wParam, LPARAM lParam )
+{
+	if ( iMessage == BFFM_INITIALIZED ) {
+		if ( s_locateDirInitialFolder != NULL ) {
+			SendMessage( hWnd, BFFM_SETSELECTION, 1, ( LPARAM )s_locateDirInitialFolder );
+		}
+		return 1;
+	}
+    return 0;
+}
+
+const char *Sys_LocateDir( const char *title, const char *initialDir ) {
+	static char buffer[ MAX_PATH ] = { 0 };
+	const char *result = NULL;
+	LPITEMIDLIST pIDL;
+	BROWSEINFO bi;
+
+	if ( OleInitialize( NULL ) != S_OK ) {
+		return NULL;
+	}
+
+	s_locateDirInitialFolder = initialDir;
+	memset( &bi, 0, sizeof( bi ) );
+	bi.ulFlags = BIF_USENEWUI;
+	bi.lpszTitle = title;
+	bi.lpfn = BrowseNotify;
+
+	pIDL = SHBrowseForFolder( &bi );
+	if ( pIDL != NULL ) {
+		if ( SHGetPathFromIDList( pIDL, buffer ) != 0 ) {
+			result = buffer;
+		}
+		CoTaskMemFree( pIDL );
+	}
+	OleUninitialize();
+	return result;
+}
+
+/*
+==============
+Sys_GetConfigurationValue
+
+Return the requested system configuration key
+==============
+*/
+const char *Sys_GetConfigurationValue( const char *key, const char *defaultValue ) {
+	HKEY hKey;
+	DWORD pathLen = MAX_OSPATH;
+	qboolean finishPath = qfalse;
+	static char buffer[MAX_OSPATH];
+	static char *result = buffer;
+
+	if ( !RegOpenKeyEx( HKEY_CURRENT_USER, "SOFTWARE\\" PRODUCT_NAME, 0, KEY_QUERY_VALUE, &hKey ) ) {
+		pathLen = MAX_OSPATH;
+		if ( RegQueryValueEx( hKey, key, NULL, NULL, ( LPBYTE )buffer, &pathLen ) ) {
+			result = NULL;
+		}
+		RegCloseKey( hKey );
+	}
+	return result ? result : defaultValue;
+}
+
+/*
+==============
+Sys_SetConfigurationValue
+
+Set the system configuration key to specified value, NULL to remove the key
+==============
+*/
+qboolean Sys_SetConfigurationValue( const char *key, const char *value ) {
+	HKEY hKey;
+	DWORD count = MAX_OSPATH, dontCare;
+	qboolean finishPath = qfalse;
+	static char buffer[MAX_OSPATH];
+	qboolean result = qtrue;
+
+	if ( RegOpenKeyEx( HKEY_CURRENT_USER, "SOFTWARE\\" PRODUCT_NAME, 0, KEY_SET_VALUE, &hKey ) != ERROR_SUCCESS ) {
+		if ( RegCreateKeyEx( HKEY_CURRENT_USER, "SOFTWARE\\" PRODUCT_NAME, 0, NULL, 0, KEY_ALL_ACCESS, NULL, &hKey, &dontCare ) != ERROR_SUCCESS ) {
+			return qfalse;
+		}
+	}
+	count = value ? strlen( value ) : 0;
+	if ( RegSetValueExA( hKey, key, 0, REG_SZ, ( const BYTE * )value, count ) != ERROR_SUCCESS ) {
+		result = qfalse;
+	}
+	RegCloseKey( hKey );
+	return result;
+}
+
+#endif
 
 /*
 ==============
