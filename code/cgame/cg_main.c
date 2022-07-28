@@ -794,10 +794,25 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.selectSound = trap_S_RegisterSound( "sound/weapons/change.wav", qfalse );
 	cgs.media.wearOffSound = trap_S_RegisterSound( "sound/items/wearoff.wav", qfalse );
 	cgs.media.useNothingSound = trap_S_RegisterSound( "sound/items/use_nothing.wav", qfalse );
+#if defined( QC )
+	if ( cgs.media.ql ) {
+		// try loadig QL dlc_gibs assets
+		cgs.media.gibSound = trap_S_RegisterSound( "dlc_gibs/gibsplt1.wav", qfalse );
+		cgs.media.gibBounce1Sound = trap_S_RegisterSound( "dlc_gibs/gibimp1.wav", qfalse ); 
+		cgs.media.gibBounce2Sound = trap_S_RegisterSound( "dlc_gibs/gibimp2.wav", qfalse ); 
+		cgs.media.gibBounce3Sound = trap_S_RegisterSound( "dlc_gibs/gibimp3.wav", qfalse ); 
+	} else {
+		cgs.media.gibSound = trap_S_RegisterSound( "sound/player/gibsplt1.wav", qfalse );
+		cgs.media.gibBounce1Sound = trap_S_RegisterSound( "sound/player/gibimp1.wav", qfalse );
+		cgs.media.gibBounce2Sound = trap_S_RegisterSound( "sound/player/gibimp2.wav", qfalse );
+		cgs.media.gibBounce3Sound = trap_S_RegisterSound( "sound/player/gibimp3.wav", qfalse );
+	}
+#else
 	cgs.media.gibSound = trap_S_RegisterSound( "sound/player/gibsplt1.wav", qfalse );
 	cgs.media.gibBounce1Sound = trap_S_RegisterSound( "sound/player/gibimp1.wav", qfalse );
 	cgs.media.gibBounce2Sound = trap_S_RegisterSound( "sound/player/gibimp2.wav", qfalse );
 	cgs.media.gibBounce3Sound = trap_S_RegisterSound( "sound/player/gibimp3.wav", qfalse );
+#endif
 
 #ifdef MISSIONPACK
 	cgs.media.useInvulnerabilitySound = trap_S_RegisterSound( "sound/items/invul_activate.wav", qfalse );
@@ -1070,7 +1085,15 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.blueProxMine = trap_R_RegisterModel( "models/weaphits/proxmineb.md3" );
 #endif
 	cgs.media.plasmaBallShader = trap_R_RegisterShader( "sprites/plasma1" );
+#if defined( QC )
+	if ( cgs.media.ql ) {
+		cgs.media.bloodTrailShader = trap_R_RegisterShader( "dlc_bloodTrail" );
+	} else {
+		cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail" );
+	}
+#else
 	cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail" );
+#endif
 	cgs.media.lagometerShader = trap_R_RegisterShader("lagometer" );
 	cgs.media.connectionShader = trap_R_RegisterShader( "disconnected" );
 
@@ -1187,12 +1210,56 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.gibLeg = trap_R_RegisterModel( "models/gibs/leg.md3" );
 	cgs.media.gibSkull = trap_R_RegisterModel( "models/gibs/skull.md3" );
 	cgs.media.gibBrain = trap_R_RegisterModel( "models/gibs/brain.md3" );
+#if defined( QC ) 
+	if ( cgs.media.ql ) { // load QL dlc_gibs 
+		cgs.media.gibAbdomen = trap_R_RegisterModel( "dlc_gibs/abdomen.md3" );
+		cgs.media.gibArm = trap_R_RegisterModel( "dlc_gibs/arm.md3" );
+		cgs.media.gibChest = trap_R_RegisterModel( "dlc_gibs/chest.md3" );
+		cgs.media.gibFist = trap_R_RegisterModel( "dlc_gibs/fist.md3" );
+		cgs.media.gibFoot = trap_R_RegisterModel( "dlc_gibs/foot.md3" );
+		cgs.media.gibForearm = trap_R_RegisterModel( "dlc_gibs/forearm.md3" );
+		cgs.media.gibIntestine = trap_R_RegisterModel( "dlc_gibs/intestine.md3" );
+		cgs.media.gibLeg = trap_R_RegisterModel( "dlc_gibs/leg.md3" );
+		cgs.media.gibSkull = trap_R_RegisterModel( "dlc_gibs/skull.md3" );
+		cgs.media.gibBrain = trap_R_RegisterModel( "dlc_gibs/brain.md3" );
+	} else {
+		cgs.media.gibAbdomen = trap_R_RegisterModel( "models/gibs/abdomen.md3" );
+		cgs.media.gibArm = trap_R_RegisterModel( "models/gibs/arm.md3" );
+		cgs.media.gibChest = trap_R_RegisterModel( "models/gibs/chest.md3" );
+		cgs.media.gibFist = trap_R_RegisterModel( "models/gibs/fist.md3" );
+		cgs.media.gibFoot = trap_R_RegisterModel( "models/gibs/foot.md3" );
+		cgs.media.gibForearm = trap_R_RegisterModel( "models/gibs/forearm.md3" );
+		cgs.media.gibIntestine = trap_R_RegisterModel( "models/gibs/intestine.md3" );
+		cgs.media.gibLeg = trap_R_RegisterModel( "models/gibs/leg.md3" );
+		cgs.media.gibSkull = trap_R_RegisterModel( "models/gibs/skull.md3" );
+		cgs.media.gibBrain = trap_R_RegisterModel( "models/gibs/brain.md3" );
+	}
+#else
+	cgs.media.gibAbdomen = trap_R_RegisterModel( "models/gibs/abdomen.md3" );
+	cgs.media.gibArm = trap_R_RegisterModel( "models/gibs/arm.md3" );
+	cgs.media.gibChest = trap_R_RegisterModel( "models/gibs/chest.md3" );
+	cgs.media.gibFist = trap_R_RegisterModel( "models/gibs/fist.md3" );
+	cgs.media.gibFoot = trap_R_RegisterModel( "models/gibs/foot.md3" );
+	cgs.media.gibForearm = trap_R_RegisterModel( "models/gibs/forearm.md3" );
+	cgs.media.gibIntestine = trap_R_RegisterModel( "models/gibs/intestine.md3" );
+	cgs.media.gibLeg = trap_R_RegisterModel( "models/gibs/leg.md3" );
+	cgs.media.gibSkull = trap_R_RegisterModel( "models/gibs/skull.md3" );
+	cgs.media.gibBrain = trap_R_RegisterModel( "models/gibs/brain.md3" );
+#endif
 
 	cgs.media.smoke2 = trap_R_RegisterModel( "models/weapons2/shells/s_shell.md3" );
 
 	cgs.media.balloonShader = trap_R_RegisterShader( "sprites/balloon3" );
 
+#if defined( QC )
+	if ( cgs.media.ql ) {
+		cgs.media.bloodExplosionShader = trap_R_RegisterShader( "dlc_bloodExplosion" );
+	} else {
+		cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion" );
+	}
+#else
 	cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion" );
+#endif
 
 	cgs.media.bulletFlashModel = trap_R_RegisterModel("models/weaphits/bullet.md3");
 	cgs.media.ringFlashModel = trap_R_RegisterModel("models/weaphits/ring02.md3");
@@ -1261,7 +1328,15 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.energyMarkShader = trap_R_RegisterShader( "gfx/damage/plasma_mrk" );
 	cgs.media.shadowMarkShader = trap_R_RegisterShader( "markShadow" );
 	cgs.media.wakeMarkShader = trap_R_RegisterShader( "wake" );
+#if defined( QC )
+	if ( cgs.media.ql ) {
+		cgs.media.bloodMarkShader = trap_R_RegisterShader( "dlc_bloodMark" );
+	} else {
+		cgs.media.bloodMarkShader = trap_R_RegisterShader( "bloodMark" );
+	}
+#else
 	cgs.media.bloodMarkShader = trap_R_RegisterShader( "bloodMark" );
+#endif
 
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();
@@ -2143,6 +2218,10 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 #ifdef MISSIONPACK
 	String_Init();
+#endif
+
+#if defined( QC )
+	cgs.media.ql = trap_R_RegisterShader( "bloodTrail" ) == 0; // QL does not have this shader
 #endif
 
 	cg.loading = qtrue;		// force players to load instead of defer
