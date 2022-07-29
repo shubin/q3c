@@ -293,6 +293,23 @@ qboolean itemclasscmp( const char *itemclass, const char *entclass_ ) {
 		return !strcmp( itemclass, entclass );
 	}
 }
+
+/*
+===============
+G_GameModeEntityCheck
+
+Check if the entity is actually needed in the current game mode
+===============
+*/
+qboolean G_GameModeEntityCheck( gentity_t *ent ) {
+	if ( g_gametype.integer == GT_TOURNAMENT ) { // no quad or battle suit in duels
+		if ( !strcmp( ent->classname, "item_quad" ) || !strcmp( ent->classname, "item_enviro" ) ) {
+			return qfalse;
+		}
+	}
+	return qtrue;
+}
+
 #endif
 
 /*
@@ -306,6 +323,12 @@ returning qfalse if not found
 qboolean G_CallSpawn( gentity_t *ent ) {
 	spawn_t	*s;
 	gitem_t	*item;
+
+#if defined( QC )
+	if ( !G_GameModeEntityCheck( ent ) ) {
+		return qfalse;
+	}
+#endif
 
 	if ( !ent->classname ) {
 		G_Printf ("G_CallSpawn: NULL classname\n");

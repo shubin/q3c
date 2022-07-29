@@ -491,6 +491,19 @@ void RespawnItem( gentity_t *ent ) {
 		return;
 	}
 
+#if defined( QC )
+	// teamed entities are cycled in QC
+	if ( ent->team ) {
+		if ( !ent->teammaster ) {
+			G_Error( "RespawnItem: bad teammaster");
+		}
+		if ( ent->teamchain != NULL ) {
+			ent = ent->teamchain;
+		} else {
+			ent = ent->teammaster;
+		}
+	}
+#else
 	// randomly select from teamed entities
 	if (ent->team) {
 		gentity_t	*master;
@@ -510,6 +523,7 @@ void RespawnItem( gentity_t *ent ) {
 		for (count = 0, ent = master; ent && count < choice; ent = ent->teamchain, count++)
 			;
 	}
+#endif
 
 	if (!ent) {
 		return;
