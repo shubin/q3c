@@ -1081,7 +1081,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		cg.killerInfo.health = cent->currentState.time;
 		cg.killerInfo.armor = cent->currentState.time2;
 		cg.blurFactor = 0.0f;
-		trap_SendConsoleCommand( "togglemenu 7"); // UIMENU_DEATH, see ui_local.h
+		if ( cg.clientNum == cg.snap->ps.clientNum && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ) { // ensure that we're actually playing, not spectating
+			trap_SendConsoleCommand( "togglemenu 7" ); // UIMENU_DEATH, see ui_local.h
+		}
 		break;
 #endif
 

@@ -35,6 +35,18 @@ void CG_InitQCHUD( void ) {
 	hud_initobituary();
 }
 
+void hud_drawfollow( void ) {
+	float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	const char *text;
+	float centerx, dim;
+	if ( cg.snap->ps.clientNum != cg.clientNum && !cg.showScores ) {
+		centerx = ( hud_bounds.left + hud_bounds.right ) / 2;
+		text = va( "Following ^7%s", cgs.clientinfo[cg.snap->ps.clientNum].name );
+		dim = hud_measurecolorstring( 0.6f, hud_media.font_regular, text );
+		hud_drawcolorstring( centerx - dim / 2, hud_bounds.bottom - 48, 0.6f, hud_media.font_regular, text, black, 2, 2, qfalse );
+	}
+}
+
 /*
 =================
 CG_Draw2DQC
@@ -44,6 +56,8 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	//CG_DrawPic( 370 + CHAR_WIDTH*3 + TEXT_ICON_SPACE, 432, ICON_SIZE, ICON_SIZE, cgs.media.armorIcon );
 	//qch_drawpic( hud_bounds.left + 100, hud_bounds.top + 100, 100, 100, cgs.media.armorIcon );
 
+	trap_R_SetColor( NULL );
+
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) {
 #if 0x0
 		CG_DrawSpectator();
@@ -52,10 +66,13 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 			CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 #endif
+		hud_drawscores_brief_tournament();
+		hud_drawscores_brief_ffa();
+		hud_drawscores_tournament();
+		hud_drawscores_ffa();
 		return;
 	}
 
-	trap_R_SetColor( NULL );
 	hud_draw_ability();
 	hud_drawstatus();
 	hud_drawammo();
@@ -70,6 +87,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	if ( stereoFrame == STEREO_CENTER ) {
 		hud_drawcrosshair();
 	}
+	hud_drawfollow();
 
 	if ( cgs.gametype >= GT_TEAM ) {
 #if 0x0

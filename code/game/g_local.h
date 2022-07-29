@@ -194,6 +194,13 @@ typedef enum {
 	SPECTATOR_SCOREBOARD
 } spectatorState_t;
 
+#if defined( QC )
+typedef enum {
+	SM_MANUAL,
+	SM_FOLLOW_KILLER,
+} spectatorMode_t;
+#endif
+
 typedef enum {
 	TEAM_BEGIN,		// Beginning a team game, spawn at base
 	TEAM_ACTIVE		// Now actively playing
@@ -225,6 +232,9 @@ typedef struct {
 	team_t		sessionTeam;
 	int			spectatorNum;		// for determining next-in-line to play
 	spectatorState_t	spectatorState;
+#if defined( QC )
+	spectatorMode_t		spectatorMode;
+#endif
 	int			spectatorClient;	// for chasecam and follow mode
 	int			wins, losses;		// tournament stats
 	qboolean	teamLeader;			// true when this client is a team leader
@@ -332,6 +342,10 @@ struct gclient_s {
 	wepstat_t	wepstat[WP_NUM_WEAPONS]; // per-weapon stats
 	itemstat_t	itemstat;			// per-item stat
 	int			kills, deaths;
+
+	// for spectator follow killer
+	int			oldpmove, newpmove; // for checking player's death
+	int			killer;
 #endif
 
 	//

@@ -39,6 +39,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 	int			i, j;
 #if defined( QC )
 	int			w;
+	int			numScores;
 #endif
 	gclient_t	*cl;
 	int			numSorted, scoreFlags, accuracy, perfect;
@@ -54,11 +55,20 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 	scoreFlags = 0;
 
 	numSorted = level.numConnectedClients;
-	
+#if defined( QC )
+	numScores = 0;
+#endif
+
 	for (i=0 ; i < numSorted ; i++) {
 		int		ping;
 
 		cl = &level.clients[level.sortedClients[i]];
+
+#if defined( QC )
+		if ( cl->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) { // nobody needs spectator's scores
+			continue;
+		}
+#endif
 
 		if ( cl->pers.connected == CON_CONNECTING ) {
 			ping = -1;
@@ -128,12 +138,19 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			strcpy( string + stringlength, entry );
 			stringlength += j;
 		}
+		numScores++;
 #endif
 	}
 
+#if defined( QC )
+	trap_SendServerCommand( ent-g_entities, va("scores %i %i %i%s", numScores, 
+		level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE],
+		string ) );
+#else
 	trap_SendServerCommand( ent-g_entities, va("scores %i %i %i%s", i, 
 		level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE],
 		string ) );
+#endif
 }
 
 

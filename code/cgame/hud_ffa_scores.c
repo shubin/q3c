@@ -51,22 +51,27 @@ void hud_drawscores_brief_ffa( void ) {
 	ps = &cg.snap->ps;
 	rank = ps->persistant[PERS_RANK] & ( RANK_TIED_FLAG - 1 );
 
-	if ( rank == 0 ) {
-		// if we have rank 0, then always draw our name on top
-		hud_drawscorebar_ffa( hud_bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
-		// choose the second leader
-		other = cgs.leader1;
-		otherscore = cgs.scores1;
-		if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
-			other = cgs.leader2;
-			otherscore = cgs.scores2;
-		}
-		if ( other != -1 ) {
-			hud_drawscorebar_ffa( hud_bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
+	if ( cg.clientNum == ps->clientNum && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ) { // we're playing
+		if ( rank == 0 ) {
+			// if we have rank 0, then always draw our name on top
+			hud_drawscorebar_ffa( hud_bounds.top + 54, color1, cgs.clientinfo[cg.clientNum].name, 1, ps->persistant[PERS_SCORE] );
+			// choose the second leader
+			other = cgs.leader1;
+			otherscore = cgs.scores1;
+			if ( other == cg.clientNum ) { // any of leader1 and leader2 can be us, so choose the one which is not us
+				other = cgs.leader2;
+				otherscore = cgs.scores2;
+			}
+			if ( other != -1 ) {
+				hud_drawscorebar_ffa( hud_bounds.top + 54 + 28, color2, cgs.clientinfo[other].name, 2, otherscore );
+			}
+		} else {
+			hud_drawscorebar_ffa( hud_bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
+			hud_drawscorebar_ffa( hud_bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
 		}
 	} else {
 		hud_drawscorebar_ffa( hud_bounds.top + 54, color2, cgs.clientinfo[cgs.leader1].name, 1, cgs.scores1 );
-		hud_drawscorebar_ffa( hud_bounds.top + 54 + 28, color1, cgs.clientinfo[cg.clientNum].name, rank + 1, ps->persistant[PERS_SCORE] );
+		hud_drawscorebar_ffa( hud_bounds.top + 54 + 28, color1, cgs.clientinfo[cgs.leader2].name, 2, cgs.scores2 );
 	}
 }
 
@@ -95,7 +100,7 @@ void hud_drawscores_ffa( void ) {
 	trap_R_SetColor( NULL );
 	hud_drawstring( centerx - 244, y + 53, 0.75f, hud_media.font_regular, "DEATHMATCH", NULL, 0, 0 );
 	trap_R_SetColor( mapnameColor );
-	hud_drawstring( centerx - 244, y + 87, 0.5f, hud_media.font_regular, cgs.mapname, NULL, 0, 0 );
+	hud_drawstring( centerx - 244, y + 87, 0.5f, hud_media.font_regular, CG_ConfigString( CS_MESSAGE ), NULL, 0, 0 );
 	trap_R_SetColor( NULL );
 	hud_drawpic( centerx - 318, y + 55, 80, 80, 0.5f, 0.5f, trap_R_RegisterShader( "menu/art/skill5" ) );
 
@@ -111,6 +116,13 @@ void hud_drawscores_ffa( void ) {
 
 	for ( int i = 0; i < cg.numScores; i++ ) {
 		scores = &cg.scores[i];
+		if ( scores->client == cg.clientNum ) {
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR )
+				continue;
+			if ( cg.snap->ps.clientNum != cg.clientNum ) {
+				continue;
+			}
+		}
 		ci = &cgs.clientinfo[scores->client];
 
 		hud_drawbar( centerx, y, 768, 72, 0.5f, 0.0f, black );

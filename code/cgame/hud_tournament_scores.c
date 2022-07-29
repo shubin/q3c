@@ -30,7 +30,7 @@ void hud_drawscores_brief_tournament( void ) {
 	static float gray[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	const char *text;
 	float centerx, dim;
-	int enemyNum, enemyScore, myScore;
+	int enemyNum, enemyScore, myNum, myScore;
 //	clientInfo_t *enemyInfo;
 
 	if ( cgs.gametype != GT_TOURNAMENT ) {
@@ -50,13 +50,27 @@ void hud_drawscores_brief_tournament( void ) {
 
 	ps = &cg.snap->ps;
 	if ( cgs.leader1 == cg.clientNum ) {
+		myNum = cgs.leader1;
+		myScore = cgs.scores1;
 		enemyNum = cgs.leader2;
 		enemyScore = cgs.scores2;
-		myScore = cgs.scores1;
-	} else {
+	} else if ( cgs.leader2 == cg.clientNum ) {
+		myNum = cgs.leader2;
+		myScore = cgs.scores2;
 		enemyNum = cgs.leader1;
 		enemyScore = cgs.scores1;
-		myScore = cgs.scores2;
+	} else {
+		if ( cgs.leader1 < cgs.leader2 ) {
+			myNum = cgs.leader1;
+			myScore = cgs.scores1;
+			enemyNum = cgs.leader2;
+			enemyScore = cgs.scores2;
+		} else {
+			myNum = cgs.leader2;
+			myScore = cgs.scores2;
+			enemyNum = cgs.leader1;
+			enemyScore = cgs.scores1;
+		}
 	}
 
 	// big red bars with scores
@@ -76,16 +90,20 @@ void hud_drawscores_brief_tournament( void ) {
 	hud_drawbar( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, black );
 
 	// player icons
-	hud_drawpic( centerx - 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.face[cg.predictedPlayerState.champion] );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		hud_drawpic( centerx - 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.face[ cgs.clientinfo[ myNum ].champion ] );
+	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		hud_drawpic( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.face[cgs.clientinfo[enemyNum].champion] );
 	}
 
-	// player score
-	text = va( "%d", myScore );
-	dim = hud_measurestring( 1.0f, hud_media.font_qcde, text );
-	trap_R_SetColor( NULL );
-	hud_drawstring( centerx - 143 - dim/2, hud_bounds.top + 84, 1.0f, hud_media.font_qcde, text, NULL, 0, 0 );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		// player score
+		text = va( "%d", myScore );
+		dim = hud_measurestring( 1.0f, hud_media.font_qcde, text );
+		trap_R_SetColor( NULL );
+		hud_drawstring( centerx - 143 - dim / 2, hud_bounds.top + 84, 1.0f, hud_media.font_qcde, text, NULL, 0, 0 );
+	}
 
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		// enemy score
@@ -95,10 +113,12 @@ void hud_drawscores_brief_tournament( void ) {
 		hud_drawstring( centerx + 143 - dim/2, hud_bounds.top + 84, 1.0f, hud_media.font_qcde, text, NULL, 0, 0 );
 	}
 
-	// player name
-	dim = hud_measurecolorstring( 0.3f, hud_media.font_regular, cgs.clientinfo[cg.clientNum].name );
-	trap_R_SetColor( gray );
-	hud_drawcolorstring(centerx - 88 - dim, hud_bounds.top + 108, 0.3f, hud_media.font_regular, cgs.clientinfo[cg.clientNum].name, NULL, 0, 0, qtrue );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		// player name
+		dim = hud_measurecolorstring( 0.3f, hud_media.font_regular, cgs.clientinfo[ myNum ].name );
+		trap_R_SetColor( gray );
+		hud_drawcolorstring( centerx - 88 - dim, hud_bounds.top + 108, 0.3f, hud_media.font_regular, cgs.clientinfo[ myNum ].name, NULL, 0, 0, qtrue );
+	}
 
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		// enemy name
@@ -120,7 +140,7 @@ void hud_drawscores_tournament( void ) {
 	static float mapnameColor[] = { 0.79f, 0.5f, 0.33f, 1.0f };
 	const char *text;
 	float centerx, y, dim;
-	int i, enemyNum, enemyScore, myScore;
+	int i, enemyNum, enemyScore, myNum, myScore;
 	int hits, shots, acc, score, damage;
 	score_t *myScores, *enemyScores;
 	int totalHits = 0, totalShots = 0, totalDamage = 0;
@@ -131,18 +151,32 @@ void hud_drawscores_tournament( void ) {
 	}
 
 	if ( cgs.leader1 == cg.clientNum ) {
+		myNum = cgs.leader1;
+		myScore = cgs.scores1;
 		enemyNum = cgs.leader2;
 		enemyScore = cgs.scores2;
-		myScore = cgs.scores1;
-	} else {
+	} else if ( cgs.leader2 == cg.clientNum ) {
+		myNum = cgs.leader2;
+		myScore = cgs.scores2;
 		enemyNum = cgs.leader1;
 		enemyScore = cgs.scores1;
-		myScore = cgs.scores2;
+	} else {
+		if ( cgs.leader1 < cgs.leader2 ) {
+			myNum = cgs.leader1;
+			myScore = cgs.scores1;
+			enemyNum = cgs.leader2;
+			enemyScore = cgs.scores2;
+		} else {
+			myNum = cgs.leader2;
+			myScore = cgs.scores2;
+			enemyNum = cgs.leader1;
+			enemyScore = cgs.scores1;
+		}
 	}
 
 	myScores = enemyScores = NULL;
 	for ( i = 0; i < cg.numScores; i++ ) {
-		if ( cg.scores[i].client == cg.clientNum ) {
+		if ( cg.scores[i].client == myNum ) {
 			myScores = &cg.scores[i];
 		}
 		if ( cg.scores[i].client == enemyNum ) {
@@ -156,7 +190,7 @@ void hud_drawscores_tournament( void ) {
 	trap_R_SetColor( NULL );
 	hud_drawstring( centerx - 800, hud_bounds.top + 88, 0.75f, hud_media.font_regular, "TOURNAMENT", NULL, 0, 0 );
 	trap_R_SetColor( mapnameColor );
-	hud_drawstring( centerx - 800, hud_bounds.top + 122, 0.5f, hud_media.font_regular, cgs.mapname, NULL, 0, 0 );
+	hud_drawstring( centerx - 800, hud_bounds.top + 122, 0.5f, hud_media.font_regular, CG_ConfigString( CS_MESSAGE ), NULL, 0, 0 );
 	trap_R_SetColor( NULL );
 	hud_drawpic( centerx - 874, hud_bounds.top + 90, 80, 80, 0.5f, 0.5f, trap_R_RegisterShader( "menu/art/skill5" ) );
 
@@ -164,7 +198,9 @@ void hud_drawscores_tournament( void ) {
 	hud_drawbar( centerx + 160, hud_bounds.top + 90, 62, 62, 0.5f, 0.5f, gray );
 	hud_drawbar( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
 	hud_drawbar( centerx + 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
-	hud_drawpic( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.face[cg.predictedPlayerState.champion] );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		hud_drawpic( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.face[ cgs.clientinfo[myNum].champion ] );
+	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		hud_drawpic( centerx + 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.face[cgs.clientinfo[enemyNum].champion] );
 	}
@@ -179,18 +215,22 @@ void hud_drawscores_tournament( void ) {
 
 	trap_R_SetColor( NULL );
 
-	text = va( "%d", myScore );
-	dim = hud_measurestring( 0.7f, hud_media.font_qcde, text );
-	hud_drawstring( centerx - 20 - dim, hud_bounds.top + 202, 0.7f, hud_media.font_qcde, text, NULL, 0, 0 );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		text = va( "%d", myScore );
+		dim = hud_measurestring( 0.7f, hud_media.font_qcde, text );
+		hud_drawstring( centerx - 20 - dim, hud_bounds.top + 202, 0.7f, hud_media.font_qcde, text, NULL, 0, 0 );
+	}
 
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		text = va( "%d", enemyScore ) ;
 		hud_drawstring( centerx + 20, hud_bounds.top + 202, 0.7f, hud_media.font_qcde, text, NULL, 0, 0 );
 	}
 
-	dim = hud_measurecolorstring( 0.5f, hud_media.font_regular, cgs.clientinfo[cg.clientNum].name );
-	trap_R_SetColor( nameColor1 );
-	hud_drawcolorstring( centerx - 130 - dim, hud_bounds.top + 194, 0.5f, hud_media.font_regular, cgs.clientinfo[cg.clientNum].name, NULL, 0, 0, qtrue );
+	if ( myScore != SCORE_NOT_PRESENT ) {
+		dim = hud_measurecolorstring( 0.5f, hud_media.font_regular, cgs.clientinfo[myNum].name );
+		trap_R_SetColor( nameColor1 );
+		hud_drawcolorstring( centerx - 130 - dim, hud_bounds.top + 194, 0.5f, hud_media.font_regular, cgs.clientinfo[myNum].name, NULL, 0, 0, qtrue );
+	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		trap_R_SetColor( nameColor2 );
 		hud_drawcolorstring( centerx + 130, hud_bounds.top + 194, 0.5f, hud_media.font_regular, cgs.clientinfo[enemyNum].name, NULL, 0, 0, qtrue );
@@ -331,7 +371,7 @@ void hud_drawscores_tournament( void ) {
 		dim = hud_measurestring( 0.4f, hud_media.font_regular, text );
 		hud_drawstring( centerx + 300 - dim/2, y + 32, 0.4f, hud_media.font_regular, text, NULL, 0, 0 );
 
-		text = va( "%d", totalDamage );
+		text = va( "%d", enemyTotalDamage );
 		dim = hud_measurestring( 0.4f, hud_media.font_regular, text );
 		hud_drawstring( centerx + 200 - dim/2, y + 32, 0.4f, hud_media.font_regular, text, NULL, 0, 0 );
 

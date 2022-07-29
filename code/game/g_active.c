@@ -320,6 +320,10 @@ SpectatorThink
 void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	pmove_t	pm;
 	gclient_t	*client;
+#if defined( QC )
+	int followedClientNum;
+	gclient_t *followedClient;
+#endif
 
 	client = ent->client;
 
@@ -356,10 +360,29 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	client->oldbuttons = client->buttons;
 	client->buttons = ucmd->buttons;
 
+#if defined( QC )
+	if ( client->sess.spectatorClient >= 0 && client->sess.spectatorClient < level.maxclients ) {
+		client->oldpmove = client->newpmove;
+		client->newpmove = g_entities[client->sess.spectatorClient].client->ps.pm_type;
+	}
+	if ( client->sess.spectatorMode == SM_FOLLOW_KILLER && client->oldpmove != PM_DEAD && client->newpmove == PM_DEAD ) {
+		if ( client->sess.spectatorClient >= 0 && client->sess.spectatorClient < level.maxclients ) {
+			followedClient = g_entities[client->sess.spectatorClient].client;
+			if ( followedClient->killer >= 0 && followedClient->killer < level.maxclients ) {
+				// switch to killer
+				client->sess.spectatorClient = followedClient->killer;
+				client->sess.spectatorState = SPECTATOR_FOLLOW;
+			}
+		}
+	} else {
+#endif
 	// attack button cycles through spectators
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) {
 		Cmd_FollowCycle_f( ent, 1 );
 	}
+#if defined( QC )
+	}
+#endif
 }
 
 
