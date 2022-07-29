@@ -259,7 +259,9 @@ static void Main_MenuDraw( void ) {
 		Menu_Draw( &s_main.menu );		
 	}
 
-#if !defined( QC )
+#if defined( QC )
+		UI_DrawString( 320, 450, PRODUCT_NAME " Ver. " PRODUCT_VERSION " " PRODUCT_DATE, UI_CENTER|UI_SMALLFONT, color );
+#else
 	if (uis.demoversion) {
 		UI_DrawProportionalString( 320, 372, "DEMO      FOR MATURE AUDIENCES      DEMO", UI_CENTER|UI_SMALLFONT, color );
 		UI_DrawString( 320, 400, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
