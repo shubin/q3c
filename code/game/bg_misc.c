@@ -460,7 +460,7 @@ gitem_t	bg_itemlist[] =
 /*QUAKED weapon_lousy_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"weapon_shotgunl", 
+		"weapon_lousy_shotgun", 
 		"sound/misc/w_pkup.wav",
         { "models/weapons3/shotgun/shotgun.md3", 
 		NULL, NULL, NULL},
@@ -476,7 +476,7 @@ gitem_t	bg_itemlist[] =
 /*QUAKED weapon_lousy_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"weapon_machinegunl", 
+		"weapon_lousy_machinegun", 
 		"sound/misc/w_pkup.wav",
         { "models/weapons3/machinegun/machinegun.md3", 
 		NULL, NULL, NULL},
@@ -492,7 +492,7 @@ gitem_t	bg_itemlist[] =
 /*QUAKED weapon_lousy_plasmagun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"weapon_plasmagunl", 
+		"weapon_lousy_plasmagun", 
 		"sound/misc/w_pkup.wav",
         { "models/weapons3/plasma/plasma.md3", 
 		NULL, NULL, NULL},
