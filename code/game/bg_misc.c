@@ -1203,10 +1203,10 @@ qboolean	BG_PlayerTouchesItem( playerState_t *ps, entityState_t *item, int atTim
 	// item grabbing is even easier in QC
 	// for some (yet unclear) reason, origin[0] has different value
 	// just scale everything up and deal with this mistery later (TODO)
-	if ( ps->origin[0] - origin[0] > 44
-		|| ps->origin[0] - origin[0] < -50
-		|| ps->origin[1] - origin[1] > 36
-		|| ps->origin[1] - origin[1] < -36
+	if ( ps->origin[0] - origin[0] > 49
+		|| ps->origin[0] - origin[0] < -55
+		|| ps->origin[1] - origin[1] > 40
+		|| ps->origin[1] - origin[1] < -40
 		|| ps->origin[2] - origin[2] > 72
 		|| ps->origin[2] - origin[2] < -72 ) {
 		return qfalse;
