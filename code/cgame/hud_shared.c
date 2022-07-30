@@ -122,7 +122,7 @@ void hud_initmedia( void ) {
 	for ( i = 0; i < bg_numItems; i++ ) {
 		if ( bg_itemlist[i].icon != NULL && bg_itemlist[i].icon[0] )
 		{
-			hud_media.itemicons[i] = trap_R_RegisterShader( va( "hud/item%s", bg_itemlist[i].icon ) );
+			hud_media.itemicons[i] = trap_R_RegisterShader( bg_itemlist[i].icon );
 		}
 		else {
 			hud_media.itemicons[i] = -1;
