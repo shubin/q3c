@@ -1065,7 +1065,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 #if defined( QC )
 	case EV_DAMAGEPLUM:
 		DEBUGNAME("EV_DAMAGEPLUM");
-		CG_AddDamagePlum( cent->currentState.generic1, cent->currentState.eventParm, cent->lerpOrigin );
+		CG_AddDamagePlum( cent->currentState.generic1, cent->currentState.time2, cent->lerpOrigin );
 		break;
 	case EV_DAMAGEDIR:
 		DEBUGNAME("EV_DAMAGEDIR");

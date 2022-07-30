@@ -59,7 +59,7 @@ void DamagePlum( gentity_t *ent, int clientNum, vec3_t origin, int damage ) {
 	plum->r.singleClient = ent->s.number;
 	//
 	plum->s.otherEntityNum = ent->s.number;
-	plum->s.eventParm = damage;
+	plum->s.time2 = damage;
 	plum->s.generic1 = clientNum;
 }
 
