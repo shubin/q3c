@@ -810,6 +810,11 @@ void Cmd_Follow_f( gentity_t *ent ) {
 	int		i;
 	char	arg[MAX_TOKEN_CHARS];
 
+#if defined( QC )
+	// reset any scheduled switch
+	ent->client->sess.switchTo = -1;
+#endif
+
 	if ( trap_Argc() != 2 ) {
 		if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
 			StopFollowing( ent );
@@ -848,6 +853,20 @@ void Cmd_Follow_f( gentity_t *ent ) {
 	ent->client->sess.spectatorClient = i;
 }
 
+#if defined( QC )
+void Cmd_FollowKiller_f( gentity_t *ent ) {
+	int n;
+	char	arg[MAX_TOKEN_CHARS];
+
+	if ( trap_Argc() > 1 ) {
+		trap_Argv( 1, arg, sizeof( arg ) );
+		n = atoi( arg );
+		ent->client->sess.spectatorMode = n ? SM_FOLLOW_KILLER : SM_MANUAL;
+	}
+	trap_SendServerCommand( ent - g_entities, va( "print \"Follow killer: %s\"\n", ent->client->sess.spectatorMode == SM_FOLLOW_KILLER ? "yes" : "no" ) );
+}
+#endif
+
 /*
 =================
 Cmd_FollowCycle_f
@@ -856,6 +875,11 @@ Cmd_FollowCycle_f
 void Cmd_FollowCycle_f( gentity_t *ent, int dir ) {
 	int		clientnum;
 	int		original;
+
+#if defined( QC )
+	// reset any scheduled switch
+	ent->client->sess.switchTo = -1;
+#endif
 
 	// if they are playing a tournement game, count as a loss
 	if ( (g_gametype.integer == GT_TOURNAMENT )
@@ -1883,6 +1907,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_FollowCycle_f (ent, 1);
 	else if (Q_stricmp (cmd, "followprev") == 0)
 		Cmd_FollowCycle_f (ent, -1);
+#if defined( QC )
+	else if (Q_stricmp (cmd, "followkiller") == 0)
+		Cmd_FollowKiller_f (ent);
+#endif
 	else if (Q_stricmp (cmd, "team") == 0)
 		Cmd_Team_f (ent);
 	else if (Q_stricmp (cmd, "where") == 0)

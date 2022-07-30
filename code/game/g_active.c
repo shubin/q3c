@@ -361,17 +361,34 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	client->buttons = ucmd->buttons;
 
 #if defined( QC )
+	if (
+		client->sess.spectatorState == SPECTATOR_FOLLOW &&
+		client->sess.spectatorMode == SM_FOLLOW_KILLER &&
+		client->sess.switchTo >= 0 &&
+		client->sess.switchAt < level.time
+		)
+	{
+		client->sess.spectatorClient = client->sess.switchTo;
+		client->sess.switchTo = -1;
+		return; // nothing else to do this frame
+	}
+
 	if ( client->sess.spectatorClient >= 0 && client->sess.spectatorClient < level.maxclients ) {
 		client->oldpmove = client->newpmove;
 		client->newpmove = g_entities[client->sess.spectatorClient].client->ps.pm_type;
 	}
-	if ( client->sess.spectatorMode == SM_FOLLOW_KILLER && client->oldpmove != PM_DEAD && client->newpmove == PM_DEAD ) {
+	if (
+		client->sess.spectatorState == SPECTATOR_FOLLOW &&
+		client->sess.spectatorMode == SM_FOLLOW_KILLER &&
+		client->oldpmove != PM_DEAD && client->newpmove == PM_DEAD
+		)
+	{
 		if ( client->sess.spectatorClient >= 0 && client->sess.spectatorClient < level.maxclients ) {
 			followedClient = g_entities[client->sess.spectatorClient].client;
 			if ( followedClient->killer >= 0 && followedClient->killer < level.maxclients ) {
-				// switch to killer
-				client->sess.spectatorClient = followedClient->killer;
-				client->sess.spectatorState = SPECTATOR_FOLLOW;
+				// schedule switch to killer
+				client->sess.switchTo = followedClient->killer;
+				client->sess.switchAt = level.time + 1000; 
 			}
 		}
 	} else {

@@ -573,6 +573,9 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("follow");
 	trap_AddCommand ("follownext");
 	trap_AddCommand ("followprev");
+#if defined( QC )
+	trap_AddCommand ("followkiller");
+#endif
 	trap_AddCommand ("levelshot");
 	trap_AddCommand ("addbot");
 	trap_AddCommand ("setviewpos");

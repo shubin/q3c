@@ -234,6 +234,8 @@ typedef struct {
 	spectatorState_t	spectatorState;
 #if defined( QC )
 	spectatorMode_t		spectatorMode;
+	int			switchTo;	// client num to switch to
+	int			switchAt;	// level.time to switch at
 #endif
 	int			spectatorClient;	// for chasecam and follow mode
 	int			wins, losses;		// tournament stats
@@ -345,7 +347,7 @@ struct gclient_s {
 
 	// for spectator follow killer
 	int			oldpmove, newpmove; // for checking player's death
-	int			killer;
+	int			killer;				// last killer
 #endif
 
 	//
