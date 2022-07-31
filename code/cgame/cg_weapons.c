@@ -1546,12 +1546,12 @@ Add the weapon, and flash for the player's view
 ==============
 */
 void CG_AddViewWeapon( playerState_t *ps ) {
-	refEntity_t			hand;
-	centity_t			*cent;
-	clientInfo_t		*ci;
-	float				fovOffset;
-	vec3_t				angles;
-	weaponInfo_t		*weapon;
+	refEntity_t	hand;
+	centity_t	*cent;
+	clientInfo_t	*ci;
+	float	fovOffset;
+	vec3_t	angles;
+	weaponInfo_t	*weapon;
 #if defined ( QC )
 	weaponPosition_t	*weaponPosition;
 #endif
@@ -2468,8 +2468,6 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 				VectorMA( origin, 8192 * 16, forward, end);
 				VectorMA (end, r, right, end);
 				VectorMA (end, u, up, end);
-
-
 
 				CG_ShotgunPellet( origin, end, otherEntNum );
 			}
