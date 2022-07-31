@@ -122,7 +122,17 @@ vmCvar_t	cg_draw2D;
 #if defined( QC )
 vmCvar_t	cg_drawQ3hud;
 vmCvar_t	cg_playerScale;
+
+vmCvar_t	cg_gauntletPosition;
+vmCvar_t	cg_machingunPosition;
+vmCvar_t	cg_shutgunPosition;
+vmCvar_t	cg_rocketPosition;
+vmCvar_t	cg_lgPosition;
+vmCvar_t	cg_railgunPosition;
+vmCvar_t	cg_plasmagunPosition;
+vmCvar_t	cg_triboltPosition;
 #endif
+
 vmCvar_t	cg_drawStatus;
 vmCvar_t	cg_animSpeed;
 vmCvar_t	cg_debugAnim;
@@ -274,6 +284,18 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_drawQ3hud, "cg_drawQ3hud", "0", CVAR_ARCHIVE  },
 	{ &cg_playerScale, "cg_playerScale", "1.06", CVAR_CHEAT },
 #endif
+
+#if defined( QC )
+	{ &cg_gauntletPosition,			"cg_gauntletPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_machingunPosition,		"cg_machingunPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_shutgunPosition,			"cg_shutgunPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_rocketPosition,			"cg_rocketPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_lgPosition,				"cg_lgPosition",			"0", CVAR_ARCHIVE },
+	{ &cg_railgunPosition,			"cg_railgunPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_plasmagunPosition,		"cg_plasmagunPosition",		"0", CVAR_ARCHIVE },
+	{ &cg_triboltPosition,			"cg_triboltPosition",		"0", CVAR_ARCHIVE },
+#endif
+
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
 	{ &cg_drawFPS, "cg_drawFPS", "0", CVAR_ARCHIVE  },
@@ -294,7 +316,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE },
 	{ &cg_lagometer, "cg_lagometer", "1", CVAR_ARCHIVE },
 	{ &cg_railTrailTime, "cg_railTrailTime", "400", CVAR_ARCHIVE  },
-	{ &cg_gun_x, "cg_gunX", "0", CVAR_CHEAT },
+	{ &cg_gun_x, "cg_gunX", "3", CVAR_CHEAT },
 	{ &cg_gun_y, "cg_gunY", "0", CVAR_CHEAT },
 	{ &cg_gun_z, "cg_gunZ", "0", CVAR_CHEAT },
 	{ &cg_centertime, "cg_centertime", "3", CVAR_CHEAT },

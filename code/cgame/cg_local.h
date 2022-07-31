@@ -398,6 +398,13 @@ typedef struct {
 	sfxHandle_t		sounds[MAX_CUSTOM_SOUNDS];
 } clientInfo_t;
 
+#if defined( QC )
+typedef struct {
+	float x;
+	float y;
+	float z;
+} weaponPosition_t;
+#endif
 
 // each WP_* weapon enum has an associated weaponInfo_t
 // that contains media references necessary to present the
@@ -436,6 +443,13 @@ typedef struct weaponInfo_s {
 
 	sfxHandle_t		readySound;
 	sfxHandle_t		firingSound;
+
+#if defined( QC )
+	vmCvar_t			*positionVar;
+	weaponPosition_t	*positionCenter;
+	weaponPosition_t	*positionRight;
+#endif
+
 } weaponInfo_t;
 
 
@@ -1216,7 +1230,17 @@ extern	vmCvar_t		cg_draw2D;
 #if defined( QC )
 extern	vmCvar_t		cg_drawQ3hud;
 extern	vmCvar_t		cg_playerScale;
+
+extern	vmCvar_t		cg_gauntletPosition;
+extern	vmCvar_t		cg_machingunPosition;
+extern	vmCvar_t		cg_shutgunPosition;
+extern	vmCvar_t		cg_rocketPosition;
+extern	vmCvar_t		cg_lgPosition;
+extern	vmCvar_t		cg_railgunPosition;
+extern	vmCvar_t		cg_plasmagunPosition;
+extern	vmCvar_t		cg_triboltPosition;
 #endif
+
 extern	vmCvar_t		cg_animSpeed;
 extern	vmCvar_t		cg_debugAnim;
 extern	vmCvar_t		cg_debugPosition;

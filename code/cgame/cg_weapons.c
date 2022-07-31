@@ -23,6 +23,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_weapons.c -- events and effects dealing with weapons
 #include "cg_local.h"
 
+#if defined( QC )
+
+#define WEAPON_POSITION_DEFAULT 0
+#define WEAPON_POSITION_RIGHT	1
+#define WEAPON_POSITION_CENTER  2
+
+static weaponPosition_t weaponPositionDefault	= { 0.0f, 0.0f, 0.0f };
+static weaponPosition_t weaponPositionRight		= { 3.5f, 0.0f, 0.0f };
+static weaponPosition_t weaponPositionCenter	= { 3.5f, 3.5f, 0.0f };
+
+// TODO: define *PositionRight structures
+
+static weaponPosition_t gauntletPositionCenter	= { 4.5f, 3.0f, 0.0f };
+static weaponPosition_t machingunPositionCenter	= { 3.5f, 3.5f, 0.0f }; // TODO: need to see
+static weaponPosition_t shutgunPositionCenter	= { 2.5f, 2.9f, 0.0f };
+static weaponPosition_t rocketPositionCenter	= { 2.0f, 5.0f, 0.0f };
+static weaponPosition_t lgPositionCenter		= { 6.5f, 3.4f, 0.0f };
+static weaponPosition_t railgunPositionCenter	= { 2.5f, 5.5f, 0.0f };
+static weaponPosition_t plasmagunPositionCenter	= { 3.0f, 4.2f, 0.0f };
+static weaponPosition_t triboltPositionCenter	= { 3.5f, 3.5f, 0.0f }; // TODO: need to see
+
+#endif
+
 /*
 ==========================
 CG_MachineGunEjectBrass
@@ -683,11 +706,22 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->handsModel = trap_R_RegisterModel( "models/weapons2/shotgun/shotgun_hand.md3" );
 	}
 
+#if defined( QC )
+	weaponInfo->positionVar		= NULL;
+	weaponInfo->positionCenter	= &weaponPositionCenter;
+	weaponInfo->positionRight	= &weaponPositionRight;
+#endif
+
 	switch ( weaponNum ) {
 	case WP_GAUNTLET:
 		MAKERGB( weaponInfo->flashDlightColor, 0.6f, 0.6f, 1.0f );
 		weaponInfo->firingSound = trap_S_RegisterSound( "sound/weapons/melee/fstrun.wav", qfalse );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/melee/fstatck.wav", qfalse );
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_gauntletPosition;
+		weaponInfo->positionCenter = &gauntletPositionCenter;
+#endif
 		break;
 
 	case WP_LIGHTNING:
@@ -702,6 +736,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		cgs.media.sfx_lghit2 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit2.wav", qfalse );
 		cgs.media.sfx_lghit3 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit3.wav", qfalse );
 
+#if defined( QC )
+		weaponInfo->positionVar = &cg_lgPosition;
+		weaponInfo->positionCenter = &lgPositionCenter;
+#endif
 		break;
 
 	case WP_GRAPPLING_HOOK:
@@ -735,7 +773,13 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
+		weaponInfo->positionVar = &cg_machingunPosition;
 		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_machingunPosition;
+		weaponInfo->positionCenter = &machingunPositionCenter;
+#endif
 		break;
 
 #if defined( QC )
@@ -747,6 +791,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
 		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+
+		weaponInfo->positionVar = &cg_machingunPosition;
+		weaponInfo->positionCenter = &machingunPositionCenter;
 		break;
 #endif
 
@@ -754,6 +801,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/shotgun/sshotf1b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_shutgunPosition;
+		weaponInfo->positionCenter = &shutgunPositionCenter;
+#endif
 		break;
 
 #if defined( QC )
@@ -761,6 +813,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/shotgun/sshotf1b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
+
+		weaponInfo->positionVar = &cg_shutgunPosition;
+		weaponInfo->positionCenter = &shutgunPositionCenter;
 		break;
 
 	case WP_TRIBOLT:
@@ -776,6 +831,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/tribolt/fire.wav", qfalse );
 		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
+
+		weaponInfo->positionVar = &cg_triboltPosition;
+		weaponInfo->positionCenter = &triboltPositionCenter;
 		break;
 #endif
 
@@ -792,6 +850,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
 		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_rocketPosition;
+		weaponInfo->positionCenter = &rocketPositionCenter;
+#endif
 		break;
 
 #ifdef MISSIONPACK
@@ -854,6 +917,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/plasma/hyprbf1a.wav", qfalse );
 		cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion" );
 		cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_plasmagunPosition;
+		weaponInfo->positionCenter = &plasmagunPositionCenter;
+#endif
 		break;
 
 #if defined( QC )
@@ -865,6 +933,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/plasma/hyprbf1a.wav", qfalse );
 		cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion" );
 		cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+
+		weaponInfo->positionVar = &cg_plasmagunPosition;
+		weaponInfo->positionCenter = &plasmagunPositionCenter;
 		break;
 #endif
 
@@ -875,6 +946,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 		cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion" );
 		cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
 		cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
+
+#if defined( QC )
+		weaponInfo->positionVar = &cg_railgunPosition;
+		weaponInfo->positionCenter = &railgunPositionCenter;
+#endif
 		break;
 
 	case WP_BFG:
@@ -1470,12 +1546,15 @@ Add the weapon, and flash for the player's view
 ==============
 */
 void CG_AddViewWeapon( playerState_t *ps ) {
-	refEntity_t	hand;
-	centity_t	*cent;
-	clientInfo_t	*ci;
-	float		fovOffset;
-	vec3_t		angles;
-	weaponInfo_t	*weapon;
+	refEntity_t			hand;
+	centity_t			*cent;
+	clientInfo_t		*ci;
+	float				fovOffset;
+	vec3_t				angles;
+	weaponInfo_t		*weapon;
+#if defined ( QC )
+	weaponPosition_t	*weaponPosition;
+#endif
 
 	if ( ps->persistant[PERS_TEAM] == TEAM_SPECTATOR ) {
 		return;
@@ -1490,7 +1569,6 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	if ( cg.renderingThirdPerson ) {
 		return;
 	}
-
 
 	// allow the gun to be completely removed
 	if ( !cg_drawGun.integer ) {
@@ -1521,14 +1599,40 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	CG_RegisterWeapon( ps->weapon );
 	weapon = &cg_weapons[ ps->weapon ];
 
+#if defined( QC )
+	if (NULL == weapon->positionVar) {
+		weaponPosition = &weaponPositionDefault;
+	} else {
+		switch (weapon->positionVar->integer) {
+		case WEAPON_POSITION_DEFAULT:
+			weaponPosition = &weaponPositionDefault;
+			break;
+		case WEAPON_POSITION_RIGHT:
+			weaponPosition = weapon->positionRight;
+			break;
+		case WEAPON_POSITION_CENTER:
+			weaponPosition = weapon->positionCenter;
+			break;
+		default:
+			weaponPosition = &weaponPositionDefault;
+		}
+	}
+#endif
+
 	memset (&hand, 0, sizeof(hand));
 
 	// set up gun position
 	CG_CalculateWeaponPosition( hand.origin, angles );
 
-	VectorMA( hand.origin, cg_gun_x.value, cg.refdef.viewaxis[0], hand.origin );
-	VectorMA( hand.origin, cg_gun_y.value, cg.refdef.viewaxis[1], hand.origin );
-	VectorMA( hand.origin, (cg_gun_z.value+fovOffset), cg.refdef.viewaxis[2], hand.origin );
+#if defined( QC )
+	VectorMA(hand.origin, weaponPosition->x, cg.refdef.viewaxis[0], hand.origin);
+	VectorMA(hand.origin, weaponPosition->y, cg.refdef.viewaxis[1], hand.origin);
+	VectorMA(hand.origin, weaponPosition->z + fovOffset, cg.refdef.viewaxis[2], hand.origin);
+#else
+	VectorMA(hand.origin, cg_gun_x.value, cg.refdef.viewaxis[0], hand.origin);
+	VectorMA(hand.origin, cg_gun_y.value, cg.refdef.viewaxis[1], hand.origin);
+	VectorMA(hand.origin, (cg_gun_z.value + fovOffset), cg.refdef.viewaxis[2], hand.origin);
+#endif
 
 	AnglesToAxis( angles, hand.axis );
 
@@ -2364,6 +2468,8 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 				VectorMA( origin, 8192 * 16, forward, end);
 				VectorMA (end, r, right, end);
 				VectorMA (end, u, up, end);
+
+
 
 				CG_ShotgunPellet( origin, end, otherEntNum );
 			}
