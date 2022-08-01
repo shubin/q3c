@@ -19,7 +19,7 @@ vec4_t hud_weapon_colors[WP_NUM_WEAPONS] = {
 	{ 1.0f, 1.0f, 1.0f ,1.0f },     // WP_PROX_LAUNCHER,
 	{ 1.0f, 1.0f, 1.0f ,1.0f },     // WP_CHAINGUN,
 #endif
-	{ 1.0f, 1.0f, 0.0f, 1.0f },     // WP_TRIBOLT,
+	{ 0.8f, 0.92f, 0.19f, 1.0f },   // WP_TRIBOLT,
 	{ 1.0f, 1.0f, 0.0f, 1.0f },     // WP_LOUSY_MACHINEGUN,
 	{ 1.0f, 0.5f, 0.0f, 1.0f },     // WP_LOUSY_SHOTGUN,
 	{ 0.8f, 0.0f, 0.9f, 1.0f },     // WP_LOUSY_PLASMAGUN,
