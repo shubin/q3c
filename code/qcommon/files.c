@@ -3376,7 +3376,7 @@ static void FS_Startup( const char *gameName )
 	if (fs_basepath->string[0]) {
 		FS_AddGameDirectory( fs_basepath->string, gameName );
 	}
-#if defined( QC )
+#if defined( QC ) && defined( _WINDOWS )
 	q3path = Sys_GetConfigurationValue( "QuakeIIIArenaPath", NULL );
 	if ( q3path != NULL ) {
 		FS_AddGameDirectory( q3path, gameName );
