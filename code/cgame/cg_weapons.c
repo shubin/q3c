@@ -764,7 +764,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 		break;
 
 	case WP_TRIBOLT:
-		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/rocket/rocket.md3" );
+		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/tribolt/bolt.md3" );
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
 		weaponInfo->missileTrailFunc = CG_RocketTrail;
 		weaponInfo->missileDlight = 100;
