@@ -825,6 +825,10 @@ typedef struct {
 	qhandle_t	regenShader;
 	qhandle_t	battleSuitShader;
 	qhandle_t	battleWeaponShader;
+#if defined( QC )
+	qhandle_t	protectionShader;
+	qhandle_t	protectionWeaponShader;
+#endif
 	qhandle_t	hastePuffShader;
 #ifdef MISSIONPACK
 	qhandle_t	redKamikazeShader;

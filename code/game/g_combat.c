@@ -1162,6 +1162,13 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		damage *= 0.5;
 	}
 
+#if defined( QC )
+	// protection reduces any damage by 2/3
+	if ( client && client->ps.powerups[PW_PROTECTION] ) {
+		damage *= 0.3333333333f;
+	}
+#endif
+
 	// add to the attacker's hit counter (if the target isn't a general entity like a prox mine)
 	if ( attacker->client && client
 			&& targ != attacker && targ->health > 0

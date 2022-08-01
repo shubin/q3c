@@ -796,6 +796,24 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "sound/items/airout.wav sound/items/protect3.wav"
 	},
 
+#if defined( QC )
+/*QUAKED item_protection (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"item_protection",
+		"sound/items/protect.wav",
+        { "models/powerups/instant/protection.md3", 
+		"models/powerups/instant/protection_ring.md3", 
+		NULL, NULL },
+/* icon */		"qc/icons/protection",
+/* pickup */	"Protection",
+		30,
+		IT_POWERUP,
+		PW_PROTECTION,
+/* precache */ "",
+/* sounds */ "sound/items/airout.wav sound/items/protect3.wav"
+	},
+#endif
 /*QUAKED item_haste (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{

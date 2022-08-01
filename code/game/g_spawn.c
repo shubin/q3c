@@ -285,6 +285,10 @@ qboolean itemclasscmp( const char *itemclass, const char *entclass_ ) {
 		}
 	}
 
+	if ( !strcmp( entclass, "item_enviro" ) ) {
+		strcpy( entclass, "item_protection" );
+	}
+
 	if ( g_gametype.integer == GT_FFA && !g_noUniAmmo.integer ) {
 		return ( !strcmp( itemclass, "ammo" ) && !strncmp( entclass, "ammo_", 5 ) )
 			|| ( !strcmp( itemclass, entclass ) && strncmp( entclass, "ammo_", 5 ) );
@@ -302,8 +306,11 @@ Check if the entity is actually needed in the current game mode
 ===============
 */
 qboolean G_GameModeEntityCheck( gentity_t *ent ) {
-	if ( g_gametype.integer == GT_TOURNAMENT ) { // no quad or battle suit in duels
-		if ( !strcmp( ent->classname, "item_quad" ) || !strcmp( ent->classname, "item_enviro" ) ) {
+	if ( g_gametype.integer == GT_TOURNAMENT ) { // no quad or battle suit or protection in duels
+		if ( !strcmp( ent->classname, "item_quad" ) ||
+			 !strcmp( ent->classname, "item_enviro" ) ||
+			 !strcmp( ent->classname, "item_protection" )
+			) {
 			return qfalse;
 		}
 	}

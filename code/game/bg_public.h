@@ -312,7 +312,11 @@ typedef enum {
 	PW_NEUTRALFLAG,
 
 	PW_SCOUT,
+#if defined( QC )
+	PW_PROTECTION,
+#else
 	PW_GUARD,
+#endif
 	PW_DOUBLER,
 	PW_AMMOREGEN,
 	PW_INVULNERABILITY,

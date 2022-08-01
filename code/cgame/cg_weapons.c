@@ -1298,6 +1298,12 @@ static void CG_AddWeaponWithPowerups( refEntity_t *gun, int powerups ) {
 			gun->customShader = cgs.media.quadWeaponShader;
 			trap_R_AddRefEntityToScene( gun );
 		}
+#if defined( QC )
+		if ( powerups & ( 1 << PW_PROTECTION ) ) {
+			gun->customShader = cgs.media.protectionWeaponShader;
+			trap_R_AddRefEntityToScene( gun );
+		}
+#endif
 	}
 }
 

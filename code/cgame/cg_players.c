@@ -2234,6 +2234,12 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int te
 			ent->customShader = cgs.media.battleSuitShader;
 			trap_R_AddRefEntityToScene( ent );
 		}
+#if defined( QC )
+		if ( state->powerups & ( 1 << PW_PROTECTION ) ) {
+			ent->customShader = cgs.media.protectionShader;
+			trap_R_AddRefEntityToScene( ent );
+		}
+#endif
 	}
 }
 
