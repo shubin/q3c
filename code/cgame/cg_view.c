@@ -777,10 +777,10 @@ static void CG_DrawAdvertisements (void)
 	if (!cgs.adsLoaded) {
 		trap_Get_Advertisements(&cgs.numAds, cgs.adverts, cgs.adShaders);
 		cgs.adsLoaded = qtrue;
-		Com_Printf("ads: %d\n", cgs.numAds);
+		//Com_Printf("ads: %d\n", cgs.numAds);
 		for (i = 0;  i < cgs.numAds;  i++) {
 			//FIXME not using ad shaders?
-			Com_Printf("ad %d: '%s'\n", i + 1, cgs.adShaders[i]);
+			//Com_Printf("ad %d: '%s'\n", i + 1, cgs.adShaders[i]);
 #if 0
 			//CG_Printf("%d : %f\n", i + 1, cgs.adverts[i * 16  + 15]);
 			if (i > 0) {
