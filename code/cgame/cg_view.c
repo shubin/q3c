@@ -1001,7 +1001,7 @@ static void CG_DrawAdvertisements (void)
 		//shader = trap_R_RegisterShader(cgs.adShaders[i]);
 
 		//trap_R_AddPolyToScene(shader, 4, verts, lightmap);  //lightmap);  //lightmap);
-		trap_R_AddPolyToScene(shader, 4, verts, 0);  //lightmap);  //lightmap);
+		trap_R_AddPolyToScene(shader, 4, verts);  //lightmap);  //lightmap);
 
 #ifdef DEBUG_ADS
 		if (cg_debugAds.integer) {
