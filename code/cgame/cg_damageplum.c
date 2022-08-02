@@ -237,7 +237,7 @@ void AddDamagePlum( int clientnum, vec3_t origin, int damage, int time ) {
 		VectorCopy( origin, data->origin );
 		data->damage += damage;
 		data->time = time;
-		int sound = min( max( 0, data->damage ), 98 )/33;
+		int sound = MIN( MAX( 0, data->damage ), 98 )/33;
 
 		trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
 	}
