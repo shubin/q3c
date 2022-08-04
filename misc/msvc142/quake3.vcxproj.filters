@@ -406,6 +406,7 @@
   <ItemGroup>
     <CustomBuild Include="..\..\code\asm\ftola.asm" />
     <CustomBuild Include="..\..\code\asm\snapvector.asm" />
+    <CustomBuild Include="..\..\code\asm\vm_x86_64.asm" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\code\sys\win_resource.rc" />

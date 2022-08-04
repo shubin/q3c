@@ -24,7 +24,7 @@ vec4_t hud_weapon_colors[WP_NUM_WEAPONS] = {
 	{ 1.0f, 0.5f, 0.0f, 1.0f },     // WP_LOUSY_SHOTGUN,
 	{ 0.8f, 0.0f, 0.9f, 1.0f },     // WP_LOUSY_PLASMAGUN,
 	// abilities
-	{ 1.0f, 1.0f, 1.0f ,1.0f },     // WP_DIRE_ORB,
+	{ 1.0f, 1.0f, 1.0f, 1.0f },     // WP_DIRE_ORB,
 	//WP_ACID_SPIT,
 };
 

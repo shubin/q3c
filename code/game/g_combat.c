@@ -613,7 +613,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		killerName = "<world>";
 	}
 
+#if defined( QC )
 	self->client->killer = killer;
+#endif
 
 	if ( meansOfDeath < 0 || meansOfDeath >= ARRAY_LEN( modNames ) ) {
 		obit = "<bad obituary>";

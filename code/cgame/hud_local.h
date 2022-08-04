@@ -9,8 +9,8 @@
 #define PICKUP_TIMEOUT 1500
 #define PICKUP_FADEOUTTIME 1000
 #define MAX_OBITUARY 16
-#define OBITUARY_TIMEOUT 1500
-#define OBITUARY_FADEOUTTIME 1000
+//#define OBITUARY_TIMEOUT 1500
+//#define OBITUARY_FADEOUTTIME 1000
 
 extern vec4_t       hud_weapon_colors[WP_NUM_WEAPONS];
 extern const char   *hud_weapon_icons[WP_NUM_WEAPONS];
