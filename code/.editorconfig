@@ -1,7 +1,7 @@
 # Visual Studio generated .editorconfig file with C++ settings.
 root = true
 
-[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+[*.{c,c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
 
 # Visual C++ Code Style settings
 
@@ -68,7 +68,7 @@ cpp_space_pointer_reference_alignment = right
 cpp_space_around_ternary_operator = insert
 cpp_wrap_preserve_blocks = never
 
-[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+[*.{c,c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
 
 # Visual C++ Code Style settings
 
