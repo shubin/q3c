@@ -2043,7 +2043,7 @@ Q3RFTOBJ = \
   $(B)/rendererft/tr_world.o \
   \
   $(B)/renderergl1/sdl_gamma.o \
-  $(B)/renderergl1/sdl_glimp.o
+  $(B)/renderergl1/sdl_ftimp.o \
 
 Q3RFTSTRINGOBJ = \
   $(B)/rendererft/glsl/bokeh_fp.o \
