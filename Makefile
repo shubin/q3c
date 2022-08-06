@@ -47,6 +47,9 @@ endif
 ifndef BUILD_RENDERER_OPENGL2
   BUILD_RENDERER_OPENGL2=
 endif
+ifndef BUILD_RENDERER_FLUENT
+  BUILD_RENDERER_FLUENT=
+endif
 ifndef BUILD_AUTOUPDATER  # DON'T build unless you mean to!
   BUILD_AUTOUPDATER=0
 endif
@@ -268,6 +271,7 @@ SDIR=$(MOUNT_DIR)/server
 RCOMMONDIR=$(MOUNT_DIR)/renderercommon
 RGL1DIR=$(MOUNT_DIR)/renderergl1
 RGL2DIR=$(MOUNT_DIR)/renderergl2
+RFTDIR=$(MOUNT_DIR)/rendererft
 CMDIR=$(MOUNT_DIR)/qcommon
 SDLDIR=$(MOUNT_DIR)/sdl
 ASMDIR=$(MOUNT_DIR)/asm
@@ -368,6 +372,11 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu")
   BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -Wstrict-prototypes \
     -pipe -DUSE_ICON -DARCH_STRING=\\\"$(ARCH)\\\"
   CLIENT_CFLAGS += $(SDL_CFLAGS)
+  
+  # FIXME:
+  ifneq ($(BUILD_RENDERER_FLUENT),0)
+    CLIENT_CFLAGS += -I$(HOME)/fluent/fluent-examples/deps/fluent/sources -I$(HOME)/fluent/fluent-examples/deps/fluent/third_party 
+  endif
 
   OPTIMIZEVM = -O3
   OPTIMIZE = $(OPTIMIZEVM) -ffast-math
@@ -416,6 +425,12 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu")
 
   CLIENT_LIBS=$(SDL_LIBS)
   RENDERER_LIBS = $(SDL_LIBS)
+
+  # FIXME: 
+  ifneq ($(BUILD_RENDERER_FLUENT),0)
+    CLIENT_LIBS += -L/tmp/fluent-examples/bin -lfluent-engine -lspirv_reflect -lhashmap_c -lvk_mem_alloc -lvolk -lstdc++
+    RENDERER_LIBS += -L/tmp/fluent-examples/bin -lfluent-engine -lspirv_reflect -lhashmap_c -lvk_mem_alloc -lvolk -lstdc++
+  endif
 
   ifeq ($(USE_OPENAL),1)
     ifneq ($(USE_OPENAL_DLOPEN),1)
@@ -1065,10 +1080,16 @@ ifneq ($(BUILD_CLIENT),0)
     ifneq ($(BUILD_RENDERER_OPENGL2),0)
       TARGETS += $(B)/renderer_opengl2_$(SHLIBNAME)
     endif
+	ifneq ($(BUILD_RENDERER_FLUENT),0)
+      TARGETS += $(B)/renderer_fluent_$(SHLIBNAME)
+    endif
   else
     TARGETS += $(B)/$(CLIENTBIN)$(FULLBINEXT)
     ifneq ($(BUILD_RENDERER_OPENGL2),0)
       TARGETS += $(B)/$(CLIENTBIN)_opengl2$(FULLBINEXT)
+    endif
+	ifneq ($(BUILD_RENDERER_FLUENT),0)
+      TARGETS += $(B)/$(CLIENTBIN)_fluent$(FULLBINEXT)
     endif
   endif
 endif
@@ -1533,6 +1554,8 @@ makedirs:
 	@$(MKDIR) $(B)/renderergl1
 	@$(MKDIR) $(B)/renderergl2
 	@$(MKDIR) $(B)/renderergl2/glsl
+	@$(MKDIR) $(B)/rendererft
+	@$(MKDIR) $(B)/rendererft/glsl
 	@$(MKDIR) $(B)/ded
 	@$(MKDIR) $(B)/$(BASEGAME)/cgame
 	@$(MKDIR) $(B)/$(BASEGAME)/game
@@ -1980,6 +2003,78 @@ Q3R2STRINGOBJ = \
   $(B)/renderergl2/glsl/tonemap_fp.o \
   $(B)/renderergl2/glsl/tonemap_vp.o
 
+Q3RFTOBJ = \
+  $(B)/rendererft/tr_animation.o \
+  $(B)/rendererft/tr_backend.o \
+  $(B)/rendererft/tr_bsp.o \
+  $(B)/rendererft/tr_cmds.o \
+  $(B)/rendererft/tr_curve.o \
+  $(B)/rendererft/tr_dsa.o \
+  $(B)/rendererft/tr_extramath.o \
+  $(B)/rendererft/tr_extensions.o \
+  $(B)/rendererft/tr_fbo.o \
+  $(B)/rendererft/tr_flares.o \
+  $(B)/rendererft/tr_font.o \
+  $(B)/rendererft/tr_glsl.o \
+  $(B)/rendererft/tr_image.o \
+  $(B)/rendererft/tr_image_bmp.o \
+  $(B)/rendererft/tr_image_jpg.o \
+  $(B)/rendererft/tr_image_pcx.o \
+  $(B)/rendererft/tr_image_png.o \
+  $(B)/rendererft/tr_image_tga.o \
+  $(B)/rendererft/tr_image_dds.o \
+  $(B)/rendererft/tr_init.o \
+  $(B)/rendererft/tr_light.o \
+  $(B)/rendererft/tr_main.o \
+  $(B)/rendererft/tr_marks.o \
+  $(B)/rendererft/tr_mesh.o \
+  $(B)/rendererft/tr_model.o \
+  $(B)/rendererft/tr_model_iqm.o \
+  $(B)/rendererft/tr_noise.o \
+  $(B)/rendererft/tr_postprocess.o \
+  $(B)/rendererft/tr_scene.o \
+  $(B)/rendererft/tr_shade.o \
+  $(B)/rendererft/tr_shade_calc.o \
+  $(B)/rendererft/tr_shader.o \
+  $(B)/rendererft/tr_shadows.o \
+  $(B)/rendererft/tr_sky.o \
+  $(B)/rendererft/tr_surface.o \
+  $(B)/rendererft/tr_vbo.o \
+  $(B)/rendererft/tr_world.o \
+  \
+  $(B)/renderergl1/sdl_gamma.o \
+  $(B)/renderergl1/sdl_glimp.o
+
+Q3RFTSTRINGOBJ = \
+  $(B)/rendererft/glsl/bokeh_fp.o \
+  $(B)/rendererft/glsl/bokeh_vp.o \
+  $(B)/rendererft/glsl/calclevels4x_fp.o \
+  $(B)/rendererft/glsl/calclevels4x_vp.o \
+  $(B)/rendererft/glsl/depthblur_fp.o \
+  $(B)/rendererft/glsl/depthblur_vp.o \
+  $(B)/rendererft/glsl/dlight_fp.o \
+  $(B)/rendererft/glsl/dlight_vp.o \
+  $(B)/rendererft/glsl/down4x_fp.o \
+  $(B)/rendererft/glsl/down4x_vp.o \
+  $(B)/rendererft/glsl/fogpass_fp.o \
+  $(B)/rendererft/glsl/fogpass_vp.o \
+  $(B)/rendererft/glsl/generic_fp.o \
+  $(B)/rendererft/glsl/generic_vp.o \
+  $(B)/rendererft/glsl/lightall_fp.o \
+  $(B)/rendererft/glsl/lightall_vp.o \
+  $(B)/rendererft/glsl/pshadow_fp.o \
+  $(B)/rendererft/glsl/pshadow_vp.o \
+  $(B)/rendererft/glsl/shadowfill_fp.o \
+  $(B)/rendererft/glsl/shadowfill_vp.o \
+  $(B)/rendererft/glsl/shadowmask_fp.o \
+  $(B)/rendererft/glsl/shadowmask_vp.o \
+  $(B)/rendererft/glsl/ssao_fp.o \
+  $(B)/rendererft/glsl/ssao_vp.o \
+  $(B)/rendererft/glsl/texturecolor_fp.o \
+  $(B)/rendererft/glsl/texturecolor_vp.o \
+  $(B)/rendererft/glsl/tonemap_fp.o \
+  $(B)/rendererft/glsl/tonemap_vp.o
+
 Q3ROBJ = \
   $(B)/renderergl1/tr_altivec.o \
   $(B)/renderergl1/tr_animation.o \
@@ -2023,6 +2118,12 @@ ifneq ($(USE_RENDERER_DLOPEN), 0)
     $(B)/renderergl1/tr_subs.o
 
   Q3R2OBJ += \
+    $(B)/renderergl1/q_shared.o \
+    $(B)/renderergl1/puff.o \
+    $(B)/renderergl1/q_math.o \
+    $(B)/renderergl1/tr_subs.o
+
+	Q3RFTOBJ += \
     $(B)/renderergl1/q_shared.o \
     $(B)/renderergl1/puff.o \
     $(B)/renderergl1/q_math.o \
@@ -2337,6 +2438,11 @@ $(B)/renderer_opengl2_$(SHLIBNAME): $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LIBS)
+
+$(B)/renderer_fluent_$(SHLIBNAME): $(Q3RFTOBJ) $(Q3RFTSTRINGOBJ) $(JPGOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3RFTOBJ) $(Q3RFTSTRINGOBJ) $(JPGOBJ) \
+		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LIBS)
 else
 $(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(JPGOBJ) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
@@ -2348,6 +2454,12 @@ $(B)/$(CLIENTBIN)_opengl2$(FULLBINEXT): $(Q3OBJ) $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(J
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) $(NOTSHLIBLDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) \
+		$(LIBSDLMAIN) $(CLIENT_LIBS) $(RENDERER_LIBS) $(LIBS)
+
+$(B)/$(CLIENTBIN)_fluent$(FULLBINEXT): $(Q3OBJ) $(Q3RFTOBJ) $(Q3RFTSTRINGOBJ) $(JPGOBJ) $(LIBSDLMAIN)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) $(NOTSHLIBLDFLAGS) \
+		-o $@ $(Q3OBJ) $(Q3RFTOBJ) $(Q3RFTSTRINGOBJ) $(JPGOBJ) \
 		$(LIBSDLMAIN) $(CLIENT_LIBS) $(RENDERER_LIBS) $(LIBS)
 endif
 
@@ -3062,6 +3174,17 @@ $(B)/renderergl2/%.o: $(RCOMMONDIR)/%.c
 $(B)/renderergl2/%.o: $(RGL2DIR)/%.c
 	$(DO_REF_CC)
 
+$(B)/rendererft/glsl/%.c: $(RFTDIR)/glsl/%.glsl $(STRINGIFY)
+	$(DO_REF_STR)
+
+$(B)/rendererft/glsl/%.o: $(B)/rendererft/glsl/%.c
+	$(DO_REF_CC)
+
+$(B)/rendererft/%.o: $(RCOMMONDIR)/%.c
+	$(DO_REF_CC)
+
+$(B)/rendererft/%.o: $(RFTDIR)/%.c
+	$(DO_REF_CC)
 
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
@@ -3215,7 +3338,7 @@ $(B)/$(QC)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 # MISC
 #############################################################################
 
-OBJ = $(Q3OBJ) $(Q3ROBJ) $(Q3R2OBJ) $(Q3DOBJ) $(JPGOBJ) \
+OBJ = $(Q3OBJ) $(Q3ROBJ) $(Q3R2OBJ) $(Q3RFTOBJ) $(Q3DOBJ) $(JPGOBJ) \
   $(MPGOBJ) $(Q3GOBJ) $(Q3CGOBJ) $(MPCGOBJ) $(Q3UIOBJ) $(MPUIOBJ) \
   $(MPGVMOBJ) $(Q3GVMOBJ) $(Q3CGVMOBJ) $(MPCGVMOBJ) $(Q3UIVMOBJ) $(MPUIVMOBJ)
 TOOLSOBJ = $(LBURGOBJ) $(Q3CPPOBJ) $(Q3RCCOBJ) $(Q3LCCOBJ) $(Q3ASMOBJ)
@@ -3243,9 +3366,15 @@ ifneq ($(BUILD_CLIENT),0)
     ifneq ($(BUILD_RENDERER_OPENGL2),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_opengl2_$(SHLIBNAME) $(COPYBINDIR)/renderer_opengl2_$(SHLIBNAME)
     endif
+    ifneq ($(BUILD_RENDERER_FLUENT),0)
+	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/renderer_fluent_$(SHLIBNAME) $(COPYBINDIR)/renderer_fluent_$(SHLIBNAME)
+    endif
   else
     ifneq ($(BUILD_RENDERER_OPENGL2),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)_opengl2$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)_opengl2$(FULLBINEXT)
+    endif
+    ifneq ($(BUILD_RENDERER_FLUENT),0)
+	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENTBIN)_fluent$(FULLBINEXT) $(COPYBINDIR)/$(CLIENTBIN)_fluent$(FULLBINEXT)
     endif
   endif
 endif
