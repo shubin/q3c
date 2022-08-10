@@ -686,6 +686,9 @@ typedef struct {
 #if defined( QC )
 	float			lastColor[4]; // save the last color set to use it in colored text output (to keep alpha)
 	vec4_t			enemyColors[5];
+	vec4_t			friendColors[5];
+	vec4_t			redTeamColors[5];
+	vec4_t			blueTeamColors[5];
 #endif
 #if defined( UNLAGGED ) //unlagged - optimized prediction
 	int			lastPredictedCommand;
@@ -1238,7 +1241,9 @@ extern	vmCvar_t		cg_gun_x;
 extern	vmCvar_t		cg_gun_y;
 extern	vmCvar_t		cg_gun_z;
 extern	vmCvar_t		cg_drawGun;
+#if !defined( QC )
 extern	vmCvar_t		cg_viewsize;
+#endif
 extern	vmCvar_t		cg_tracerChance;
 extern	vmCvar_t		cg_tracerWidth;
 extern	vmCvar_t		cg_tracerLength;

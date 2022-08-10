@@ -779,6 +779,9 @@ static void ServerOptions_Start( void ) {
 		trap_Cvar_SetValue( "ui_tourney_timelimit", timelimit );
 		break;
 
+#if defined( QC )
+	case GT_TEAM2V2:
+#endif
 	case GT_TEAM:
 		trap_Cvar_SetValue( "ui_team_fraglimit", fraglimit );
 		trap_Cvar_SetValue( "ui_team_timelimit", timelimit );
@@ -1063,7 +1066,11 @@ static void ServerOptions_InitBotNames( void ) {
 	if( s_serveroptions.gametype >= GT_TEAM ) {
 		Q_strncpyz( s_serveroptions.playerNameBuffers[1], "grunt", 16 );
 		Q_strncpyz( s_serveroptions.playerNameBuffers[2], "major", 16 );
+#if defined( QC )
+		if ( s_serveroptions.gametype == GT_TEAM || s_serveroptions.gametype == GT_TEAM2V2 ) {
+#else
 		if( s_serveroptions.gametype == GT_TEAM ) {
+#endif
 			Q_strncpyz( s_serveroptions.playerNameBuffers[3], "visor", 16 );
 		}
 		else {
@@ -1075,7 +1082,11 @@ static void ServerOptions_InitBotNames( void ) {
 		Q_strncpyz( s_serveroptions.playerNameBuffers[6], "sarge", 16 );
 		Q_strncpyz( s_serveroptions.playerNameBuffers[7], "grunt", 16 );
 		Q_strncpyz( s_serveroptions.playerNameBuffers[8], "major", 16 );
+#if defined( QC )
+		if ( s_serveroptions.gametype == GT_TEAM || s_serveroptions.gametype == GT_TEAM2V2 ) {
+#else
 		if( s_serveroptions.gametype == GT_TEAM ) {
+#endif
 			Q_strncpyz( s_serveroptions.playerNameBuffers[9], "visor", 16 );
 		}
 		else {
@@ -1166,7 +1177,9 @@ static void ServerOptions_SetMenuItems( void ) {
 		Com_sprintf( s_serveroptions.fraglimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_tourney_fraglimit" ) ) );
 		Com_sprintf( s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_tourney_timelimit" ) ) );
 		break;
-
+#if defined( QC )
+	case GT_TEAM2V2:
+#endif
 	case GT_TEAM:
 		Com_sprintf( s_serveroptions.fraglimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_team_fraglimit" ) ) );
 		Com_sprintf( s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_team_timelimit" ) ) );

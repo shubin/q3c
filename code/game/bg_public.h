@@ -114,6 +114,9 @@ typedef enum {
 	//-- team games go after this --
 
 	GT_TEAM,			// team deathmatch
+#if defined( QC )
+	GT_TEAM2V2,			// team deathmatch 2 vs 2
+#endif
 	GT_CTF,				// capture the flag
 	GT_1FCTF,
 	GT_OBELISK,

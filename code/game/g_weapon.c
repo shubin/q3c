@@ -626,10 +626,10 @@ void weapon_heavymachinegun_fire (gentity_t* ent) {
 
 	if ( ent->client->pers.cmd.buttons & BUTTON_ZOOM ) {
 		spread = MACHINEGUN_ZOOM_SPREAD;
-		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_ZOOM_DAMAGE : MACHINEGUN_ZOOM_TEAM_DAMAGE;
+		damage = ( g_gametype.integer != GT_TEAM && g_gametype.integer != GT_TEAM2V2 ) ? MACHINEGUN_ZOOM_DAMAGE : MACHINEGUN_ZOOM_TEAM_DAMAGE;
 	} else {
 		spread = MACHINEGUN_SPREAD;
-		damage = g_gametype.integer != GT_TEAM ? MACHINEGUN_DAMAGE : MACHINEGUN_TEAM_DAMAGE;
+		damage = ( g_gametype.integer != GT_TEAM && g_gametype.integer != GT_TEAM2V2 ) ? MACHINEGUN_DAMAGE : MACHINEGUN_TEAM_DAMAGE;
 	}
 	Bullet_Fire( ent, spread, damage, MOD_MACHINEGUN );
 }
@@ -639,7 +639,7 @@ void weapon_lousymachinegun_fire (gentity_t* ent) {
 	int damage;
 
 	spread = LOUSY_MACHINEGUN_SPREAD;
-	damage = g_gametype.integer != GT_TEAM ? LOUSY_MACHINEGUN_DAMAGE : LOUSY_MACHINEGUN_TEAM_DAMAGE;
+	damage = ( g_gametype.integer != GT_TEAM && g_gametype.integer != GT_TEAM2V2 ) ? LOUSY_MACHINEGUN_DAMAGE : LOUSY_MACHINEGUN_TEAM_DAMAGE;
 	Bullet_Fire( ent, spread, damage, MOD_MACHINEGUN );
 }
 #endif

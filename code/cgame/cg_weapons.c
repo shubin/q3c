@@ -1910,8 +1910,6 @@ Caused by an EV_ACTIVTE_ABILITY event
 void CG_ActivateAbility( centity_t *cent ) {
 	entityState_t	*es;
 	int				event, c;
-	vec3_t			dir;
-	const char		*s;
 	int				clientNum;
 	clientInfo_t	*ci;
 	weaponInfo_t	*weap;

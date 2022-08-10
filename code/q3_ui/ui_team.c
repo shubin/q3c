@@ -164,6 +164,9 @@ void TeamMain_MenuInit( void ) {
 		break;
 
 	default:
+#if defined( QC )
+	case GT_TEAM2V2:
+#endif
 	case GT_TEAM:
 	case GT_CTF:
 		s_teammain.joingame.generic.flags |= QMF_GRAYED;

@@ -618,13 +618,13 @@ char* champion_models[NUM_CHAMPIONS] = {
     "hunter", // athena
     "mynx",   // nyx
     "slash",  // slash
-    "tim",    // bj
+    "bitterman",  // bj
     "klesk",  // dk
     "doom",   // doom
     "razor",  // eisen
     "major",  // galena
     "ranger", // ranger
-    "xian",   // strogg
+    "grunt",  // strogg
     "visor",  // visor
     "tankjr", // clutch
     "keel",   // keel
@@ -633,23 +633,23 @@ char* champion_models[NUM_CHAMPIONS] = {
 };
 
 char* champion_skins[NUM_CHAMPIONS] = {
-    "pm",      // sarge
-    "pm",      // anarki
-    "default", // athena
-    "default", // nyx
-    "default", // slash
-    "default", // bj
-    "default", // dk
-    "default", // doom
-    "default", // eisen
-    "default", // galena
-    "pm",      // ranger
-    "default", // strogg
-    "default", // visor
-    "default", // clutch
-    "pm",      // keel
-    "default", // scalebearer
-    "default", // sorlag
+    "pm", // sarge
+    "pm", // anarki
+    "pm", // athena
+    "pm", // nyx
+    "pm", // slash
+    "pm", // bj
+    "pm", // dk
+    "pm", // doom
+    "pm", // eisen
+    "pm", // galena
+    "pm", // ranger
+    "pm", // strogg
+    "pm", // visor
+    "pm", // clutch
+    "pm", // keel
+    "pm", // scalebearer
+    "pm", // sorlag
 };
 
 int ParseChampionName( const char* name ) {

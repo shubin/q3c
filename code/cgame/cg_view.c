@@ -187,6 +187,9 @@ Sets the coordinates of the rendered window
 static void CG_CalcVrect (void) {
 	int		size;
 
+#if defined( QC )
+	size = 100;
+#else
 	// the intermission should allways be full screen
 	if ( cg.snap->ps.pm_type == PM_INTERMISSION ) {
 		size = 100;
@@ -203,6 +206,7 @@ static void CG_CalcVrect (void) {
 		}
 
 	}
+#endif
 	cg.refdef.width = cgs.glconfig.vidWidth*size/100;
 	cg.refdef.width &= ~1;
 

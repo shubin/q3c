@@ -57,6 +57,10 @@ void hud_drawscores_ffa( void );
 void hud_drawscores_brief_tournament( void );
 // tournament scores with weapon usage stats, item stats etc.
 void hud_drawscores_tournament( void );
+//
+void hud_drawscores_brief_tdm( void );
+//
+void hud_drawscores_tdm( void );
 // ability status
 void hud_draw_ability( void );
 // crosshair

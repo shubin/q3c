@@ -41,7 +41,9 @@ DISPLAY OPTIONS MENU
 #define ID_SOUND			12
 #define ID_NETWORK			13
 #define ID_BRIGHTNESS		14
+#if !defined( QC )
 #define ID_SCREENSIZE		15
+#endif
 #define ID_BACK				16
 
 
@@ -58,7 +60,9 @@ typedef struct {
 	menutext_s		network;
 
 	menuslider_s	brightness;
+#if !defined( QC )
 	menuslider_s	screensize;
+#endif
 
 	menubitmap_s	back;
 } displayOptionsInfo_t;
@@ -98,10 +102,12 @@ static void UI_DisplayOptionsMenu_Event( void* ptr, int event ) {
 	case ID_BRIGHTNESS:
 		trap_Cvar_SetValue( "r_gamma", displayOptionsInfo.brightness.curvalue / 10.0f );
 		break;
-	
+
+#if !defined( QC )
 	case ID_SCREENSIZE:
 		trap_Cvar_SetValue( "cg_viewsize", displayOptionsInfo.screensize.curvalue * 10 );
 		break;
+#endif
 
 	case ID_BACK:
 		UI_PopMenu();
@@ -202,6 +208,7 @@ static void UI_DisplayOptionsMenu_Init( void ) {
 		displayOptionsInfo.brightness.generic.flags |= QMF_GRAYED;
 	}
 
+#if !defined( QC )
 	y += BIGCHAR_HEIGHT+2;
 	displayOptionsInfo.screensize.generic.type		= MTYPE_SLIDER;
 	displayOptionsInfo.screensize.generic.name		= "Screen Size:";
@@ -212,6 +219,7 @@ static void UI_DisplayOptionsMenu_Init( void ) {
 	displayOptionsInfo.screensize.generic.y			= y;
 	displayOptionsInfo.screensize.minvalue			= 3;
     displayOptionsInfo.screensize.maxvalue			= 10;
+#endif
 
 	displayOptionsInfo.back.generic.type		= MTYPE_BITMAP;
 	displayOptionsInfo.back.generic.name		= ART_BACK0;
@@ -232,11 +240,15 @@ static void UI_DisplayOptionsMenu_Init( void ) {
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.sound );
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.network );
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.brightness );
+#if !defined( QC )
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.screensize );
+#endif
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.back );
 
 	displayOptionsInfo.brightness.curvalue  = trap_Cvar_VariableValue("r_gamma") * 10;
+#if !defined( QC )
 	displayOptionsInfo.screensize.curvalue  = trap_Cvar_VariableValue( "cg_viewsize")/10;
+#endif
 }
 
 

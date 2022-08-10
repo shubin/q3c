@@ -35,6 +35,9 @@ int forceModelModificationCount = -1;
 #endif
 #if defined( QC )
 int enemyColorsModificationCount = -1;
+int friendColorsModificationCount = -1;
+int redTeamColorsModificationCount = -1;
+int blueTeamColorsModificationCount = -1;
 #endif
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
@@ -135,7 +138,9 @@ vmCvar_t	cg_showmiss;
 vmCvar_t	cg_footsteps;
 vmCvar_t	cg_addMarks;
 vmCvar_t	cg_brassTime;
+#if !defined( QC )
 vmCvar_t	cg_viewsize;
+#endif
 vmCvar_t	cg_drawGun;
 vmCvar_t	cg_gun_frame;
 vmCvar_t	cg_gun_x;
@@ -238,6 +243,9 @@ vmCvar_t    cg_damagePlumPulse;     // whether to animate the popping up number 
 vmCvar_t    cg_damageDirection;		// damage indicator around the crosshair showing the direction the damage came from
 vmCvar_t    cg_hitCross;			// diagonal cross which blinks around the crosshair when you hit an enemy
 vmCvar_t	cg_enemyColors;
+vmCvar_t	cg_friendColors;
+vmCvar_t	cg_redTeamColors;
+vmCvar_t	cg_blueTeamColors;
 #endif
 
 typedef struct {
@@ -262,7 +270,9 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
 	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE },
 #endif
+#if !defined( QC )
 	{ &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
+#endif
 	{ &cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE  },
 #if defined( QC )
 	{ &cg_gibs, "cg_gibs", "3", CVAR_ARCHIVE  },
@@ -411,7 +421,10 @@ static cvarTable_t cvarTable[] = {
     { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
     { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
     { &cg_hitCross, "cg_hitCross", "1", CVAR_ARCHIVE },
-	{ &cg_enemyColors, "cg_enemyColors", "2222", CVAR_ARCHIVE },
+	{ &cg_friendColors, "cg_friendColors", "66666", CVAR_ARCHIVE },
+	{ &cg_enemyColors, "cg_enemyColors", "22222", CVAR_ARCHIVE },
+	{ &cg_redTeamColors, "cg_redTeamColors", "11111", CVAR_ARCHIVE },
+	{ &cg_blueTeamColors, "cg_blueTeamColors", "44444", CVAR_ARCHIVE },
 #endif
 };
 
@@ -473,46 +486,63 @@ static void CG_ForceModelChange( void ) {
 #if defined( QC )
 /*
 =================
-CG_UpdateEnemyColors
+CG_UpdateColors
 =================
 */
-static void CG_UpdateEnemyColors( void ) {
-	int len = strlen( cg_enemyColors.string );
+static void CG_UpdateColors( vmCvar_t *cv, vec4_t *colors ) {
+	int len = strlen( cv->string );
 	int railcore, head, torso, legs, spiral;
 	if ( len == 0 ) {
 		railcore = head = torso = legs = spiral = 2;
 	}
 	else if ( len == 1 ) {
-		railcore = head = torso = legs = spiral = ColorIndex( cg_enemyColors.string[0] );
+		railcore = head = torso = legs = spiral = ColorIndex( cv->string[0] );
 	}
 	else {
-		railcore = ColorIndex( cg_enemyColors.string[0]);
-		head = ColorIndex( cg_enemyColors.string[1] );
+		railcore = ColorIndex( cv->string[0]);
+		head = ColorIndex( cv->string[1] );
 		if ( len > 2 ) {
-			torso = ColorIndex( cg_enemyColors.string[2] );
+			torso = ColorIndex( cv->string[2] );
 		}
 		else {
 			torso = head;
 		}
 		if ( len > 3 ) {
-			legs = ColorIndex( cg_enemyColors.string[3] );
+			legs = ColorIndex( cv->string[3] );
 		}
 		else {
 			legs = torso;
 		}
 		if ( len > 4 ) {
-			spiral = ColorIndex( cg_enemyColors.string[4] );
+			spiral = ColorIndex( cv->string[4] );
 		}
 		else {
 			spiral = railcore;
 		}
 	}
-	memcpy( cg.enemyColors[0], g_color_table[railcore], sizeof( vec4_t ) );
-	memcpy( cg.enemyColors[1], g_color_table[head], sizeof( vec4_t ) );
-	memcpy( cg.enemyColors[2], g_color_table[torso], sizeof( vec4_t ) );
-	memcpy( cg.enemyColors[3], g_color_table[legs], sizeof( vec4_t ) );
-	memcpy( cg.enemyColors[4], g_color_table[spiral], sizeof( vec4_t ) );
+	memcpy( colors[0], g_color_table[railcore], sizeof( vec4_t ) );
+	memcpy( colors[1], g_color_table[head], sizeof( vec4_t ) );
+	memcpy( colors[2], g_color_table[torso], sizeof( vec4_t ) );
+	memcpy( colors[3], g_color_table[legs], sizeof( vec4_t ) );
+	memcpy( colors[4], g_color_table[spiral], sizeof( vec4_t ) );
 }
+
+static void CG_UpdateEnemyColors( void ) {
+	CG_UpdateColors( &cg_enemyColors, cg.enemyColors );
+}
+
+static void CG_UpdateFriendColors( void ) {
+	CG_UpdateColors( &cg_friendColors, cg.friendColors );
+}
+
+static void CG_UpdateRedTeamColors( void ) {
+	CG_UpdateColors( &cg_redTeamColors, cg.redTeamColors );
+}
+
+static void CG_UpdateBlueTeamColors( void ) {
+	CG_UpdateColors( &cg_blueTeamColors, cg.blueTeamColors );
+}
+
 #endif
 
 /*
@@ -581,6 +611,18 @@ void CG_UpdateCvars( void ) {
 	if ( enemyColorsModificationCount != cg_enemyColors.modificationCount ) {
 		enemyColorsModificationCount = cg_enemyColors.modificationCount;
 		CG_UpdateEnemyColors();
+	}
+	if ( friendColorsModificationCount != cg_friendColors.modificationCount ) {
+		friendColorsModificationCount = cg_friendColors.modificationCount;
+		CG_UpdateFriendColors();
+	}
+	if ( redTeamColorsModificationCount != cg_redTeamColors.modificationCount ) {
+		redTeamColorsModificationCount = cg_redTeamColors.modificationCount;
+		CG_UpdateRedTeamColors();
+	}
+	if ( blueTeamColorsModificationCount != cg_blueTeamColors.modificationCount ) {
+		blueTeamColorsModificationCount = cg_blueTeamColors.modificationCount;
+		CG_UpdateBlueTeamColors();
 	}
 #endif
 }

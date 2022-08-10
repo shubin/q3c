@@ -314,6 +314,9 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 	char *team, *charactersFolder;
 	int i;
 
+#if defined( QC )
+	team = "default";
+#else
 	if ( cgs.gametype >= GT_TEAM ) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
@@ -329,6 +332,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 	else {
 		team = "default";
 	}
+#endif
 	charactersFolder = "";
 	while(1) {
 		for ( i = 0; i < 2; i++ ) {
@@ -343,6 +347,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 			if ( CG_FileExists( filename ) ) {
 				return qtrue;
 			}
+#if !defined( QC )
 			if ( cgs.gametype >= GT_TEAM ) {
 				if ( i == 0 && teamName && *teamName ) {
 					//								"models/players/characters/james/stroggs/lower_red.skin"
@@ -353,7 +358,9 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", charactersFolder, modelName, base, team, ext );
 				}
 			}
-			else {
+			else 
+#endif
+			{
 				if ( i == 0 && teamName && *teamName ) {
 					//								"models/players/characters/james/stroggs/lower_lily.skin"
 					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", charactersFolder, modelName, teamName, base, skinName, ext );
@@ -389,6 +396,9 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	char *team, *headsFolder;
 	int i;
 
+#if defined( QC )
+	team = "default";
+#else
 	if ( cgs.gametype >= GT_TEAM ) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
@@ -404,6 +414,7 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	else {
 		team = "default";
 	}
+#endif
 
 	if ( headModelName[0] == '*' ) {
 		headsFolder = "heads/";
@@ -423,6 +434,7 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 			if ( CG_FileExists( filename ) ) {
 				return qtrue;
 			}
+#if !defined( QC )
 			if ( cgs.gametype >= GT_TEAM ) {
 				if ( i == 0 &&  teamName && *teamName ) {
 					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", headsFolder, headModelName, teamName, base, team, ext );
@@ -431,7 +443,9 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", headsFolder, headModelName, base, team, ext );
 				}
 			}
-			else {
+			else 
+#endif
+			{
 				if ( i == 0 && teamName && *teamName ) {
 					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", headsFolder, headModelName, teamName, base, headSkinName, ext );
 				}
@@ -793,7 +807,10 @@ static qboolean CG_ScanForExistingClientInfo( clientInfo_t *ci ) {
 			&& !Q_stricmp( ci->headSkinName, match->headSkinName ) 
 			&& !Q_stricmp( ci->blueTeam, match->blueTeam ) 
 			&& !Q_stricmp( ci->redTeam, match->redTeam )
-			&& (cgs.gametype < GT_TEAM || ci->team == match->team) ) {
+#if !defined( QC )
+			&& (cgs.gametype < GT_TEAM || ci->team == match->team)
+#endif
+			) {
 			// this clientinfo is identical, so use its handles
 
 			ci->deferred = qfalse;
@@ -836,7 +853,12 @@ static void CG_SetDeferredClientInfo( int clientNum, clientInfo_t *ci ) {
 			 Q_stricmp( ci->modelName, match->modelName ) ||
 //			 Q_stricmp( ci->headModelName, match->headModelName ) ||
 //			 Q_stricmp( ci->headSkinName, match->headSkinName ) ||
-			 (cgs.gametype >= GT_TEAM && ci->team != match->team) ) {
+#if defined( QC )
+			 qfalse
+#else
+			 (cgs.gametype >= GT_TEAM && ci->team != match->team) 
+#endif
+			) {
 			continue;
 		}
 		// just load the real info cause it uses the same models and skins
@@ -851,8 +873,11 @@ static void CG_SetDeferredClientInfo( int clientNum, clientInfo_t *ci ) {
 			if ( !match->infoValid || match->deferred ) {
 				continue;
 			}
-			if ( Q_stricmp( ci->skinName, match->skinName ) ||
-				(cgs.gametype >= GT_TEAM && ci->team != match->team) ) {
+			if ( Q_stricmp( ci->skinName, match->skinName )
+#if !defined( QC )
+				|| (cgs.gametype >= GT_TEAM && ci->team != match->team) 
+#endif
+				) {
 				continue;
 			}
 			ci->deferred = qtrue;
@@ -2218,10 +2243,14 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int te
 
 		if ( state->powerups & ( 1 << PW_QUAD ) )
 		{
+#if defined( QC )
+			ent->customShader = cgs.media.quadShader;
+#else
 			if (team == TEAM_RED)
 				ent->customShader = cgs.media.redQuadShader;
 			else
 				ent->customShader = cgs.media.quadShader;
+#endif
 			trap_R_AddRefEntityToScene( ent );
 		}
 		if ( state->powerups & ( 1 << PW_REGEN ) ) {
@@ -2296,7 +2325,7 @@ CG_Player
 ===============
 */
 void CG_Player( centity_t *cent ) {
-	clientInfo_t	*ci;
+	clientInfo_t *ci;
 	refEntity_t		legs;
 	refEntity_t		torso;
 	refEntity_t		head;
@@ -2314,6 +2343,7 @@ void CG_Player( centity_t *cent ) {
 #endif
 #if defined( QC )
 	float			scale = cg_playerScale.value;
+	vec4_t *modelColors;
 #endif
 
 	// the client number is stored in clientNum.  It can't be derived
@@ -2321,9 +2351,9 @@ void CG_Player( centity_t *cent ) {
 	// multiple corpses on the level using the same clientinfo
 	clientNum = cent->currentState.clientNum;
 	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
-		CG_Error( "Bad clientNum on player entity");
+		CG_Error( "Bad clientNum on player entity" );
 	}
-	ci = &cgs.clientinfo[ clientNum ];
+	ci = &cgs.clientinfo[clientNum];
 
 	// it is possible to see corpses from disconnected players that may
 	// not have valid clientinfo
@@ -2333,24 +2363,24 @@ void CG_Player( centity_t *cent ) {
 
 	// get the player model information
 	renderfx = 0;
-	if ( cent->currentState.number == cg.snap->ps.clientNum) {
-		if (!cg.renderingThirdPerson) {
+	if ( cent->currentState.number == cg.snap->ps.clientNum ) {
+		if ( !cg.renderingThirdPerson ) {
 			renderfx = RF_THIRD_PERSON;			// only draw in mirrors
 		} else {
-			if (cg_cameraMode.integer) {
+			if ( cg_cameraMode.integer ) {
 				return;
 			}
 		}
 	}
 
 
-	memset( &legs, 0, sizeof(legs) );
-	memset( &torso, 0, sizeof(torso) );
-	memset( &head, 0, sizeof(head) );
+	memset( &legs, 0, sizeof( legs ) );
+	memset( &torso, 0, sizeof( torso ) );
+	memset( &head, 0, sizeof( head ) );
 
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
-	
+
 	// get the animation state (after rotation, to allow feet shuffle)
 	CG_PlayerAnimation( cent, &legs.oldframe, &legs.frame, &legs.backlerp,
 		 &torso.oldframe, &torso.frame, &torso.backlerp );
@@ -2369,7 +2399,7 @@ void CG_Player( centity_t *cent ) {
 	}
 	renderfx |= RF_LIGHTING_ORIGIN;			// use the same origin for all
 #ifdef MISSIONPACK
-	if( cgs.gametype == GT_HARVESTER ) {
+	if ( cgs.gametype == GT_HARVESTER ) {
 		CG_PlayerTokens( cent, renderfx );
 	}
 #endif
@@ -2384,17 +2414,39 @@ void CG_Player( centity_t *cent ) {
 	VectorCopy( cent->lerpOrigin, legs.lightingOrigin );
 	legs.shadowPlane = shadowPlane;
 	legs.renderfx = renderfx;
-	VectorCopy (legs.origin, legs.oldorigin);	// don't positionally lerp at all
+	VectorCopy( legs.origin, legs.oldorigin );	// don't positionally lerp at all
 #if defined( QC )
+	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.clientNum != cg.clientNum ) {
+		if ( cgs.gametype < GT_TEAM ) {
+			modelColors = cg.enemyColors;
+		} else {
+			modelColors = ci->team == TEAM_RED ? cg.redTeamColors : cg.blueTeamColors;
+		}
+	} else {
+		if ( cgs.gametype < GT_TEAM ) {
+			if ( clientNum == cg.clientNum ) {
+				modelColors = cg.friendColors;
+			} else {
+				modelColors = cg.enemyColors;
+			}
+		} else {
+			if ( ci->team == cgs.clientinfo[cg.clientNum].team ) {
+				modelColors = cg.friendColors;
+			} else {
+				modelColors = cg.enemyColors;
+			}
+		}
+	}
+
 	legs.origin[2] += 24 * scale - 24;
 	VectorScale( legs.axis[0], scale, legs.axis[0] );
 	VectorScale( legs.axis[1], scale, legs.axis[1] );
 	VectorScale( legs.axis[2], scale, legs.axis[2] );
 	legs.nonNormalizedAxes = ( scale != 1.0f );
-	legs.shaderRGBA[0] = (int)(cg.enemyColors[3][0] * 255.0f);
-	legs.shaderRGBA[1] = (int)(cg.enemyColors[3][1] * 255.0f);
-	legs.shaderRGBA[2] = (int)(cg.enemyColors[3][2] * 255.0f);
-	legs.shaderRGBA[3] = (int)(cg.enemyColors[3][3] * 255.0f);
+	legs.shaderRGBA[0] = (int)(modelColors[3][0] * 255.0f);
+	legs.shaderRGBA[1] = (int)(modelColors[3][1] * 255.0f);
+	legs.shaderRGBA[2] = (int)(modelColors[3][2] * 255.0f);
+	legs.shaderRGBA[3] = (int)(modelColors[3][3] * 255.0f);
 #endif
 
 	CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
@@ -2426,10 +2478,10 @@ void CG_Player( centity_t *cent ) {
 	//VectorScale( torso.axis[1], 2, torso.axis[1] );
 	//VectorScale( torso.axis[2], 2, torso.axis[2] );
 	//torso.nonNormalizedAxes = qtrue;
-	torso.shaderRGBA[0] = (int)(cg.enemyColors[2][0] * 255.0f);
-	torso.shaderRGBA[1] = (int)(cg.enemyColors[2][1] * 255.0f);
-	torso.shaderRGBA[2] = (int)(cg.enemyColors[2][2] * 255.0f);
-	torso.shaderRGBA[3] = (int)(cg.enemyColors[2][3] * 255.0f);
+	torso.shaderRGBA[0] = (int)(modelColors[2][0] * 255.0f);
+	torso.shaderRGBA[1] = (int)(modelColors[2][1] * 255.0f);
+	torso.shaderRGBA[2] = (int)(modelColors[2][2] * 255.0f);
+	torso.shaderRGBA[3] = (int)(modelColors[2][3] * 255.0f);
 	//torso.customShader = cgs.media.wireframeShader;
 	//trap_R_AddRefEntityToScene( &torso );
 	//torso.customShader = 0;
@@ -2665,10 +2717,10 @@ void CG_Player( centity_t *cent ) {
 	//VectorScale( head.axis[1], 2, head.axis[1] );
 	//VectorScale( head.axis[2], 2, head.axis[2] );
 	//head.nonNormalizedAxes = qtrue;
-	head.shaderRGBA[0] = (int)(cg.enemyColors[1][0] * 255.0f);
-	head.shaderRGBA[1] = (int)(cg.enemyColors[1][1] * 255.0f);
-	head.shaderRGBA[2] = (int)(cg.enemyColors[1][2] * 255.0f);
-	head.shaderRGBA[3] = (int)(cg.enemyColors[1][3] * 255.0f);
+	head.shaderRGBA[0] = (int)(modelColors[1][0] * 255.0f);
+	head.shaderRGBA[1] = (int)(modelColors[1][1] * 255.0f);
+	head.shaderRGBA[2] = (int)(modelColors[1][2] * 255.0f);
+	head.shaderRGBA[3] = (int)(modelColors[1][3] * 255.0f);
 #endif
 	CG_AddRefEntityWithPowerups( &head, &cent->currentState, ci->team );
 
@@ -2753,7 +2805,7 @@ qboolean CG_RegisterChampionModels( void ) {
 				cgs.media.championModels[i].modelName,
 				cgs.media.championModels[i].skinName,
 				cgs.media.championModels[i].headModelName,
-				cgs.media.championModels[i].headSkinName, "default" 
+				cgs.media.championModels[i].headSkinName, NULL 
 		) ) {
 			CG_Error( "Failed to load champion model: %s", champion_names[i] );
 			return qfalse;

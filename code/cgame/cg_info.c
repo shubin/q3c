@@ -247,6 +247,11 @@ void CG_DrawInformation( void ) {
 	case GT_TEAM:
 		s = "Team Deathmatch";
 		break;
+#if defined( QC )
+	case GT_TEAM2V2:
+		s = "Team Deathmatch 2v2";
+		break;
+#endif
 	case GT_CTF:
 		s = "Capture The Flag";
 		break;

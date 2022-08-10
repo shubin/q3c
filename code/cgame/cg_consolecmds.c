@@ -45,6 +45,7 @@ void CG_TargetCommand_f( void ) {
 }
 
 
+#if !defined( QC )
 
 /*
 =================
@@ -68,6 +69,8 @@ Keybinding command
 static void CG_SizeDown_f (void) {
 	trap_Cvar_Set("cg_viewsize", va("%i",(int)(cg_viewsize.integer-10)));
 }
+
+#endif
 
 
 /*
@@ -462,8 +465,10 @@ static consoleCommand_t	commands[] = {
 	{ "-scores", CG_ScoresUp_f },
 	{ "+zoom", CG_ZoomDown_f },
 	{ "-zoom", CG_ZoomUp_f },
+#if !defined( QC )
 	{ "sizeup", CG_SizeUp_f },
 	{ "sizedown", CG_SizeDown_f },
+#endif
 	{ "weapnext", CG_NextWeapon_f },
 	{ "weapprev", CG_PrevWeapon_f },
 	{ "weapon", CG_Weapon_f },

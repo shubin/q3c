@@ -123,7 +123,11 @@ void AddScore( gentity_t *ent, vec3_t origin, int score ) {
 	ScorePlum(ent, origin, score);
 	//
 	ent->client->ps.persistant[PERS_SCORE] += score;
+#if defined( QC )
+	if ( g_gametype.integer == GT_TEAM || g_gametype.integer == GT_TEAM2V2 )
+#else
 	if ( g_gametype.integer == GT_TEAM )
+#endif
 		level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] += score;
 	CalculateRanks();
 }
@@ -182,8 +186,13 @@ void TossClientItems( gentity_t *self ) {
 		Drop_Item( self, item, 0 );
 	}
 
+#if defined( QC )
+	// always drop
+	{
+#else
 	// drop all the powerups if not in teamplay
 	if ( g_gametype.integer != GT_TEAM ) {
+#endif
 		angle = 45;
 		for ( i = 1 ; i < PW_NUM_POWERUPS ; i++ ) {
 			if ( self->client->ps.powerups[ i ] > level.time ) {
