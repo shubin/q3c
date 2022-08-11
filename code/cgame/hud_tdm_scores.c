@@ -66,7 +66,7 @@ void hud_drawscores_brief_tdm( void ) {
 
 	hud_progressbar( gauge2, centerx - 280, hud_bounds.top + 42, 220, 50, 2, color1, color1e );
 	hud_progressbar( -gauge1, centerx + 80, hud_bounds.top + 42, 220, 50, 2, color2, color2e );
-	// small black bars for nicknames
+	// small black bars for team names
 	hud_drawbar( centerx - 280, hud_bounds.top + 92, 220, 21, 0.0f, 0.0f, black );
 	hud_drawbar( centerx + 80,  hud_bounds.top + 92, 220, 21, 0.0f, 0.0f, black );
 
