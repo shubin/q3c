@@ -71,6 +71,7 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 		hud_drawscores_brief_tdm();
 		hud_drawscores_tournament();
 		hud_drawscores_ffa();
+		hud_drawscores_tdm();
 		return;
 	}
 
