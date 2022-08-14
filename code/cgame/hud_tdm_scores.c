@@ -115,6 +115,8 @@ void hud_drawscores_tdm( void ) {
 	static float translucent[] = { 1, 1, 1, 0.15f };
 	static float header[] = { 0.15f, 0.05f, 0.05f, 0.8f };
 	static float myColor[] = { 0.26f / 1.5f, 0.70f / 1.5f, 0.89f / 1.5f, 0.8f };
+	static float color1[] = { 0.12f, 0.38f, 0.53f, 1.0f };
+	static float color2[] = { 0.42f, 0.07f, 0.07f, 1.0f };
 
 	if ( !cg.showScores || ( cgs.gametype != GT_TEAM && cgs.gametype != GT_TEAM2V2 ) ) {
 		return;
@@ -133,13 +135,51 @@ void hud_drawscores_tdm( void ) {
 	trap_R_SetColor( NULL );
 	hud_drawpic( centerx - 703, y + 55, 80, 80, 0.5f, 0.5f, trap_R_RegisterShader( "menu/art/skill5" ) );
 
+	centerx -= 390;
+
+	y = hud_bounds.top + 190;
+	hud_drawbar( centerx - 384, y, 768, 38, 0.0f, 0.0f, color1 );
+	hud_drawbar( centerx + 396, y, 768, 38, 0.0f, 0.0f, color2 );
+	trap_R_SetColor( color1 );
+	hud_drawquad(
+		centerx + 384 - 130, y - 20, 0, 0,
+		centerx + 384, y - 20, 0, 1,
+		centerx + 384, y, 1, 1,
+		centerx + 384 - 150, y, 0, 1,
+		cgs.media.whiteShader
+	);
+	//trap_R_SetColor( black );
+	//hud_drawquad(
+	//	centerx - 384, y - 20, 0, 0,
+	//	centerx + 384 - 130, y - 20, 0, 1,
+	//	centerx + 384 - 150, y, 1, 1,
+	//	centerx - 384, y, 1, 0,
+	//	cgs.media.whiteShader
+	//	);
+	trap_R_SetColor( color2 );
+	hud_drawquad(
+		centerx + 396 + 130, y - 20, 0, 0,
+		centerx + 396 + 150, y, 0, 1,
+		centerx + 396, y, 1, 1,
+		centerx + 396, y - 20, 0, 1,
+		cgs.media.whiteShader
+	);
+
+	text = va( "%d", cgs.scores2 );
+	dim = hud_measurestring( 0.8f, hud_media.font_qcde, text );
+	trap_R_SetColor( NULL );
+	hud_drawstring( centerx + 384 - 4 - dim, y + 30, 0.8f, hud_media.font_qcde, text, NULL, 0, 0 );
+	hud_drawstring( centerx + 406, y + 30, 0.8f, hud_media.font_qcde, va( "%d", cgs.scores1 ), NULL, 0, 0 );
+
+	hud_drawstring( centerx - 384 + 16, y + 30, 0.5f, hud_media.font_regular, "BLUE TEAM", NULL, 0, 0 );
+	dim = hud_measurestring( 0.5f, hud_media.font_regular, "RED TEAM" );
+	hud_drawstring( centerx + 396 + 768 - 16 - dim, y + 30, 0.5f, hud_media.font_regular, "RED TEAM", NULL, 0, 0 );
 
 	team = TEAM_BLUE;
-	centerx -= 386;
 
 draw_again:
 
-	y = hud_bounds.top + 156;
+	y = hud_bounds.top + 240;
 
 	hud_drawbar( centerx, y, 768, 45, 0.5f, 0.0f, black );
 	trap_R_SetColor( gray );
@@ -197,7 +237,7 @@ draw_again:
 	trap_R_SetColor( NULL );
 	if ( team == TEAM_BLUE ) {
 		team = TEAM_RED;
-		centerx += 772;
+		centerx += 780;
 		goto draw_again;
 	}
 }

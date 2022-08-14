@@ -102,6 +102,21 @@ void hud_drawbar( float x, float y, float width, float height, float cx, float c
 	trap_R_DrawStretchPic( x - cx * width, y - cy * height, width, height, 0, 0, 0, 0, cgs.media.whiteShader );
 	trap_R_SetColor( NULL );
 }
+// draw quad
+void hud_drawquad(
+	float x0, float y0, float s0, float t0,
+	float x1, float y1, float s1, float t1,
+	float x2, float y2, float s2, float t2,
+	float x3, float y3, float s3, float t3,
+	qhandle_t hShader
+) 
+{
+	hud_translate_point( &x0, &y0 );
+	hud_translate_point( &x1, &y1 );
+	hud_translate_point( &x2, &y2 );
+	hud_translate_point( &x3, &y3 );
+	trap_R_DrawQuad( x0, y0, s0, t0, x1, y1, s1, t1, x2, y2, s2, t2, x3, y3, s3, t3, hShader );
+}
 // find character by its id
 static chardesc_t* find_char( font_t *font, int c ) {
 	if ( c >= 0 && c < sizeof( font->charmap ) / sizeof( font->charmap[0] ) ) {

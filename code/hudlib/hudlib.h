@@ -53,6 +53,14 @@ void hud_drawpic( float x, float y, float width, float height, float cx, float c
 // draw bar of specified color
 // cx, cy - see hud_drawpic()
 void hud_drawbar( float x, float y, float width, float height, float cx, float cy, float *color );
+// draw quad
+void hud_drawquad(
+	float x0, float y0, float s0, float t0,
+	float x1, float y1, float s1, float t1,
+	float x2, float y2, float s2, float t2,
+	float x3, float y3, float s3, float t3,
+	qhandle_t hShader
+);
 // returns string width if it should be rendered using the specified font
 float hud_measurestring( float scale, font_t *font, const char *string );
 float hud_measurecolorstring( float scale, font_t *font, const char *string );
