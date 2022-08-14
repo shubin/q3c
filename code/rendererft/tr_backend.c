@@ -1294,6 +1294,8 @@ const void	*RB_DrawBuffer( const void *data ) {
 		// qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
+	FT_BeginFrame();
+
 	return (const void *)(cmd + 1);
 }
 
@@ -1484,17 +1486,14 @@ const void	*RB_SwapBuffers( const void *data ) {
 		}
 	}
 
-	if ( !glState.finishCalled )
-	{
-		// qglFinish();
-	}
-
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
 
 	GLimp_EndFrame();
 
 	backEnd.framePostProcessed = qfalse;
 	backEnd.projection2D = qfalse;
+
+	FT_EndFrame();
 
 	return (const void *)(cmd + 1);
 }

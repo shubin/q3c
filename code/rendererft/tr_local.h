@@ -41,8 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define FT_WITH_RENDERER 1
 #include <fluent/fluent.h>
 
-#define FT_FIXME() FT_TRACE("[ FT_FIXME ]: %s", __FUNCTION__)
-
 #define GL_INDEX_TYPE		GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
 
@@ -1663,10 +1661,35 @@ typedef struct {
 	float					fogTable[FOG_TABLE_SIZE];
 } trGlobals_t;
 
-extern backEndState_t	backEnd;
-extern trGlobals_t	tr;
-extern glstate_t	glState;		// outside of TR since it shouldn't be cleared during ref re-init
-extern glRefConfig_t glRefConfig;
+#define FRAME_COUNT 2
+
+struct ft_frame_data {
+	struct ft_semaphore      *present_semaphore;
+	struct ft_semaphore      *render_semaphore;
+	struct ft_fence          *render_fence;
+	struct ft_command_pool   *cmd_pool;
+	struct ft_command_buffer *cmd;
+	bool                      cmd_recorded;
+};
+
+typedef struct {
+	struct ft_instance  *instance;
+	struct ft_device    *device;
+	struct ft_queue     *queue;
+	struct ft_frame_data frames[FRAME_COUNT];
+	struct ft_swapchain *swapchain;
+	struct ft_image     *depth_image;
+	uint32_t             frame_index;
+	uint32_t             image_index;
+
+	struct ft_command_buffer *cmd;
+} ftContext_t;
+
+extern backEndState_t backEnd;
+extern trGlobals_t    tr;
+extern glstate_t      glState; // outside of TR since it shouldn't be cleared during ref re-init
+extern glRefConfig_t  glRefConfig;
+extern ftContext_t    ft;
 
 //
 // cvars
@@ -2525,5 +2548,11 @@ void RE_TakeVideoFrame( int width, int height,
 #if defined( QC )
 void RE_GetAdvertisements(int *num, float *verts, char shaders[][MAX_QPATH]);
 #endif
+
+void FT_Init( void );
+void FT_Shutdown( void );
+
+void FT_BeginFrame( void );
+void FT_EndFrame( void );
 
 #endif //TR_LOCAL_H

@@ -237,74 +237,6 @@ cvar_t	*r_maxpolyverts;
 int		max_polyverts;
 
 /*
-** InitOpenGL
-**
-** This function is responsible for initializing a valid OpenGL subsystem.  This
-** is done by calling GLimp_Init (which gives us a working OGL subsystem) then
-** setting variables, checking GL constants, and reporting the gfx system config
-** to the user.
-*/
-static void InitOpenGL( void )
-{
-	//
-	// initialize OS specific portions of the renderer
-	//
-	// GLimp_Init directly or indirectly references the following cvars:
-	//		- r_fullscreen
-	//		- r_mode
-	//		- r_(color|depth|stencil)bits
-	//		- r_ignorehwgamma
-	//		- r_gamma
-	//
-	
-	if ( !ft_log_init(FT_LOG_LEVEL_INFO, 1000) ) 
-	{
-		ri.Printf( PRINT_ERROR, "ERROR: failed to initialize fluent renderer\n" );
-		return;
-	}
-
-	if ( glConfig.vidWidth == 0 )
-	{
-		GLint		temp;
-		
-		GLimp_Init( qfalse );
-		GLimp_InitExtraExtensions();
-
-		glConfig.textureEnvAddAvailable = qtrue;
-
-		// OpenGL driver constants
-		// qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
-		glConfig.maxTextureSize = temp;
-
-		// stubbed or broken drivers may have reported 0...
-		if ( glConfig.maxTextureSize <= 0 ) 
-		{
-			glConfig.maxTextureSize = 0;
-		}
-
-		// qglGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &temp );
-		glConfig.numTextureUnits = temp;
-
-		// reserve 160 components for other uniforms
-		// qglGetIntegerv( GL_MAX_VERTEX_UNIFORM_COMPONENTS, &temp );
-		glRefConfig.glslMaxAnimatedBones = Com_Clamp( 0, IQM_MAX_JOINTS, ( temp - 160 ) / 16 );
-		if ( glRefConfig.glslMaxAnimatedBones < 12 ) {
-			glRefConfig.glslMaxAnimatedBones = 0;
-		}
-	}
-
-	// check for GLSL function textureCubeLod()
-	if ( r_cubeMapping->integer /* && !QGL_VERSION_ATLEAST( 3, 0 ) */ )
-	{
-		ri.Printf( PRINT_WARNING, "WARNING: Disabled r_cubeMapping because it requires OpenGL 3.0\n" );
-		ri.Cvar_Set( "r_cubeMapping", "0" );
-	}
-
-	// set default state
-	GL_SetDefaultState();
-}
-
-/*
 ==================
 GL_CheckErrors
 ==================
@@ -1345,7 +1277,7 @@ void R_Init( void ) {
 	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof( *backEndData ) + sizeof(srfPoly_t) * max_polys);
 	R_InitNextFrame();
 
-	InitOpenGL();
+	FT_Init();
 
 	R_InitImages();
 
@@ -1405,6 +1337,7 @@ void RE_Shutdown( qboolean destroyWindow ) {
 
 	// shut down platform specific OpenGL stuff
 	if ( destroyWindow ) {
+		FT_Shutdown();
 		GLimp_Shutdown();
 
 		Com_Memset( &glConfig, 0, sizeof( glConfig ) );

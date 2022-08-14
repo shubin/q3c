@@ -2041,6 +2041,7 @@ Q3RFTOBJ = \
   $(B)/rendererft/tr_surface.o \
   $(B)/rendererft/tr_vbo.o \
   $(B)/rendererft/tr_world.o \
+  $(B)/rendererft/ft.o \
   \
   $(B)/renderergl1/sdl_gamma.o \
   $(B)/renderergl1/sdl_ftimp.o \
