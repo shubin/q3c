@@ -172,17 +172,17 @@ static void GLSL_PrintLog(GLuint programOrShader, glslPrintLog_t type, qboolean 
 	{
 		case GLSL_PRINTLOG_PROGRAM_INFO:
 			ri.Printf(printLevel, "Program info log:\n");
-			qglGetProgramiv(programOrShader, GL_INFO_LOG_LENGTH, &maxLength);
+			// qglGetProgramiv(programOrShader, GL_INFO_LOG_LENGTH, &maxLength);
 			break;
 
 		case GLSL_PRINTLOG_SHADER_INFO:
 			ri.Printf(printLevel, "Shader info log:\n");
-			qglGetShaderiv(programOrShader, GL_INFO_LOG_LENGTH, &maxLength);
+			// qglGetShaderiv(programOrShader, GL_INFO_LOG_LENGTH, &maxLength);
 			break;
 
 		case GLSL_PRINTLOG_SHADER_SOURCE:
 			ri.Printf(printLevel, "Shader source:\n");
-			qglGetShaderiv(programOrShader, GL_SHADER_SOURCE_LENGTH, &maxLength);
+			// qglGetShaderiv(programOrShader, GL_SHADER_SOURCE_LENGTH, &maxLength);
 			break;
 	}
 
@@ -200,15 +200,15 @@ static void GLSL_PrintLog(GLuint programOrShader, glslPrintLog_t type, qboolean 
 	switch (type)
 	{
 		case GLSL_PRINTLOG_PROGRAM_INFO:
-			qglGetProgramInfoLog(programOrShader, maxLength, &maxLength, msg);
+			// qglGetProgramInfoLog(programOrShader, maxLength, &maxLength, msg);
 			break;
 
 		case GLSL_PRINTLOG_SHADER_INFO:
-			qglGetShaderInfoLog(programOrShader, maxLength, &maxLength, msg);
+			// qglGetShaderInfoLog(programOrShader, maxLength, &maxLength, msg);
 			break;
 
 		case GLSL_PRINTLOG_SHADER_SOURCE:
-			qglGetShaderSource(programOrShader, maxLength, &maxLength, msg);
+			// qglGetShaderSource(programOrShader, maxLength, &maxLength, msg);
 			break;
 	}
 
@@ -270,18 +270,7 @@ static void GLSL_GetShaderHeader( GLenum shaderType, const GLchar *extra, char *
 		Q_strcat(dest, size, "#define shadow2D(a,b) shadow2D(a,b).r \n");
 	}
 
-	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
-	//Q_strcat(dest, size,
-	//		 va("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value));
-	//Q_strcat(dest, size,
-	//		 va("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value));
-	//Q_strcat(dest, size,
-	//       va("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value));
-
-
 	Q_strcat(dest, size, "#ifndef M_PI\n#define M_PI 3.14159265358979323846\n#endif\n");
-
-	//Q_strcat(dest, size, va("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS));
 
 	Q_strcat(dest, size,
 					 va("#ifndef deformGen_t\n"
@@ -367,18 +356,18 @@ static void GLSL_GetShaderHeader( GLenum shaderType, const GLchar *extra, char *
 
 static int GLSL_CompileGPUShader(GLuint program, GLuint *prevShader, const GLchar *buffer, int size, GLenum shaderType)
 {
-	GLint           compiled;
+	GLint           compiled = true;
 	GLuint          shader;
 
-	shader = qglCreateShader(shaderType);
+	// shader = qglCreateShader(shaderType);
 
-	qglShaderSource(shader, 1, (const GLchar **)&buffer, &size);
+	// qglShaderSource(shader, 1, (const GLchar **)&buffer, &size);
 
 	// compile shader
-	qglCompileShader(shader);
+	// qglCompileShader(shader);
 
 	// check if shader compiled
-	qglGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	// qglGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if(!compiled)
 	{
 		GLSL_PrintLog(shader, GLSL_PRINTLOG_SHADER_SOURCE, qfalse);
@@ -389,12 +378,12 @@ static int GLSL_CompileGPUShader(GLuint program, GLuint *prevShader, const GLcha
 
 	if (*prevShader)
 	{
-		qglDetachShader(program, *prevShader);
-		qglDeleteShader(*prevShader);
+		// qglDetachShader(program, *prevShader);
+		// qglDeleteShader(*prevShader);
 	}
 
 	// attach shader to program
-	qglAttachShader(program, shader);
+	// qglAttachShader(program, shader);
 
 	*prevShader = shader;
 
@@ -466,11 +455,11 @@ static int GLSL_LoadGPUShaderText(const char *name, const char *fallback,
 
 static void GLSL_LinkProgram(GLuint program)
 {
-	GLint           linked;
+	GLint           linked = true;
 
-	qglLinkProgram(program);
+	// qglLinkProgram(program);
 
-	qglGetProgramiv(program, GL_LINK_STATUS, &linked);
+	// qglGetProgramiv(program, GL_LINK_STATUS, &linked);
 	if(!linked)
 	{
 		GLSL_PrintLog(program, GLSL_PRINTLOG_PROGRAM_INFO, qfalse);
@@ -485,12 +474,12 @@ static void GLSL_ShowProgramUniforms(GLuint program)
 	char            uniformName[1000];
 
 	// query the number of active uniforms
-	qglGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
+	// qglGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
 
 	// Loop over each of the active uniforms, and set their value
 	for(i = 0; i < count; i++)
 	{
-		qglGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
+		// qglGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
 		ri.Printf(PRINT_DEVELOPER, "active uniform: '%s'\n", uniformName);
 	}
@@ -507,13 +496,13 @@ static int GLSL_InitGPUShader2(shaderProgram_t * program, const char *name, int 
 
 	Q_strncpyz(program->name, name, sizeof(program->name));
 
-	program->program = qglCreateProgram();
+	// program->program = qglCreateProgram();
 	program->attribs = attribs;
 
 	if (!(GLSL_CompileGPUShader(program->program, &program->vertexShader, vpCode, strlen(vpCode), GL_VERTEX_SHADER)))
 	{
 		ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_VERTEX_SHADER\n", name);
-		qglDeleteProgram(program->program);
+		// qglDeleteProgram(program->program);
 		return 0;
 	}
 
@@ -522,55 +511,49 @@ static int GLSL_InitGPUShader2(shaderProgram_t * program, const char *name, int 
 		if(!(GLSL_CompileGPUShader(program->program, &program->fragmentShader, fpCode, strlen(fpCode), GL_FRAGMENT_SHADER)))
 		{
 			ri.Printf(PRINT_ALL, "GLSL_InitGPUShader2: Unable to load \"%s\" as GL_FRAGMENT_SHADER\n", name);
-			qglDeleteProgram(program->program);
+			// qglDeleteProgram(program->program);
 			return 0;
 		}
 	}
 
-	if(attribs & ATTR_POSITION)
-		qglBindAttribLocation(program->program, ATTR_INDEX_POSITION, "attr_Position");
+	// if(attribs & ATTR_POSITION)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_POSITION, "attr_Position");
 
-	if(attribs & ATTR_TEXCOORD)
-		qglBindAttribLocation(program->program, ATTR_INDEX_TEXCOORD, "attr_TexCoord0");
+	// if(attribs & ATTR_TEXCOORD)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_TEXCOORD, "attr_TexCoord0");
 
-	if(attribs & ATTR_LIGHTCOORD)
-		qglBindAttribLocation(program->program, ATTR_INDEX_LIGHTCOORD, "attr_TexCoord1");
+	// if(attribs & ATTR_LIGHTCOORD)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_LIGHTCOORD, "attr_TexCoord1");
 
-//  if(attribs & ATTR_TEXCOORD2)
-//      qglBindAttribLocation(program->program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
+	// if(attribs & ATTR_TANGENT)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_TANGENT, "attr_Tangent");
 
-//  if(attribs & ATTR_TEXCOORD3)
-//      qglBindAttribLocation(program->program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
+	// if(attribs & ATTR_NORMAL)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_NORMAL, "attr_Normal");
 
-	if(attribs & ATTR_TANGENT)
-		qglBindAttribLocation(program->program, ATTR_INDEX_TANGENT, "attr_Tangent");
+	// if(attribs & ATTR_COLOR)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_COLOR, "attr_Color");
 
-	if(attribs & ATTR_NORMAL)
-		qglBindAttribLocation(program->program, ATTR_INDEX_NORMAL, "attr_Normal");
+	// if(attribs & ATTR_PAINTCOLOR)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_PAINTCOLOR, "attr_PaintColor");
 
-	if(attribs & ATTR_COLOR)
-		qglBindAttribLocation(program->program, ATTR_INDEX_COLOR, "attr_Color");
+	// if(attribs & ATTR_LIGHTDIRECTION)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_LIGHTDIRECTION, "attr_LightDirection");
 
-	if(attribs & ATTR_PAINTCOLOR)
-		qglBindAttribLocation(program->program, ATTR_INDEX_PAINTCOLOR, "attr_PaintColor");
+	// if(attribs & ATTR_BONE_INDEXES)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
 
-	if(attribs & ATTR_LIGHTDIRECTION)
-		qglBindAttribLocation(program->program, ATTR_INDEX_LIGHTDIRECTION, "attr_LightDirection");
+	// if(attribs & ATTR_BONE_WEIGHTS)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
 
-	if(attribs & ATTR_BONE_INDEXES)
-		qglBindAttribLocation(program->program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
+	// if(attribs & ATTR_POSITION2)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_POSITION2, "attr_Position2");
 
-	if(attribs & ATTR_BONE_WEIGHTS)
-		qglBindAttribLocation(program->program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
+	// if(attribs & ATTR_NORMAL2)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_NORMAL2, "attr_Normal2");
 
-	if(attribs & ATTR_POSITION2)
-		qglBindAttribLocation(program->program, ATTR_INDEX_POSITION2, "attr_Position2");
-
-	if(attribs & ATTR_NORMAL2)
-		qglBindAttribLocation(program->program, ATTR_INDEX_NORMAL2, "attr_Normal2");
-
-	if(attribs & ATTR_TANGENT2)
-		qglBindAttribLocation(program->program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
+	// if(attribs & ATTR_TANGENT2)
+	// 	qglBindAttribLocation(program->program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
 
 	GLSL_LinkProgram(program->program);
 
@@ -638,7 +621,8 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 	size = 0;
 	for (i = 0; i < UNIFORM_COUNT; i++)
 	{
-		uniforms[i] = qglGetUniformLocation(program->program, uniformsInfo[i].name);
+		uniforms[i] = i;
+		// uniforms[i] = qglGetUniformLocation(program->program, uniformsInfo[i].name);
 
 		if (uniforms[i] == -1)
 			continue;
@@ -706,7 +690,7 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 
 	*compare = value;
 
-	qglProgramUniform1iEXT(program->program, uniforms[uniformNum], value);
+	// qglProgramUniform1iEXT(program->program, uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value)
@@ -730,7 +714,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	*compare = value;
 	
-	qglProgramUniform1fEXT(program->program, uniforms[uniformNum], value);
+	// qglProgramUniform1fEXT(program->program, uniforms[uniformNum], value);
 }
 
 void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v)
@@ -755,7 +739,7 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 	compare[0] = v[0];
 	compare[1] = v[1];
 
-	qglProgramUniform2fEXT(program->program, uniforms[uniformNum], v[0], v[1]);
+	// qglProgramUniform2fEXT(program->program, uniforms[uniformNum], v[0], v[1]);
 }
 
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v)
@@ -779,7 +763,7 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 
 	VectorCopy(v, compare);
 
-	qglProgramUniform3fEXT(program->program, uniforms[uniformNum], v[0], v[1], v[2]);
+	// qglProgramUniform3fEXT(program->program, uniforms[uniformNum], v[0], v[1], v[2]);
 }
 
 void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v)
@@ -803,7 +787,7 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 
 	VectorCopy4(v, compare);
 
-	qglProgramUniform4fEXT(program->program, uniforms[uniformNum], v[0], v[1], v[2], v[3]);
+	// qglProgramUniform4fEXT(program->program, uniforms[uniformNum], v[0], v[1], v[2], v[3]);
 }
 
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v)
@@ -827,7 +811,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 
 	VectorCopy5(v, compare);
 
-	qglProgramUniform1fvEXT(program->program, uniforms[uniformNum], 5, v);
+	// qglProgramUniform1fvEXT(program->program, uniforms[uniformNum], 5, v);
 }
 
 void GLSL_SetUniformMat4(shaderProgram_t *program, int uniformNum, const mat4_t matrix)
@@ -851,7 +835,7 @@ void GLSL_SetUniformMat4(shaderProgram_t *program, int uniformNum, const mat4_t 
 
 	Mat4Copy(matrix, compare);
 
-	qglProgramUniformMatrix4fvEXT(program->program, uniforms[uniformNum], 1, GL_FALSE, matrix);
+	// qglProgramUniformMatrix4fvEXT(program->program, uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
 
 void GLSL_SetUniformMat4BoneMatrix(shaderProgram_t *program, int uniformNum, /*const*/ mat4_t *matrix, int numMatricies)
@@ -883,7 +867,7 @@ void GLSL_SetUniformMat4BoneMatrix(shaderProgram_t *program, int uniformNum, /*c
 
 	Com_Memcpy(compare, matrix, numMatricies * sizeof(mat4_t));
 
-	qglProgramUniformMatrix4fvEXT(program->program, uniforms[uniformNum], numMatricies, GL_FALSE, &matrix[0][0]);
+	// qglProgramUniformMatrix4fvEXT(program->program, uniforms[uniformNum], numMatricies, GL_FALSE, &matrix[0][0]);
 }
 
 void GLSL_DeleteGPUShader(shaderProgram_t *program)
@@ -892,17 +876,17 @@ void GLSL_DeleteGPUShader(shaderProgram_t *program)
 	{
 		if (program->vertexShader)
 		{
-			qglDetachShader(program->program, program->vertexShader);
-			qglDeleteShader(program->vertexShader);
+			// qglDetachShader(program->program, program->vertexShader);
+			// qglDeleteShader(program->vertexShader);
 		}
 
 		if (program->fragmentShader)
 		{
-			qglDetachShader(program->program, program->fragmentShader);
-			qglDeleteShader(program->fragmentShader);
+			// qglDetachShader(program->program, program->fragmentShader);
+			// qglDeleteShader(program->fragmentShader);
 		}
 
-		qglDeleteProgram(program->program);
+		// qglDeleteProgram(program->program);
 
 		if (program->uniformBuffer)
 		{
@@ -1424,25 +1408,6 @@ void GLSL_InitGPUShaders(void)
 		numEtcShaders++;
 	}
 
-#if 0
-	attribs = ATTR_POSITION | ATTR_TEXCOORD;
-	extradefines[0] = '\0';
-
-	if (!GLSL_InitGPUShader(&tr.testcubeShader, "testcube", attribs, qtrue, extradefines, qtrue, NULL, NULL))
-	{
-		ri.Error(ERR_FATAL, "Could not load testcube shader!");
-	}
-
-	GLSL_InitUniforms(&tr.testcubeShader);
-
-	GLSL_SetUniformInt(&tr.testcubeShader, UNIFORM_TEXTUREMAP, TB_COLORMAP);
-
-	GLSL_FinishGPUShader(&tr.testcubeShader);
-
-	numEtcShaders++;
-#endif
-
-
 	endTime = ri.Milliseconds();
 
 	ri.Printf(PRINT_ALL, "loaded %i GLSL shaders (%i gen %i light %i etc) in %5.2f seconds\n", 
@@ -1456,9 +1421,10 @@ void GLSL_ShutdownGPUShaders(void)
 
 	ri.Printf(PRINT_ALL, "------- GLSL_ShutdownGPUShaders -------\n");
 
-	for (i = 0; i < ATTR_INDEX_COUNT; i++)
-		qglDisableVertexAttribArray(i);
-
+	for ( i = 0; i < ATTR_INDEX_COUNT; i++ )
+	{
+		// qglDisableVertexAttribArray(i);
+	}
 	GL_BindNullProgram();
 
 	for ( i = 0; i < GENERICDEF_COUNT; i++)

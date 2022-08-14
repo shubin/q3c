@@ -394,11 +394,11 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		else
 		{
 			R_IssuePendingRenderCommands();
-			qglEnable( GL_STENCIL_TEST );
-			qglStencilMask( ~0U );
-			qglClearStencil( 0U );
-			qglStencilFunc( GL_ALWAYS, 0U, ~0U );
-			qglStencilOp( GL_KEEP, GL_INCR, GL_INCR );
+			// qglEnable( GL_STENCIL_TEST );
+			// qglStencilMask( ~0U );
+			// qglClearStencil( 0U );
+			// qglStencilFunc( GL_ALWAYS, 0U, ~0U );
+			// qglStencilOp( GL_KEEP, GL_INCR, GL_INCR );
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -407,7 +407,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		// this is only reached if it was on and is now off
 		if ( r_measureOverdraw->modified ) {
 			R_IssuePendingRenderCommands();
-			qglDisable( GL_STENCIL_TEST );
+			// qglDisable( GL_STENCIL_TEST );
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -437,8 +437,6 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		int	err;
 
 		R_IssuePendingRenderCommands();
-		if ((err = qglGetError()) != GL_NO_ERROR)
-			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!", err);
 	}
 
 	if (glConfig.stereoEnabled) {
@@ -462,7 +460,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 			if(r_anaglyphMode->modified)
 			{
 				// clear both, front and backbuffer.
-				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				// qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 				backEnd.colorMask[0] = GL_FALSE;
 				backEnd.colorMask[1] = GL_FALSE;
 				backEnd.colorMask[2] = GL_FALSE;
@@ -474,22 +472,22 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 					if (tr.msaaResolveFbo)
 					{
 						FBO_Bind(tr.msaaResolveFbo);
-						qglClear(GL_COLOR_BUFFER_BIT);
+						// qglClear(GL_COLOR_BUFFER_BIT);
 					}
 
 					if (tr.renderFbo)
 					{
 						FBO_Bind(tr.renderFbo);
-						qglClear(GL_COLOR_BUFFER_BIT);
+						// qglClear(GL_COLOR_BUFFER_BIT);
 					}
 
 					FBO_Bind(NULL);
 				}
 
-				qglDrawBuffer(GL_FRONT);
-				qglClear(GL_COLOR_BUFFER_BIT);
-				qglDrawBuffer(GL_BACK);
-				qglClear(GL_COLOR_BUFFER_BIT);
+				// qglDrawBuffer(GL_FRONT);
+				// qglClear(GL_COLOR_BUFFER_BIT);
+				// qglDrawBuffer(GL_BACK);
+				// qglClear(GL_COLOR_BUFFER_BIT);
 
 				r_anaglyphMode->modified = qfalse;
 			}
@@ -533,9 +531,9 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		{
 			cmd->commandId = RC_DRAW_BUFFER;
 
-			if(r_anaglyphMode->modified)
+			if ( r_anaglyphMode->modified )
 			{
-				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				// qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 				backEnd.colorMask[0] = 0;
 				backEnd.colorMask[1] = 0;
 				backEnd.colorMask[2] = 0;

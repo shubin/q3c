@@ -293,7 +293,7 @@ void RB_TestFlare( flare_t *f ) {
 	}
 
 	// read back the z buffer contents
-	qglReadPixels( f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth );
+	// qglReadPixels( f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth );
 
 	// if we're doing multisample rendering, switch to the old FBO
 	if (tr.msaaResolveFbo)

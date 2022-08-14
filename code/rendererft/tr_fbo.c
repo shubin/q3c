@@ -30,47 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 R_CheckFBO
 =============
 */
-qboolean R_CheckFBO(const FBO_t * fbo)
-{
-	GLenum code = qglCheckNamedFramebufferStatusEXT(fbo->frameBuffer, GL_FRAMEBUFFER);
-
-	if(code == GL_FRAMEBUFFER_COMPLETE)
-		return qtrue;
-
-	// an error occurred
-	switch (code)
-	{
-		case GL_FRAMEBUFFER_UNSUPPORTED:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Unsupported framebuffer format\n", fbo->name);
-			break;
-
-		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete attachment\n", fbo->name);
-			break;
-
-		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing attachment\n", fbo->name);
-			break;
-
-		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing draw buffer\n", fbo->name);
-			break;
-
-		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete, missing read buffer\n", fbo->name);
-			break;
-
-		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) Framebuffer incomplete multisample\n", fbo->name);
-			break;
-
-		default:
-			ri.Printf(PRINT_WARNING, "R_CheckFBO: (%s) unknown error 0x%X\n", fbo->name, code);
-			break;
-	}
-
-	return qfalse;
-}
+qboolean R_CheckFBO( const FBO_t *fbo ) { return qtrue; }
 
 /*
 ============
@@ -107,7 +67,7 @@ FBO_t          *FBO_Create(const char *name, int width, int height)
 	fbo->width = width;
 	fbo->height = height;
 
-	qglGenFramebuffers(1, &fbo->frameBuffer);
+	// qglGenFramebuffers(1, &fbo->frameBuffer);
 
 	return fbo;
 }
@@ -171,23 +131,29 @@ void FBO_CreateBuffer(FBO_t *fbo, int format, int index, int multisample)
 
 	absent = *pRenderBuffer == 0;
 	if (absent)
-		qglGenRenderbuffers(1, pRenderBuffer);
+	{
+		// qglGenRenderbuffers(1, pRenderBuffer);
+	}
 
 	if (multisample && glRefConfig.framebufferMultisample)
-		qglNamedRenderbufferStorageMultisampleEXT(*pRenderBuffer, multisample, format, fbo->width, fbo->height);
+	{
+		// qglNamedRenderbufferStorageMultisampleEXT(*pRenderBuffer, multisample, format, fbo->width, fbo->height);
+	}
 	else
-		qglNamedRenderbufferStorageEXT(*pRenderBuffer, format, fbo->width, fbo->height);
+	{
+		// qglNamedRenderbufferStorageEXT(*pRenderBuffer, format, fbo->width, fbo->height);
+	}
 
 	if(absent)
 	{
 		if (attachment == 0)
 		{
-			qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, GL_DEPTH_ATTACHMENT,   GL_RENDERBUFFER, *pRenderBuffer);
-			qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *pRenderBuffer);
+			// qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, GL_DEPTH_ATTACHMENT,   GL_RENDERBUFFER, *pRenderBuffer);
+			// qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *pRenderBuffer);
 		}
 		else
 		{
-			qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, attachment, GL_RENDERBUFFER, *pRenderBuffer);
+			// qglNamedFramebufferRenderbufferEXT(fbo->frameBuffer, attachment, GL_RENDERBUFFER, *pRenderBuffer);
 		}
 	}
 }
@@ -206,7 +172,7 @@ void FBO_AttachImage(FBO_t *fbo, image_t *image, GLenum attachment, GLuint cubem
 	if (image->flags & IMGFLAG_CUBEMAP)
 		target = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + cubemapside;
 
-	qglNamedFramebufferTexture2DEXT(fbo->frameBuffer, attachment, target, image->texnum, 0);
+	// qglNamedFramebufferTexture2DEXT(fbo->frameBuffer, attachment, target, image->texnum, 0);
 	index = attachment - GL_COLOR_ATTACHMENT0;
 	if (index >= 0 && index <= 15)
 		fbo->colorImage[index] = image;
@@ -264,8 +230,8 @@ void FBO_Init(void)
 	if (r_hdr->integer && glRefConfig.textureFloat)
 		hdrFormat = GL_RGBA16F_ARB;
 
-	if (glRefConfig.framebufferMultisample)
-		qglGetIntegerv(GL_MAX_SAMPLES, &multisample);
+	// if (glRefConfig.framebufferMultisample)
+	// 	qglGetIntegerv(GL_MAX_SAMPLES, &multisample);
 
 	if (r_ext_framebuffer_multisample->integer < multisample)
 		multisample = r_ext_framebuffer_multisample->integer;
@@ -303,7 +269,7 @@ void FBO_Init(void)
 	if (tr.renderFbo)
 	{
 		GL_BindFramebuffer(GL_FRAMEBUFFER, tr.renderFbo->frameBuffer);
-		qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		// qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
 	if (tr.screenScratchImage)
@@ -440,17 +406,25 @@ void FBO_Shutdown(void)
 		for(j = 0; j < glRefConfig.maxColorAttachments; j++)
 		{
 			if(fbo->colorBuffers[j])
-				qglDeleteRenderbuffers(1, &fbo->colorBuffers[j]);
+			{
+				// qglDeleteRenderbuffers(1, &fbo->colorBuffers[j]);
+			}
 		}
 
 		if(fbo->depthBuffer)
-			qglDeleteRenderbuffers(1, &fbo->depthBuffer);
+		{
+			// qglDeleteRenderbuffers(1, &fbo->depthBuffer);
+		}
 
 		if(fbo->stencilBuffer)
-			qglDeleteRenderbuffers(1, &fbo->stencilBuffer);
+		{
+			// qglDeleteRenderbuffers(1, &fbo->stencilBuffer);
+		}
 
 		if(fbo->frameBuffer)
-			qglDeleteFramebuffers(1, &fbo->frameBuffer);
+		{
+			// qglDeleteFramebuffers(1, &fbo->frameBuffer);
+		}
 	}
 }
 
@@ -556,8 +530,8 @@ void FBO_BlitFromTexture(struct image_s *src, vec4_t inSrcTexCorners, vec2_t inS
 
 	FBO_Bind(dst);
 
-	qglViewport( 0, 0, width, height );
-	qglScissor( 0, 0, width, height );
+	// qglViewport( 0, 0, width, height );
+	// qglScissor( 0, 0, width, height );
 
 	Mat4Ortho(0, width, height, 0, 0, 1, projection);
 
@@ -653,9 +627,9 @@ void FBO_FastBlit(FBO_t *src, ivec4_t srcBox, FBO_t *dst, ivec4_t dstBox, int bu
 
 	GL_BindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
 	GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFb);
-	qglBlitFramebuffer(srcBoxFinal[0], srcBoxFinal[1], srcBoxFinal[2], srcBoxFinal[3],
-	                      dstBoxFinal[0], dstBoxFinal[1], dstBoxFinal[2], dstBoxFinal[3],
-						  buffers, filter);
+	// qglBlitFramebuffer(srcBoxFinal[0], srcBoxFinal[1], srcBoxFinal[2], srcBoxFinal[3],
+	//                       dstBoxFinal[0], dstBoxFinal[1], dstBoxFinal[2], dstBoxFinal[3],
+	// 					  buffers, filter);
 
 	GL_BindFramebuffer(GL_FRAMEBUFFER, 0);
 	glState.currentFBO = NULL;

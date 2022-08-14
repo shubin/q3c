@@ -40,7 +40,7 @@ R_DrawElements
 
 void R_DrawElements( int numIndexes, int firstIndex )
 {
-	qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, BUFFER_OFFSET(firstIndex * sizeof(glIndex_t)));
+	// qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, BUFFER_OFFSET(firstIndex * sizeof(glIndex_t)));
 }
 
 
@@ -106,7 +106,7 @@ static void DrawTris (shaderCommands_t *input) {
 	GL_BindToTMU( tr.whiteImage, TB_COLORMAP );
 
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
-	qglDepthRange( 0, 0 );
+	// qglDepthRange( 0, 0 );
 
 	{
 		shaderProgram_t *sp = &tr.textureColorShader;
@@ -122,7 +122,7 @@ static void DrawTris (shaderCommands_t *input) {
 		R_DrawElements(input->numIndexes, input->firstIndex);
 	}
 
-	qglDepthRange( 0, 1 );
+	// qglDepthRange( 0, 1 );
 }
 
 
@@ -1469,7 +1469,7 @@ static void DrawWireframe( shaderCommands_t *input, float lineWidth ) {
 	//qglDepthMask( GL_FALSE );
 	//glPolygonOffset( 5, 5 );
 	//qglDepthRange( 1, 1 );
-	qglLineWidth( 4 );
+	// qglLineWidth( 4 );
 	{
 		shaderProgram_t *sp = &tr.textureColorShader;
 		vec4_t color;
@@ -1564,7 +1564,7 @@ void RB_StageIteratorGeneric( void )
 	// set polygon offset if necessary
 	if ( input->shader->polygonOffset )
 	{
-		qglEnable( GL_POLYGON_OFFSET_FILL );
+		// qglEnable( GL_POLYGON_OFFSET_FILL );
 	}
 
 	//
@@ -1579,7 +1579,7 @@ void RB_StageIteratorGeneric( void )
 		//
 		if ( input->shader->polygonOffset )
 		{
-			qglDisable( GL_POLYGON_OFFSET_FILL );
+			// qglDisable( GL_POLYGON_OFFSET_FILL );
 		}
 
 		return;
@@ -1599,7 +1599,7 @@ void RB_StageIteratorGeneric( void )
 		//
 		if ( input->shader->polygonOffset )
 		{
-			qglDisable( GL_POLYGON_OFFSET_FILL );
+			// qglDisable( GL_POLYGON_OFFSET_FILL );
 		}
 
 		return;
@@ -1648,7 +1648,7 @@ void RB_StageIteratorGeneric( void )
 	//
 	if ( input->shader->polygonOffset )
 	{
-		qglDisable( GL_POLYGON_OFFSET_FILL );
+		// qglDisable( GL_POLYGON_OFFSET_FILL );
 	}
 }
 

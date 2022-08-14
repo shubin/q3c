@@ -273,7 +273,7 @@ static void InitOpenGL( void )
 		glConfig.textureEnvAddAvailable = qtrue;
 
 		// OpenGL driver constants
-		qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
+		// qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
 		glConfig.maxTextureSize = temp;
 
 		// stubbed or broken drivers may have reported 0...
@@ -282,11 +282,11 @@ static void InitOpenGL( void )
 			glConfig.maxTextureSize = 0;
 		}
 
-		qglGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &temp );
+		// qglGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &temp );
 		glConfig.numTextureUnits = temp;
 
 		// reserve 160 components for other uniforms
-		qglGetIntegerv( GL_MAX_VERTEX_UNIFORM_COMPONENTS, &temp );
+		// qglGetIntegerv( GL_MAX_VERTEX_UNIFORM_COMPONENTS, &temp );
 		glRefConfig.glslMaxAnimatedBones = Com_Clamp( 0, IQM_MAX_JOINTS, ( temp - 160 ) / 16 );
 		if ( glRefConfig.glslMaxAnimatedBones < 12 ) {
 			glRefConfig.glslMaxAnimatedBones = 0;
@@ -294,7 +294,8 @@ static void InitOpenGL( void )
 	}
 
 	// check for GLSL function textureCubeLod()
-	if ( r_cubeMapping->integer && !QGL_VERSION_ATLEAST( 3, 0 ) ) {
+	if ( r_cubeMapping->integer /* && !QGL_VERSION_ATLEAST( 3, 0 ) */ )
+	{
 		ri.Printf( PRINT_WARNING, "WARNING: Disabled r_cubeMapping because it requires OpenGL 3.0\n" );
 		ri.Cvar_Set( "r_cubeMapping", "0" );
 	}
@@ -309,41 +310,6 @@ GL_CheckErrors
 ==================
 */
 void GL_CheckErrs( char *file, int line ) {
-	int		err;
-	char	s[64];
-
-	err = qglGetError();
-	if ( err == GL_NO_ERROR ) {
-		return;
-	}
-	if ( r_ignoreGLErrors->integer ) {
-		return;
-	}
-	switch( err ) {
-		case GL_INVALID_ENUM:
-			strcpy( s, "GL_INVALID_ENUM" );
-			break;
-		case GL_INVALID_VALUE:
-			strcpy( s, "GL_INVALID_VALUE" );
-			break;
-		case GL_INVALID_OPERATION:
-			strcpy( s, "GL_INVALID_OPERATION" );
-			break;
-		case GL_STACK_OVERFLOW:
-			strcpy( s, "GL_STACK_OVERFLOW" );
-			break;
-		case GL_STACK_UNDERFLOW:
-			strcpy( s, "GL_STACK_UNDERFLOW" );
-			break;
-		case GL_OUT_OF_MEMORY:
-			strcpy( s, "GL_OUT_OF_MEMORY" );
-			break;
-		default:
-			Com_sprintf( s, sizeof(s), "%i", err);
-			break;
-	}
-
-	ri.Error( ERR_FATAL, "GL_CheckErrors: %s in %s at line %d", s , file, line);
 }
 
 
@@ -460,7 +426,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	int padwidth, linelen;
 	GLint packAlign;
 	
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	// qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 	
 	linelen = width * 3;
 	padwidth = PAD(linelen, packAlign);
@@ -470,7 +436,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	
 	bufstart = PADP((intptr_t) buffer + *offset, packAlign);
 
-	qglReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
+	// qglReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
 	
 	*offset = bufstart - buffer;
 	*padlen = padwidth - linelen;
@@ -893,7 +859,7 @@ const void *RB_TakeVideoFrameCmd( const void *data )
 
 	cmd = (const videoFrameCommand_t *)data;
 	
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	// qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 	linelen = cmd->width * 3;
 
@@ -906,8 +872,8 @@ const void *RB_TakeVideoFrameCmd( const void *data )
 
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 		
-	qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
-		GL_UNSIGNED_BYTE, cBuf);
+	// qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
+	// 	GL_UNSIGNED_BYTE, cBuf);
 
 	memcount = padwidth * cmd->height;
 
@@ -962,9 +928,9 @@ const void *RB_TakeVideoFrameCmd( const void *data )
 */
 void GL_SetDefaultState( void )
 {
-	qglClearDepth( 1.0f );
+	// qglClearDepth( 1.0f );
 
-	qglCullFace(GL_FRONT);
+	// qglCullFace(GL_FRONT);
 
 	GL_BindNullTextures();
 
@@ -973,8 +939,8 @@ void GL_SetDefaultState( void )
 
 	GL_TextureMode( r_textureMode->string );
 
-	//qglShadeModel( GL_SMOOTH );
-	qglDepthFunc( GL_LEQUAL );
+	// qglShadeModel( GL_SMOOTH );
+	// qglDepthFunc( GL_LEQUAL );
 
 	//
 	// make sure our GL state vector is set correctly
@@ -987,27 +953,31 @@ void GL_SetDefaultState( void )
 	GL_BindNullProgram();
 
 	if (glRefConfig.vertexArrayObject)
-		qglBindVertexArray(0);
+	{
+		// qglBindVertexArray(0);
+	}
 
-	qglBindBuffer(GL_ARRAY_BUFFER, 0);
-	qglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	// qglBindBuffer(GL_ARRAY_BUFFER, 0);
+	// qglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glState.currentVao = NULL;
 	glState.vertexAttribsEnabled = 0;
 
-	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-	qglDepthMask( GL_TRUE );
-	qglDisable( GL_DEPTH_TEST );
-	qglEnable( GL_SCISSOR_TEST );
-	qglDisable( GL_CULL_FACE );
-	qglDisable( GL_BLEND );
+	// qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+	// qglDepthMask( GL_TRUE );
+	// qglDisable( GL_DEPTH_TEST );
+	// qglEnable( GL_SCISSOR_TEST );
+	// qglDisable( GL_CULL_FACE );
+	// qglDisable( GL_BLEND );
 
 	if (glRefConfig.seamlessCubeMap)
-		qglEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	{
+		// qglEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	}
 
 	// GL_POLYGON_OFFSET_FILL will be glEnable()d when this is used
-	qglPolygonOffset( r_offsetFactor->value, r_offsetUnits->value );
+	// qglPolygonOffset( r_offsetFactor->value, r_offsetUnits->value );
 
-	qglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	// FIXME: get color of sky
+	// qglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	// FIXME: get color of sky
 }
 
 /*
@@ -1039,80 +1009,6 @@ GfxInfo_f
 */
 void GfxInfo_f( void ) 
 {
-	const char *enablestrings[] =
-	{
-		"disabled",
-		"enabled"
-	};
-	const char *fsstrings[] =
-	{
-		"windowed",
-		"fullscreen"
-	};
-
-	ri.Printf( PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string );
-	ri.Printf( PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
-	ri.Printf( PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
-	ri.Printf( PRINT_ALL, "GL_EXTENSIONS: " );
-	// glConfig.extensions_string is a limited length so get the full list directly
-	if ( qglGetStringi )
-	{
-		GLint numExtensions;
-		int i;
-
-		qglGetIntegerv( GL_NUM_EXTENSIONS, &numExtensions );
-		for ( i = 0; i < numExtensions; i++ )
-		{
-			ri.Printf( PRINT_ALL, "%s ", qglGetStringi( GL_EXTENSIONS, i ) );
-		}
-	}
-	else
-	{
-		R_PrintLongString( (char *) qglGetString( GL_EXTENSIONS ) );
-	}
-	ri.Printf( PRINT_ALL, "\n" );
-	ri.Printf( PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize );
-	ri.Printf( PRINT_ALL, "GL_MAX_TEXTURE_IMAGE_UNITS: %d\n", glConfig.numTextureUnits );
-	ri.Printf( PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
-	ri.Printf( PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1] );
-	if ( glConfig.displayFrequency )
-	{
-		ri.Printf( PRINT_ALL, "%d\n", glConfig.displayFrequency );
-	}
-	else
-	{
-		ri.Printf( PRINT_ALL, "N/A\n" );
-	}
-	if ( glConfig.deviceSupportsGamma )
-	{
-		ri.Printf( PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits );
-	}
-	else
-	{
-		ri.Printf( PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits );
-	}
-
-	ri.Printf( PRINT_ALL, "texturemode: %s\n", r_textureMode->string );
-	ri.Printf( PRINT_ALL, "picmip: %d\n", r_picmip->integer );
-	ri.Printf( PRINT_ALL, "texture bits: %d\n", r_texturebits->integer );
-	ri.Printf( PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0 ] );
-	ri.Printf( PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0] );
-	ri.Printf( PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression!=TC_NONE] );
-	if ( r_vertexLight->integer || glConfig.hardwareType == GLHW_PERMEDIA2 )
-	{
-		ri.Printf( PRINT_ALL, "HACK: using vertex lightmap approximation\n" );
-	}
-	if ( glConfig.hardwareType == GLHW_RAGEPRO )
-	{
-		ri.Printf( PRINT_ALL, "HACK: ragePro approximations\n" );
-	}
-	if ( glConfig.hardwareType == GLHW_RIVA128 )
-	{
-		ri.Printf( PRINT_ALL, "HACK: riva128 approximations\n" );
-	}
-	if ( r_finish->integer ) {
-		ri.Printf( PRINT_ALL, "Forcing glFinish\n" );
-	}
 }
 
 /*
@@ -1122,49 +1018,6 @@ GfxMemInfo_f
 */
 void GfxMemInfo_f( void ) 
 {
-	switch (glRefConfig.memInfo)
-	{
-		case MI_NONE:
-		{
-			ri.Printf(PRINT_ALL, "No extension found for GPU memory info.\n");
-		}
-		break;
-		case MI_NVX:
-		{
-			int value;
-
-			qglGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &value);
-			ri.Printf(PRINT_ALL, "GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX: %ikb\n", value);
-
-			qglGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &value);
-			ri.Printf(PRINT_ALL, "GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX: %ikb\n", value);
-
-			qglGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &value);
-			ri.Printf(PRINT_ALL, "GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX: %ikb\n", value);
-
-			qglGetIntegerv(GL_GPU_MEMORY_INFO_EVICTION_COUNT_NVX, &value);
-			ri.Printf(PRINT_ALL, "GPU_MEMORY_INFO_EVICTION_COUNT_NVX: %i\n", value);
-
-			qglGetIntegerv(GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX, &value);
-			ri.Printf(PRINT_ALL, "GPU_MEMORY_INFO_EVICTED_MEMORY_NVX: %ikb\n", value);
-		}
-		break;
-		case MI_ATI:
-		{
-			// GL_ATI_meminfo
-			int value[4];
-
-			qglGetIntegerv(GL_VBO_FREE_MEMORY_ATI, &value[0]);
-			ri.Printf(PRINT_ALL, "VBO_FREE_MEMORY_ATI: %ikb total %ikb largest aux: %ikb total %ikb largest\n", value[0], value[1], value[2], value[3]);
-
-			qglGetIntegerv(GL_TEXTURE_FREE_MEMORY_ATI, &value[0]);
-			ri.Printf(PRINT_ALL, "TEXTURE_FREE_MEMORY_ATI: %ikb total %ikb largest aux: %ikb total %ikb largest\n", value[0], value[1], value[2], value[3]);
-
-			qglGetIntegerv(GL_RENDERBUFFER_FREE_MEMORY_ATI, &value[0]);
-			ri.Printf(PRINT_ALL, "RENDERBUFFER_FREE_MEMORY_ATI: %ikb total %ikb largest aux: %ikb total %ikb largest\n", value[0], value[1], value[2], value[3]);
-		}
-		break;
-	}
 }
 
 /*
@@ -1402,7 +1255,9 @@ void R_InitQueries(void)
 		return;
 
 	if (r_drawSunRays->integer)
-		qglGenQueries(ARRAY_LEN(tr.sunFlareQuery), tr.sunFlareQuery);
+	{
+		// qglGenQueries(ARRAY_LEN(tr.sunFlareQuery), tr.sunFlareQuery);
+	}
 }
 
 void R_ShutDownQueries(void)
@@ -1411,7 +1266,9 @@ void R_ShutDownQueries(void)
 		return;
 
 	if (r_drawSunRays->integer)
-		qglDeleteQueries(ARRAY_LEN(tr.sunFlareQuery), tr.sunFlareQuery);
+	{
+		// qglDeleteQueries(ARRAY_LEN(tr.sunFlareQuery), tr.sunFlareQuery);
+	}
 }
 
 /*
@@ -1509,13 +1366,6 @@ void R_Init( void ) {
 
 	R_InitQueries();
 
-
-	err = qglGetError();
-	if ( err != GL_NO_ERROR )
-		ri.Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
-
-	// print info
-	GfxInfo_f();
 	ri.Printf( PRINT_ALL, "----- finished R_Init -----\n" );
 }
 

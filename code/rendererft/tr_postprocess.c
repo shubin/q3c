@@ -282,7 +282,7 @@ static qboolean RB_UpdateSunFlareVis(void)
 		for (iter=0 ; ; ++iter)
 		{
 			GLint available = 0;
-			qglGetQueryObjectiv(tr.sunFlareQuery[tr.sunFlareQueryIndex], GL_QUERY_RESULT_AVAILABLE, &available);
+			// qglGetQueryObjectiv(tr.sunFlareQuery[tr.sunFlareQueryIndex], GL_QUERY_RESULT_AVAILABLE, &available);
 			if (available)
 				break;
 		}
@@ -290,7 +290,7 @@ static qboolean RB_UpdateSunFlareVis(void)
 		ri.Printf(PRINT_DEVELOPER, "Waited %d iterations\n", iter);
 	}
 	
-	qglGetQueryObjectuiv(tr.sunFlareQuery[tr.sunFlareQueryIndex], GL_QUERY_RESULT, &sampleCount);
+	// qglGetQueryObjectuiv(tr.sunFlareQuery[tr.sunFlareQueryIndex], GL_QUERY_RESULT, &sampleCount);
 	return sampleCount > 0;
 }
 
@@ -466,9 +466,9 @@ void RB_GaussianBlur(float blur)
 		FBO_FastBlit(tr.quarterFbo[0], NULL, tr.textureScratchFbo[0], NULL, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		// set the alpha channel
-		qglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+		// qglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 		FBO_BlitFromTexture(tr.whiteImage, NULL, NULL, tr.textureScratchFbo[0], NULL, NULL, color, GLS_DEPTHTEST_DISABLE);
-		qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		// qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 		// blur the tiny buffer horizontally and vertically
 		RB_HBlur(tr.textureScratchFbo[0], tr.textureScratchFbo[1], factor);
