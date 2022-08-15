@@ -123,20 +123,19 @@ typedef struct vaoAttrib_s
 }
 vaoAttrib_t;
 
-typedef struct vao_s
-{
-	char            name[MAX_QPATH];
+typedef struct vao_s {
+	char name[MAX_QPATH];
 
-	uint32_t        vao;
+	uint32_t vao;
 
-	uint32_t        vertexesVBO;
-	int             vertexesSize;	// amount of memory data allocated for all vertices in bytes
-	vaoAttrib_t     attribs[VAO_MAX_ATTRIBS];
+	struct ft_buffer *vb;
+	int               vertexesSize; // amount of memory data allocated for all vertices in bytes
+	vaoAttrib_t       attribs[VAO_MAX_ATTRIBS];
 
-	uint32_t        frameSize;      // bytes to skip per frame when doing vertex animation
+	uint32_t frameSize; // bytes to skip per frame when doing vertex animation
 
-	uint32_t        indexesIBO;
-	int             indexesSize;	// amount of memory data allocated for all triangles in bytes
+	struct ft_buffer *ib;
+	int               indexesSize; // amount of memory data allocated for all triangles in bytes
 } vao_t;
 
 //===============================================================================
@@ -1662,6 +1661,7 @@ typedef struct {
 } trGlobals_t;
 
 #define FRAME_COUNT 2
+#define PIPELINE_COUNT 1
 
 struct ft_frame_data {
 	struct ft_semaphore      *present_semaphore;
@@ -1673,6 +1673,7 @@ struct ft_frame_data {
 };
 
 typedef struct {
+	enum ft_renderer_api renderer_api;
 	struct ft_instance  *instance;
 	struct ft_device    *device;
 	struct ft_queue     *queue;
@@ -1683,6 +1684,9 @@ typedef struct {
 	uint32_t             image_index;
 
 	struct ft_command_buffer *cmd;
+
+	struct ft_pipeline              *pipeline_2d;
+	struct ft_descriptor_set_layout *dsl_2d;
 } ftContext_t;
 
 extern backEndState_t backEnd;

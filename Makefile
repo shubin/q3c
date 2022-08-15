@@ -375,7 +375,7 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu")
   
   # FIXME:
   ifneq ($(BUILD_RENDERER_FLUENT),0)
-    CLIENT_CFLAGS += -I$(HOME)/fluent/fluent-examples/deps/fluent/sources -I$(HOME)/fluent/fluent-examples/deps/fluent/third_party 
+    CLIENT_CFLAGS += -I$(HOME)/fluent/fluent-examples/deps/fluent/sources -I$(HOME)/fluent/fluent-examples/deps/fluent/third_party -I./code/rendererft/glsl/bin
   endif
 
   OPTIMIZEVM = -O3

@@ -1,8 +1,117 @@
 #include "tr_local.h"
 
+FT_DECLARE_SHADER( single_texture_vert );
+FT_DECLARE_SHADER( single_texture_frag );
+
+// FIXME: link it
+#include "shader_single_texture_vert.c"
+#include "shader_single_texture_frag.c"
+
 extern struct ft_wsi_info SDL_wsiInfo;
 
 ftContext_t ft;
+
+static inline void CreatePipelines( void )
+{
+	struct ft_shader     *shader;
+	struct ft_shader_info shader_info = {
+	    .vertex   = get_single_texture_vert_shader( ft.renderer_api ),
+	    .fragment = get_single_texture_frag_shader( ft.renderer_api ),
+	};
+	ft_create_shader( ft.device, &shader_info, &shader );
+
+	ft_create_descriptor_set_layout( ft.device, shader, &ft.dsl_2d );
+
+	struct ft_vertex_layout vertex_layout = {
+	    .binding_info_count = 3, // 3 for 2d pipeline
+	    .binding_infos =
+	        {
+	            [0] =
+	                {
+	                    .binding    = 0,
+	                    .input_rate = FT_VERTEX_INPUT_RATE_VERTEX,
+	                    .stride     = sizeof( vec4_t ),
+	                },
+	            [1] =
+	                {
+	                    .binding    = 1,
+	                    .input_rate = FT_VERTEX_INPUT_RATE_VERTEX,
+	                    .stride     = sizeof( color4ub_t ),
+	                },
+	            [2] =
+	                {
+	                    .binding    = 2,
+	                    .input_rate = FT_VERTEX_INPUT_RATE_VERTEX,
+	                    .stride     = sizeof( vec2_t ),
+	                },
+	            [3] =
+	                {
+	                    .binding    = 3,
+	                    .input_rate = FT_VERTEX_INPUT_RATE_VERTEX,
+	                    .stride     = sizeof( vec2_t ),
+	                },
+	        },
+	    .attribute_info_count = 3, // 3 for 2d pipeline
+	    .attribute_infos =
+	        {
+	            [0] =
+	                {
+	                    .binding  = 0,
+	                    .location = 0,
+	                    .offset   = 0,
+	                    .format   = FT_FORMAT_R32G32B32A32_SFLOAT,
+	                },
+	            [1] =
+	                {
+	                    .binding  = 1,
+	                    .location = 1,
+	                    .offset   = 0,
+	                    .format   = FT_FORMAT_R8G8B8A8_UNORM,
+	                },
+	            [2] =
+	                {
+	                    .binding  = 2,
+	                    .location = 2,
+	                    .offset   = 0,
+	                    .format   = FT_FORMAT_R32G32_SFLOAT,
+	                },
+	            [3] =
+	                {
+	                    .binding  = 3,
+	                    .location = 3,
+	                    .offset   = 0,
+	                    .format   = FT_FORMAT_R32G32_SFLOAT,
+	                },
+	        },
+	};
+
+	struct ft_pipeline_info pipeline_info = {
+	    .name                  = "2d_pipeline",
+	    .type                  = FT_PIPELINE_TYPE_GRAPHICS,
+	    .shader                = shader,
+	    .descriptor_set_layout = ft.dsl_2d,
+	    .sample_count          = 1,
+	    .topology              = FT_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+	    .vertex_layout         = vertex_layout,
+	    .rasterizer_info =
+	        {
+	            .cull_mode    = FT_CULL_MODE_NONE,
+	            .polygon_mode = FT_POLYGON_MODE_FILL,
+	        },
+	    .depth_state_info =
+	        {
+	            .depth_test  = false,
+	            .depth_write = false,
+	        },
+	    .color_attachment_count      = 1,
+	    .color_attachment_formats[0] = ft_get_swapchain_format( ft.swapchain ),
+	    .depth_stencil_format        = FT_FORMAT_D32_SFLOAT,
+	};
+
+	ft_create_pipeline( ft.device, &pipeline_info, &ft.pipeline_2d );
+
+	ft_destroy_shader( ft.device, shader );
+}
 
 void FT_Init( void )
 {
@@ -83,6 +192,8 @@ void FT_Init( void )
 		};
 
 		ft_create_image( ft.device, &depth_image_info, &ft.depth_image );
+
+		CreatePipelines();
 	}
 
 	GL_SetDefaultState();
@@ -91,6 +202,9 @@ void FT_Init( void )
 void FT_Shutdown( void )
 {
 	ft_queue_wait_idle( ft.queue );
+
+	ft_destroy_pipeline( ft.device, ft.pipeline_2d );
+	ft_destroy_descriptor_set_layout( ft.device, ft.dsl_2d );
 
 	ft_destroy_image( ft.device, ft.depth_image );
 

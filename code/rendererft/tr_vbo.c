@@ -151,6 +151,22 @@ vao_t *R_CreateVao(const char *name, byte *vertexes, int vertexesSize, byte *ind
 
 	vao->vertexesSize = vertexesSize;
 
+	ft_create_buffer( ft.device,
+	                  &( struct ft_buffer_info ){
+	                      .descriptor_type = FT_DESCRIPTOR_TYPE_VERTEX_BUFFER,
+	                      .name            = name,
+	                      .size            = vao->vertexesSize,
+	                      .memory_usage    = FT_MEMORY_USAGE_CPU_TO_GPU,
+	                  },
+	                  &vao->vb );
+
+	if ( vertexes )
+	{
+		void *mem = ft_map_memory( ft.device, vao->vb );
+		memcpy( mem, vertexes, vao->vertexesSize );
+		ft_unmap_memory( ft.device, vao->vb );
+	}
+
 	// qglGenBuffers(1, &vao->vertexesVBO);
 
 	// qglBindBuffer(GL_ARRAY_BUFFER, vao->vertexesVBO);
@@ -158,6 +174,22 @@ vao_t *R_CreateVao(const char *name, byte *vertexes, int vertexesSize, byte *ind
 
 
 	vao->indexesSize = indexesSize;
+
+	ft_create_buffer( ft.device,
+	                  &( struct ft_buffer_info ){
+	                      .descriptor_type = FT_DESCRIPTOR_TYPE_INDEX_BUFFER,
+	                      .name            = name,
+	                      .size            = vao->indexesSize,
+	                      .memory_usage    = FT_MEMORY_USAGE_CPU_TO_GPU,
+	                  },
+	                  &vao->ib );
+
+	if ( indexes )
+	{
+		void *mem = ft_map_memory( ft.device, vao->ib );
+		memcpy( mem, indexes, vao->indexesSize );
+		ft_unmap_memory( ft.device, vao->ib );
+	}
 
 	// qglGenBuffers(1, &vao->indexesIBO);
 
@@ -304,6 +336,18 @@ vao_t *R_CreateVao2(const char *name, int numVertexes, srfVert_t *verts, int num
 
 	vao->vertexesSize = dataSize;
 
+	ft_create_buffer( ft.device,
+	                  &( struct ft_buffer_info ){
+	                      .descriptor_type = FT_DESCRIPTOR_TYPE_VERTEX_BUFFER,
+	                      .name            = name,
+	                      .size            = vao->vertexesSize,
+	                      .memory_usage    = FT_MEMORY_USAGE_CPU_TO_GPU,
+	                  },
+	                  &vao->vb );
+	void *mem = ft_map_memory( ft.device, vao->vb );
+	memcpy( mem, data, vao->vertexesSize );
+	ft_unmap_memory( ft.device, vao->vb );
+
 	// qglGenBuffers(1, &vao->vertexesVBO);
 
 	// qglBindBuffer(GL_ARRAY_BUFFER, vao->vertexesVBO);
@@ -312,6 +356,18 @@ vao_t *R_CreateVao2(const char *name, int numVertexes, srfVert_t *verts, int num
 
 	// create IBO
 	vao->indexesSize = numIndexes * sizeof(glIndex_t);
+
+	ft_create_buffer( ft.device,
+	                  &( struct ft_buffer_info ){
+	                      .descriptor_type = FT_DESCRIPTOR_TYPE_INDEX_BUFFER,
+	                      .name            = name,
+	                      .size            = vao->indexesSize,
+	                      .memory_usage    = FT_MEMORY_USAGE_CPU_TO_GPU,
+	                  },
+	                  &vao->ib );
+	mem = ft_map_memory( ft.device, vao->ib );
+	memcpy( mem, indexes, vao->indexesSize );
+	ft_unmap_memory( ft.device, vao->ib );
 
 	// qglGenBuffers(1, &vao->indexesIBO);
 
@@ -517,31 +573,33 @@ void R_InitVaos(void)
 R_ShutdownVaos
 ============
 */
-void R_ShutdownVaos(void)
+void R_ShutdownVaos( void )
 {
-	int             i;
-	vao_t          *vao;
+	int    i;
+	vao_t *vao;
 
-	ri.Printf(PRINT_ALL, "------- R_ShutdownVaos -------\n");
+	ri.Printf( PRINT_ALL, "------- R_ShutdownVaos -------\n" );
 
 	R_BindNullVao();
 
-	for(i = 0; i < tr.numVaos; i++)
+	for ( i = 0; i < tr.numVaos; i++ )
 	{
 		vao = tr.vaos[i];
 
-		if(vao->vao)
+		if ( vao->vao )
 		{
 			// qglDeleteVertexArrays(1, &vao->vao);
 		}
 
-		if(vao->vertexesVBO)
+		if ( vao->vb )
 		{
+			ft_destroy_buffer( ft.device, vao->vb );
 			// qglDeleteBuffers(1, &vao->vertexesVBO);
 		}
 
-		if(vao->indexesIBO)
+		if ( vao->ib )
 		{
+			ft_destroy_buffer( ft.device, vao->ib );
 			// qglDeleteBuffers(1, &vao->indexesIBO);
 		}
 	}
@@ -633,6 +691,10 @@ void RB_UpdateTessVao(unsigned int attribBits)
 			{
 				// note: tess has a VBO where stride == size
 				// qglBufferSubData(GL_ARRAY_BUFFER, vAtb->offset, tess.numVertexes * vAtb->stride, tess.attribPointers[attribIndex]);
+				uint8_t *mem = ft_map_memory( ft.device, tess.vao->vb );
+				memcpy( mem + vAtb->offset, tess.attribPointers[attribIndex],
+				        tess.numVertexes * vAtb->stride );
+				ft_unmap_memory( ft.device, tess.vao->vb );
 			}
 
 			if (attribBits & attribBit)
@@ -661,6 +723,9 @@ void RB_UpdateTessVao(unsigned int attribBits)
 		// orphan old index buffer so we don't stall on it
 		// qglBufferData(GL_ELEMENT_ARRAY_BUFFER, tess.vao->indexesSize, NULL, GL_DYNAMIC_DRAW);
 
+		void *mem = ft_map_memory( ft.device, tess.vao->ib );
+		memcpy( mem, tess.indexes, tess.numIndexes * sizeof( tess.indexes[0] ) );
+		ft_unmap_memory( ft.device, tess.vao->ib );
 		// qglBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, tess.numIndexes * sizeof(tess.indexes[0]), tess.indexes);
 	}
 }
@@ -808,6 +873,10 @@ void VaoCache_Commit(void)
 
 		if (vcq.vertexCommitSize)
 		{
+			uint8_t *mem = ft_map_memory( ft.device, vc.vao->vb );
+			memcpy( mem + vc.vertexOffset, vcq.vertexes, vcq.vertexCommitSize );
+			ft_unmap_memory( ft.device, vc.vao->vb );
+
 			// qglBindBuffer(GL_ARRAY_BUFFER, vc.vao->vertexesVBO);
 			// qglBufferSubData(GL_ARRAY_BUFFER, vc.vertexOffset, vcq.vertexCommitSize, vcq.vertexes);
 			vc.vertexOffset += vcq.vertexCommitSize;
@@ -815,6 +884,10 @@ void VaoCache_Commit(void)
 
 		if (vcq.indexCommitSize)
 		{
+			uint8_t *mem = ft_map_memory( ft.device, vc.vao->ib );
+			memcpy( mem + vc.indexOffset, vcq.indexes, vcq.indexCommitSize );
+			ft_unmap_memory( ft.device, vc.vao->ib );
+
 			// qglBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vc.vao->indexesIBO);
 			// qglBufferSubData(GL_ELEMENT_ARRAY_BUFFER, vc.indexOffset, vcq.indexCommitSize, vcq.indexes);
 			vc.indexOffset += vcq.indexCommitSize;

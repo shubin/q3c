@@ -40,6 +40,7 @@ R_DrawElements
 
 void R_DrawElements( int numIndexes, int firstIndex )
 {
+	ft_cmd_draw_indexed(ft.cmd, numIndexes, 1, firstIndex, 0, 0);
 	// qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, BUFFER_OFFSET(firstIndex * sizeof(glIndex_t)));
 }
 

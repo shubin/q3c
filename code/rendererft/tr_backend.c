@@ -655,6 +655,12 @@ void	RB_SetGL2D (void) {
 
 	GL_Cull( CT_TWO_SIDED );
 
+	ft_cmd_bind_pipeline( ft.cmd, ft.pipeline_2d );
+	ft_cmd_set_viewport( ft.cmd, 0, 0, width, height, 0.0f, 1.0f );
+	ft_cmd_set_scissor( ft.cmd, 0, 0, width, height );
+	ft_cmd_push_constants( ft.cmd, ft.pipeline_2d, 0, sizeof( glState.modelviewProjection ),
+	                       &glState.modelviewProjection );
+
 	// set time for 2D shaders
 	backEnd.refdef.time = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001;
