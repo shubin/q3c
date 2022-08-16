@@ -651,24 +651,23 @@ void SetTeam( gentity_t *ent, const char *s ) {
 					"cp \"Blue team has too many players.\n\"" );
 				return; // ignore the request
 			}
-#if defined( QC )
-			if ( g_gametype.integer == GT_TEAM2V2 ) {
-				if ( team == TEAM_RED && TeamCount( clientNum, TEAM_RED ) >= 2 ) {
-					trap_SendServerCommand( clientNum,
-						"cp \"Red team has too many players.\n\"" );
-					return; // ignore the request
-				}
-				if ( team == TEAM_BLUE && TeamCount( clientNum, TEAM_BLUE ) >= 2 ) {
-					trap_SendServerCommand( clientNum,
-						"cp \"Blue team has too many players.\n\"" );
-					return; // ignore the request
-				}
-			}
-#endif
 
 			// It's ok, the team we are switching to has less or same number of players
 		}
-
+#if defined( QC )
+		if ( g_gametype.integer == GT_TEAM2V2 ) {
+			if ( team == TEAM_RED && TeamCount( clientNum, TEAM_RED ) >= 2 ) {
+				trap_SendServerCommand( clientNum,
+					"cp \"Red team has too many players.\n\"" );
+				return; // ignore the request
+			}
+			if ( team == TEAM_BLUE && TeamCount( clientNum, TEAM_BLUE ) >= 2 ) {
+				trap_SendServerCommand( clientNum,
+					"cp \"Blue team has too many players.\n\"" );
+				return; // ignore the request
+			}
+		}
+#endif
 	} else {
 		// force them to spectators if there aren't any spots free
 		team = TEAM_FREE;
