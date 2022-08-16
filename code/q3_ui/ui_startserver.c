@@ -92,6 +92,7 @@ static const char *gametype_items[] = {
 #if defined( QC )
 	"Free For All",
 	"Tournament",
+	"TDM 2v2",
 #else
 	"Free For All",
 	"Team Deathmatch",
@@ -102,8 +103,8 @@ static const char *gametype_items[] = {
 };
 
 #if defined( QC )
-static int gametype_remap[] = {GT_FFA, GT_TOURNAMENT};
-static int gametype_remap2[] = {0, 1, 0};
+static int gametype_remap[] = {GT_FFA, GT_TOURNAMENT, GT_TEAM2V2 };
+static int gametype_remap2[] = {0, 1, 2, 0};
 #else
 static int gametype_remap[] = {GT_FFA, GT_TEAM, GT_TOURNAMENT, GT_CTF};
 static int gametype_remap2[] = {0, 2, 0, 1, 3};
@@ -274,6 +275,11 @@ static void StartServer_GametypeEvent( void* ptr, int event ) {
 	if( gametype_remap[s_startserver.gametype.curvalue] == GT_FFA ) {
 		matchbits |= ( 1 << GT_SINGLE_PLAYER );
 	}
+#if defined( QC )
+	if( gametype_remap[s_startserver.gametype.curvalue] == GT_TEAM2V2 ) {
+		matchbits |= ( 1 << GT_TEAM );
+	}
+#endif
 	for( i = 0; i < count; i++ ) {
 		info = UI_GetArenaInfoByNumber( i );
 	
