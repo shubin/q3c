@@ -52,6 +52,9 @@ void hud_drawfollow( void ) {
 CG_Draw2DQC
 =================
 */
+
+void CG_DrawVote( void ); // cg_draw.c
+
 void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	//CG_DrawPic( 370 + CHAR_WIDTH*3 + TEXT_ICON_SPACE, 432, ICON_SIZE, ICON_SIZE, cgs.media.armorIcon );
 	//qch_drawpic( hud_bounds.left + 100, hud_bounds.top + 100, 100, 100, cgs.media.armorIcon );

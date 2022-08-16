@@ -2105,7 +2105,10 @@ static void CG_DrawSpectator(void) {
 CG_DrawVote
 =================
 */
-static void CG_DrawVote(void) {
+#if !defined( QC )
+static
+#endif
+void CG_DrawVote(void) {
 	char	*s;
 	int		sec;
 
