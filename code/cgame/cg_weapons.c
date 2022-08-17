@@ -241,7 +241,11 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 	le->lifeRate = 1.0 / (le->endTime - le->startTime);
  
 	re->shaderTime = cg.time / 1000.0f;
+#if defined( QC )
+	re->reType = RT_LIGHTNING;
+#else
 	re->reType = RT_RAIL_CORE;
+#endif
 	re->customShader = cgs.media.railCoreShader;
  
 	VectorCopy(start, re->origin);
