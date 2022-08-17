@@ -282,7 +282,7 @@ void RE_StretchPic ( float x, float y, float w, float h,
 #if defined( QC )
 /*
 =============
-RE_StretchPic
+RE_DrawQuad
 =============
 */
 void RE_DrawQuad( 
