@@ -206,7 +206,7 @@ draw_again:
 		hud_drawbar( centerx, y, 760, 68, 0.5f, 0.0f, scores->client == cg.clientNum ? myColor : gray2 );
 		hud_drawbar( centerx + 124, y + 34, 68, 68, 0.5f, 0.5f, translucent );
 		trap_R_SetColor( NULL );
-		hud_drawpic( centerx - 346, y + 34, 58, 58, 0.5f, 0.5f, hud_media.face[ci->champion] );
+		hud_drawpic( centerx - 346, y + 34, 58, 58, 0.5f, 0.5f, hud_media.smallface[ci->champion] );
 		hud_drawcolorstring( centerx - 290, y + 46, 0.5f, hud_media.font_regular, ci->name, NULL, 0, 0, qfalse );
 
 		text = va( "%d", ci->score );

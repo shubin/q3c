@@ -25,7 +25,11 @@ void hud_drawstatus( void ) {
 	cs = &champion_stats[ ps->champion ];
 
 	// draw head
-	hud_drawpic( hud_bounds.left + 160, hud_bounds.bottom - 160, 160, 160, 0.5f, 0.5f, hud_media.face[cg.predictedPlayerState.champion] );
+	if ( hud_media.bigface[cg.predictedPlayerState.champion] ) {
+		hud_drawpic( hud_bounds.left + 80 - 36, hud_bounds.bottom - 240 - 36, 196, 196, 0, 0, hud_media.bigface[cg.predictedPlayerState.champion] );
+	} else {
+		hud_drawpic( hud_bounds.left + 80, hud_bounds.bottom - 240, 160, 160, 0, 0, hud_media.smallface[cg.predictedPlayerState.champion] );
+	}
 
 	// draw health
 	hud_drawpic( hud_bounds.left + 256, hud_bounds.bottom - 174, 40, 40, 0.5f, 0.5f, hud_media.icon_health );

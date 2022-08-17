@@ -31,7 +31,8 @@ typedef struct {
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
 	qhandle_t	ringgauge, ringglow, abbg;
 	qhandle_t	skillicon[NUM_CHAMPIONS];
-	qhandle_t	face[NUM_CHAMPIONS];
+	qhandle_t	bigface[NUM_CHAMPIONS];
+	qhandle_t	smallface[NUM_CHAMPIONS];
 	qhandle_t	gradient, radgrad;
 	qhandle_t	itemicons[MAX_ITEMS];
 } hud_media_t;

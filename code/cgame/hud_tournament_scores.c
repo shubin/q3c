@@ -91,10 +91,10 @@ void hud_drawscores_brief_tournament( void ) {
 
 	// player icons
 	if ( myScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx - 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.face[ cgs.clientinfo[ myNum ].champion ] );
+		hud_drawpic( centerx - 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.smallface[ cgs.clientinfo[ myNum ].champion ] );
 	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.face[cgs.clientinfo[enemyNum].champion] );
+		hud_drawpic( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.smallface[cgs.clientinfo[enemyNum].champion] );
 	}
 
 	if ( myScore != SCORE_NOT_PRESENT ) {
@@ -199,10 +199,10 @@ void hud_drawscores_tournament( void ) {
 	hud_drawbar( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
 	hud_drawbar( centerx + 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, black );
 	if ( myScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.face[ cgs.clientinfo[myNum].champion ] );
+		hud_drawpic( centerx - 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.smallface[ cgs.clientinfo[myNum].champion ] );
 	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
-		hud_drawpic( centerx + 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.face[cgs.clientinfo[enemyNum].champion] );
+		hud_drawpic( centerx + 160, hud_bounds.top + 90, 58, 58, 0.5f, 0.5f, hud_media.smallface[cgs.clientinfo[enemyNum].champion] );
 	}
 	
 	hud_drawbar( centerx - 5, hud_bounds.top + 152, 935, 60, 1.0f, 0.0f, header );

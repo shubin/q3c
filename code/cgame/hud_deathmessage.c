@@ -52,7 +52,11 @@ void hud_drawdeathmessage( void ) {
 	// draw the killer face
 	trap_R_SetColor( NULL );
 	if ( cg.killerInfo.clientNum >= 0 && cg.killerInfo.clientNum < cgs.maxclients ) {
-		hud_drawpic( centerx, top - 3, 128, 128, 0.5f, 1.0f, hud_media.face[cgs.clientinfo[cg.killerInfo.clientNum].champion] );
+		if ( hud_media.bigface[cgs.clientinfo[cg.killerInfo.clientNum].champion] ) {
+			hud_drawpic( centerx - 64 - 28, top - 3 - 128 - 28, 156, 156, 0, 0, hud_media.bigface[cgs.clientinfo[cg.killerInfo.clientNum].champion] );
+		} else {
+			hud_drawpic( centerx - 64, top - 3 - 128, 128, 128, 0, 0, hud_media.smallface[cgs.clientinfo[cg.killerInfo.clientNum].champion] );
+		}
 	}
 	// draw the text
 	trap_R_SetColor( NULL );

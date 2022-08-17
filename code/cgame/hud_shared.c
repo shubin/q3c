@@ -115,7 +115,11 @@ void hud_initmedia( void ) {
 	hud_media.abbg = trap_R_RegisterShader( "hud/abbg" );
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
 		hud_media.skillicon[i] = trap_R_RegisterShader( va( "hud/skill/%s", champion_names[i] ) );
-		hud_media.face[i] = trap_R_RegisterShader( va( "gfx/champions/faces/%s", champion_names[i] ) );
+		hud_media.bigface[i] = trap_R_RegisterShader( va( "hud/faces/big/%s", champion_names[i] ) );
+		hud_media.smallface[i] = trap_R_RegisterShader( va( "hud/faces/small/%s", champion_names[i] ) );
+		if ( hud_media.smallface[i] == 0 ) {
+			hud_media.smallface[i] = trap_R_RegisterShader( va( "gfx/champions/faces/%s", champion_names[i] ) );
+		}
 	}
 	hud_media.gradient = trap_R_RegisterShaderNoMip( "hud/gradient" );
 	hud_media.radgrad = trap_R_RegisterShaderNoMip( "hud/radgrad" );
