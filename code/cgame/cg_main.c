@@ -334,7 +334,11 @@ static cvarTable_t cvarTable[] = {
 #if !defined( QC )
 	{ &cg_forceModel, "cg_forceModel", "0", CVAR_ARCHIVE  },
 #endif
+#if defined( QC )
+	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE | CVAR_USERINFO },
+#else
 	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE },
+#endif
 #ifdef MISSIONPACK
 	{ &cg_deferPlayers, "cg_deferPlayers", "0", CVAR_ARCHIVE },
 #else
