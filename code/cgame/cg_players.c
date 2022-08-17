@@ -941,7 +941,11 @@ void CG_NewClientInfo( int clientNum ) {
 
 	// colors
 	v = Info_ValueForKey( configstring, "c1" );
+#if defined( QC )
+	VectorCopy( cg.friendColors[0], newInfo.color1 );
+#else
 	CG_ColorFromString( v, newInfo.color1 );
+#endif
 
 	newInfo.c1RGBA[0] = 255 * newInfo.color1[0];
 	newInfo.c1RGBA[1] = 255 * newInfo.color1[1];
@@ -949,7 +953,11 @@ void CG_NewClientInfo( int clientNum ) {
 	newInfo.c1RGBA[3] = 255;
 
 	v = Info_ValueForKey( configstring, "c2" );
+#if defined( QC )
+	VectorCopy( cg.friendColors[4], newInfo.color2 );
+#else
 	CG_ColorFromString( v, newInfo.color2 );
+#endif
 
 	newInfo.c2RGBA[0] = 255 * newInfo.color2[0];
 	newInfo.c2RGBA[1] = 255 * newInfo.color2[1];

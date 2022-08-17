@@ -537,6 +537,7 @@ static void CG_UpdateEnemyColors( void ) {
 
 static void CG_UpdateFriendColors( void ) {
 	CG_UpdateColors( &cg_friendColors, cg.friendColors );
+	CG_NewClientInfo( cg.clientNum );
 }
 
 static void CG_UpdateRedTeamColors( void ) {
