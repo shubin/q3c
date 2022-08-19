@@ -263,6 +263,14 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 
 	AxisClear( re->axis );
  
+#if defined( QC )
+	if (cg_oldRail.integer)
+	{
+		// nudge down a bit so it isn't exactly in center
+		re->origin[2] -= 6;
+		return;
+	}
+#else
 	if (cg_oldRail.integer)
 	{
 		// nudge down a bit so it isn't exactly in center
@@ -270,6 +278,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 		re->oldorigin[2] -= 8;
 		return;
 	}
+#endif
 
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
