@@ -45,6 +45,7 @@ void hud_drawobituary( void ) {
 	obituary_t *p;
 	weapon_t weapon = WP_NONE;
 	qhandle_t deathicon;
+	qboolean usemodicon;
 
 	if ( cg.showScores ) {
 		return;
@@ -56,6 +57,23 @@ void hud_drawobituary( void ) {
 	y = hud_bounds.top + 165;
 
 	for ( p = hud_obituary; p < hud_obituary + hud_numobituary; p++ ) {
+		deathicon = hud_media.icon_death;
+		usemodicon = qtrue;
+		if ( p->weapon > WP_NONE && p->weapon < WP_NUM_WEAPONS ) {
+			deathicon = hud_media.icon_weapon[p->weapon];
+			wepcolor[0] = hud_weapon_colors[p->weapon][0];
+			wepcolor[1] = hud_weapon_colors[p->weapon][1];
+			wepcolor[2] = hud_weapon_colors[p->weapon][2];
+			wepcolor[3] = color[3];
+			if ( p->weapon != WP_DIRE_ORB ) { // orb pseudo-weapon uses "square" icon so treat it as mod icon
+				usemodicon = qfalse;
+			}
+		} else {
+			deathicon = hud_media.icon_mod[p->mod];
+			wepcolor[0] = wepcolor[1] = wepcolor[2] = 1.0f;
+			wepcolor[3] = color[3];
+		}
+
 		if ( cg.time - p->time > OBITUARY_FADEOUTTIME ) {
 			color[3] = 1.0f - ( (float)cg.time - p->time - OBITUARY_FADEOUTTIME ) / ( OBITUARY_TIMEOUT - OBITUARY_FADEOUTTIME );
 		}
@@ -69,25 +87,13 @@ void hud_drawobituary( void ) {
 			y += 40;
 			continue;
 		}
-		deathicon = hud_media.icon_death;
-		if ( p->weapon > WP_NONE && p->weapon < WP_NUM_WEAPONS ) {
-			deathicon = hud_media.icon_weapon[p->weapon];
-			wepcolor[0] = hud_weapon_colors[p->weapon][0];
-			wepcolor[1] = hud_weapon_colors[p->weapon][1];
-			wepcolor[2] = hud_weapon_colors[p->weapon][2];
-			wepcolor[3] = color[3];
-		} else {
-			deathicon = hud_media.icon_mod[p->mod];
-			wepcolor[0] = wepcolor[1] = wepcolor[2] = 1.0f;
-			wepcolor[3] = color[3];
-		}
 		dim = hud_measurecolorstring( 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name );
 		hud_drawcolorstring( x, y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->killer].name, shadow, 2, 2, qfalse );
-		hud_drawcolorstring( x + dim + 64, y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->victim].name, shadow, 2, 2, qfalse );
-		if ( hud_media.icon_death != deathicon ) {
+		hud_drawcolorstring( x + dim + ( usemodicon ? 48 : 64 ), y, 0.4f, hud_media.font_regular, cgs.clientinfo[p->victim].name, shadow, 2, 2, qfalse );
+		if ( !usemodicon ) {
 			trap_R_SetColor( wepcolor );
 		}
-		hud_drawpic( x + dim + 32, y - 8, 48, 48, 0.5f, 0.5f, deathicon );
+		hud_drawpic( x + dim + ( usemodicon ? 24 : 32 ), y - 8, usemodicon ? 36 : 48, usemodicon ? 36 : 48, 0.5f, 0.5f, deathicon );
 		y += 40;
 	}
 	trap_R_SetColor( NULL );

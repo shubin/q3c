@@ -16,6 +16,11 @@ void hud_drawdeathmessage( void ) {
 	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	int i;
 
+	static float wepcolor[4];
+	weapon_t weapon = WP_NONE;
+	qhandle_t deathicon;
+	qboolean usemodicon;
+
 	if ( cg.killerInfo.clientNum < 0 || 
 		cg.killerInfo.clientNum >= MAX_CLIENTS || 
 		cg.predictedPlayerState.pm_type != PM_DEAD || 
@@ -25,6 +30,25 @@ void hud_drawdeathmessage( void ) {
 	{
 		return;
 	}
+
+	weapon = cg.killerInfo.weapon;
+	deathicon = hud_media.icon_death;
+	usemodicon = qtrue;
+	if ( weapon > WP_NONE && weapon < WP_NUM_WEAPONS ) {
+		deathicon = hud_media.icon_weapon[weapon];
+		wepcolor[0] = hud_weapon_colors[weapon][0];
+		wepcolor[1] = hud_weapon_colors[weapon][1];
+		wepcolor[2] = hud_weapon_colors[weapon][2];
+		wepcolor[3] = 1.0f;
+		if ( weapon != WP_DIRE_ORB ) { // orb pseudo-weapon uses "square" icon so treat it as mod icon
+			usemodicon = qfalse;
+		}
+	} else {
+		deathicon = hud_media.icon_mod[cg.killerInfo.mod];
+		wepcolor[0] = wepcolor[1] = wepcolor[2] = 1.0f;
+		wepcolor[3] = 1.0f;
+	}
+
 
 	// measure the text
 	centerx = ( hud_bounds.left + hud_bounds.right ) * 0.5f;
@@ -61,14 +85,17 @@ void hud_drawdeathmessage( void ) {
 	// draw the text
 	trap_R_SetColor( NULL );
 	hud_drawcolorstring( centerx - dim/2, top + 40, 0.5f, hud_media.font_regular, text, NULL, 0, 0, qfalse );
+
+
 	// draw means of death icon (weapon icon, ability icon, etc)
-	trap_R_SetColor( hud_weapon_colors[cg.killerInfo.weapon] ) ;
-	if ( cg.killerInfo.weapon > WP_NONE && cg.killerInfo.weapon < WP_NUM_WEAPONS ) {
-		hud_drawpic( centerx + dim / 2 - 80 + 12, top + 30, 80, 64, 0.0f, 0.5f, hud_media.icon_weapon[ cg.killerInfo.weapon ] );
+	if ( !usemodicon ) {
+		trap_R_SetColor( hud_weapon_colors[weapon] ) ;
+		hud_drawpic( centerx + dim / 2 - 80 + 12 + 32, top + 30, 64, 64, 0.5f, 0.5f, deathicon );
+		trap_R_SetColor( NULL );
 	} else {
-		hud_drawpic( centerx + dim / 2 - 80 + 12, top + 30, 80, 64, 0.0f, 0.5f, hud_media.icon_mod[ cg.killerInfo.mod ] );
+		hud_drawpic( centerx + dim / 2 - 80 + 12 + 32, top + 30, 48, 48, 0.5f, 0.5f, deathicon );
 	}
-	trap_R_SetColor( NULL );
+
 	if ( cg.killerInfo.health != -9999 ) {
 		// draw stack left
 		text = va( "STACK LEFT", cg.killerInfo.health, cg.killerInfo.armor );

@@ -83,7 +83,7 @@ void hud_draw_ability( void ) {
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, hud_media.ringglow );
 		trap_R_SetColor( NULL );
 		// draw the ability icon
-		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
+		hud_drawpic( gaugex, gaugey, gaugesize * 0.6f, gaugesize * 0.6f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
 		return;
 	} else {
 		// ability is not fully charged, draw the full ring semi-transparently
@@ -96,7 +96,7 @@ void hud_draw_ability( void ) {
 	if ( ps->ab_flags & ABF_ENGAGED ) {
 		// ability is enaged, so draw the icon semi-transparently
 		trap_R_SetColor( white );
-		hud_drawpic( gaugex, gaugey, gaugesize * 0.75f, gaugesize * 0.75f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
+		hud_drawpic( gaugex, gaugey, gaugesize * 0.6f, gaugesize * 0.6f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
 		if ( ps->champion == CHAMP_ANARKI && ci->abilityActivationTime != 0 ) {
 			current = cg.time - ci->abilityActivationTime;
