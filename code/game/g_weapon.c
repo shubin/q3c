@@ -196,11 +196,7 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
 
 	damage *= s_quadFactor;
 
-#if defined( UNLAGGED ) //unlagged - attack prediction #2
-	// this has to match what's on the client
-
-	damage *= s_quadFactor;
-
+#if defined( UNLAGGED )
 //unlagged - attack prediction #2
 	// this has to match what's on the client
 	r = Q_random(&seed) * M_PI * 2.0f;
