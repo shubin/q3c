@@ -203,7 +203,12 @@ void	trap_S_AddLoopingSound( int entityNum, const vec3_t origin, const vec3_t ve
 }
 
 void	trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
+#if defined( QC )
+	// CNQ3 does not implement CG_S_ADDREALLOOPINGSOUND
+	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx );
+#else
 	syscall( CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx );
+#endif
 }
 
 void	trap_S_StopLoopingSound( int entityNum ) {
