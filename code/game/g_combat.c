@@ -991,6 +991,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 #endif
 #if defined( QC )
 	float		knockback_scale = 1.0f; // knokback scale factor for more powerful rocketjumps and plasmajumps to allow various QC tricks
+	float		knockback_value;
 #endif
 
 	if (!targ->takedamage) {
@@ -1066,10 +1067,10 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( ( dflags & DAMAGE_RADIUS ) && !( dflags & DAMAGE_NO_KNOCKBACK ) ) {
 		if ( inflictor->client == NULL ) {
 			switch  ( inflictor->s.weapon ) {
-				case WP_PLASMAGUN:
-				case WP_LOUSY_PLASMAGUN:
-					knockback_scale = 2.0f;
-					break;
+				//case WP_PLASMAGUN:
+				//case WP_LOUSY_PLASMAGUN:
+				//	knockback_scale = 2.0f;
+				//	break;
 				case WP_ROCKET_LAUNCHER:
 				case WP_GRENADE_LAUNCHER:
 				case WP_TRIBOLT:
@@ -1109,7 +1110,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		mass = 200;
 
 #if defined( QC )
-		VectorScale (dir, g_knockback.value * knockback_scale * (float)knockback / mass, kvel);
+		knockback_value = ( float )knockback / mass;
+		knockback_value = knockback_value + 0.1f * ( 1.0f - knockback_value ); // knockback boost for easier splashjumps
+		VectorScale (dir, g_knockback.value * knockback_scale * knockback_value, kvel);
 #else
 		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
 #endif
