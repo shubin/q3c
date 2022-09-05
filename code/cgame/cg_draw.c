@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // active (after loading) gameplay
 
 #include "cg_local.h"
+#if defined( QC )
+#include "hud_local.h"
+#endif
 
 #ifdef MISSIONPACK
 #include "../ui/ui_shared.h"
@@ -771,6 +774,49 @@ static float CG_DrawFPS( float y ) {
 
 	return y + BIGCHAR_HEIGHT + 4;
 }
+
+#if defined( QC )
+#define QC_FPS_FRAMES 8
+static float CG_DrawFPSQC( float y ) {
+	char		*s;
+	float			w;
+	static int	previousTimes[QC_FPS_FRAMES];
+	static int	index;
+	int		i, total;
+	int		fps;
+	static	int	previous;
+	int		t, frameTime;
+
+	// don't use serverTime, because that will be drifting to
+	// correct for internet lag changes, timescales, timedemos, etc
+	t = trap_Milliseconds();
+	frameTime = t - previous;
+	previous = t;
+
+	previousTimes[index % QC_FPS_FRAMES] = frameTime;
+	index++;
+	if ( index > QC_FPS_FRAMES ) {
+		// average multiple frames together to smooth changes out a bit
+		total = 0;
+		for ( i = 0 ; i < QC_FPS_FRAMES ; i++ ) {
+			total += previousTimes[i];
+		}
+		if ( !total ) {
+			total = 1;
+		}
+		fps = 1000 * QC_FPS_FRAMES / total;
+
+		s = va( "%d", fps );
+
+		//w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
+		w = hud_measurestring( 0.6f, hud_media.font_regular, s );
+		trap_R_SetColor( NULL );
+		hud_drawstring( hud_bounds.right - w - 8, y + 32, 0.6f, hud_media.font_regular, s, colorBlack, 2, 2 );
+	}
+
+	return 0;
+}
+#endif
 
 /*
 =================
@@ -2561,6 +2607,9 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 #if defined( QC )
 	if ( !cg_drawQ3hud.integer ) {
 		CG_Draw2DQC( stereoFrame );
+		if ( cg_drawFPS.integer ) {
+			CG_DrawFPSQC( 0 );
+		}
 		return;
 	}
 #endif
