@@ -102,23 +102,23 @@ void hud_initmedia( void ) {
 	hud_media.icon_yellow_armor = cg_items[BG_FindItemByClass( "item_armor_combat" ) - bg_itemlist].icon;
 	hud_media.icon_hourglass = cg_items[BG_FindItemByClass( "item_hourglass" ) - bg_itemlist].icon;
 	for ( i = 0; i < WP_NUM_WEAPONS; i++ ) {
-		hud_media.icon_weapon[i] = trap_R_RegisterShader( hud_weapon_icons[i] );
+		hud_media.icon_weapon[i] = trap_R_RegisterShaderNoMip( hud_weapon_icons[i] );
 	}
 	for ( i = 0; i < MOD_NUM; i++ ) {
-		hud_media.icon_mod[i] = trap_R_RegisterShader( hud_mod_icons[i] );
+		hud_media.icon_mod[i] = trap_R_RegisterShaderNoMip( hud_mod_icons[i] );
 	}
-	hud_media.ammobar_background = trap_R_RegisterShader( "hud/ammobar/background" );
-	hud_media.ammobar_full = trap_R_RegisterShader( "hud/ammobar/full" );
-	hud_media.ammobar_empty = trap_R_RegisterShader( "hud/ammobar/empty" );
-	hud_media.ringgauge = trap_R_RegisterShader( "hud/ring");
-	hud_media.ringglow = trap_R_RegisterShader( "hud/ring_glow" );
-	hud_media.abbg = trap_R_RegisterShader( "hud/abbg" );
+	hud_media.ammobar_background = trap_R_RegisterShaderNoMip( "hud/ammobar/background" );
+	hud_media.ammobar_full = trap_R_RegisterShaderNoMip( "hud/ammobar/full" );
+	hud_media.ammobar_empty = trap_R_RegisterShaderNoMip( "hud/ammobar/empty" );
+	hud_media.ringgauge = trap_R_RegisterShaderNoMip( "hud/ring");
+	hud_media.ringglow = trap_R_RegisterShaderNoMip( "hud/ring_glow" );
+	hud_media.abbg = trap_R_RegisterShaderNoMip( "hud/abbg" );
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
-		hud_media.skillicon[i] = trap_R_RegisterShader( va( "hud/skill/%s", champion_names[i] ) );
-		hud_media.bigface[i] = trap_R_RegisterShader( va( "hud/faces/big/%s", champion_names[i] ) );
-		hud_media.smallface[i] = trap_R_RegisterShader( va( "hud/faces/small/%s", champion_names[i] ) );
+		hud_media.skillicon[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/%s", champion_names[i] ) );
+		hud_media.bigface[i] = trap_R_RegisterShaderNoMip( va( "hud/faces/big/%s", champion_names[i] ) );
+		hud_media.smallface[i] = trap_R_RegisterShaderNoMip( va( "hud/faces/small/%s", champion_names[i] ) );
 		if ( hud_media.smallface[i] == 0 ) {
-			hud_media.smallface[i] = trap_R_RegisterShader( va( "gfx/champions/faces/%s", champion_names[i] ) );
+			hud_media.smallface[i] = trap_R_RegisterShaderNoMip( va( "gfx/champions/faces/%s", champion_names[i] ) );
 		}
 	}
 	hud_media.gradient = trap_R_RegisterShaderNoMip( "hud/gradient" );
@@ -126,7 +126,7 @@ void hud_initmedia( void ) {
 	for ( i = 0; i < bg_numItems; i++ ) {
 		if ( bg_itemlist[i].icon != NULL && bg_itemlist[i].icon[0] )
 		{
-			hud_media.itemicons[i] = trap_R_RegisterShader( bg_itemlist[i].icon );
+			hud_media.itemicons[i] = trap_R_RegisterShaderNoMip( bg_itemlist[i].icon );
 		}
 		else {
 			hud_media.itemicons[i] = -1;
