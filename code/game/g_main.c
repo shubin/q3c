@@ -169,7 +169,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_weaponRespawn, "g_weaponrespawn", "5", 0, 0, qtrue  },
 	{ &g_weaponTeamRespawn, "g_weaponTeamRespawn", "30", 0, 0, qtrue },
 #endif
+#if defined( QC )
+	{ &g_forcerespawn, "g_forcerespawn", "5", 0, 0, qtrue },
+#else
 	{ &g_forcerespawn, "g_forcerespawn", "20", 0, 0, qtrue },
+#endif
 	{ &g_inactivity, "g_inactivity", "0", 0, 0, qtrue },
 	{ &g_debugMove, "g_debugMove", "0", 0, 0, qfalse },
 	{ &g_debugDamage, "g_debugDamage", "0", 0, 0, qfalse },

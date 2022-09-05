@@ -1322,6 +1322,7 @@ extern  vmCvar_t        cg_damagePlumPulse;
 extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
 extern	vmCvar_t		cg_enemyColors;
+extern	vmCvar_t		cg_kickScale;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

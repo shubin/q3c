@@ -246,6 +246,7 @@ vmCvar_t	cg_enemyColors;
 vmCvar_t	cg_friendColors;
 vmCvar_t	cg_redTeamColors;
 vmCvar_t	cg_blueTeamColors;
+vmCvar_t	cg_kickScale;
 #endif
 
 typedef struct {
@@ -429,6 +430,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_enemyColors, "cg_enemyColors", "22222", CVAR_ARCHIVE },
 	{ &cg_redTeamColors, "cg_redTeamColors", "11111", CVAR_ARCHIVE },
 	{ &cg_blueTeamColors, "cg_blueTeamColors", "44444", CVAR_ARCHIVE },
+	{ &cg_kickScale, "cg_kickScale", "1", CVAR_ARCHIVE },
 #endif
 };
 
