@@ -1110,9 +1110,15 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		mass = 200;
 
 #if defined( QC )
-		knockback_value = ( float )knockback / mass;
-		knockback_value = knockback_value + 0.1f * ( 1.0f - knockback_value ); // knockback boost for easier splashjumps
-		VectorScale (dir, g_knockback.value * knockback_scale * knockback_value, kvel);
+		// looks like the splashjump-helper stuff makes direct damage (lightning, shotgun, etc) too knocky
+		// let's apply these helper rules for radius damage only
+		if ( dflags & DAMAGE_RADIUS ) { 
+			knockback_value = ( float )knockback / mass;
+			knockback_value = knockback_value + 0.1f * ( 1.0f - knockback_value ); // knockback boost for easier splashjumps
+			VectorScale( dir, g_knockback.value * knockback_scale * knockback_value, kvel );
+		} else {
+			VectorScale( dir, g_knockback.value *( float )knockback / mass, kvel );
+		}
 #else
 		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
 #endif
