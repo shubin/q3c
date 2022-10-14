@@ -2152,7 +2152,7 @@ static void PM_Weapon( void ) {
 		if ( pm->cmd.buttons & BUTTON_ZOOM ) {
 			addTime = 150;
 		} else {
-			addTime = 75;
+			addTime = 100;
 		}
 #else
 		addTime = 100;

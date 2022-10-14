@@ -7,7 +7,11 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 void CG_Bullet( vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum );
 
 // and this as well
+#if defined( QC ) // WARNING: important to keep it coherent with the same definition in g_weapon.c 
+#define MACHINEGUN_SPREAD	300
+#else
 #define MACHINEGUN_SPREAD	200
+#endif
 
 /*
 =======================

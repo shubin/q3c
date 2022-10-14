@@ -161,7 +161,7 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 #define CHAINGUN_SPREAD		600
 #define CHAINGUN_DAMAGE		7
 #endif
-#if defined( QC )
+#if defined( QC ) // WARNING: important to keep it coherent with the same definition in cg_unlagged.c 
 #define MACHINEGUN_SPREAD	300
 #else
 #define MACHINEGUN_SPREAD	200
