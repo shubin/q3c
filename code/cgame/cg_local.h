@@ -1805,7 +1805,7 @@ int			trap_R_LerpTag( orientation_t *tag, clipHandle_t mod, int startFrame, int 
 void		trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset );
 qboolean	trap_R_inPVS( const vec3_t p1, const vec3_t p2 );
 #if defined( QC )
-void trap_Get_Advertisements( int *num, float *verts, char shaders[][MAX_QPATH] );
+void		trap_Get_Advertisements( int *num, float *verts, char shaders[][MAX_QPATH] );
 #endif
 
 // The glconfig_t will not change during the life of a cgame.

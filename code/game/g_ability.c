@@ -52,9 +52,9 @@ void G_GenerateDireOrbProbes( void ) {
 
 	for ( i = 0; i < NUM_PROBES; i++ ) {
 		y = 1.0f - ( i / (float)( NUM_PROBES - 1 ) ) * 2.0f;
-		r = sqrtf( 1.0f - y * y );
-		x = cosf( PHI * i ) * r;
-		z = sinf( PHI * i ) * r;
+		r = sqrt( 1.0f - y * y );
+		x = cos( PHI * i ) * r;
+		z = sin( PHI * i ) * r;
 		orb_probes[i][0] = x;
 		orb_probes[i][1] = y;
 		orb_probes[i][2] = z;

@@ -583,9 +583,9 @@ void G_RunMissile( gentity_t *ent ) {
 				//return;
 			}
 			if ( tr_orb.fraction != 1 ) {
+				vec3_t dir;
 				// stop the orb
 				VectorCopy( ent->r.currentOrigin, stoppos );
-				vec3_t dir;
 				VectorSubtract( stoppos, ent->s.pos.trBase, dir);
 				VectorNormalize(dir);
 				VectorMA( stoppos, -10, dir, stoppos );

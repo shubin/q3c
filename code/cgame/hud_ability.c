@@ -6,20 +6,20 @@ static
 void calc_sector_point( float angle, float *x, float *y ) {
 	if ( ( angle > 315.0f ) || ( angle <= 45.0f ) ) {
 		*x = 1.0f;
-		*y = tanf( DEG2RAD( angle ) );
+		*y = tan( DEG2RAD( angle ) );
 		return;
 	}
 	if ( ( angle > 45.0f ) && ( angle <= 135.0f ) ) {
-		*x = tanf( DEG2RAD( 90.0f - angle ) );
+		*x = tan( DEG2RAD( 90.0f - angle ) );
 		*y = 1.0f;
 		return;
 	}
 	if ( ( angle > 135.0f ) && ( angle <= 225.0f ) ) {
 		*x = -1.0f;
-		*y = -tanf( DEG2RAD( angle ) );
+		*y = -tan( DEG2RAD( angle ) );
 		return;
 	}
-	*x = -tanf( DEG2RAD( 90.0f - angle ) );
+	*x = -tan( DEG2RAD( 90.0f - angle ) );
 	*y = -1.0f;
 }
 
@@ -43,6 +43,16 @@ void hud_draw_ability( void ) {
 	static float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
 	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	float overall, current, dim;
+	int sec_left;
+	float gaugex, gaugey, gaugesize;
+	float x[16], y[16];
+	int num, pos;
+	int start_angle, end_angle, angle, ta;
+	float scalex, scaley, offsetx, offsety;
+	float x0, y0, x1, y1, x2, y2, x3, y3;
+	float s0, t0, s1, t1, s2, t2, s3, t3;
+
 	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
 		return;
 	}
@@ -51,20 +61,11 @@ void hud_draw_ability( void ) {
 	cent = &cg_entities[cg.snap->ps.clientNum];
 	ci = &cgs.clientinfo[cg.snap->ps.clientNum];
 
-	float overall = champion_stats[ps->champion].ability_cooldown;
-	float current = ps->ab_time;
-	float dim;
-	int sec_left;
+	overall = champion_stats[ps->champion].ability_cooldown;
+	current = ps->ab_time;
 
-	float gaugex, gaugey, gaugesize;
-
-	float x[16];
-	float y[16];
-	int num, pos;
-
-	int start_angle = 270;
-	int end_angle = (int)( 270 + current/overall * 360);
-	int angle, ta;
+	start_angle = 270;
+	end_angle = (int)( 270 + current/overall * 360);
 
 	gaugex = ( hud_bounds.left + hud_bounds.right ) / 2;
 	gaugey = hud_bounds.bottom - 160;
@@ -140,9 +141,10 @@ void hud_draw_ability( void ) {
 	}
 
 	// convert the points calculated above into real coordinates and render them in groups of 4
-	float scalex = gaugesize / 2, scaley = gaugesize / 2, offsetx = gaugex, offsety = gaugey;
-	float x0, y0, x1, y1, x2, y2, x3, y3;
-	float s0, t0, s1, t1, s2, t2, s3, t3;
+	scalex = gaugesize / 2;
+	scaley = gaugesize / 2;
+	offsetx = gaugex;
+	offsety = gaugey;
 
 	pos = 0;
 	while ( 1 ) {

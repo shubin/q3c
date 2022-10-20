@@ -40,25 +40,26 @@ typedef struct hitmarker_s {
 static qboolean DrawHitMarker( hitmarker_t *hm ) {
 	refEntity_t		ent;
 
+	float angle;
 	byte alpha = 255;
-
 	int phase = cg.time - hm->time;
+
 	if ( phase > HITMARKER_STAY_TIME + HITMARKER_DISSOLVE_TIME ) {
 		return qfalse;
 	}
 
 	if ( phase > HITMARKER_STAY_TIME ) {
 		float fphase = ( phase - HITMARKER_STAY_TIME ) / (float)HITMARKER_DISSOLVE_TIME;
-		fphase = sinf( fphase * M_PI/2 );
+		fphase = sin( fphase * M_PI/2 );
 		alpha = 255 - (int)( 255 * fphase );
 	}
 
 	memset( &ent, 0, sizeof( ent ) );
-	float angle = ( hm->angle - cg.refdefViewAngles[1] + 180.0f ) / 180.0f * M_PI;
+	angle = ( hm->angle - cg.refdefViewAngles[1] + 180.0f ) / 180.0f * M_PI;
 	ent.reType = RT_SPRITE;
 	ent.origin[0] = 75.0f;
-	ent.origin[1] = cosf( angle ) * HITMARKER_RADIUS;
-	ent.origin[2] = -sinf( angle ) * HITMARKER_RADIUS;
+	ent.origin[1] = cos( angle ) * HITMARKER_RADIUS;
+	ent.origin[2] = -sin( angle ) * HITMARKER_RADIUS;
 	ent.radius = 40;
 	ent.customShader = cgs.media.damageDirectionShader;
 	ent.rotation = hm->angle - cg.refdefViewAngles[1] - 90.0f;
@@ -100,7 +101,7 @@ void CG_AddDamageDir( int clientnum, int damage, vec3_t position ) {
 		}
 	}
 	if ( hm != NULL ) {
-		hm->angle = ( atan2f( position[1] - cg.refdef.vieworg[1], position[0] - cg.refdef.vieworg[0] ) + M_PI/2 ) / M_PI * 180.0f;
+		hm->angle = ( atan2( position[1] - cg.refdef.vieworg[1], position[0] - cg.refdef.vieworg[0] ) + M_PI/2 ) / M_PI * 180.0f;
 		hm->damage = damage;
 		hm->time = cg.time;
 		hm->clientnum = clientnum;

@@ -574,17 +574,18 @@ void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
 	vec3_t	origin, velocity;
 	vec3_t	killvector, knockvel;
 	float	distance, speed;
-	qhandle_t giblist[] = {
-		cgs.media.gibAbdomen,
-		cgs.media.gibArm,
-		cgs.media.gibChest,
-		cgs.media.gibFist,
-		cgs.media.gibFoot,
-		cgs.media.gibForearm,
-		cgs.media.gibIntestine,
-		cgs.media.gibLeg,
-		cgs.media.gibLeg,
-	};
+	qhandle_t giblist[9];
+	int i, gib;
+
+	giblist[0] = cgs.media.gibAbdomen;
+	giblist[1] = cgs.media.gibArm;
+	giblist[2] = cgs.media.gibChest;
+	giblist[3] = cgs.media.gibFist;
+	giblist[4] = cgs.media.gibFoot;
+	giblist[5] = cgs.media.gibForearm;
+	giblist[6] = cgs.media.gibIntestine;
+	giblist[7] = cgs.media.gibLeg;
+	giblist[8] = cgs.media.gibLeg;
 
 	if ( !cg_blood.integer ) {
 		return;
@@ -621,8 +622,8 @@ void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
 		return;
 	}
 
-	for ( int i = 0; i < cg_gibs.integer && i < 5; i++ ) {
-		for ( int gib = 0; gib < ARRAY_LEN(giblist); gib++ ) {
+	for ( i = 0; i < cg_gibs.integer && i < 5; i++ ) {
+		for ( gib = 0; gib < ARRAY_LEN(giblist); gib++ ) {
 			VectorCopy( playerOrigin, origin );
 			velocity[0] = crandom()*GIB_VELOCITY;
 			velocity[1] = crandom()*GIB_VELOCITY;

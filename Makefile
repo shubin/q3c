@@ -148,7 +148,7 @@ MISSIONPACK_CFLAGS=-DMISSIONPACK
 endif
 
 ifndef QC_CFLAGS
-QC_CFLAGS=-DQC
+QC_CFLAGS=-DQC -DUNLAGGED
 endif
 
 ifndef COPYDIR
@@ -1601,7 +1601,7 @@ DAGCHECK_C  = $(B)/tools/rcc/dagcheck.c
 Q3RCC       = $(B)/tools/q3rcc$(TOOLS_BINEXT)
 Q3CPP       = $(B)/tools/q3cpp$(TOOLS_BINEXT)
 Q3LCC       = $(B)/tools/q3lcc$(TOOLS_BINEXT)
-Q3ASM       = $(B)/tools/q3asm$(TOOLS_BINEXT)
+Q3ASM       = $(B)/tools/q3asm$(TOOLS_BINEXT) -vq3
 STRINGIFY   = $(B)/tools/stringify$(TOOLS_BINEXT)
 
 LBURGOBJ= \
@@ -2630,6 +2630,7 @@ QCCGOBJ_ = \
   $(B)/$(QC)/cgame/hud_crosshair.o \
   $(B)/$(QC)/cgame/hud_deathmessage.o \
   $(B)/$(QC)/cgame/hud_ffa_scores.o \
+  $(B)/$(QC)/cgame/hud_tdm_scores.o \
   $(B)/$(QC)/cgame/hud_fragmessage.o \
   $(B)/$(QC)/cgame/hud_obituary.o \
   $(B)/$(QC)/cgame/hud_pickups.o \
@@ -3143,6 +3144,9 @@ $(B)/$(QC)/cgame/bg_%.asm: $(GDIR)/bg_%.c $(Q3LCC)
 	$(DO_CGAME_Q3LCC_QC)
 
 $(B)/$(QC)/cgame/%.asm: $(CGDIR)/%.c $(Q3LCC)
+	$(DO_CGAME_Q3LCC_QC)
+
+$(B)/$(QC)/cgame/hudlib.asm: $(HUDLIBDIR)/hudlib.c $(Q3LCC)
 	$(DO_CGAME_Q3LCC_QC)
 
 $(B)/$(BASEGAME)/game/%.o: $(GDIR)/%.c

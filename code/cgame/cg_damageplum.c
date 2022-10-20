@@ -201,9 +201,10 @@ static
 damage_plum_data_t *GetDamagePlumData( int clientnum, int time ) {
 	damage_plum_data_t *data = NULL;
 	damage_plum_data_t *freeslot = NULL;
+	damage_plum_data_t *p;
 
 	if ( cg_damagePlum.integer == 2 ) {
-		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
+		for ( p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
 			if ( freeslot == NULL && p->damage == 0 ) {
 				freeslot = p;
 			}
@@ -213,7 +214,7 @@ damage_plum_data_t *GetDamagePlumData( int clientnum, int time ) {
 			}
 		}
 	} else {
-		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
+		for ( p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++) {
 			if ( freeslot == NULL && p->damage == 0 ) {
 				freeslot = p;
 			}
@@ -233,11 +234,13 @@ damage_plum_data_t *GetDamagePlumData( int clientnum, int time ) {
 static
 void AddDamagePlum( int clientnum, vec3_t origin, int damage, int time ) {
 	damage_plum_data_t *data = GetDamagePlumData( clientnum, time );
+	int sound;
+
 	if ( data != NULL ) {
 		VectorCopy( origin, data->origin );
 		data->damage += damage;
 		data->time = time;
-		int sound = MIN( MAX( 0, data->damage ), 98 )/33;
+		sound = MIN( MAX( 0, data->damage ), 98 )/33;
 
 		trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
 	}
@@ -279,13 +282,15 @@ static
 float PlumDrawString( float x, float y, float width, float height, const char *string, int align ) {
 	float string_width = strlen( string ) * width;
 	float pos = x;
+	const char *ch;
+
 	if ( align < 0 ) {
 		pos -= string_width;
 	}
 	else if ( align == 0 ) {
 		pos -= string_width/2.0f;
 	}
-	for ( const char* ch = string; *ch; ch++ ) {
+	for ( ch = string; *ch; ch++ ) {
 		pos = PlumDrawChar( pos, y, width, height, *ch );
 	}
 	return pos;
@@ -294,11 +299,22 @@ float PlumDrawString( float x, float y, float width, float height, const char *s
 static
 void DrawDamagePlum( damage_plum_data_t* dn ) {
 	vec3_t pos;
+	int dmgtime;
+	float k;
+	vec3_t screenpos;
+
+	float char_width, char_height;
+	float x, y;
+	float w, h;
+	float pulsezoom;
+
+	float color[4];
+
 	VectorCopy( dn->origin, pos );
 	pos[2] += DAMAGE_PLUM_WORLD_OFFSET;
 
-	int dmgtime = cg.time - dn->time;
-	float k = 0.0f;
+	dmgtime = cg.time - dn->time;
+	k = 0.0f;
 
 	if ( dmgtime > DAMAGE_PLUM_STAY_TIME ) {
 		k = ( dmgtime - DAMAGE_PLUM_STAY_TIME ) / (float)( DAMAGE_PLUM_DISSOLVE_TIME );
@@ -308,21 +324,20 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 	CalcModelMatrix( &cg.refdef, s_modelMatrix );
 	CalcProjectionMatrix( &cg.refdef, s_projectionMatrix );
 
-	vec3_t screenpos;
 	if ( ProjectPoint( &cg.refdef, pos, screenpos ) ) {
 		screenpos[1] = cg.refdef.height - screenpos[1];
- 		float char_width = DAMAGE_PLUM_WIDTH * cg.refdef.height / 480.0f;
-		float char_height = DAMAGE_PLUM_HEIGHT * cg.refdef.height / 480.0f;
+ 		char_width = DAMAGE_PLUM_WIDTH * cg.refdef.height / 480.0f;
+		char_height = DAMAGE_PLUM_HEIGHT * cg.refdef.height / 480.0f;
 
-		float pulsezoom = DAMAGE_PLUM_DEFAULT_SCALE;
+		pulsezoom = DAMAGE_PLUM_DEFAULT_SCALE;
 		if ( dmgtime < DAMAGE_PLUM_STAY_TIME && cg_damagePlumPulse.integer != 0 ) {
-			pulsezoom = DAMAGE_PLUM_DEFAULT_SCALE + sinf( (float)dmgtime / DAMAGE_PLUM_STAY_TIME * M_PI ) * ( DAMAGE_PLUM_PULSE_SCALE - DAMAGE_PLUM_DEFAULT_SCALE ) * ( dn->damage / 100.0f );
+			pulsezoom = DAMAGE_PLUM_DEFAULT_SCALE + sin( (float)dmgtime / DAMAGE_PLUM_STAY_TIME * M_PI ) * ( DAMAGE_PLUM_PULSE_SCALE - DAMAGE_PLUM_DEFAULT_SCALE ) * ( dn->damage / 100.0f );
 		}
 
-		float x = screenpos[0];
-		float y = screenpos[1];
-		float w = char_width;
-		float h = char_height;
+		x = screenpos[0];
+		y = screenpos[1];
+		w = char_width;
+		h = char_height;
 
 		if ( x < char_width ) x = char_width;
 		if ( y < char_height ) y = char_height;
@@ -332,7 +347,10 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 #if 1
 		y -= char_height * pulsezoom / 2.0f;
 #endif
-		float color[] = { 1, 1, 1, 1.0f - k };
+		color[0] = 1.0f;
+		color[1] = 1.0f;
+		color[2] = 1.0f;
+		color[3] = 1.0f - k;
 		trap_R_SetColor( color );
 #if 1
 		PlumDrawString( x, y, char_width * pulsezoom, char_height * pulsezoom, va( "%d", dn->damage ), 0 );
@@ -344,16 +362,19 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 
 void CG_AddDamagePlum( int clientnum, int damage, vec3_t position ) {
 	if ( damage > 0 ) {
-		if ( cg_damagePlum.integer ) {
-			AddDamagePlum( clientnum, position, damage, cg.time );
-		}
+		AddDamagePlum( clientnum, position, damage, cg.time );
 		s_last_damage_time = cg.time;
 	}
 }
 
 void CG_DrawDamagePlums( void ) {
+	damage_plum_data_t *p;
+	float color[4];
+	float x, y, w, h;
+	float phase;
+
 	if ( cg_damagePlum.integer ) {
-		for ( damage_plum_data_t *p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++ ) {
+		for ( p = s_damage_plums; p - s_damage_plums < MAX_DAMAGE_PLUMS; p++ ) {
 			if ( p->damage > 0 ) {
 				DrawDamagePlum( p );
 				if ( cg.time - p->time > DAMAGE_PLUM_STAY_TIME + DAMAGE_PLUM_DISSOLVE_TIME ) {
@@ -363,15 +384,17 @@ void CG_DrawDamagePlums( void ) {
 		}
 	}
 	if ( cg.time - s_last_damage_time < DAMAGE_CROSS_TIME && cg_hitCross.integer ) {
-		float x = cg.refdef.width / 2.0f;
-		float y = cg.refdef.height / 2.0f;
-		float w = 43.0f / 480.0f * cg.refdef.height;
-		float h = w;
+		x = cg.refdef.width / 2.0f;
+		y = cg.refdef.height / 2.0f;
+		w = 43.0f / 480.0f * cg.refdef.height;
+		h = w;
 		x -= 0.5f * w;
 		y -= 0.5f * h;
-		float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float phase = (float)( cg.time - s_last_damage_time ) / DAMAGE_CROSS_TIME;
-		color[3] = cosf( phase * (M_PI / 2.0f + M_PI / 6.0f) - M_PI / 6.0f );
+		color[0] = 1.0f;
+		color[1] = 1.0f;
+		color[2] = 1.0f;
+		phase = (float)( cg.time - s_last_damage_time ) / DAMAGE_CROSS_TIME;
+		color[3] = cos( phase * (M_PI / 2.0f + M_PI / 6.0f) - M_PI / 6.0f );
 		trap_R_SetColor( color );
 		trap_R_DrawStretchPic( x, y, w, h, 0.0f, 0.0f, 1.0f, 1.0f, cgs.media.hitCrossShader );
 	}

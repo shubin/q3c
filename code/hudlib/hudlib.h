@@ -32,7 +32,7 @@ typedef struct {
 	fonthdr_t hdr;
 	chardesc_t *charmap[65536]; // TODO: optimize some day
 	qhandle_t shader;
-	chardesc_t chars[];
+	chardesc_t chars[256];
 } font_t;
 
 extern hudbounds_t hud_bounds;

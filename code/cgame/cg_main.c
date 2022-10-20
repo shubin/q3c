@@ -2324,6 +2324,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	trap_S_ClearLoopingSounds( qtrue );
 #if defined( QC )
 	cg.blurFactor = 0.0f;
+	cg.lastColor[0] = cg.lastColor[1] = cg.lastColor[2] = cg.lastColor[3] = 1.0f;
 #endif
 }
 

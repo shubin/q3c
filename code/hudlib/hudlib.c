@@ -14,14 +14,16 @@ hudbounds_t hud_bounds;
 static font_t *s_fonts[] = { &font_regular, &font_qcde, NULL };
 
 static void hud_initfont( font_t *font ) {
-	for ( int i = 0; i < sizeof( font->charmap ) / sizeof( font->charmap[0] ); i++ ) {
+	int i;
+	for ( i = 0; i < sizeof( font->charmap ) / sizeof( font->charmap[0] ); i++ ) {
 		font->charmap[i] = NULL;
 	}
 	font->shader = trap_R_RegisterShader( font->hdr.name );
 }
 
 font_t *hud_font( const char *fontname ) {
-    for ( font_t **f = &s_fonts[0]; *f; f++ ) {
+	font_t **f;
+    for ( f = &s_fonts[0]; *f; f++ ) {
         if ( Q_stricmp( fontname, (*f)->hdr.name ) == 0 ) {
             if ( (*f)->shader == 0 ) {
                 hud_initfont( *f );
@@ -41,13 +43,13 @@ static void hud_initbounds( void ) {
 		hud_bounds.top = 0.0f;
 		hud_bounds.bottom = VIRTUAL_HEIGHT;
 		zz = 0.5f * VIRTUAL_HEIGHT * asp;
-		hud_bounds.left = floorf(0.5f * VIRTUAL_WIDTH - zz);
+		hud_bounds.left = floor(0.5f * VIRTUAL_WIDTH - zz);
 		hud_bounds.right = VIRTUAL_WIDTH - hud_bounds.left;
 	} else {
 		hud_bounds.left = 0.0f;
 		hud_bounds.right = VIRTUAL_WIDTH;;
 		zz = 0.5f * VIRTUAL_WIDTH / asp;
-		hud_bounds.top = floorf(0.5f * VIRTUAL_HEIGHT - zz);
+		hud_bounds.top = floor(0.5f * VIRTUAL_HEIGHT - zz);
 		hud_bounds.bottom = VIRTUAL_HEIGHT - hud_bounds.top;
 	}
 	hud_bounds.xscale = cgs.glconfig.vidWidth / ( hud_bounds.right - hud_bounds.left );
@@ -119,11 +121,13 @@ void hud_drawquad(
 }
 // find character by its id
 static chardesc_t* find_char( font_t *font, int c ) {
+	int i;
+
 	if ( c >= 0 && c < sizeof( font->charmap ) / sizeof( font->charmap[0] ) ) {
 		if ( font->charmap[c] != NULL ) {
 			return font->charmap[c];
 		}
-		for ( int i = 0; i < font->hdr.num_chars; i++ ) {
+		for ( i = 0; i < font->hdr.num_chars; i++ ) {
 			if ( font->chars[i].id == c ) {
 				font->charmap[c] = &font->chars[i];
 				return &font->chars[i];
@@ -192,7 +196,7 @@ float hud_drawstring( float x, float y, float scale, font_t *font, const char *s
 	return advance - x;
 }
 
-float hud_measurecolorstring(float scale, font_t *font, const char *string ) {
+float hud_measurecolorstring( float scale, font_t *font, const char *string ) {
 	chardesc_t *chr;
 	const char	*s;
 	int			xx;
@@ -298,7 +302,7 @@ void hud_bargauge(
 	bluebars = 0;
 	if ( whitebars > redbars ) {
 		whitebars = redbars;
-		bluebars = (int)ceilf(  ( value - basevalue ) / (float)barvalue );
+		bluebars = (int)ceil(  ( value - basevalue ) / (float)barvalue );
 	}
 	redbars -= whitebars;
 	for ( i = 0; i < whitebars; i++) {

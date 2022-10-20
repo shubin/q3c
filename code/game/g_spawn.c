@@ -290,8 +290,8 @@ qboolean itemclasscmp( const char *itemclass, const char *entclass_ ) {
 	}
 
 	if ( g_gametype.integer == GT_FFA && !g_noUniAmmo.integer ) {
-		return ( !strcmp( itemclass, "ammo" ) && !strncmp( entclass, "ammo_", 5 ) )
-			|| ( !strcmp( itemclass, entclass ) && strncmp( entclass, "ammo_", 5 ) );
+		return ( !strcmp( itemclass, "ammo" ) && !Q_strncmp( entclass, "ammo_", 5 ) )
+			|| ( !strcmp( itemclass, entclass ) && Q_strncmp( entclass, "ammo_", 5 ) );
 	}
 	else {
 		return !strcmp( itemclass, entclass );

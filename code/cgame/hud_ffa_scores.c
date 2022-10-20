@@ -80,7 +80,7 @@ void hud_drawscores_ffa( void ) {
 	float centerx, y, dim;
 	score_t *scores;
 	clientInfo_t *ci;
-	int d1, d2;
+	int d1, d2, i;
 	static float mapnameColor[] = { 0.79f, 0.5f, 0.33f, 1.0f };
 	static float black[] = { 0.0f, 0.0f, 0.0f, 0.8f };
 	static float gray[] = { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -114,7 +114,7 @@ void hud_drawscores_ffa( void ) {
 	hud_drawstring( centerx + 298, y + 32, 0.4f, hud_media.font_regular, "PING", NULL, 0, 0 );
 	y += 45;
 
-	for ( int i = 0; i < cg.numScores; i++ ) {
+	for ( i = 0; i < cg.numScores; i++ ) {
 		scores = &cg.scores[i];
 		if ( scores->client == cg.clientNum ) {
 			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR )

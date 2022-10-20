@@ -40,76 +40,76 @@ typedef enum { MS_VQ3, MS_ANARKI, MS_SLASH } movement_style_t;
 
 static movement_parameters_t s_mp[] = {
 	{	// VQ3
-		.pm_stopspeed = 100.0f,
-		.pm_duckScale = 0.25f,
-		.pm_swimScale = 0.50f,
+		100.0f,	// pm_stopspeed
+		0.25f,	// pm_duckScale
+		0.50f,	// pm_swimScale
 
-		.pm_accelerate = 10.0f,
-		.pm_airaccelerate = 1.0f,
-		.pm_wateraccelerate = 4.0f,
-		.pm_flyaccelerate = 8.0f,
+		10.0f,	// pm_accelerate
+		1.0f,	// pm_airaccelerate
+		4.0f,	// pm_wateraccelerate
+		8.0f,	// pm_flyaccelerate
 
-		.pm_friction = 6.0f,
-		.pm_waterfriction = 1.0f,
-		.pm_flightfriction = 3.0f,
+		6.0f,	// pm_friction
+		1.0f,	// pm_waterfriction
+		3.0f,	// pm_flightfriction
 
-		.pm_slidefriction = 0.0f,
-		.pm_slidevelocity = 1,
-		.pm_powerslide = 0.09f,
+		0.0f,	// pm_slidefriction
+		1.0f,	// pm_slidevelocity
+		0.09f,	// pm_powerslide
 
-		.cpm_pm_airstopaccelerate = 1.0f,
-		.cpm_pm_aircontrol = 0.0f,
-		.cpm_pm_strafeaccelerate = 1.0f,
-		.cpm_pm_wishspeed = 400.0f,
-		.cpm_pm_jump_z = 50.0f,
+		1.0f,	// cpm_pm_airstopaccelerate
+		0.0f,	// cpm_pm_aircontrol
+		1.0f,	// cpm_pm_strafeaccelerate
+		400.0f,	// cpm_pm_wishspeed
+		50.0f,	// cpm_pm_jump_z
 	},
 	{	// Anarki CPM
-		.pm_stopspeed = 100.0f,
-		.pm_duckScale = 0.25f,
-		.pm_swimScale = 0.50f,
+		100.0f,	// pm_stopspeed
+		0.45f,	// pm_duckScale
+		0.50f,	// pm_swimScale
 
-		.pm_accelerate = 15.0f,
-		.pm_airaccelerate = 1.0f,
-		.pm_wateraccelerate = 4.0f,
-		.pm_flyaccelerate = 8.0f,
+		15.0f,	// pm_accelerate
+		1.0f,	// pm_airaccelerate
+		4.0f,	// pm_wateraccelerate
+		8.0f,	// pm_flyaccelerate
 
-		.pm_friction = 8.0f,
-		.pm_waterfriction = 1.0f,
-		.pm_flightfriction = 3.0f,
+		8.0f,	// pm_friction
+		1.0f,	// pm_waterfriction
+		3.0f,	// pm_flightfriction
 
-		.pm_slidefriction = 0.0f,
-		.pm_slidevelocity = 1,
-		.pm_powerslide = 0.09f,
+		0.0f,	// pm_slidefriction
+		1.0f,	// pm_slidevelocity
+		0.09f,	// pm_powerslide
 
-		.cpm_pm_airstopaccelerate = 2.5f,
-		.cpm_pm_aircontrol = 150.0f,
-		.cpm_pm_strafeaccelerate = 70.0f,
-		.cpm_pm_wishspeed = 30.0f,
-		.cpm_pm_jump_z = 50.0f,
+		2.5f,	// cpm_pm_airstopaccelerate
+		150.0f,	// cpm_pm_aircontrol
+		70.0f,	// cpm_pm_strafeaccelerate
+		30.0f,	// cpm_pm_wishspeed
+		50.0f,	// cpm_pm_jump_z	
 	},
-	{
-		.pm_stopspeed = 100.0f,
-		.pm_duckScale = 0.25f,
-		.pm_swimScale = 0.50f,
+	{	// Slash
+		100.0f,	// pm_stopspeed
+		0.25f,	// pm_duckScale
+		0.50f,	// pm_swimScale
 
-		.pm_accelerate = 10.0f,
-		.pm_airaccelerate = 1.0f,
-		.pm_wateraccelerate = 4.0f,
-		.pm_flyaccelerate = 8.0f,
+		10.0f,	// pm_accelerate
+		1.0f,	// pm_airaccelerate
+		4.0f,	// pm_wateraccelerate
+		8.0f,	// pm_flyaccelerate
 
-		.pm_friction = 6.0f,
-		.pm_waterfriction = 1.0f,
-		.pm_flightfriction = 3.0f,
+		6.0f,	// pm_friction
+		1.0f,	// pm_waterfriction
+		3.0f,	// pm_flightfriction
 
-		.pm_slidefriction = 0.5f,
-		.pm_slidevelocity = 1,
-		.pm_powerslide = 0.09f,
+		0.5f,	// pm_slidefriction
+		1.0f,	// pm_slidevelocity
+		0.09f,	// pm_powerslide
 
-		.cpm_pm_airstopaccelerate = 1.0f,
-		.cpm_pm_aircontrol = 0.0f,
-		.cpm_pm_strafeaccelerate = 1.0f,
-		.cpm_pm_wishspeed = 400.0f,
-		.cpm_pm_jump_z = 50.0f,
+		1.0f,	// cpm_pm_airstopaccelerate
+		0.0f,	// cpm_pm_aircontrol
+		1.0f,	// cpm_pm_strafeaccelerate
+		400.0f,	// cpm_pm_wishspeed
+		50.0f,	// cpm_pm_jump_z
 	},
 };
 
@@ -302,11 +302,20 @@ void PM_ClipVelocity( vec3_t in, vec3_t normal, vec3_t out, float overbounce ) {
 }
 
 #if defined( QC )
+
+static double fastpow( double a, double b ) {
+	int *x = (int*)&a;
+	x[1] = ( int )( b * ( x[1] - 1072632447 ) + 1072632447 );
+	x[0] = 0;
+	return a;
+}
+
 void PM_AdjustVertically( vec3_t _in, vec3_t normal, vec3_t _out, int forceLength, int pm_slidevelocity, float pm_powerslide ) {
 	vec3_t out;
 	vec4_t in;
 	vec3_t hout;
 	vec3_t velocityPlane;
+	double inSpeed, hSpeed, angle, ratio, targetSpeed;
 
 	VectorCopy(_in, in);
 
@@ -325,18 +334,18 @@ void PM_AdjustVertically( vec3_t _in, vec3_t normal, vec3_t _out, int forceLengt
 	switch ( forceLength ) {
 		case 0: {
 			if ( pm_slidevelocity == 1 ) {
-				double inSpeed = VectorNormalize( in );
-				double hSpeed = VectorNormalize( out );
+				inSpeed = VectorNormalize( in );
+				hSpeed = VectorNormalize( out );
 				// incidence angle, between 0 (just touching, result speed at inSpeed) and M_PI/2 (perpendicular hit, result speed at hSpeed)
-				float angle = Q_acos( DotProduct( in, out ) );
-				double ratio = pow( angle * 2.0f / M_PI, pm_powerslide );
-				float targetSpeed = ratio * hSpeed + ( 1.0 - ratio ) * inSpeed;
+				angle = acos( DotProduct( in, out ) );
+				ratio = fastpow( angle * 2.0f / M_PI, pm_powerslide );
+				targetSpeed = ratio * hSpeed + ( 1.0 - ratio ) * inSpeed;
 				VectorScale( out, targetSpeed, out );
 			}
 		break;
 		}
 		case 1: {
-			double inSpeed = VectorNormalize( in );
+			inSpeed = VectorNormalize( in );
 			VectorNormalize( out );
 			VectorScale( out, inSpeed, out );
 			break;
@@ -345,7 +354,7 @@ void PM_AdjustVertically( vec3_t _in, vec3_t normal, vec3_t _out, int forceLengt
 			// scale the out vector so horizontal speed is maintained
 			VectorCopy( out, hout );
 			hout[2] = 0.0f;
-			float ratio = VectorLength( velocityPlane ) / VectorLength( hout );
+			ratio = VectorLength( velocityPlane ) / VectorLength( hout );
 			VectorScale( out, ratio, out );
 			break;
 		}

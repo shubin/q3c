@@ -5,7 +5,6 @@ Copyright (C) 2022 Sergei Shubin
 This file is part of Quake III Champions source code.
 
 Quake III Champions source code is free software; you can redistribute it
-and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of the License,
 or (at your option) any later version.
 
@@ -30,565 +29,630 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // sarge
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             75, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // G_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 9999,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 40 },
+        320, // speed
+        9999, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 40 }, // maxs
     },
     // anarki
     {
-        .base_health = 100,
-        .base_armor = 75,
-        .max_health = 150,
-        .max_armor = 150,
-        .ability_cooldown = 45,
-        .ability_duration = 30, // tenths of a second
-        .start_health = {
+        100, // base_health
+        75, // base_armor
+        150, // max_health
+        150, // max_armor
+        45, // ability_cooldown
+        30, // tenths of a second // ability_duration
+        { // start_health
             125, // GT_FFA
             125, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
+            100, // G_TEAM2V2
             100, // GT_TEAM
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             50, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 640,
-        .mins = { -12, -12, -24 },
-        .maxs = { 12, 12, 40 },
+        320, // speed
+        640, // maxspeed
+        { -12, -12, -24 }, // mins
+        { 12, 12, 40 }, // maxs
     },
     // athena
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        320, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // nyx
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        320, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // slash
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 750,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        320, // speed
+        750, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // bj
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // dk
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // doomguy
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // eisen
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // galena
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // ranger
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 175,
-        .max_armor = 150,
-        .ability_cooldown = 45,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        175, // max_health
+        150, // max_armor
+        45, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             125, // GT_FFA
             125, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             50, // GT_FFA
             50, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 40 },
+        310, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 40 }, // maxs
     },
     // strogg
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 310,
-        .maxspeed = 750,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        310, // speed
+        750, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // visor
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 320,
-        .maxspeed = 2000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        320, // speed
+        2000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // clutch
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 300,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        300, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
     // keel
     {
-        .base_health = 100,
-        .base_armor = 125,
-        .max_health = 175,
-        .max_armor = 175,
-        .ability_cooldown = 45,
-        .start_health = {
+        100, // base_health
+        125, // base_armor
+        175, // max_health
+        175, // max_armor
+        45, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             125, // GT_FFA
             125, // GT_TOURNAMENT
             125, // GT_SINGLE_PLAYER
             125, // GT_TEAM
+            125, // GT_TEAM2V2
             125, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             100, // GT_FFA
             100, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 300,
-        .maxspeed = 1000,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 40 },
+        300, // speed
+        1000, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 40 }, // maxs
     },
     // scalebearer
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 300,
-        .maxspeed = 1000,
-        .mins = { -18, -18, -24 },
-        .maxs = { 18, 18, 32 },
+        300, // speed
+        1000, // maxspeed
+        { -18, -18, -24 }, // mins
+        { 18, 18, 32 }, // maxs
     },
     // sorlag
     {
-        .base_health = 100,
-        .base_armor = 100,
-        .max_health = 200,
-        .max_armor = 200,
-        .ability_cooldown = 30,
-        .start_health = {
+        100, // base_health
+        100, // base_armor
+        200, // max_health
+        200, // max_armor
+        30, // ability_cooldown
+        -1, // ability_duration
+        { // start_health
             100, // GT_FFA
             100, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
+            100, // GT_TEAM2V2
             100, // GT_CTF
         },
-        .start_armor = {
+        { // start_armor
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .spawn_protection = {
+        { // spawn_protection
             0, // GT_FFA
             0, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
+            0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        .speed = 300,
-        .maxspeed = 750,
-        .mins = { -15, -15, -24 },
-        .maxs = { 15, 15, 32 },
+        300, // speed
+        750, // maxspeed
+        { -15, -15, -24 }, // mins
+        { 15, 15, 32 }, // maxs
     },
 };
 
@@ -653,7 +717,8 @@ char* champion_skins[NUM_CHAMPIONS] = {
 };
 
 int ParseChampionName( const char* name ) {
-    for ( int i = 0; i < NUM_CHAMPIONS; i++ ) {
+    int i;
+    for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
         if ( !Q_stricmp( name, champion_names[i] ) ) {
             return i;
         }

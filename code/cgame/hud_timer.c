@@ -4,6 +4,7 @@
 
 void hud_drawtimer( float x, float y ) {
 	static float shadow[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	int	mins, seconds, tens, msec;
 	float dim;
@@ -16,7 +17,7 @@ void hud_drawtimer( float x, float y ) {
 	seconds -= tens * 10;
 
 	dim = hud_measurestring( 0.65f, hud_media.font_qcde, va( "%d", mins ) );	
-	trap_R_SetColor( NULL );
+	trap_R_SetColor( white );
 	hud_drawstring( x - dim, y, 0.65f, hud_media.font_qcde, va( "%d", mins ), shadow, 1, 1 );
 	hud_drawstring( x, y, 0.65f, hud_media.font_qcde, va( ":%d%d", tens, seconds ), shadow, 1, 1 );
 }

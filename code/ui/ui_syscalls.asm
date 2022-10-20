@@ -89,6 +89,8 @@ equ trap_LAN_CompareServers					-86
 equ trap_FS_Seek		-87
 equ trap_SetPbClStatus -88
 
+equ trap_R_DrawQuad	-89
+
 equ	memset						-101
 equ	memcpy						-102
 equ	strncpy						-103

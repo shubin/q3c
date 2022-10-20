@@ -821,6 +821,9 @@ void BotTestAAS(vec3_t origin);
 
 extern	level_locals_t	level;
 extern	gentity_t		g_entities[MAX_GENTITIES];
+#if defined( QC )
+extern	gclient_t		g_clients[MAX_CLIENTS];
+#endif
 
 #define	FOFS(x) ((size_t)&(((gentity_t *)0)->x))
 
@@ -843,6 +846,9 @@ extern	vmCvar_t	g_speed;
 extern	vmCvar_t	g_knockback;
 extern	vmCvar_t	g_quadfactor;
 extern	vmCvar_t	g_forcerespawn;
+#if defined( QC )
+extern	vmCvar_t	g_respawnType;
+#endif
 extern	vmCvar_t	g_inactivity;
 extern	vmCvar_t	g_debugMove;
 extern	vmCvar_t	g_debugAlloc;

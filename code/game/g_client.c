@@ -267,6 +267,59 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 	return list_spot[rnd];
 }
 
+#if defined( QC )
+/*
+===========
+SelectTournamentSpawnPoint
+
+Chooses next respawn point for tournament mode, QC-style
+============
+*/
+gentity_t *SelectTournamentSpawnPoint( gclient_t *client, vec3_t origin, vec3_t angles ) {
+	int i;
+	vec3_t opponentOrigin, delta;
+	gentity_t *spot, *spawnPoint;
+	float dist, maxdist;
+
+	for ( i = 0; i < MAX_CLIENTS; i++ ) {
+		if ( i == client->ps.clientNum ) {
+			continue;
+		}
+		if ( g_clients[i].ps.persistant[PERS_TEAM] == TEAM_FREE ) {
+			break;
+		}
+	}
+	if ( i == MAX_CLIENTS ) {
+		return SelectRandomFurthestSpawnPoint( client->ps.origin, origin, angles, qfalse );
+	}
+	VectorCopy( g_clients[i].ps.origin, opponentOrigin );
+
+	spot = NULL;
+	maxdist = 0;
+	spawnPoint = NULL;
+
+	while ( ( spot = G_Find( spot, FOFS( classname ), "info_player_deathmatch" ) ) != NULL ) {
+		VectorSubtract( spot->s.origin, opponentOrigin, delta );
+		dist = VectorLength( delta );
+		if ( dist > maxdist ) {
+			maxdist = dist;
+			spawnPoint = spot;
+		}
+	}
+
+	if ( spawnPoint == NULL ) {
+		return SelectRandomFurthestSpawnPoint( client->ps.origin, origin, angles, qfalse );
+	}
+
+	VectorCopy( spawnPoint->s.origin, origin );
+	origin[2] += 9;
+	VectorCopy( spawnPoint->s.angles, angles );
+
+	return spawnPoint;
+}
+
+#endif
+
 /*
 ===========
 SelectSpawnPoint
@@ -1187,10 +1240,21 @@ void ClientSpawn(gentity_t *ent) {
 		}
 		else
 		{
+#if defined( QC )
+			if ( g_gametype.value != GT_TOURNAMENT || g_respawnType.value == 0 ) { // classic Quake III Arena spawn selection
+				// don't spawn near existing origin if possible
+				spawnPoint = SelectSpawnPoint(
+					client->ps.origin,
+					spawn_origin, spawn_angles, !!( ent->r.svFlags & SVF_BOT ) );
+			} else {
+				spawnPoint = SelectTournamentSpawnPoint( client, spawn_origin, spawn_angles );
+			}
+#else
 			// don't spawn near existing origin if possible
 			spawnPoint = SelectSpawnPoint ( 
 				client->ps.origin, 
 				spawn_origin, spawn_angles, !!(ent->r.svFlags & SVF_BOT));
+#endif
 		}
 	}
 	client->pers.teamState.state = TEAM_ACTIVE;

@@ -55,6 +55,9 @@ vmCvar_t	g_cheats;
 vmCvar_t	g_knockback;
 vmCvar_t	g_quadfactor;
 vmCvar_t	g_forcerespawn;
+#if defined( QC )
+vmCvar_t	g_respawnType;
+#endif
 vmCvar_t	g_inactivity;
 vmCvar_t	g_debugMove;
 vmCvar_t	g_debugDamage;
@@ -171,6 +174,7 @@ static cvarTable_t		gameCvarTable[] = {
 #endif
 #if defined( QC )
 	{ &g_forcerespawn, "g_forcerespawn", "5", 0, 0, qtrue },
+	{ &g_respawnType, "g_respawnType", "1", 0, 0, qtrue },
 #else
 	{ &g_forcerespawn, "g_forcerespawn", "20", 0, 0, qtrue },
 #endif

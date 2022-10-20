@@ -230,6 +230,21 @@ typedef enum {
 	// 1.32
 	G_FS_SEEK,
 
+#if defined( QC )
+	G_MEMSET = 100,
+	G_MEMCPY,
+	G_STRNCPY,
+	G_SIN,
+	G_COS,
+	G_ATAN2,
+	G_SQRT,
+	G_ACOS,
+	G_FLOOR = 110,
+	G_CEIL,
+	G_TEST_PRINT_INT,
+	G_TEST_PRINT_FLOAT,
+#endif
+
 	BOTLIB_SETUP = 200,				// ( void );
 	BOTLIB_SHUTDOWN,				// ( void );
 	BOTLIB_LIBVAR_SET,

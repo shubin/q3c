@@ -347,7 +347,8 @@ void SG_AddDamage( gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, v
 
 static
 void SG_ExecuteClientDamage( void ) {
-	for ( int i = 0; i < MAX_CLIENTS; i++ ) {
+	int i;
+	for ( i = 0; i < MAX_CLIENTS; i++ ) {
 		client_damage_t *cd = &s_client_damage[i];
 		if ( cd->targ != NULL && cd->inflictor != NULL && cd->attacker != NULL ) {
 			G_Damage( cd->targ, cd->inflictor, cd->attacker, cd->dir, cd->point, cd->damage, 0, MOD_SHOTGUN );

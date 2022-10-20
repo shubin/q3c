@@ -119,10 +119,6 @@ typedef enum {
 	CG_R_RENDERSCENE,
 	CG_R_SETCOLOR,
 	CG_R_DRAWSTRETCHPIC,
-#if defined( QC )
-	CG_GET_ADVERTISEMENTS,
-	CG_R_DRAWQUAD,
-#endif
 	CG_R_MODELBOUNDS,
 	CG_R_LERPTAG,
 	CG_GETGLCONFIG,
@@ -186,7 +182,13 @@ typedef enum {
 	CG_CEIL,
 	CG_TESTPRINTINT,
 	CG_TESTPRINTFLOAT,
-	CG_ACOS
+	CG_ACOS,
+
+#if defined( QC )
+	CG_GET_ADVERTISEMENTS = 150,
+	CG_R_DRAWQUAD,
+#endif
+
 } cgameImport_t;
 
 

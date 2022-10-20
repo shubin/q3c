@@ -1204,10 +1204,10 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 #if defined( QC )
         if ( targ->client ) {
+            int attackerClientNum = -1;
 			if ( attacker->client && attacker->client->ps.clientNum != targ->client->ps.clientNum && targ->health > 0 ) {
 				DamagePlum( attacker, client->ps.clientNum, targ->client->ps.origin, damage );
 			}
-            int attackerClientNum = -1;
             if ( attacker->client != NULL ) {
                 attackerClientNum = attacker->client->ps.clientNum;
             }
