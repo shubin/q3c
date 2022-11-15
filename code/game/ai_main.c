@@ -1370,11 +1370,20 @@ BotAILoadMap
 */
 int BotAILoadMap( int restart ) {
 	int			i;
+#if defined( QC )
+	char		mapname[MAX_CVAR_VALUE_STRING];
+#else
 	vmCvar_t	mapname;
+#endif
 
 	if (!restart) {
+#if defined( QC )
+		trap_Cvar_VariableStringBuffer( "mapname", mapname, ARRAY_LEN( mapname ) );
+		trap_BotLibLoadMap( mapname );
+#else
 		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
 		trap_BotLibLoadMap( mapname.string );
+#endif
 	}
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
