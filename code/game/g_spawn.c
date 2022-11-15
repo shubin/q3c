@@ -470,7 +470,11 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 	int			i;
 	gentity_t	*ent;
 	char		*s, *value, *gametypeName;
+#if defined( QC )
+	static char *gametypeNames[] = { "ffa", "tournament", "single", "team", "team2v2", "ctf", "oneflag", "obelisk", "harvester" };
+#else
 	static char *gametypeNames[] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester"};
+#endif
 
 	// get the next free entity
 	ent = G_Spawn();
@@ -478,6 +482,27 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 	for ( i = 0 ; i < level.numSpawnVars ; i++ ) {
 		G_ParseField( level.spawnVars[i][0], level.spawnVars[i][1], ent );
 	}
+
+#if defined( QC )
+	// check for "notduel" flag
+	if ( g_gametype.integer == GT_TOURNAMENT ) {
+		G_SpawnInt( "notduel", "0", &i );
+		if ( i ) {
+			ADJUST_AREAPORTAL();
+			G_FreeEntity( ent );
+			return;
+		}
+	}
+	// check for "not2v2" flag
+	if ( g_gametype.integer == GT_TEAM2V2 ) {
+		G_SpawnInt( "not2v2", "0", &i );
+		if ( i ) {
+			ADJUST_AREAPORTAL();
+			G_FreeEntity( ent );
+			return;
+		}
+	}
+#endif
 
 	// check for "notsingle" flag
 	if ( g_gametype.integer == GT_SINGLE_PLAYER ) {
