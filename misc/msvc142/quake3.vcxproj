@@ -477,7 +477,7 @@ copy "$(SolutionDir)..\..\code\libs\win32\sdl2.dll" "$(TargetDir)"</Command>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\code\SDL2\include;..\..\code\curl-7.54.0\include;..\..\code\AL;..\..\code\opus-1.2.1\include;..\..\code\opus-1.2.1\celt;..\..\code\opus-1.2.1\silk;..\..\code\opus-1.2.1\silk\float;..\..\code\zlib;..\..\code\jpeg-8c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -536,7 +536,7 @@ xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\" /K /D /H /Y
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\code\SDL2\include;..\..\code\curl-7.54.0\include;..\..\code\AL;..\..\code\opus-1.2.1\include;..\..\code\opus-1.2.1\celt;..\..\code\opus-1.2.1\silk;..\..\code\opus-1.2.1\silk\float;..\..\code\zlib;..\..\code\jpeg-8c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -691,7 +691,7 @@ xcopy "$(TargetPath)" "$(SolutionDir)..\..\..\workdir\" /K /D /H /Y
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\code\SDL2\include;..\..\code\curl-7.54.0\include;..\..\code\AL;..\..\code\opus-1.2.1\include;..\..\code\opus-1.2.1\celt;..\..\code\opus-1.2.1\silk;..\..\code\opus-1.2.1\silk\float;..\..\code\zlib;..\..\code\jpeg-8c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC=QC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -740,7 +740,7 @@ xcopy "$(TargetPath)" "$(SolutionDir)..\..\..\workdir\" /K /D /H /Y
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\code\SDL2\include;..\..\code\curl-7.54.0\include;..\..\code\AL;..\..\code\opus-1.2.1\include;..\..\code\opus-1.2.1\celt;..\..\code\opus-1.2.1\silk;..\..\code\opus-1.2.1\silk\float;..\..\code\zlib;..\..\code\jpeg-8c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;BOTLIB;USE_ICON;USE_CURL;USE_CURL_DLOPEN;USE_OPENAL;USE_OPENAL_DLOPEN;USE_VOIP;OPUS_BUILD;HAVE_LRINTF;FLOATING_POINT;FLOAT_APPROX;USE_ALLOCA;USE_INTERNAL_JPEG;USE_RENDERER_DLOPEN;QC=QC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

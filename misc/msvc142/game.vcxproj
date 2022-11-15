@@ -433,7 +433,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL;DEBUG;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL;DEBUG;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -483,7 +483,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL;DEBUG;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;BUILDING_REF_GL;DEBUG;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -627,7 +627,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -674,7 +674,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;GLOBALRANK;_CRT_SECURE_NO_DEPRECATE;QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
