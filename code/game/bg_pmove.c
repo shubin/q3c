@@ -426,7 +426,11 @@ static void PM_Friction( void ) {
 	}
 
 	// apply water friction even if just wading
+#if defined( QC )
+	if ( pm->waterlevel > 3 ) {
+#else
 	if ( pm->waterlevel ) {
+#endif
 		drop += speed*pm_waterfriction*pm->waterlevel*pml.frametime;
 	}
 
