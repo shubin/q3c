@@ -161,11 +161,22 @@ void hud_drawgradient( float x, float y, float w, float h, int dir ) {
 			break;
 
 	}
-	trap_R_DrawQuad( 
-		px[0], py[0], ps[0], pt[0],
-		px[1], py[1], ps[1], pt[1],
-		px[2], py[2], ps[2], pt[2],
-		px[3], py[3], ps[3], pt[3],
-		hud_media.gradient 
+	trap_R_DrawTriangle(
+		px[0], py[0],
+		px[1], py[1],
+		px[2], py[2],
+		ps[0], pt[0],
+		ps[1], pt[1],
+		ps[2], pt[2],
+		hud_media.gradient
+	);
+	trap_R_DrawTriangle(
+		px[2], py[2],
+		px[3], py[3],
+		px[0], py[0],
+		ps[2], pt[2],
+		ps[3], pt[3],
+		ps[0], pt[0],
+		hud_media.gradient
 	);
 }

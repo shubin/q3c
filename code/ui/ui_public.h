@@ -124,9 +124,6 @@ typedef enum {
 	// 1.32
 	UI_FS_SEEK,
 	UI_SET_PBCLSTATUS,
-#if defined( QC )
-	UI_R_DRAWQUAD,
-#endif	
 
 	UI_MEMSET = 100,
 	UI_MEMCPY,
@@ -136,7 +133,11 @@ typedef enum {
 	UI_ATAN2,
 	UI_SQRT,
 	UI_FLOOR,
-	UI_CEIL
+	UI_CEIL,
+
+#if defined( QC )
+	UI_R_DRAWTRIANGLE = 500,
+#endif	
 } uiImport_t;
 
 typedef enum {

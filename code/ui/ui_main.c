@@ -5109,7 +5109,7 @@ void _UI_Init( qboolean inGameLoad ) {
 	uiInfo.uiDC.drawHandlePic = &UI_DrawHandlePic;
 	uiInfo.uiDC.drawStretchPic = &trap_R_DrawStretchPic;
 	#if defined( QC )
-	uiInfo.uiDC.drawQuad = &trap_R_DrawQuad;
+	uiInfo.uiDC.drawTriangle = &trap_R_DrawTriangle;
 	#endif
 	uiInfo.uiDC.drawText = &Text_Paint;
 	uiInfo.uiDC.textWidth = &Text_Width;

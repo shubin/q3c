@@ -50,8 +50,8 @@ void hud_draw_ability( void ) {
 	int num, pos;
 	int start_angle, end_angle, angle, ta;
 	float scalex, scaley, offsetx, offsety;
-	float x0, y0, x1, y1, x2, y2, x3, y3;
-	float s0, t0, s1, t1, s2, t2, s3, t3;
+	float x0, y0, x1, y1, x2, y2;
+	float s0, t0, s1, t1, s2, t2;
 
 	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ) {
 		return;
@@ -147,28 +147,19 @@ void hud_draw_ability( void ) {
 	offsety = gaugey;
 
 	pos = 0;
+	x0 = offsetx; y0 = offsety; s0 = 0.5f; t0 = 0.5f;
+	hud_translate_point( &x0, &y0 );
 	while ( 1 ) {
-		x0 = offsetx; y0 = offsety; s0 = 0.5f; t0 = 0.5f;
-		hud_translate_point( &x0, &y0 );
 		x1 = x[pos] * scalex + offsetx; s1 = x[pos] / 2.0f + 0.5f;
 		y1 = y[pos] * scaley + offsety; t1 = y[pos] / 2.0f + 0.5f;
 		hud_translate_point( &x1, &y1 );
+	
 		x2 = x[pos + 1] * scalex + offsetx; s2 = x[pos + 1] / 2.0f + 0.5f;
 		y2 = y[pos + 1] * scaley + offsety;	t2 = y[pos + 1] / 2.0f + 0.5f;
 		hud_translate_point( &x2, &y2 );
-		if ( pos + 2 >= num ) {
-			// not enough geometry, so the last quad is a degenerate
-			x3 = x2;
-			y3 = y2;
-			s3 = s2;
-			t3 = t2;
-		} else {
-			x3 = x[pos + 2] * scalex + offsetx; s3 = x[pos + 2] / 2.0f + 0.5f;
-			y3 = y[pos + 2] * scaley + offsety;	t3 = y[pos + 2] / 2.0f + 0.5f;
-			hud_translate_point( &x3, &y3 );
-		}
-		trap_R_DrawQuad( x0, y0, s0, t0, x1, y1, s1, t1, x2, y2, s2, t2, x3, y3, s3, t3, hud_media.ringgauge );
-		pos += 2;
+
+		trap_R_DrawTriangle( x0, y0, x1, y1, x2, y2, s0, t0, s1, t1, s2, t2, hud_media.ringgauge );
+		pos += 1;
 		if ( pos >= num - 1 ) {
 			break;
 		}

@@ -2691,9 +2691,9 @@ static void FixRenderCommandList( int newShader ) {
 				break;
 				}
 #if defined( QC )
-			case RC_DRAW_QUAD:
+			case RC_TRIANGLE:
 				{
-				const drawQuadCommand_t *sp_cmd = (const drawQuadCommand_t *)curCmd;
+				const drawTriangleCommand_t *sp_cmd = (const drawTriangleCommand_t *)curCmd;
 				curCmd = (const void *)(sp_cmd + 1);
 				break;
 				}

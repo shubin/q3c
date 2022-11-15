@@ -869,15 +869,15 @@ const void *RB_StretchPic ( const void *data ) {
 #if defined( QC )
 /*
 =============
-RB_DrawQuad
+RB_DrawTriangle
 =============
 */
-const void *RB_DrawQuad( const void *data ) {
-	const drawQuadCommand_t	*cmd;
+const void *RB_DrawTriangle( const void *data ) {
+	const drawTriangleCommand_t	*cmd;
 	shader_t *shader;
 	int		numVerts, numIndexes;
 
-	cmd = (const drawQuadCommand_t *)data;
+	cmd = (const drawTriangleCommand_t *)data;
 
 	// FIXME: HUGE hack
 	if (glRefConfig.framebufferObject)
@@ -895,19 +895,16 @@ const void *RB_DrawQuad( const void *data ) {
 		RB_BeginSurface( shader, 0, 0 );
 	}
 
-	RB_CHECKOVERFLOW( 4, 6 );
+	RB_CHECKOVERFLOW( 3, 3 );
 	numVerts = tess.numVertexes;
 	numIndexes = tess.numIndexes;
 
-	tess.numVertexes += 4;
-	tess.numIndexes += 6;
+	tess.numVertexes += 3;
+	tess.numIndexes += 3;
 
-	tess.indexes[ numIndexes ] = numVerts + 3;
-	tess.indexes[ numIndexes + 1 ] = numVerts + 0;
+	tess.indexes[ numIndexes + 0 ] = numVerts + 0;
+	tess.indexes[ numIndexes + 1 ] = numVerts + 1;
 	tess.indexes[ numIndexes + 2 ] = numVerts + 2;
-	tess.indexes[ numIndexes + 3 ] = numVerts + 2;
-	tess.indexes[ numIndexes + 4 ] = numVerts + 0;
-	tess.indexes[ numIndexes + 5 ] = numVerts + 1;
 
 	{
 		uint16_t color[4];
@@ -917,7 +914,6 @@ const void *RB_DrawQuad( const void *data ) {
 		VectorCopy4(color, tess.color[ numVerts ]);
 		VectorCopy4(color, tess.color[ numVerts + 1]);
 		VectorCopy4(color, tess.color[ numVerts + 2]);
-		VectorCopy4(color, tess.color[ numVerts + 3 ]);
 	}
 
 	tess.xyz[ numVerts + 0 ][0] = cmd->x0;
@@ -940,13 +936,6 @@ const void *RB_DrawQuad( const void *data ) {
 	
 	tess.texCoords[ numVerts + 2 ][0] = cmd->s2;
 	tess.texCoords[ numVerts + 2 ][1] = cmd->t2;
-
-	tess.xyz[ numVerts + 3 ][0] = cmd->x3;
-	tess.xyz[ numVerts + 3 ][1] = cmd->y3;
-	tess.xyz[ numVerts + 3 ][2] = 0;
-	
-	tess.texCoords[ numVerts + 3 ][0] = cmd->s3;
-	tess.texCoords[ numVerts + 3 ][1] = cmd->t3;
 
 	return (const void *)(cmd + 1);
 }
@@ -1835,8 +1824,8 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			data = RB_StretchPic( data );
 			break;
 #if defined( QC )
-		case RC_DRAW_QUAD:
-			data = RB_DrawQuad( data );
+		case RC_TRIANGLE:
+			data = RB_DrawTriangle( data );
 			break;
 #endif
 		case RC_DRAW_SURFS:

@@ -282,17 +282,17 @@ void RE_StretchPic ( float x, float y, float w, float h,
 #if defined( QC )
 /*
 =============
-RE_DrawQuad
+RE_DrawTriangle
 =============
 */
-void RE_DrawQuad( 
+void RE_DrawTriangle( 
 	float x0, float y0, float s0, float t0,
 	float x1, float y1, float s1, float t1,
 	float x2, float y2, float s2, float t2,
 	float x3, float y3, float s3, float t3,
 	qhandle_t hShader ) 
 {
-	drawQuadCommand_t *cmd;
+	drawTriangleCommand_t *cmd;
 	int i;
 	if ( !tr.registered ) {
 		return;
@@ -301,12 +301,11 @@ void RE_DrawQuad(
 	if ( !cmd ) {
 		return;
 	}
-	cmd->commandId = RC_DRAW_QUAD;
+	cmd->commandId = RC_TRIANGLE;
 	cmd->shader = R_GetShaderByHandle( hShader );
 	cmd->x0 = x0; cmd->y0 = y0; cmd->s0 = s0; cmd->t0 = t0;
 	cmd->x1 = x1; cmd->y1 = y1; cmd->s1 = s1; cmd->t1 = t1;
 	cmd->x2 = x2; cmd->y2 = y2; cmd->s2 = s2; cmd->t2 = t2;
-	cmd->x3 = x3; cmd->y3 = y3; cmd->s3 = s3; cmd->t3 = t3;
 }
 #endif
 

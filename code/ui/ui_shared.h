@@ -322,11 +322,9 @@ typedef struct {
   void (*drawHandlePic) (float x, float y, float w, float h, qhandle_t asset);
   void (*drawStretchPic) (float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );
   #if defined( QC )
-  void (*drawQuad) (
-	  float x0, float y0, float s0, float t0, 
-	  float x1, float y1, float s1, float t1, 
-	  float x2, float y2, float s2, float t2, 
-	  float x3, float y3, float s3, float t3, 
+  void (*drawTriangle) (
+	  float x0, float y0, float x1, float y1, float x2, float y2, 
+	  float s0, float t0, float s1, float t1, float s2, float t2,
 	  qhandle_t hShader );
   #endif
   void (*drawText) (float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style );

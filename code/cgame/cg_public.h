@@ -185,8 +185,8 @@ typedef enum {
 	CG_ACOS,
 
 #if defined( QC )
-	CG_GET_ADVERTISEMENTS = 150,
-	CG_R_DRAWQUAD,
+	CG_GET_ADVERTISEMENTS = 500,
+	CG_R_DRAWTRIANGLE,
 #endif
 
 } cgameImport_t;

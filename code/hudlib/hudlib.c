@@ -117,7 +117,16 @@ void hud_drawquad(
 	hud_translate_point( &x1, &y1 );
 	hud_translate_point( &x2, &y2 );
 	hud_translate_point( &x3, &y3 );
-	trap_R_DrawQuad( x0, y0, s0, t0, x1, y1, s1, t1, x2, y2, s2, t2, x3, y3, s3, t3, hShader );
+	trap_R_DrawTriangle(
+		x0, y0, x1, y1, x2, y2,
+		s0, t0, s1, t1, s2, t2,
+		hShader
+	);
+	trap_R_DrawTriangle(
+		x2, y2, x3, y3, x0, y0, 
+		s2, t2, s3, t3, s0, t0,
+		hShader
+	);
 }
 // find character by its id
 static chardesc_t* find_char( font_t *font, int c ) {

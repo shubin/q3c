@@ -1791,14 +1791,6 @@ void		trap_R_RenderScene( const refdef_t *fd );
 void		trap_R_SetColor( const float *rgba );	// NULL = 1,1,1,1
 void		trap_R_DrawStretchPic( float x, float y, float w, float h, 
 			float s1, float t1, float s2, float t2, qhandle_t hShader );
-#if defined( QC )
-void	trap_R_DrawQuad(
-		float x0, float y0, float s0, float t0, 
-		float x1, float y1, float s1, float t1, 
-		float x2, float y2, float s2, float t2, 
-		float x3, float y3, float s3, float t3, 
-	qhandle_t hShader );
-#endif
 void		trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs );
 int			trap_R_LerpTag( orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, 
 					   float frac, const char *tagName );
@@ -1806,6 +1798,10 @@ void		trap_R_RemapShader( const char *oldShader, const char *newShader, const ch
 qboolean	trap_R_inPVS( const vec3_t p1, const vec3_t p2 );
 #if defined( QC )
 void		trap_Get_Advertisements( int *num, float *verts, char shaders[][MAX_QPATH] );
+void		trap_R_DrawTriangle(
+						float x0, float y0, float x1, float y1, float x2, float y2,
+						float s0, float t0, float s1, float t1, float s2, float t2,
+						qhandle_t hShader );
 #endif
 
 // The glconfig_t will not change during the life of a cgame.
