@@ -105,4 +105,4 @@ equ	testPrintFloat				-111
 equ acos						-112
 
 equ trap_Get_Advertisements	-501
-equ trap_R_DrawQuad		-502
+equ trap_R_DrawTriangle		-502
