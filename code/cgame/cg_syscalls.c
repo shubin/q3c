@@ -303,26 +303,6 @@ void	trap_R_DrawStretchPic( float x, float y, float w, float h,
 	syscall( CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader );
 }
 
-#if defined( QC )
-void	trap_R_DrawTriangle(
-		float x0, float y0,  
-		float x1, float y1,  
-		float x2, float y2,  
-		float s0, float t0,
-		float s1, float t1,
-		float s2, float t2,
-	qhandle_t hShader ) {
-	syscall( CG_R_DRAWTRIANGLE, 
-		PASSFLOAT(x0), PASSFLOAT(y0),
-		PASSFLOAT(x1), PASSFLOAT(y1), 
-		PASSFLOAT(x2), PASSFLOAT(y2),
-		PASSFLOAT(s0), PASSFLOAT(t0),
-		PASSFLOAT(s1), PASSFLOAT(t1),
-		PASSFLOAT(s2), PASSFLOAT(t2),
-		hShader );
-}
-#endif
-
 void	trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {
 	syscall( CG_R_MODELBOUNDS, model, mins, maxs );
 }
@@ -480,9 +460,94 @@ qboolean trap_R_inPVS( const vec3_t p1, const vec3_t p2 ) {
 }
 
 #if defined( QC )
+// QC engine extensions
 
 void trap_Get_Advertisements( int *num, float *verts, char shaders[][MAX_QPATH] ) {
 	syscall( CG_GET_ADVERTISEMENTS, num, verts, shaders );
+}
+
+void	trap_R_DrawTriangle(
+	float x0, float y0, float x1, float y1, float x2, float y2, 
+	float s0, float t0, float s1, float t1, float s2, float t2,
+	qhandle_t hShader )
+{
+	syscall( CG_R_DRAWTRIANGLE, 
+		PASSFLOAT(x0), PASSFLOAT(y0), PASSFLOAT(x1), PASSFLOAT(y1), PASSFLOAT(x2), PASSFLOAT(y2),
+		PASSFLOAT(s0), PASSFLOAT(t0), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2),
+		hShader );
+}
+
+#endif
+
+#if defined( QC )
+// CNQ3 engine extensions
+
+qboolean trap_GetValue( char *value, int valueSize, const char *key ) {
+	return syscall( CG_EXT_GETVALUE, value, valueSize, key );
+}
+
+void trap_LocateInteropData( unsigned char *interopBufferIn, int interopBufferInSize, unsigned char *interopBufferOut, int interopBufferOutSize ) {
+	syscall( CG_EXT_LOCATEINTEROPDATA, interopBufferIn, interopBufferInSize, interopBufferOut, interopBufferOutSize );
+}
+
+void trap_R_AddRefEntityToScene2( const refEntity_t *re ) {
+	syscall( CG_EXT_R_ADDREFENTITYTOSCENE2, re );
+}
+
+void trap_ForceFixedDLights( void ) {
+	syscall( CG_EXT_R_FORCEFIXEDDLIGHTS );
+}
+
+void trap_SetInputForwarding( int cgameForwardInput ) {
+	syscall( CG_EXT_SETINPUTFORWARDING, cgameForwardInput );
+}
+
+void trap_Cvar_SetRange( const char *var_name, int cvarType, const char *vmin, const char *vmax ) {
+	syscall( CG_EXT_CVAR_SETRANGE, var_name, cvarType, vmin, vmax );
+}
+
+void trap_Cvar_SetHelp( const char *var_name, const char *help ) {
+	syscall( CG_EXT_CVAR_SETHELP, var_name, help );
+}
+
+void trap_Cmd_SetHelp( const char *cmd_name, const char *help ) {
+	syscall( CG_EXT_CMD_SETHELP, cmd_name, help ); 
+}
+
+void trap_MatchAlertEvent( int event ) {
+	syscall( CG_EXT_MATCHALERTEVENT, event );
+}
+
+void trap_Error2( const char *message, qboolean realError ) {
+	syscall( CG_EXT_ERROR2, message, realError );
+}
+
+qboolean trap_IsRecordingDemo( void ) {
+	return syscall( CG_EXT_ISRECORDINGDEMO );
+}
+
+qboolean trap_NDP_Enable( int analyzeCommands, int generateCommands, int isCsNeeded, int analyzeSnapshot, int endAnalyzis ) {
+	return syscall( CG_EXT_NDP_ENABLE, analyzeCommands, generateCommands, isCsNeeded, analyzeSnapshot, endAnalyzis );
+}
+
+int trap_NDP_Seek( int serverTime ) {
+	return syscall( CG_EXT_NDP_SEEK, serverTime );
+}
+
+void trap_NDP_ReadUntil( int serverTime ) {
+	syscall( CG_EXT_NDP_READUNTIL, serverTime );
+}
+
+qboolean trap_NDP_StartVideo( const char *fileNameNoExt, int aviFrameRate ) {
+	return syscall( CG_EXT_NDP_STARTVIDEO, fileNameNoExt, aviFrameRate ); 
+}
+
+void trap_NDP_StopVideo( void ) {
+	syscall( CG_EXT_NDP_STOPVIDEO );
+}
+
+void trap_R_RenderScene2( const refdef_t *fd, int us ) {
+	syscall( CG_EXT_R_RENDERSCENE, fd, us );
 }
 
 #endif

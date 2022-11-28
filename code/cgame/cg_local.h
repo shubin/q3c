@@ -1889,3 +1889,23 @@ extern qboolean		initparticles;
 int CG_NewParticleArea ( int num );
 
 
+#if defined( QC )
+// CNQ3 engine extensions
+qboolean	trap_EXT_GetValue( char *value, int valueSize, const char *key );
+void		trap_EXT_LocateInteropData( unsigned char *interopBufferIn, int interopBufferInSize, unsigned char *interopBufferOut, int interopBufferOutSize );
+void		trap_EXT_R_AddRefEntityToScene2( const refEntity_t *re );
+void		trap_EXT_ForceFixedDLights( void );
+void		trap_EXT_SetInputForwarding( int cgameForwardInput );
+void		trap_EXT_Cvar_SetRange( const char *var_name, int cvarType, const char *vmin, const char *vmax );
+void		trap_EXT_Cvar_SetHelp( const char *var_name, const char *help );
+void		trap_EXT_Cmd_SetHelp( const char *cmd_name, const char *help );
+void		trap_EXT_MatchAlertEvent( int event );
+void		trap_EXT_Error2( const char *message, qboolean realError );
+qboolean	trap_EXT_IsRecordingDemo( void );
+qboolean	trap_EXT_NDP_Enable( int analyzeCommands, int generateCommands, int isCsNeeded, int analyzeSnapshot, int endAnalyzis );
+int		trap_EXT_NDP_Seek( int serverTime );
+void		trap_EXT_NDP_ReadUntil( int serverTime );
+qboolean	trap_EXT_NDP_StartVideo( const char *fileNameNoExt, int aviFrameRate );
+void		trap_EXT_NDP_StopVideo( void );
+void		trap_EXT_NDP_RenderScene( const refdef_t *fd, int us );
+#endif

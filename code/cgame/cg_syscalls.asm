@@ -106,3 +106,21 @@ equ acos						-112
 
 equ trap_Get_Advertisements	-501
 equ trap_R_DrawTriangle		-502
+
+equ trap_GetValue		-701
+equ trap_LocateIteropData	-702
+equ trap_R_AddRefEntityToScene2	-703
+equ trap_R_ForceFixedDLights	-704
+equ trap_SetInputForwarding	-705
+equ trap_Cvar_SetRange		-706
+equ trap_Cvar_SetHelp		-707
+equ trap_Cmd_SetHelp		-708
+equ trap_MatchAlertEvent	-709
+equ trap_Error2			-710
+equ trap_IsRecordingDemo	-711
+equ trap_NDP_Enable		-712
+equ trap_NDP_Seek		-713
+equ trap_NDP_ReadUntil		-714
+equ trap_NDP_StartVideo		-715
+equ trap_NDP_StopVideo		-716
+equ trap_R_RenderScene2		-717
