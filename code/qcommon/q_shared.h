@@ -187,7 +187,7 @@ typedef int intptr_t;
 #include <ctype.h>
 #include <limits.h>
 
-#ifdef _MSC_VER
+#if defined( _MSC_VER ) && 0
   #include <io.h>
 
   typedef __int64 int64_t;
