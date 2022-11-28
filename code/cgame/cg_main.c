@@ -1417,6 +1417,10 @@ static void CG_RegisterGraphics( void ) {
 		cgs.gameModels[i] = trap_R_RegisterModel( modelName );
 	}
 
+#if defined( QC )
+	cgs.media.totemModel = trap_R_RegisterModel( "models/special/totem.md3" );
+#endif
+
 #ifdef MISSIONPACK
 	// new stuff
 	cgs.media.patrolShader = trap_R_RegisterShaderNoMip("ui/assets/statusbar/patrol.tga");

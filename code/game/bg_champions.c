@@ -363,21 +363,21 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     {
         100, // base_health
         100, // base_armor
-        200, // max_health
-        200, // max_armor
-        30, // ability_cooldown
+        175, // max_health
+        150, // max_armor
+        45, // ability_cooldown
         -1, // ability_duration
         { // start_health
-            100, // GT_FFA
-            100, // GT_TOURNAMENT
+            125, // GT_FFA
+            125, // GT_TOURNAMENT
             100, // GT_SINGLE_PLAYER
             100, // GT_TEAM
             100, // GT_TEAM2V2
             100, // GT_CTF
         },
         { // start_armor
-            0, // GT_FFA
-            0, // GT_TOURNAMENT
+            50, // GT_FFA
+            50, // GT_TOURNAMENT
             0, // GT_SINGLE_PLAYER
             0, // GT_TEAM
             0, // GT_TEAM2V2
@@ -394,7 +394,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         310, // speed
         1000, // maxspeed
         { -15, -15, -24 }, // mins
-        { 15, 15, 32 }, // maxs
+        { 15, 15, 40 }, // maxs
     },
     // ranger
     {

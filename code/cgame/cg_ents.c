@@ -1122,6 +1122,38 @@ static void CG_TeamBase( centity_t *cent ) {
 #endif
 }
 
+#if defined( QC )
+/*
+===============
+CG_Totem
+
+===============
+*/
+static void CG_Totem( centity_t *cent ) {
+	refEntity_t model;
+	vec3_t lightOrigin;
+
+	memset( &model, 0, sizeof( model ) );
+	model.reType = RT_MODEL;
+	VectorCopy( cent->lerpOrigin, model.lightingOrigin );
+	VectorCopy( cent->lerpOrigin, model.origin );
+	AnglesToAxis( cent->currentState.angles, model.axis );
+
+	model.hModel = cgs.media.totemModel;
+	//if ( cent->currentState.modelindex == TEAM_RED ) {
+	//	model.hModel = cgs.media.redFlagBaseModel;
+	//} else if ( cent->currentState.modelindex == TEAM_BLUE ) {
+	//	model.hModel = cgs.media.blueFlagBaseModel;
+	//} else {
+	//	model.hModel = cgs.media.neutralFlagBaseModel;
+	//}
+	trap_R_AddRefEntityToScene( &model );
+	VectorCopy( cent->lerpOrigin, lightOrigin );
+	lightOrigin[2] += 12;
+	trap_R_AddLightToScene( cent->lerpOrigin, 250, 0.0f, 0.5f, 1.0f );
+}
+#endif
+
 /*
 ===============
 CG_AddCEntity
@@ -1178,6 +1210,11 @@ static void CG_AddCEntity( centity_t *cent ) {
 	case ET_TEAM:
 		CG_TeamBase( cent );
 		break;
+#if defined( QC )
+	case ET_TOTEM:
+		CG_Totem( cent );
+		break;
+#endif
 	}
 }
 
