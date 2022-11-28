@@ -831,6 +831,7 @@ typedef struct {
 #if defined( QC )
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;
+	qhandle_t	totemModel;
 #endif
 	qhandle_t	hastePuffShader;
 #ifdef MISSIONPACK
