@@ -1,0 +1,1491 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lua">
+      <UniqueIdentifier>{c396a3b0-242b-408f-bf81-0cd69c0ed325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dlmalloc">
+      <UniqueIdentifier>{88f4e579-a88c-40a8-a407-77a7a12c29f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="freetype2">
+      <UniqueIdentifier>{9c6d456a-e806-4b84-9956-65995f70a1bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi">
+      <UniqueIdentifier>{5a9aa7db-3f7d-477f-beb8-adca81d7a3c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi\Core">
+      <UniqueIdentifier>{10d845e9-32fb-4a1c-9a75-c1396bdf2954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi\Lua">
+      <UniqueIdentifier>{f869c0fd-d303-43cf-99b6-858d4052ed47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi\Core\Elements">
+      <UniqueIdentifier>{6859ba27-4b41-4a9a-8e73-163a880b91b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi\Core\FontEngineDefault">
+      <UniqueIdentifier>{592ac9a4-da48-4239-bf10-251da920aa7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RmlUi\Lua\Elements">
+      <UniqueIdentifier>{ced4559a-3d7d-45f0-b647-316b13821a77}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\code\qc_ui\dlmalloc\dlmalloc.c">
+      <Filter>dlmalloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\ui_lua.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lapi.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lauxlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lbaselib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lcode.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lcorolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lctype.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldblib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldebug.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldo.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lfunc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lgc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\linit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\liolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\llex.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lmathlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lmem.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\loadlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lobject.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lopcodes.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\loslib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lparser.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstate.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstring.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstrlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltable.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltablib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lundump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lutf8lib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lvm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lzio.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\ftdebug.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\autofit\autofit.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbase.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbbox.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbdf.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbitmap.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftcid.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftfntfmt.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftfstype.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftgasp.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftglyph.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftgxval.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftinit.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftlcdfil.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftmm.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftotval.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftpatent.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftpfr.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftstroke.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftsynth.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftsystem.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\fttype1.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftwinfnt.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\bdf\bdf.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cff\cff.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cid\type1cid.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\gzip\ftgzip.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\lzw\ftlzw.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\winfonts\winfnt.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\type42\type42.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\type1\type1.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pfr\pfr.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pcf\pcf.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\psaux\psaux.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pshinter\pshinter.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\psnames\psmodule.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\raster\raster.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\sfnt\sfnt.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\smooth\smooth.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\truetype\truetype.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cache\ftcache.c">
+      <Filter>freetype2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataFormatter.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataQuery.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataSource.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataSourceListener.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGrid.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridCell.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridExpandButton.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridRow.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementForm.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControl.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlDataSelect.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlInput.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlSelect.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlTextArea.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementImage.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementLabel.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementProgress.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTabSet.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTextSelection.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputType.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeButton.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeCheckbox.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRadio.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRange.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeSubmit.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeText.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetDropDown.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetSlider.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInput.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputMultiLine.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLine.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLinePassword.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerDataGrid.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerSelect.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTabSet.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTextArea.cpp">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontEngineInterfaceDefault.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFace.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceHandleDefault.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceLayer.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFamily.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontProvider.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FreeTypeInterface.cpp">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\BaseXMLParser.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Box.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Clock.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputedValues.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputeProperty.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Context.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancerDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ConvolutionFilter.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Core.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataController.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataControllerDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataExpression.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModel.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModelHandle.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataTypeRegister.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataVariable.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataView.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataViewDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Decorator.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorGradient.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorNinePatch.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiled.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBox.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBoxInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontal.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontalInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImage.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImageInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVertical.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVerticalInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DocumentHeader.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Element.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementAnimation.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementBackgroundBorder.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDecoration.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDefinition.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDocument.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementHandle.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementScroll.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementStyle.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementText.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementUtilities.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Event.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventDispatcher.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancerDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventListenerInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventSpecification.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Factory.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterface.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterfaceDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffect.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectBlur.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectGlow.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectInstancer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectOutline.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectShadow.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineInterface.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Geometry.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryBackgroundBorder.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryDatabase.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryUtilities.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBox.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBoxSpace.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutDetails.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutEngine.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutFlex.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBox.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBoxText.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutLineBox.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTable.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTableDetails.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Log.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Math.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Memory.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ObserverPtr.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Plugin.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PluginRegistry.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Profiling.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertiesIteratorView.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Property.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyDefinition.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyDictionary.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserAnimation.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserColour.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserDecorator.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserFontEffect.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserKeyword.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserNumber.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserRatio.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserString.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserTransform.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertySpecification.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\RenderInterface.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Spritesheet.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Stream.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamFile.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamMemory.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StringUtilities.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheet.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetContainer.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetFactory.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetNode.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetParser.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSelector.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSpecification.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\SystemInterface.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Template.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TemplateCache.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Texture.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureDatabase.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayout.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRectangle.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRow.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutTexture.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureResource.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Transform.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformPrimitive.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformState.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformUtilities.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Tween.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TypeConverter.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\URL.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Variant.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\WidgetScroll.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandler.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerBody.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerDefault.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerHead.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerTemplate.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParser.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParseTools.cpp">
+      <Filter>RmlUi\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\ui_rml.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataFormatter.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataSource.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGrid.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGridRow.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementForm.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControl.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlDataSelect.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlInput.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlSelect.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlTextArea.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementTabSet.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataFormatter.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataSource.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\SelectOptionsProxy.cpp">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourb.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourf.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Context.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ContextDocumentsProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Document.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Element.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementAttributesProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementChildNodesProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementInstancer.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementStyleProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementText.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Event.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\EventParametersProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\GlobalLuaFunctions.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Interpreter.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Log.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Lua.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDataModel.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocument.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocumentElementInstancer.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaElementInstancer.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListener.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListenerInstancer.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaPlugin.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaType.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUi.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUiContextsProxy.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Utilities.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2f.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2i.cpp">
+      <Filter>RmlUi\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\ui_atoms.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_main.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_syscalls.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\code\qc_ui\dlmalloc\dlmalloc.h">
+      <Filter>dlmalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lapi.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lauxlib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lcode.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lctype.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ldebug.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ldo.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lfunc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lgc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ljumptab.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\llex.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\llimits.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lmem.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lobject.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lopcodes.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lopnames.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lparser.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lprefix.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lstate.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lstring.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ltable.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ltm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lua.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lua.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\luaconf.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lualib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lundump.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lvm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lzio.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementImage.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementLabel.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTextSelection.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputType.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeButton.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeCheckbox.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRadio.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRange.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeSubmit.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeText.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetDropDown.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetSlider.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInput.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputMultiLine.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLine.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLinePassword.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerDataGrid.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerSelect.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTabSet.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTextArea.h">
+      <Filter>RmlUi\Core\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontEngineInterfaceDefault.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFace.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceHandleDefault.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceLayer.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFamily.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontProvider.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontTypes.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FreeTypeInterface.h">
+      <Filter>RmlUi\Core\FontEngineDefault</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Clock.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputeProperty.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancerDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataController.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataControllerDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataExpression.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModel.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataView.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataViewDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorGradient.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorNinePatch.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiled.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBox.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBoxInstancer.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontal.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontalInstancer.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImage.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImageInstancer.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledInstancer.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVertical.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVerticalInstancer.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DocumentHeader.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementAnimation.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementBackgroundBorder.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDecoration.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDefinition.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementHandle.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementStyle.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventDispatcher.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancerDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventSpecification.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterfaceDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectBlur.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectGlow.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectOutline.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectShadow.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryBackgroundBorder.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryDatabase.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\IdNameMap.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBox.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBoxSpace.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutDetails.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutEngine.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutFlex.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBox.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBoxText.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutLineBox.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTable.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTableDetails.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Memory.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PluginRegistry.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Pool.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\precompiled.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertiesIterator.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserAnimation.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserColour.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserDecorator.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserFontEffect.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserKeyword.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserNumber.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserRatio.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserString.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserTransform.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyShorthandDefinition.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamFile.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetFactory.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetNode.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetParser.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSelector.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Template.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TemplateCache.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureDatabase.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayout.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRectangle.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRow.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutTexture.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureResource.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformState.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformUtilities.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\WidgetScroll.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerBody.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerDefault.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerHead.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerTemplate.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParseTools.h">
+      <Filter>RmlUi\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\As.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataFormatter.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataSource.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGrid.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGridRow.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementForm.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControl.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlDataSelect.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlInput.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlSelect.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlTextArea.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementTabSet.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataFormatter.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataSource.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\SelectOptionsProxy.h">
+      <Filter>RmlUi\Lua\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourb.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourf.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Context.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ContextDocumentsProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Document.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Element.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementAttributesProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementChildNodesProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementInstancer.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementStyleProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementText.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Event.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\EventParametersProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\GlobalLuaFunctions.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Log.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDataModel.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocument.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocumentElementInstancer.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaElementInstancer.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListener.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListenerInstancer.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaPlugin.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Pairs.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUi.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUiContextsProxy.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2f.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2i.h">
+      <Filter>RmlUi\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\code\qc_ui\ui_local.h" />
+    <ClInclude Include="..\..\code\qc_ui\ui_public.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\code\qc_ui\RmlUi\Source\Core\Pool.inl">
+      <Filter>RmlUi\Core</Filter>
+    </None>
+  </ItemGroup>
+</Project>

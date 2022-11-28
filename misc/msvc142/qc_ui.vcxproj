@@ -1,0 +1,1099 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\code\qc_ui\dlmalloc\dlmalloc.c">
+      <UndefinePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN32_LEAN_AND_MEAN</UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\ftdebug.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\autofit\autofit.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbase.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbbox.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbdf.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftbitmap.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftcid.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftfntfmt.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftfstype.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftgasp.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftglyph.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftgxval.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftinit.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftlcdfil.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftmm.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftotval.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftpatent.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftpfr.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftstroke.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftsynth.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftsystem.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\fttype1.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\base\ftwinfnt.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\bdf\bdf.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cache\ftcache.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cff\cff.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\cid\type1cid.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\gzip\ftgzip.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\lzw\ftlzw.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pcf\pcf.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pfr\pfr.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\psaux\psaux.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\pshinter\pshinter.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\psnames\psmodule.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\raster\raster.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\sfnt\sfnt.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\smooth\smooth.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\truetype\truetype.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\type1\type1.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\type42\type42.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\freetype\src\winfonts\winfnt.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lapi.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lauxlib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lbaselib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lcode.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lcorolib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lctype.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldblib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldebug.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldo.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ldump.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lfunc.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lgc.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\linit.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\liolib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\llex.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lmathlib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lmem.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\loadlib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lobject.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lopcodes.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\loslib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lparser.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstate.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstring.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lstrlib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltable.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltablib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\ltm.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lundump.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lutf8lib.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lvm.c" />
+    <ClCompile Include="..\..\code\qc_ui\lua\src\lzio.c" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\BaseXMLParser.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Box.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Clock.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputedValues.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputeProperty.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Context.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancerDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ConvolutionFilter.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Core.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataController.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataControllerDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataExpression.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModel.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModelHandle.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataTypeRegister.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataVariable.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataView.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DataViewDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Decorator.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorGradient.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorNinePatch.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiled.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBox.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBoxInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontal.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontalInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImage.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImageInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVertical.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVerticalInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\DocumentHeader.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Element.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementAnimation.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementBackgroundBorder.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDecoration.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDefinition.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDocument.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementHandle.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementScroll.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementStyle.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataFormatter.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataQuery.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataSource.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\DataSourceListener.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGrid.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridCell.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridExpandButton.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementDataGridRow.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementForm.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControl.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlDataSelect.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlInput.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlSelect.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementFormControlTextArea.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementImage.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementLabel.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementProgress.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTabSet.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTextSelection.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputType.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeButton.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeCheckbox.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRadio.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRange.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeSubmit.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeText.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetDropDown.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetSlider.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInput.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputMultiLine.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLine.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLinePassword.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerDataGrid.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerSelect.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTabSet.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTextArea.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementText.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementUtilities.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Event.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventDispatcher.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancerDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventListenerInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\EventSpecification.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Factory.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterface.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterfaceDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffect.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectBlur.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectGlow.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectInstancer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectOutline.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectShadow.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontEngineInterfaceDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFace.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceHandleDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceLayer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFamily.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontProvider.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FreeTypeInterface.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineInterface.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Geometry.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryBackgroundBorder.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryDatabase.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryUtilities.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBox.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBoxSpace.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutDetails.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutEngine.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutFlex.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBox.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBoxText.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutLineBox.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTable.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTableDetails.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Log.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Math.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Memory.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\ObserverPtr.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Plugin.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PluginRegistry.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Profiling.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertiesIteratorView.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Property.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyDefinition.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyDictionary.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserAnimation.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserColour.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserDecorator.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserFontEffect.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserKeyword.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserNumber.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserRatio.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserString.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserTransform.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertySpecification.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\RenderInterface.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Spritesheet.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Stream.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamFile.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamMemory.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StringUtilities.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheet.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetContainer.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetFactory.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetNode.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetParser.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSelector.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSpecification.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\SystemInterface.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Template.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TemplateCache.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Texture.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureDatabase.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayout.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRectangle.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRow.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutTexture.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureResource.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Transform.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformPrimitive.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformState.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformUtilities.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Tween.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\TypeConverter.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\URL.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\Variant.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\WidgetScroll.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandler.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerBody.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerDefault.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerHead.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerTemplate.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParser.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParseTools.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourb.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourf.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Context.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ContextDocumentsProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Document.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Element.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementAttributesProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementChildNodesProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementInstancer.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementStyleProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataFormatter.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataSource.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGrid.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGridRow.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementForm.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControl.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlDataSelect.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlInput.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlSelect.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlTextArea.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementTabSet.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataFormatter.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataSource.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\SelectOptionsProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementText.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Event.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\EventParametersProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\GlobalLuaFunctions.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Interpreter.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Log.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Lua.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDataModel.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocument.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocumentElementInstancer.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaElementInstancer.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListener.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListenerInstancer.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaPlugin.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaType.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUi.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUiContextsProxy.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Utilities.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2f.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2i.cpp">
+      <ModuleOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleOutputFile>
+      <AssemblerListingLocation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</AssemblerListingLocation>
+      <ModuleDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ModuleDependenciesFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</ObjectFileName>
+      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</XMLDocumentationFileName>
+      <SourceDependenciesFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)RmlLua\</SourceDependenciesFile>
+    </ClCompile>
+    <ClCompile Include="..\..\code\qc_ui\ui_atoms.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_lua.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_main.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_rml.cpp" />
+    <ClCompile Include="..\..\code\qc_ui\ui_syscalls.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\code\qc_ui\dlmalloc\dlmalloc.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lapi.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lauxlib.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lcode.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lctype.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ldebug.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ldo.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lfunc.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lgc.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ljumptab.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\llex.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\llimits.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lmem.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lobject.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lopcodes.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lopnames.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lparser.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lprefix.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lstate.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lstring.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ltable.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\ltm.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lua.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lua.hpp" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\luaconf.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lualib.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lundump.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lvm.h" />
+    <ClInclude Include="..\..\code\qc_ui\lua\src\lzio.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Clock.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ComputeProperty.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ContextInstancerDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataController.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataControllerDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataExpression.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataModel.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataView.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DataViewDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorGradient.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorNinePatch.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiled.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBox.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledBoxInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontal.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledHorizontalInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImage.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledImageInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVertical.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DecoratorTiledVerticalInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\DocumentHeader.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementAnimation.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementBackgroundBorder.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDecoration.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementDefinition.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementHandle.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\ElementStyle.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementImage.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementLabel.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\ElementTextSelection.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputType.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeButton.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeCheckbox.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRadio.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeRange.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeSubmit.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\InputTypeText.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetDropDown.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetSlider.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInput.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputMultiLine.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLine.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\WidgetTextInputSingleLinePassword.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerDataGrid.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerSelect.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTabSet.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Elements\XMLNodeHandlerTextArea.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventDispatcher.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventInstancerDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\EventSpecification.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FileInterfaceDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectBlur.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectGlow.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectOutline.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEffectShadow.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontEngineInterfaceDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFace.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceHandleDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFaceLayer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontFamily.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontProvider.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FontTypes.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\FontEngineDefault\FreeTypeInterface.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryBackgroundBorder.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\GeometryDatabase.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\IdNameMap.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBox.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutBlockBoxSpace.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutDetails.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutEngine.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutFlex.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBox.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutInlineBoxText.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutLineBox.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTable.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\LayoutTableDetails.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Memory.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PluginRegistry.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Pool.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\precompiled.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertiesIterator.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserAnimation.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserColour.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserDecorator.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserFontEffect.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserKeyword.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserNumber.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserRatio.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserString.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyParserTransform.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\PropertyShorthandDefinition.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StreamFile.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetFactory.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetNode.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetParser.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\StyleSheetSelector.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\Template.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TemplateCache.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureDatabase.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayout.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRectangle.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutRow.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureLayoutTexture.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TextureResource.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformState.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\TransformUtilities.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\WidgetScroll.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerBody.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerDefault.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerHead.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLNodeHandlerTemplate.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Core\XMLParseTools.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourb.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Colourf.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Context.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ContextDocumentsProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Document.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Element.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementAttributesProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementChildNodesProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementStyleProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\As.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataFormatter.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\DataSource.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGrid.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementDataGridRow.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementForm.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControl.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlDataSelect.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlInput.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlSelect.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementFormControlTextArea.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\ElementTabSet.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataFormatter.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\LuaDataSource.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Elements\SelectOptionsProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\ElementText.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Event.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\EventParametersProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\GlobalLuaFunctions.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Log.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDataModel.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocument.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaDocumentElementInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaElementInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListener.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaEventListenerInstancer.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\LuaPlugin.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Pairs.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUi.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\RmlUiContextsProxy.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2f.h" />
+    <ClInclude Include="..\..\code\qc_ui\RmlUi\Source\Lua\Vector2i.h" />
+    <ClInclude Include="..\..\code\qc_ui\ui_local.h" />
+    <ClInclude Include="..\..\code\qc_ui\ui_public.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\code\qc_ui\RmlUi\Source\Core\Pool.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{d34f5d9e-2f98-44fb-85b4-9cff88f0b352}</ProjectGuid>
+    <RootNamespace>qcui</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\build\debug-qc-msvc142-x86_64\qc\</OutDir>
+    <IntDir>..\..\build\debug-qc-msvc142-x86_64\qc\qc_ui\</IntDir>
+    <TargetName>qcuix86_64</TargetName>
+    <IncludePath>$(SolutionDir)..\..\code\qc_ui\lua\src;$(SolutionDir)..\..\code\qc_ui\dlmalloc;$(SolutionDir)..\..\code\qc_ui\freetype\include;$(SolutionDir)..\..\code\qc_ui\RmlUi\Include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;QCUI_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;QCUI_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;UI_EXPORTS;_CRT_SECURE_NO_DEPRECATE;QC=QC;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;USE_DL_PREFIX;MSPACES;LUA_COMPAT_APIINTCASTS;LUA_COMPAT_MATHLIB;FT_EXPORT(x)=extern "C" x;RMLUI_STATIC_LIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\code\qc_ui\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <ModuleDefinitionFile>qc_ui.def</ModuleDefinitionFile>
+      <OutputFile>$(OutDir)qcuix86_64.dll</OutputFile>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(TargetPath)" "$(SolutionDir)..\..\..\workdir\qc\" /K /D /H /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;QCUI_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
