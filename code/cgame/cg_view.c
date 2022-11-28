@@ -1168,7 +1168,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 		}
 	}
 
-#if defined( QC )
+#if defined( QC ) && 0
 	refdefex = (refdefex_t*)(&cg.refdef + 1);
 	if ( cg.blurFactor > 0 && cg.blurFactor <= 1 ) {
 		refdefex->blurFactor = cg.blurFactor;
