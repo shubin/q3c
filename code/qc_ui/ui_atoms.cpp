@@ -78,19 +78,16 @@ static void Lua_DoFiles( const char *path, const char *ext ) {
 static void Lua_Init( void ) {
 	lstate = lua_newstate( Lua_Alloc, ui_mspace );
 
-
-	luaopen_trap( lstate );
 	luaopen_base( lstate );
 	lua_newtable( lstate ); luaopen_math( lstate ); lua_setglobal( lstate, LUA_MATHLIBNAME );
 	lua_newtable( lstate ); luaopen_string( lstate ); lua_setglobal( lstate, LUA_STRLIBNAME );
 	lua_newtable( lstate ); luaopen_table( lstate ); lua_setglobal( lstate, LUA_TABLIBNAME );
+	luaopen_trap( lstate );
 }
 
 static void Lua_Shutdown( void ) {
-	if ( lstate != NULL ) {
-		lua_close( lstate );
-		lstate = NULL;
-	}
+	lua_close( lstate );
+	lstate = NULL;
 }
 
 void UI_Init( void ) {
@@ -199,6 +196,10 @@ void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 }
 
 qboolean UI_ConsoleCommand( int realTime ) {
+	if ( lstate == NULL ) {
+		return qfalse;
+	}
+
 	lua_getglobal( lstate, "UI_ConsoleCommand" );
 	if ( !lua_isfunction( lstate, -1 ) ) {
 		lua_pop( lstate, -1 );

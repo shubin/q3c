@@ -37,11 +37,11 @@ public:
 	}
 
 	virtual void EnableScissorRegion( bool enable ) override {
-		trap_R_EnableScissor( enable ? qtrue : qfalse );
+		//trap_R_EnableScissor( enable ? qtrue : qfalse );
 	}
 
 	virtual void SetScissorRegion( int x, int y, int width, int height ) override {
-		trap_R_SetScissor( x, y, width, height );
+		//trap_R_SetScissor( x, y, width, height );
 	}
 
 	virtual bool LoadTexture( Rml::TextureHandle &texture_handle, Rml::Vector2i &texture_dimensions, const Rml::String &source ) override {
@@ -89,7 +89,7 @@ class Q_FileInterface: public Rml::FileInterface {
 		FileHandle *handle = (FileHandle*)file;
 		trap_FS_Read( buffer, (int)size, handle->f );
 		int oldpos = handle->pos;
-		handle->pos += size;
+		handle->pos += (int)size;
 		if ( handle->pos > handle->size ) {
 			handle->pos = handle->size;
 		}
@@ -137,6 +137,9 @@ static Q_RenderInterface g_renderInterface;
 static Q_FileInterface g_fileInterface;
 
 void UI_InitRML( lua_State *L ) {
+	glconfig_t glc;
+	trap_GetGlconfig( &glc );
+
 	Rml::SetSystemInterface( &g_systemInterface );
 	Rml::SetFileInterface( &g_fileInterface );
 	Rml::SetRenderInterface( &g_renderInterface );

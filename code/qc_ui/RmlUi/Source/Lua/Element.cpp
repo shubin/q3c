@@ -99,11 +99,17 @@ int ElementAddEventListener(lua_State* L, Element* obj)
 int ElementAppendChild(lua_State* L, Element* obj)
 {
 	ElementPtr* element = LuaType<ElementPtr>::check(L, 1);
+    Element *ele = element->get();
 	if (*element)
 		obj->AppendChild(std::move(*element));
 	else
 		Log::Message(Log::LT_WARNING, "Could not append child to element '%s', as the child was null. Was it already moved from?", obj->GetAddress().c_str());
-    return 0;
+    if (ele) {
+        LuaType<Element>::push(L, ele, false);
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
 }
 
 int ElementBlur(lua_State* /*L*/, Element* obj)
@@ -646,6 +652,11 @@ luaL_Reg ElementSetters[] =
 
 RMLUI_LUATYPE_DEFINE(Element)
 
+int ElementPtrGetAttrget( lua_State *L ) {
+    ElementPtr *elePtr = LuaType<ElementPtr>::check( L, 1 );
+    LuaType<Element>::push( L, elePtr->get(), false );
+    return 1;
+}
 
 template<> void ExtraInit<ElementPtr>(lua_State* /*L*/, int /*metatable_index*/)
 {
@@ -659,6 +670,7 @@ RegType<ElementPtr> ElementPtrMethods[] =
 
 luaL_Reg ElementPtrGetters[] =
 {
+    RMLUI_LUAGETTER(ElementPtr,get)
 	{ nullptr, nullptr },
 };
 

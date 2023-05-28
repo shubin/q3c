@@ -2,288 +2,199 @@
 #include <lauxlib.h>
 #include <initializer_list>
 
-//#undef cast
-//#include "LuaBridge/LuaBridge.h"
+#if defined( cast )
+#undef cast
+#endif
+
+#define USE_LUA_BRIDGE
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include "LuaBridge/LuaBridge.h"
+#include "LuaBridge/Vector.h"
+using namespace luabridge;
 
 
-#define LUA_INTFIELD(L, V, F) do { lua_pushstring( L, #F); lua_pushinteger( L, V.F ); lua_settable( L, -3 ); } while (false)
-#define LUA_BOOLFIELD(L, V, F) do { lua_pushstring( L, #F); lua_pushboolean( L, V.F ); lua_settable( L, -3 ); } while (false)
-#define LUA_NUMFIELD(L, V, F) do { lua_pushstring( L, #F); lua_pushnumber( L, V.F ); lua_settable( L, -3 ); } while (false)
-#define LUA_STRFIELD(L, V, F) do { lua_pushstring( L, #F); lua_pushstring( L, V.F ); lua_settable( L, -3 ); } while (false)
+void Q_strncpyz( char *dest, const char *src, int destsize ) {
+	strncpy( dest, src, destsize - 1 );
+	dest[destsize - 1] = 0;
+}
 
 //void			trap_Error( const char *string ) __attribute__( ( noreturn ) );
-static int lua_Error( lua_State *L ) {
-	const char *message = luaL_checkstring( L, 1 );
-	trap_Error( message );
-	return 0;
+static void lua_Error( const char *string) {
+	trap_Error( string );
 }
 
 //void			trap_Print( const char *string );
-static int lua_Print( lua_State *L ) {
-	const char *message = luaL_checkstring( L, 1 );
-	trap_Print( message );
-	return 0;
+static void lua_Print( const char *string ) {
+	trap_Print( string );
 }
 
 //int				trap_Milliseconds( void );
-static int lua_Milliseconds( lua_State *L ) {
-	lua_pushinteger( L, trap_Milliseconds() );
-	return 1;
+static int lua_Milliseconds() {
+	return trap_Milliseconds();
 }
 
+struct Lua_vmCvar_t: vmCvar_t {
+	void setString( const char *string ) {
+		Q_strncpyz( this->string, string, sizeof( this->string ) );
+	}
+	const char *getString() const {
+		return this->string;
+	}
+};
+
 //void			trap_Cvar_Register( vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags );
-static int lua_Cvar_Register( lua_State *L ) {
-	const char *varName = luaL_checkstring( L, 1 );
-	const char *defaultValue = luaL_checkstring( L, 2 );
-	int flags = luaL_checkinteger( L, 3 );
-	vmCvar_t *vmCvar = (vmCvar_t*)mspace_malloc( ui_mspace, sizeof( vmCvar_t ) );
-	memset( (void*)vmCvar, 0, sizeof( vmCvar_t ) );
-	trap_Cvar_Register( vmCvar, varName, defaultValue, flags );
-	vmCvar_t **pvmCvar = (vmCvar_t**)lua_newuserdata( L, sizeof( vmCvar_t* ) );
-	*pvmCvar = vmCvar;
-	return 1;
+static Lua_vmCvar_t lua_Cvar_Register( const char *varName, const char *defaultValue, int flags ) {
+	Lua_vmCvar_t vmCvar = {};
+	trap_Cvar_Register( &vmCvar, varName, defaultValue, flags );
+	return vmCvar;
 }
 
 //void			trap_Cvar_Update( vmCvar_t *vmCvar );
-static int lua_Cvar_Update( lua_State *L ) {
-	if ( !lua_isuserdata( L, 1 ) ) {
-		return 0;
-	}
-	vmCvar_t **pvmCvar = (vmCvar_t**)lua_touserdata( L, 1 );
-	trap_Cvar_Update( *pvmCvar );
-	return 0;
+static void lua_Cvar_Update( Lua_vmCvar_t &vmCvar ) {
+	trap_Cvar_Update( &vmCvar );
 }
 
 //void			trap_Cvar_Set( const char *var_name, const char *value );
-static int lua_Cvar_Set( lua_State *L ) {
-	const char *var_name = luaL_checkstring( L, 1 );
-	const char *value = luaL_checkstring( L, 2 );
+static void lua_Cvar_Set( const char *var_name, const char *value ) {
 	trap_Cvar_Set( var_name, value );
-	return 0;
 }
 
 //float			trap_Cvar_VariableValue( const char *var_name );
-static int lua_Cvar_VariableValue( lua_State *L ) {
-	const char *var_name = luaL_checkstring( L, 1 );
-	lua_pushnumber( L, trap_Cvar_VariableValue( var_name ) );
-	return 1;
+static float lua_Cvar_VariableValue( const char *var_name ) {
+	return trap_Cvar_VariableValue( var_name );
 }
 
 //void			trap_Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize );
-static int lua_Cvar_VariableStringBuffer( lua_State *L ) {
-	const char *var_name = luaL_checkstring( L, 1 );
+static const char* lua_Cvar_VariableStringBuffer( const char *var_name ) {
 	static char buffer[1024];
 	trap_Cvar_VariableStringBuffer( var_name, buffer, ARRAY_LEN( buffer ) );
-	lua_pushstring( L, buffer );
-	return 1;
+	return buffer;
 }
 
 //void			trap_Cvar_SetValue( const char *var_name, float value );
-static int lua_Cvar_SetValue( lua_State *L ) {
-	const char *var_name = luaL_checkstring( L, 1 );
-	lua_Number value = luaL_checknumber( L, 2 );
-	trap_Cvar_SetValue( var_name, (float)value );
-	return 0;
+static void lua_Cvar_SetValue( const char *var_name, float value) {
+	trap_Cvar_SetValue( var_name, value );
 }
 
 //void			trap_Cvar_Reset( const char *name );
-static int lua_Cvar_Reset( lua_State *L ) {
-	const char *name = luaL_checkstring( L, 1 );
+static void lua_Cvar_Reset( const char *name ) {
 	trap_Cvar_Reset( name );
-	return 0;
 }
+
 //void			trap_Cvar_Create( const char *var_name, const char *var_value, int flags );
-static int lua_Cvar_Create( lua_State *L ) {
-	const char *var_name = luaL_checkstring( L, 1 );
-	const char *var_value = luaL_checkstring( L, 2 );
-	int flags = luaL_checkinteger( L, 3 );
+static void lua_Cvar_Create( const char *var_name, const char *var_value, int flags ) {
 	trap_Cvar_Create( var_name, var_value, flags );
-	return 0;
 }
 
 //void			trap_Cvar_InfoStringBuffer( int bit, char *buffer, int bufsize );
-static int lua_Cvar_InfoStringBuffer( lua_State *L ) {
+static const char* lua_Cvar_InfoStringBuffer( int bit ) {
 	static char buffer[1024];
-	int bit = luaL_checkinteger( L, 1 );
 	trap_Cvar_InfoStringBuffer( bit, buffer, ARRAY_LEN( buffer ) );
-	lua_pushstring( L, buffer );
-	return 1;
+	return buffer;
 }
 
 //int				trap_Argc( void );
-static int lua_Argc( lua_State *L ) {
-	lua_pushinteger( L, trap_Argc() );
-	return 1;
+static int lua_Argc() {
+	return trap_Argc();
 }
 
 //void			trap_Argv( int n, char *buffer, int bufferLength );
-static int lua_Argv( lua_State *L ) {
+static const char* lua_Argv( int n ) {
 	static char buffer[1024];
-	int n = luaL_checkinteger( L, 1 );
 	trap_Argv( n, buffer, ARRAY_LEN( buffer ) );
-	lua_pushstring( L, buffer );
-	return 1;
+	return buffer;
 }
 
 //void			trap_Cmd_ExecuteText( int exec_when, const char *text );	// don't use EXEC_NOW!
-static int lua_Cmd_ExecuteText( lua_State *L ) {
-	int when = luaL_checkinteger( L, 1 );
-	const char *text = luaL_checkstring( L, 2 );
-	trap_Cmd_ExecuteText( when, text );
+static int lua_Cmd_ExecuteText( int exec_when, const char *text ) {
+	trap_Cmd_ExecuteText( exec_when, text );
 	return 0;
 }
 
+struct Q_File {
+	fileHandle_t	handle;
+	int				size;
+
+	int	getLength() const {
+		return size;
+	}
+};
+
 //int				trap_FS_FOpenFile( const char *qpath, fileHandle_t *f, fsMode_t mode );
-static int lua_FS_FOpenFile( lua_State *L ) {
-	const char *qpath = luaL_checkstring( L, 1 );
-	const fsMode_t mode = (fsMode_t)luaL_checkinteger( L, 2 );
-	fileHandle_t f;
-	int len = trap_FS_FOpenFile( qpath, &f, mode );
-	lua_pushinteger( L, f );
-	lua_pushinteger( L, len );
-	return 2;
+static Q_File lua_FS_FOpenFile( const char *qpath, int mode ) {
+	Q_File file;
+	file.size = trap_FS_FOpenFile( qpath, &file.handle, (fsMode_t)mode );
+	return file;
 }
 
 //void			trap_FS_Read( void *buffer, int len, fileHandle_t f );
-static int lua_FS_Read( lua_State *L ) {
-	int len = luaL_checkinteger( L, 1 );
-	fileHandle_t f = luaL_checkinteger( L, 2 );
-	void *buffer = dlmalloc( len );
-	trap_FS_Read( buffer, len, f );
-	lua_pushlstring( L, (char*)buffer, len );
+static std::string lua_FS_Read( int len, const Q_File &file ) {
+	char *buffer = (char*)dlmalloc( len );
+	memset( buffer, 0, len );
+	trap_FS_Read( buffer, len, file.handle );
+	std::string retval( buffer, len );
 	dlfree( buffer );
-	return 1;
+	return retval;
 }
 
 //void			trap_FS_Write( const void *buffer, int len, fileHandle_t f );
-static int lua_FS_Write( lua_State *L ) {
-	size_t len;
-	const char *buffer = luaL_checklstring( L, 1, &len );
-	fileHandle_t f = luaL_checkinteger( L, 2 );
-	trap_FS_Write( buffer, (int)len, f );
-	return 0;
+static void lua_FS_Write( const std::string& buffer, const Q_File &file ) {
+	trap_FS_Write( buffer.c_str(), (int)buffer.size(), file.handle );
 }
 
 //void			trap_FS_FCloseFile( fileHandle_t f );
-static int lua_FS_FCloseFile( lua_State *L ) {
-	fileHandle_t f = luaL_checkinteger( L, 1 );
-	trap_FS_FCloseFile( f );
+static int lua_FS_FCloseFile( const Q_File &file ) {
+	trap_FS_FCloseFile( file.handle );
 	return 0;
 }
 
 //int				trap_FS_GetFileList( const char *path, const char *extension, char *listbuf, int bufsize );
-static int lua_FS_GetFileList( lua_State *L ) {
-	const char *path = luaL_checkstring( L, 1 );
-	const char *extension = luaL_checkstring( L, 2 );
+static std::vector<std::string> lua_FS_GetFileList( const char *path, const char *extension ) {
 	const int bufsize = 16384;
-	char *listbuf = (char*)dlmalloc( bufsize );
+	char *listbuf = ( char * )dlmalloc( bufsize );
+
 	int nFiles = trap_FS_GetFileList( path, extension, listbuf, bufsize );
+
+	std::vector<std::string> result;
+	result.reserve( nFiles );
+
 	char *bufend = listbuf;
 	for ( int i = 0; i < nFiles; i++ ) {
+		result.push_back( bufend );
 		bufend += strlen( bufend ) + 1;
 	}
-	lua_pushinteger( L, nFiles );
-	lua_pushlstring( L, listbuf, bufend - listbuf );
 	dlfree( listbuf );
-	return 2;
+
+	return result;
 }
 
 //int				trap_FS_Seek( fileHandle_t f, long offset, int origin ); // fsOrigin_t
-static int lua_FS_Seek( lua_State *L ) {
-	fileHandle_t f = luaL_checkinteger( L, 1 );
-	long offset = luaL_checklong( L, 2 );
-	int origin = luaL_checkinteger( L, 3 );
-	lua_pushinteger( L, trap_FS_Seek( f, offset, origin ) );
-	return 1;
+static int lua_FS_Seek( const Q_File &file, long offset, int origin ) {
+	return trap_FS_Seek( file.handle, offset, origin );
 }
 
 //qhandle_t		trap_R_RegisterModel( const char *name );
-static int lua_R_RegisterModel( lua_State *L ) {
-	const char *name = luaL_checkstring( L, 1 );
-	lua_pushinteger( L, trap_R_RegisterModel( name ) );
-	return 1;
+static qhandle_t lua_R_RegisterModel( const char *name ) {
+	return trap_R_RegisterModel( name );
 }
 
 //qhandle_t		trap_R_RegisterSkin( const char *name );
-static int lua_R_RegisterSkin( lua_State *L ) {
-	const char *name = luaL_checkstring( L, 1 );
-	lua_pushinteger( L, trap_R_RegisterSkin( name ) );
-	return 1;
+static qhandle_t lua_R_RegisterSkin( const char *name ) {
+	return trap_R_RegisterSkin( name );
 }
 
 //qhandle_t		trap_R_RegisterShaderNoMip( const char *name );
-static int lua_R_RegisterShaderNoMip( lua_State *L ) {
-	const char *name = luaL_checkstring( L, 1 );
-	lua_pushinteger( L, trap_R_RegisterShaderNoMip( name ) );
-	return 1;
+static qhandle_t lua_R_RegisterShaderNoMip( const char *name ) {
+	return trap_R_RegisterShaderNoMip( name );
 }
 
 //void			trap_R_ClearScene( void );
-static int lua_R_ClearScene( lua_State *L ) {
+static void lua_R_ClearScene() {
 	trap_R_ClearScene();
-	return 0;
-}
-
-template <class ... Args>
-void luapp_getfields(  lua_State *L, Args ... args ) {
-	const auto list = { args... };
-	for ( auto item : list ) {
-		lua_getfield( L, 1, item );
-	}
-}
-
-//void			trap_R_AddRefEntityToScene( const refEntity_t *re );
-static int lua_R_AddRefEntityToScene( lua_State *L ) {
-	refEntity_t ent;
-
-	lua_settop( L, 1 );
-	luaL_checktype( L, 1, LUA_TTABLE );
-
-	luapp_getfields( L, 
-		/* -20 */ "reType",
-		/* -19 */ "renderfx",
-		/* -18 */ "hModel",
-		/* -17 */ "lightingOrigin",
-		/* -16 */ "shadowPlane",
-		/* -15 */ "axis",
-		/* -14 */ "nonNormalizedAxes",
-		/* -13 */ "origin",
-		/* -12 */ "frame",
-		/* -11 */ "oldOrigin",
-		/* -10 */ "oldframe",
-		/*  -9 */ "backlerp",
-		/*  -8 */ "skinNum",
-		/*  -7 */ "customSkin",
-		/*  -6 */ "customShader",
-		/*  -5 */ "shaderRGBA",
-		/*  -4 */ "shaderTexCoord",
-		/*  -3 */  "shaderTime",
-		/*  -2 */ "radius",
-		/*  -1 */ "rotation"
-	);
-
-	memset( &ent, 0, sizeof( refEntity_t ) );
-
-
-	return 0;
-}
-
-//void			trap_R_AddPolyToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts );
-static int lua_R_AddPolyToScene( lua_State *L ) {
-	// not implemented
-	return 0;
-}
-
-//void			trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b );
-static int lua_R_AddLightToScene( lua_State *L ) {
-	// not implemented
-	return 0;
-}
-
-//void			trap_R_RenderScene( const refdef_t *fd );
-static int lua_R_RenderScene( lua_State *L ) {
-	// not implemented
-	return 0;
 }
 
 //void			trap_R_SetColor( const float *rgba );
@@ -293,34 +204,23 @@ static int lua_R_SetColor( lua_State *L ) {
 	if ( lua_isnil( L, 1 ) ) {
 		trap_R_SetColor( NULL );
 	} else {
-		rgba[0] = (float)luaL_checknumber( L, 1 );
-		rgba[1] = (float)luaL_checknumber( L, 2 );
-		rgba[2] = (float)luaL_checknumber( L, 3 );
-		rgba[3] = (float)luaL_optnumber( L, 4, 1.0 );
+		rgba[0] = ( float )luaL_checknumber( L, 1 );
+		rgba[1] = ( float )luaL_checknumber( L, 2 );
+		rgba[2] = ( float )luaL_checknumber( L, 3 );
+		rgba[3] = ( float )luaL_optnumber( L, 4, 1.0 );
 		trap_R_SetColor( rgba );
 	}
 	return 0;
 }
 
 //void			trap_R_DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );
-static int lua_R_DrawStretchPic( lua_State *L ) {
-	float x = (float)luaL_checknumber( L, 1 );
-	float y = (float)luaL_checknumber( L, 2 );
-	float w = (float)luaL_checknumber( L, 3 );
-	float h = (float)luaL_checknumber( L, 4 );
-	float s1 = (float)luaL_checknumber( L, 5 );
-	float t1 = (float)luaL_checknumber( L, 6 );
-	float s2 = (float)luaL_checknumber( L, 7 );
-	float t2 = (float)luaL_checknumber( L, 8 );
-	qhandle_t hShader = luaL_checkinteger( L, 9 );
+static void lua_R_DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader ) {
 	trap_R_DrawStretchPic( x, y, w, h, s1, t1, s2, t2, hShader );
-	return 0;
 }
 
 //void			trap_UpdateScreen( void );
-static int lua_UpdateScreen( lua_State *L ) {
+static void lua_UpdateScreen() {
 	trap_UpdateScreen();
-	return 0;
 }
 
 //int			trap_CM_LerpTag( orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName );
@@ -330,203 +230,116 @@ static int lua_CM_LerpTag( lua_State *L ) {
 }
 
 //void			trap_S_StartLocalSound( sfxHandle_t sfx, int channelNum );
-static int lua_S_StartLocalSound( lua_State *L ) {
-	sfxHandle_t sfx = luaL_checkinteger( L, 1 );
-	int channelNum = luaL_checkinteger( L, 2 );
+static void lua_S_StartLocalSound( sfxHandle_t sfx, int channelNum ) {
 	trap_S_StartLocalSound( sfx, channelNum );
-	return 0;
 }
 
 //sfxHandle_t		trap_S_RegisterSound( const char *sample, qboolean compressed );
-static int lua_S_RegisterSound( lua_State *L ) {
-	const char *sample = luaL_checkstring( L, 1 );
-	qboolean compressed = (qboolean)lua_toboolean( L, 2 );
-	lua_pushinteger( L, trap_S_RegisterSound( sample, compressed ) );
-	return 1;
+static sfxHandle_t lua_S_RegisterSound( const char *sample, bool compressed ) {
+	return trap_S_RegisterSound( sample, compressed ? qtrue : qfalse );
 }
 
 
 //void			trap_Key_KeynumToStringBuf( int keynum, char *buf, int buflen );
-static int lua_Key_KeynumToStringBuf( lua_State *L ) {
-	int keynum = luaL_checkinteger( L, 1 );
+static std::string lua_Key_KeynumToStringBuf( int keynum ) {
 	static char buf[32];
 	trap_Key_KeynumToStringBuf( keynum, buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return std::string( buf );
 }
 
 //void			trap_Key_GetBindingBuf( int keynum, char *buf, int buflen );
-static int lua_Key_GetBindingBuf( lua_State *L ) {
-	int keynum = luaL_checkinteger( L, 1 );
+static const char* lua_Key_GetBindingBuf( int keynum ) {
 	static char buf[32];
 	trap_Key_GetBindingBuf( keynum, buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return buf;
 }
 
 //void			trap_Key_SetBinding( int keynum, const char *binding );
-static int lua_Key_SetBinding( lua_State *L ) {
-	int keynum = luaL_checkinteger( L, 1 );
-	const char *binding = luaL_checkstring( L, 2 );
+static void lua_Key_SetBinding( int keynum, const char *binding ) {
 	trap_Key_SetBinding( keynum, binding );
-	return 0;
 }
 
 //qboolean		trap_Key_IsDown( int keynum );
-static int lua_Key_IsDown( lua_State *L ) {
-	int keynum = luaL_checkinteger( L, 1 );
-	lua_pushboolean( L, trap_Key_IsDown( keynum ) );
-	return 1;
+static bool lua_Key_IsDown( int keynum ) {
+	return trap_Key_IsDown( keynum );
 }
 
 //qboolean		trap_Key_GetOverstrikeMode( void );
-static int lua_Key_GetOverstrikeMode( lua_State *L ) {
-	lua_pushboolean( L, trap_Key_GetOverstrikeMode() );
-	return 1;
+static bool lua_Key_GetOverstrikeMode() {
+	return trap_Key_GetOverstrikeMode();
 }
 
 //void			trap_Key_SetOverstrikeMode( qboolean state );
-static int lua_Key_SetOverstrikeMode( lua_State *L ) {
-	qboolean state = ( qboolean )lua_toboolean( L, 1 );
-	trap_Key_SetOverstrikeMode( state );
-	return 0;
+static void lua_Key_SetOverstrikeMode( bool state ) {
+	trap_Key_SetOverstrikeMode( state ? qtrue: qfalse );
 }
 
 //void			trap_Key_ClearStates( void );
-static int lua_Key_ClearStates( lua_State *L ) {
+static void lua_Key_ClearStates() {
 	trap_Key_ClearStates();
-	return 0;
 }
 
 //int				trap_Key_GetCatcher( void );
-static int lua_Key_GetCatcher( lua_State *L ) {
-	lua_pushinteger( L, trap_Key_GetCatcher() );
-	return 1;
+static int lua_Key_GetCatcher() {
+	return trap_Key_GetCatcher();
 }
 
 //void			trap_Key_SetCatcher( int catcher );
-static int lua_Key_SetCatcher( lua_State *L ) {
-	int catcher = luaL_checkinteger( L, 1 );
+static void lua_Key_SetCatcher( int catcher ) {
 	trap_Key_SetCatcher( catcher );
-	return 0;
 }
 
 //void			trap_GetClipboardData( char *buf, int bufsize );
-static int lua_GetClipboardData( lua_State *L ) {
+static const char* lua_GetClipboardData() {
 	static char buf[1024];
 	trap_GetClipboardData( buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
-}
-
-//void			trap_GetClientState( uiClientState_t *state );
-static int lua_GetClientState( lua_State *L ) {
-	uiClientState_t state;
-	trap_GetClientState( &state );
-
-	lua_newtable( L );
-	LUA_INTFIELD( L, state, connState );
-	LUA_INTFIELD( L, state, connectPacketCount );
-	LUA_INTFIELD( L, state, clientNum );
-	LUA_STRFIELD( L, state, servername );
-	LUA_STRFIELD( L, state, updateInfoString );
-	LUA_STRFIELD( L, state, messageString );
-
-	return 1;
-}
-
-//void			trap_GetGlconfig( glconfig_t *glconfig );
-static int lua_GetGlconfig( lua_State *L ) {
-	glconfig_t glconfig;
-
-	trap_GetGlconfig( &glconfig );
-
-	lua_newtable( L );
-	LUA_STRFIELD( L, glconfig, renderer_string );
-	LUA_STRFIELD( L, glconfig, vendor_string );
-	LUA_STRFIELD( L, glconfig, version_string );
-	LUA_STRFIELD( L, glconfig, extensions_string );
-	LUA_INTFIELD( L, glconfig, maxTextureSize );
-	LUA_INTFIELD( L, glconfig, numTextureUnits );
-	LUA_INTFIELD( L, glconfig, colorBits );
-	LUA_INTFIELD( L, glconfig, depthBits );
-	LUA_INTFIELD( L, glconfig, stencilBits );
-	LUA_INTFIELD( L, glconfig, driverType );
-	LUA_INTFIELD( L, glconfig, hardwareType );
-	LUA_BOOLFIELD( L, glconfig, deviceSupportsGamma );
-	LUA_INTFIELD( L, glconfig, textureCompression );
-	LUA_BOOLFIELD( L, glconfig, textureEnvAddAvailable );
-	LUA_INTFIELD( L, glconfig, vidWidth );
-	LUA_INTFIELD( L, glconfig, vidHeight );
-	LUA_NUMFIELD( L, glconfig, windowAspect );
-	LUA_INTFIELD( L, glconfig, displayFrequency );
-	LUA_BOOLFIELD( L, glconfig, isFullscreen );
-	LUA_BOOLFIELD( L, glconfig, stereoEnabled );
-	LUA_BOOLFIELD( L, glconfig, smpActive );
-
-	return 1;
+	return buf;
 }
 
 //int				trap_GetConfigString( int index, char *buff, int buffsize );
-static int lua_GetConfigString( lua_State *L ) {
-	char buf[MAX_CONFIGSTRINGS];
-	int index = luaL_checkinteger( L, 1 );
+static const char* lua_GetConfigString( int index ) {
+	static char buf[MAX_CONFIGSTRINGS];
 	int result = trap_GetConfigString( index, buf, ARRAY_LEN( buf ) );
-	if ( result ) {
-		lua_pushstring( L, buf );
-	} else {
-		lua_pushnil( L );
+	if ( !result ) {
+		buf[0] = '\0';
 	}
-	return 1;
+	return buf;
 }
 
 //int				trap_LAN_GetServerCount( int source );
-static int lua_LAN_GetServerCount( lua_State *L ) {
-	int source = luaL_checkinteger( L, 1 );
-	lua_pushinteger( L, trap_LAN_GetServerCount( source ) );
-	return 1;
+static int lua_LAN_GetServerCount( int source ) {
+	return trap_LAN_GetServerCount( source );
 }
 
 //void			trap_LAN_GetServerAddressString( int source, int n, char *buf, int buflen );
-static int lua_LAN_GetServerAddressString( lua_State *L ) {
-	int source = luaL_checkinteger( L, 1 );
-	int n = luaL_checkinteger( L, 2 );
+static const char* lua_LAN_GetServerAddressString( int source, int n ) {
 	static char buf[1024];
 	trap_LAN_GetServerAddressString( source, n, buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return buf;
 }
 
 //void			trap_LAN_GetServerInfo( int source, int n, char *buf, int buflen );
-static int lua_LAN_GetServerInfo( lua_State *L ) {
-	int source = luaL_checkinteger( L, 1 );
-	int n = luaL_checkinteger( L, 2 );
+static const char* lua_LAN_GetServerInfo( int source, int n ) {
 	static char buf[1024];
 	trap_LAN_GetServerInfo( source, n, buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return buf;
 }
 
 //int				trap_LAN_GetPingQueueCount( void );
-static int lua_LAN_GetPingQueueCount( lua_State *L ) {
-	lua_pushinteger( L, trap_LAN_GetPingQueueCount() );
-	return 1;
+static int lua_LAN_GetPingQueueCount() {
+	return trap_LAN_GetPingQueueCount();
 }
 
 //int				trap_LAN_ServerStatus( const char *serverAddress, char *serverStatus, int maxLen );
-static int lua_LAN_ServerStatus( lua_State *L ) {
-	const char *serverAddress = luaL_checkstring( L, 1 );
+static const char* lua_LAN_ServerStatus( const char *serverAddress ) {
 	static char serverStatus[1024];
 	trap_LAN_ServerStatus( serverAddress, serverStatus, ARRAY_LEN( serverStatus ) );
-	lua_pushstring( L, serverStatus );
-	return 1;
+	return serverStatus;
 }
 
 //void			trap_LAN_ClearPing( int n );
-static int lua_LAN_ClearPing( lua_State *L ) {
-	int n = luaL_checkinteger( L, 1 );
+static void lua_LAN_ClearPing( int n ) {
 	trap_LAN_ClearPing( n );
-	return 0;
 }
 
 //void			trap_LAN_GetPing( int n, char *buf, int buflen, int *pingtime );
@@ -541,48 +354,37 @@ static int lua_LAN_GetPing( lua_State *L ) {
 }
 
 //void			trap_LAN_GetPingInfo( int n, char *buf, int buflen );
-static int lua_LAN_GetPingInfo( lua_State *L ) {
-	int n = luaL_checkinteger( L, 1 );
+static const char* lua_LAN_GetPingInfo( int n ) {
 	static char buf[1024];
 	trap_LAN_GetPingInfo( n, buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return buf;
 }
 
 //int				trap_MemoryRemaining( void );
-static int lua_MemoryRemaining( lua_State *L ) {
-	lua_pushinteger( L, trap_MemoryRemaining() );
-	return 1;
+static int lua_MemoryRemaining() {
+	return trap_MemoryRemaining();
 }
 
 //void			trap_GetCDKey( char *buf, int buflen );
-static int lua_GetCDKey( lua_State *L ) {
+static const char* lua_GetCDKey() {
 	static char buf[1024];
 	trap_GetCDKey( buf, ARRAY_LEN( buf ) );
-	lua_pushstring( L, buf );
-	return 1;
+	return buf;
 }
 
 //void			trap_SetCDKey( char *buf );
-static int lua_SetCDKey( lua_State *L ) {
-	const char *buf = luaL_checkstring( L, 1 );
+static void lua_SetCDKey( const char *buf ) {
 	trap_SetCDKey( buf );
-	return 0;
 }
 
 //qboolean        trap_VerifyCDKey( const char *key, const char *chksum );
-static int lua_VerifyCDKey( lua_State *L ) {
-	const char *key = luaL_checkstring( L, 1 );
-	const char *chksum = luaL_checkstring( L, 2 );
-	lua_pushboolean( L, trap_VerifyCDKey( key, chksum ) );
-	return 1;
+static bool lua_VerifyCDKey( const char *key, const char *chksum ) {
+	return trap_VerifyCDKey( key, chksum );
 }
 
 //void			trap_SetPbClStatus( int status );
-static int lua_SetPbClStatus( lua_State *L ) {
-	int status = luaL_checkinteger( L, 1 );
+static void lua_SetPbClStatus( int status ) {
 	trap_SetPbClStatus( status );
-	return 0;
 }
 
 //void trap_R_SetMatrix( const float *matrix )
@@ -596,71 +398,8 @@ static int lua_R_SetMatrix( lua_State *L ) {
 	return 0;
 }
 
-static const luaL_Reg uilib[] = {
-	{ "Print", lua_Print },
-	{ "Error", lua_Error },
-	{ "Milliseconds", lua_Milliseconds },
-	{ "Cvar_Register", lua_Cvar_Register },
-	{ "Cvar_Update", lua_Cvar_Update },
-	{ "Cvar_Set", lua_Cvar_Set },
-	{ "Cvar_VariableValue", lua_Cvar_VariableValue },
-	{ "Cvar_VariableStringBuffer", lua_Cvar_VariableStringBuffer },
-	{ "Cvar_SetValue", lua_Cvar_SetValue },
-	{ "Cvar_Reset", lua_Cvar_Reset },
-	{ "Cvar_Create", lua_Cvar_Create },
-	{ "Cvar_InfoStringBuffer", lua_Cvar_InfoStringBuffer },
-	{ "Argc", lua_Argc },
-	{ "Argv", lua_Argv },
-	{ "Cmd_ExecuteText", lua_Cmd_ExecuteText },
-	{ "FS_FOpenFile", lua_FS_FOpenFile },
-	{ "FS_Read", lua_FS_Read },
-	{ "FS_Write", lua_FS_Write },
-	{ "FS_FCloseFile", lua_FS_FCloseFile },
-	{ "FS_GetFileList", lua_FS_GetFileList },
-	{ "FS_Seek", lua_FS_Seek },
-	{ "R_RegisterModel", lua_R_RegisterModel },
-	{ "R_RegisterSkin", lua_R_RegisterSkin },
-	{ "R_RegisterShaderNoMip", lua_R_RegisterShaderNoMip },
-	{ "R_ClearScene", lua_R_ClearScene },
-	{ "R_AddRefEntityToScene", lua_R_AddRefEntityToScene },
-	{ "R_AddPolyToScene", lua_R_AddPolyToScene },
-	{ "R_AddLightToScene", lua_R_AddLightToScene },
-	{ "R_RenderScene", lua_R_RenderScene },
-	{ "R_SetColor", lua_R_SetColor },
-	{ "R_DrawStretchPic", lua_R_DrawStretchPic },
-	{ "UpdateScreen", lua_UpdateScreen },
-	{ "CM_LerpTag", lua_CM_LerpTag },
-	{ "S_StartLocalSound", lua_S_StartLocalSound },
-	{ "S_RegisterSound", lua_S_RegisterSound },
-	{ "Key_KeynumToStringBuf", lua_Key_KeynumToStringBuf },
-	{ "Key_GetBindingBuf", lua_Key_GetBindingBuf },
-	{ "Key_SetBinding", lua_Key_SetBinding },
-	{ "Key_IsDown", lua_Key_IsDown },
-	{ "Key_GetOverstrikeMode", lua_Key_GetOverstrikeMode },
-	{ "Key_SetOverstrikeMode", lua_Key_SetOverstrikeMode },
-	{ "Key_ClearStates", lua_Key_ClearStates },
-	{ "Key_GetCatcher", lua_Key_GetCatcher },
-	{ "Key_SetCatcher", lua_Key_SetCatcher },
-	{ "GetClipboardData", lua_GetClipboardData },
-	{ "GetClientState", lua_GetClientState },
-	{ "GetGlconfig", lua_GetGlconfig },
-	{ "GetConfigString", lua_GetConfigString },
-	{ "LAN_GetServerCount", lua_LAN_GetServerCount },
-	{ "LAN_GetServerAddressString", lua_LAN_GetServerAddressString },
-	{ "LAN_GetServerInfo", lua_LAN_GetServerInfo },
-	{ "LAN_GetPingQueueCount", lua_LAN_GetPingQueueCount },
-	{ "LAN_ServerStatus", lua_LAN_ServerStatus },
-	{ "LAN_ClearPing", lua_LAN_ClearPing },
-	{ "LAN_GetPing", lua_LAN_GetPing },
-	{ "LAN_GetPingInfo", lua_LAN_GetPingInfo },
-	{ "MemoryRemaining", lua_MemoryRemaining },
-	{ "GetCDKey", lua_GetCDKey },
-	{ "SetCDKey", lua_SetCDKey },
-	{ "VerifyCDKey", lua_VerifyCDKey },
-	{ "SetPbClStatus", lua_SetPbClStatus },
-	{ "R_SetMatrix", lua_R_SetMatrix },
-	{ NULL, NULL }
-};
+
+
 
 typedef struct {
 	const char *name;
@@ -1008,7 +747,7 @@ static const luaL_Integer uilib_intconst[] = {
 	{ "CVAR_VM_CREATED", CVAR_VM_CREATED },
 	{ "CVAR_PROTECTED", CVAR_PROTECTED },
 	{ "CVAR_MODIFIED", CVAR_MODIFIED },
-	{ "CVAR_NONEXISTENT", CVAR_NONEXISTENT },
+	{ "CVAR_NONEXISTENT", (int)CVAR_NONEXISTENT },
 
 	{ "UIMENU_NONE", UIMENU_NONE },
 	{ "UIMENU_MAIN", UIMENU_MAIN },
@@ -1024,6 +763,8 @@ static const luaL_Integer uilib_intconst[] = {
 	{ "UIMENU_CHAMPIONS_INGAME", UIMENU_CHAMPIONS_INGAME },
 #endif
 
+	{ "RDF_NOWORLDMODEL", RDF_NOWORLDMODEL },
+	{ "RDF_HYPERSPACE", RDF_HYPERSPACE },
 	{ NULL, 0 },
 };
 
@@ -1034,10 +775,391 @@ static void lua_setintconstants( lua_State *L, const luaL_Integer *l ) {
 	}
 }
 
+struct Lua_vec2_t {
+	vec2_t value;
+
+	Lua_vec2_t() {
+		value[0] = value[1] = 0.0f;
+	}
+	Lua_vec2_t( const vec2_t &value ) {
+		memcpy( this->value, value, sizeof( this->value ) );
+	}
+	template<unsigned index> float get() const { return value[index]; }
+	template<unsigned index>  void set( float x ) { value[index] = x; }
+};
+
+struct Lua_vec3_t {
+	vec3_t value;
+
+	Lua_vec3_t() {
+		value[0] = value[1] = value[2] = 0.0f;
+	}
+	Lua_vec3_t( const vec3_t &value ) {
+		memcpy( this->value, value, sizeof( this->value ) );
+	}
+
+	template<unsigned index> float get() const { 
+		return value[index];
+	}
+	template<unsigned index>  void set( float x ) { 
+		value[index] = x;
+	}
+
+	std::string toString() const {
+		std::ostringstream  os;
+		os << "{" << value[0] << ", " << value[1] << ", " << value[2] << "}";
+		return os.str();
+		//return std::format( "({}, {}, {})", value[0], value[1], value[2] );
+	}
+};
+
+struct Lua_color4ub {
+	byte rgba[4];
+	Lua_color4ub() {
+		memset( rgba, 0, sizeof( rgba ) );
+	}
+	Lua_color4ub( const byte rgba[4] ) {
+		memcpy( this->rgba, rgba, sizeof( this->rgba ) );
+	}
+	template<unsigned index> byte get() const { return rgba[index]; }
+	template<unsigned index> void set( byte r ) { rgba[index] = r; }
+};
+
+struct Lua_polyVert_t: polyVert_t {
+	Lua_polyVert_t() {
+		memset( this, 0, sizeof( *this) );
+	}
+	Lua_polyVert_t( const Lua_polyVert_t &other ) {
+		memcpy( this, &other, sizeof( *this) );
+	}
+	Lua_polyVert_t( const polyVert_t &other ) {
+		memcpy( this, &other, sizeof( *this) );
+	}
+};
+
+struct Lua_glconfig_t: glconfig_t {
+	const char* get_renderer_string() const { return renderer_string; }
+	void set_renderer_string( const char *v) { Q_strncpyz( renderer_string, v, sizeof( renderer_string )); }
+
+	const char* get_vendor_string() const { return vendor_string; }
+	void set_vendor_string( const char *v) { Q_strncpyz( vendor_string, v, sizeof( vendor_string )); }
+
+	const char* get_version_string() const { return version_string; }
+	void set_version_string( const char *v) { Q_strncpyz( version_string, v, sizeof( version_string )); }
+
+	const char* get_extensions_string() const { return extensions_string; }
+	void set_extensions_string( const char *v) { Q_strncpyz( extensions_string, v, sizeof( extensions_string )); }
+
+	bool getDeviceSupportsGamma() const { return deviceSupportsGamma; }
+	void setDeviceSupportsGamma( bool value ) { deviceSupportsGamma = value ? qtrue : qfalse; }
+
+	bool getTextureEnvAddAvailable() const { return textureEnvAddAvailable; }
+	void setTextureEnvAddAvailable( bool value ) { textureEnvAddAvailable= value ? qtrue : qfalse; }
+
+	bool getIsFullscreen() const { return isFullscreen; }
+	void setIsFullscreen( bool value ) { isFullscreen= value ? qtrue : qfalse; }
+
+	bool getStereoEnabled() const { return stereoEnabled; }
+	void setStereoEnabled( bool value ) { stereoEnabled= value ? qtrue : qfalse; }
+
+	bool getSmpActive() const { return smpActive; }
+	void setSmpActive( bool value ) { smpActive= value ? qtrue : qfalse; }
+};
+
+struct Lua_refEntity_t: refEntity_t {
+
+	Lua_refEntity_t() {
+		memset( this, 0, sizeof( Lua_refEntity_t ) );
+	}
+
+	Lua_refEntity_t( const Lua_refEntity_t& other ) {
+		memcpy( this, &other, sizeof( Lua_refEntity_t ) );
+	}
+
+	bool getNonNormalizedAxes() const {
+		return this->nonNormalizedAxes; 
+	}
+
+	void setNonNormalizedAxes( bool value ) {
+		this->nonNormalizedAxes = value ? qtrue : qfalse;
+	}
+};
+
+struct Lua_uiClientState_t: uiClientState_t {
+	const char *getServerName() const { return this->servername; }
+	void setServerName( const char *value ) { Q_strncpyz( this->servername, value, sizeof( this->servername ) ); }
+
+	const char *getUpdateInfoString() const { return this->updateInfoString; }
+	void setUpdateInfoString( const char *value)  { Q_strncpyz( this->updateInfoString, value, sizeof( this->updateInfoString ) ); }
+
+	const char *getMessageString() const { return this->messageString; }
+	void setMessageString( const char *value ) { Q_strncpyz( this->messageString, value, sizeof( this->messageString ) ); }
+
+};
+
+struct Lua_refdef_t : refdef_t {
+	Lua_refdef_t() {
+		memset( this, 0, sizeof( *this ) );
+	}
+};
+
+//void			trap_R_AddRefEntityToScene( const refEntity_t *re );
+static void lua_R_AddRefEntityToScene( const Lua_refEntity_t &re ) {
+	trap_R_AddRefEntityToScene( &re );
+}
+
+//void			trap_R_RenderScene( const refdef_t *fd );
+static void lua_R_RenderScene( const Lua_refdef_t &fd ) {
+	trap_R_RenderScene( &fd );
+}
+
+//void			trap_R_AddPolyToScene( qhandle_t hShader, int numVerts, const polyVert_t *verts );
+static void lua_R_AddPolyToScene( qhandle_t hShader, const std::vector<polyVert_t> &verts ) {
+	trap_R_AddPolyToScene( hShader, ( int )verts.size(), &verts[0] );
+}
+
+//void			trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b );
+static void lua_R_AddLightToScene( const Lua_vec3_t org, float intensity, float r, float g, float b ) {
+	trap_R_AddLightToScene( org.value, intensity, r, g, b );
+}
+
+//void			trap_GetClientState( uiClientState_t *state );
+static const Lua_uiClientState_t &lua_GetClientState() {
+	Lua_uiClientState_t state;
+	trap_GetClientState( &state );
+	return state;
+}
+
+//void			trap_GetGlconfig( glconfig_t *glconfig );
+static Lua_glconfig_t lua_GetGlconfig() {
+	Lua_glconfig_t glconfig;
+	trap_GetGlconfig( &glconfig );
+	return glconfig;
+}
+
+
 LUAMOD_API int luaopen_trap( lua_State *L ) {
-	lua_newtable( L );
-	luaL_setfuncs( L, uilib, 0 );
-	lua_setintconstants( L, uilib_intconst );
-	lua_setglobal( L, "trap" );
+	luabridge::Namespace global = getGlobalNamespace( L );
+	luabridge::Namespace ns = global.beginNamespace( "trap" );
+
+	ns = ns.beginClass<Lua_vmCvar_t>( "vmCvar_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "handle", &Lua_vmCvar_t::handle )
+		.addProperty( "value", &Lua_vmCvar_t::value )
+		.addProperty( "integer", &Lua_vmCvar_t::integer )
+		.addProperty( "string", &Lua_vmCvar_t::getString, &Lua_vmCvar_t::setString )
+	.endClass()
+	.beginClass<Q_File>( "Q_File" )
+		.addConstructor<void(*)()>()
+		.addProperty( "length", &Q_File::getLength )
+	.endClass()
+	.beginClass<Lua_vec2_t>( "vec2_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "x", &Lua_vec2_t::get<0>, &Lua_vec2_t::set<0> )
+		.addProperty( "y", &Lua_vec2_t::get<1>, &Lua_vec2_t::set<1> )
+	.endClass()
+	.beginClass<Lua_vec3_t>( "vec3_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "x", &Lua_vec3_t::get<0>, &Lua_vec3_t::set<0> )
+		.addProperty( "y", &Lua_vec3_t::get<1>, &Lua_vec3_t::set<1> )
+		.addProperty( "z", &Lua_vec3_t::get<2>, &Lua_vec3_t::set<2> )
+		.addFunction( "__tostring", &Lua_vec3_t::toString )
+	.endClass()
+	.beginClass<Lua_color4ub>( "color4ub" )
+		.addConstructor<void(*)()>()
+		.addProperty( "r", &Lua_color4ub::get<0>, &Lua_color4ub::set<0> )
+		.addProperty( "g", &Lua_color4ub::get<1>, &Lua_color4ub::set<1> )
+		.addProperty( "b", &Lua_color4ub::get<2>, &Lua_color4ub::set<2> )
+		.addProperty( "a", &Lua_color4ub::get<3>, &Lua_color4ub::set<3> )
+	.endClass()
+	.beginClass<Lua_refdef_t>("refdef_t")
+		.addConstructor<void(*)()>()
+		.addProperty( "x", &Lua_refdef_t::x )
+		.addProperty( "y", &Lua_refdef_t::y )
+		.addProperty( "width", &Lua_refdef_t::width )
+		.addProperty( "height", &Lua_refdef_t::height )
+		.addProperty( "fov_x", &Lua_refdef_t::fov_x )
+		.addProperty( "fov_y", &Lua_refdef_t::fov_y )
+		.addProperty( "vieworg",
+			std::function<Lua_vec3_t( const Lua_refdef_t * )>( []( const Lua_refdef_t *rd ) { return Lua_vec3_t( rd->vieworg ); } ),
+			std::function<void( Lua_refdef_t *, Lua_vec3_t )>( []( Lua_refdef_t *rd, Lua_vec3_t org ) { memcpy( rd->vieworg, org.value, sizeof( rd->vieworg ) ); } )
+		)
+		.addProperty( "viewaxis0",
+			std::function<Lua_vec3_t( const Lua_refdef_t * )>( []( const Lua_refdef_t *rd ) { return Lua_vec3_t( rd->viewaxis[0] ); } ),
+			std::function<void( Lua_refdef_t *, Lua_vec3_t )>( []( Lua_refdef_t *rd, Lua_vec3_t ax ) { memcpy( rd->viewaxis[0], ax.value, sizeof( rd->viewaxis[0] ) ); } )
+		)
+		.addProperty( "viewaxis1",
+			std::function<Lua_vec3_t( const Lua_refdef_t * )>( []( const Lua_refdef_t *rd ) { return Lua_vec3_t( rd->viewaxis[1] ); } ),
+			std::function<void( Lua_refdef_t *, Lua_vec3_t )>( []( Lua_refdef_t *rd, Lua_vec3_t ax ) { memcpy( rd->viewaxis[1], ax.value, sizeof( rd->viewaxis[1] ) ); } )
+		)
+		.addProperty( "viewaxis2",
+			std::function<Lua_vec3_t( const Lua_refdef_t * )>( []( const Lua_refdef_t *rd ) { return Lua_vec3_t( rd->viewaxis[2] ); } ),
+			std::function<void( Lua_refdef_t *, Lua_vec3_t )>( []( Lua_refdef_t *rd, Lua_vec3_t ax ) { memcpy( rd->viewaxis[2], ax.value, sizeof( rd->viewaxis[2] ) ); } )
+		)
+		.addProperty( "time", &Lua_refdef_t::time )
+		.addProperty( "rdflags", &Lua_refdef_t::rdflags )
+	.endClass()
+	.beginClass<Lua_refEntity_t>( "refEntity_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "reType", &Lua_refEntity_t::reType )
+		.addProperty( "renderfx", &Lua_refEntity_t::renderfx )
+		.addProperty( "hModel", &Lua_refEntity_t::hModel )
+		.addProperty( "lightingOrigin", 
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->lightingOrigin ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->lightingOrigin, lorig.value, sizeof( re->lightingOrigin ) ); } )
+		)
+		.addProperty( "shadowPlane", &Lua_refEntity_t::shadowPlane )
+		.addProperty( "axis0", 
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->axis[0] ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->axis[0], lorig.value, sizeof( re->axis[0]) ); } )
+		)
+		.addProperty( "axis1",
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->axis[1] ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->axis[1], lorig.value, sizeof( re->axis[1] ) ); } )
+		)
+		.addProperty( "axis2",
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->axis[2] ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->axis[2], lorig.value, sizeof( re->axis[2] ) ); } )
+		)
+		.addProperty( "nonNormalizedAxes", &Lua_refEntity_t::getNonNormalizedAxes, &Lua_refEntity_t::setNonNormalizedAxes )
+		.addProperty( "origin", 
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->origin ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->origin, lorig.value, sizeof( re->origin ) ); } )
+		)
+		.addProperty( "frame", &Lua_refEntity_t::frame )
+		.addProperty( "oldorigin",
+			std::function<Lua_vec3_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec3_t( re->oldorigin ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec3_t )>( []( Lua_refEntity_t *re, Lua_vec3_t lorig ) { memcpy( re->oldorigin, lorig.value, sizeof( re->oldorigin ) ); } )
+		)
+		.addProperty( "oldframe", &Lua_refEntity_t::frame )
+		.addProperty( "skinNum", &Lua_refEntity_t::skinNum )
+		.addProperty( "customSkin", &Lua_refEntity_t::customSkin )
+		.addProperty( "customShader", &Lua_refEntity_t::customShader )
+		.addProperty( "shaderRGBA",
+			std::function<Lua_color4ub( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_color4ub( re->shaderRGBA ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_color4ub )>( []( Lua_refEntity_t *re, Lua_color4ub shaderRGBA ) { memcpy( re->shaderRGBA, shaderRGBA.rgba, sizeof( re->shaderRGBA ) ); } )
+		)
+		.addProperty( "shaderTexCoord",
+			std::function<Lua_vec2_t( const Lua_refEntity_t * )>( []( const Lua_refEntity_t *re ) { return Lua_vec2_t( re->shaderTexCoord ); } ),
+			std::function<void( Lua_refEntity_t *, Lua_vec2_t )>( []( Lua_refEntity_t *re, Lua_vec2_t texCoord) { memcpy( re->shaderTexCoord, texCoord.value, sizeof( re->shaderTexCoord ) ); } )
+		)
+		.addProperty( "shaderTime", &Lua_refEntity_t::shaderTime )
+		.addProperty( "radius", &Lua_refEntity_t::radius )
+		.addProperty( "rotation", &Lua_refEntity_t::rotation )
+	.endClass()
+	.beginClass<Lua_polyVert_t>( "polyVert_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "xyz", 
+			std::function<Lua_vec3_t( const Lua_polyVert_t * )>( []( const Lua_polyVert_t *pv ) { return Lua_vec3_t( pv->xyz ); } ),
+			std::function<void( Lua_polyVert_t *, Lua_vec3_t )>( []( Lua_polyVert_t *pv, Lua_vec3_t xyz ) { memcpy( pv->xyz, xyz.value, sizeof( pv->xyz ) ); } )
+		)
+		.addProperty( "st",
+			std::function<Lua_vec2_t( const Lua_polyVert_t * )>( []( const Lua_polyVert_t *pv ) { return Lua_vec2_t( pv->st ); } ),
+			std::function<void( Lua_polyVert_t *, Lua_vec2_t )>( []( Lua_polyVert_t *pv, Lua_vec2_t st ) { memcpy( pv->st, st.value, sizeof( pv->st ) ); } )
+		)
+		.addProperty( "modulate",
+			std::function<Lua_color4ub( const Lua_polyVert_t * )>( []( const Lua_polyVert_t *pv ) { return Lua_color4ub( pv->modulate ); } ),
+			std::function<void( Lua_polyVert_t *, Lua_color4ub )>( []( Lua_polyVert_t *pv, Lua_color4ub mod ) { memcpy( pv->modulate, mod.rgba, sizeof( pv->modulate ) ); } )
+		)
+	.endClass()
+	.beginClass<Lua_glconfig_t>( "glconfig_t" )
+		.addConstructor<void(*)()>()
+		.addProperty( "renderer_string", &Lua_glconfig_t::get_renderer_string )
+		.addProperty( "vendor_string", &Lua_glconfig_t::get_vendor_string )
+		.addProperty( "version_string", &Lua_glconfig_t::get_version_string )
+		.addProperty( "extensions_string", &Lua_glconfig_t::get_extensions_string )
+		.addProperty( "colorBits", &Lua_glconfig_t::colorBits )
+		.addProperty( "depthBits", &Lua_glconfig_t::depthBits )
+		.addProperty( "stencilBits", &Lua_glconfig_t::stencilBits )
+		.addProperty( "drtiverType", &Lua_glconfig_t::driverType )
+		.addProperty( "hardwareType", &Lua_glconfig_t::hardwareType )
+		.addProperty( "deviceSupportsGamma", &Lua_glconfig_t::getDeviceSupportsGamma )
+		.addProperty( "textureCompression_t", &Lua_glconfig_t::textureCompression )
+		.addProperty( "textureEnvAddAvailable", &Lua_glconfig_t::getTextureEnvAddAvailable )
+		.addProperty( "vidWidth", &Lua_glconfig_t::vidWidth )
+		.addProperty( "vidHeight", &Lua_glconfig_t::vidHeight )
+		.addProperty( "windowAspect", &Lua_glconfig_t::windowAspect )
+		.addProperty( "displayFrequency", &Lua_glconfig_t::displayFrequency )
+		.addProperty( "isFullscreen", &Lua_glconfig_t::getIsFullscreen )
+		.addProperty( "stereoEnabled", &Lua_glconfig_t::getStereoEnabled )
+		.addProperty( "smpActive", &Lua_glconfig_t::getSmpActive )
+	.endClass()
+	.beginClass<Lua_uiClientState_t>( "uiClientState_t" )
+		.addProperty( "connstate", &Lua_uiClientState_t::connState )
+		.addProperty( "connectPacketCount", &Lua_uiClientState_t::connectPacketCount )
+		.addProperty( "clientNum", &Lua_uiClientState_t::clientNum )
+		.addProperty( "servername", &Lua_uiClientState_t::getServerName, &Lua_uiClientState_t::setServerName )
+		.addProperty( "updateInfoString", &Lua_uiClientState_t::getUpdateInfoString, &Lua_uiClientState_t::setUpdateInfoString )
+		.addProperty( "servername", &Lua_uiClientState_t::getMessageString, &Lua_uiClientState_t::setMessageString )
+	.endClass();
+
+	for ( const luaL_Integer *l = uilib_intconst; l->name != NULL; l++ ) {
+		ns.addConstant( l->name, l->value );
+	}
+	ns.addFunction( "Print", lua_Print );
+	ns.addFunction( "Error", lua_Error );
+	ns.addFunction( "Milliseconds", lua_Milliseconds );
+	ns.addFunction( "Cvar_Register", lua_Cvar_Register );
+	ns.addFunction( "Cvar_Update", lua_Cvar_Update );
+	ns.addFunction( "Cvar_Set", lua_Cvar_Set );
+	ns.addFunction( "Cvar_VariableValue", lua_Cvar_VariableValue );
+	ns.addFunction( "Cvar_VariableStringBuffer", lua_Cvar_VariableStringBuffer );
+	ns.addFunction( "Cvar_SetValue", lua_Cvar_SetValue );
+	ns.addFunction( "Cvar_Reset", lua_Cvar_Reset );
+	ns.addFunction( "Cvar_Create", lua_Cvar_Create );
+	ns.addFunction( "Cvar_InfoStringBuffer", lua_Cvar_InfoStringBuffer );
+	ns.addFunction( "Argc", lua_Argc );
+	ns.addFunction( "Argv", lua_Argv );
+	ns.addFunction( "Cmd_ExecuteText", lua_Cmd_ExecuteText );
+	ns.addFunction( "GetClientState", lua_GetClientState );
+	ns.addFunction( "FS_FOpenFile", lua_FS_FOpenFile );
+	ns.addFunction( "FS_Read", lua_FS_Read );
+	ns.addFunction( "FS_Write", lua_FS_Write );
+	ns.addFunction( "FS_FCloseFile", lua_FS_FCloseFile );
+	ns.addFunction( "FS_GetFileList", lua_FS_GetFileList );
+	ns.addFunction( "FS_Seek", lua_FS_Seek );
+	ns.addFunction( "R_RegisterModel", lua_R_RegisterModel );
+	ns.addFunction( "R_RegisterSkin", lua_R_RegisterSkin );
+	ns.addFunction( "R_RegisterShaderNoMip", lua_R_RegisterShaderNoMip );
+	ns.addFunction( "R_ClearScene", lua_R_ClearScene );
+	ns.addFunction( "R_AddRefEntityToScene", lua_R_AddRefEntityToScene );
+	ns.addFunction( "R_AddPolyToScene", lua_R_AddPolyToScene );
+	ns.addFunction( "R_AddLightToScene", lua_R_AddLightToScene );
+	ns.addFunction( "R_RenderScene", lua_R_RenderScene );
+	ns.addFunction( "R_SetColor", lua_R_SetColor );
+	ns.addFunction( "R_DrawStretchPic", lua_R_DrawStretchPic );
+	ns.addFunction( "UpdateScreen", lua_UpdateScreen );
+	//ns.addFunction( "CM_LerpTag", lua_CM_LerpTag );
+	ns.addFunction( "S_StartLocalSound", lua_S_StartLocalSound );
+	ns.addFunction( "S_RegisterSound", lua_S_RegisterSound );
+	ns.addFunction( "Key_KeynumToStringBuf", lua_Key_KeynumToStringBuf );
+	ns.addFunction( "Key_GetBindingBuf", lua_Key_GetBindingBuf );
+	ns.addFunction( "Key_SetBinding", lua_Key_SetBinding );
+	ns.addFunction( "Key_IsDown", lua_Key_IsDown );
+	ns.addFunction( "Key_GetOverstrikeMode", lua_Key_GetOverstrikeMode );
+	ns.addFunction( "Key_SetOverstrikeMode", lua_Key_SetOverstrikeMode );
+	ns.addFunction( "Key_ClearStates", lua_Key_ClearStates );
+	ns.addFunction( "Key_GetCatcher", lua_Key_GetCatcher );
+	ns.addFunction( "Key_SetCatcher", lua_Key_SetCatcher );
+	ns.addFunction( "GetClipboardData", lua_GetClipboardData );
+	ns.addFunction( "GetGlconfig", lua_GetGlconfig );
+	ns.addFunction( "GetConfigString", lua_GetConfigString );
+	ns.addFunction( "LAN_GetServerCount", lua_LAN_GetServerCount );
+	ns.addFunction( "LAN_GetServerAddressString", lua_LAN_GetServerAddressString );
+	ns.addFunction( "LAN_GetServerInfo", lua_LAN_GetServerInfo );
+	ns.addFunction( "LAN_GetPingQueueCount", lua_LAN_GetPingQueueCount );
+	ns.addFunction( "LAN_ServerStatus", lua_LAN_ServerStatus );
+	ns.addFunction( "LAN_ClearPing", lua_LAN_ClearPing );
+	ns.addFunction( "LAN_GetPing", lua_LAN_GetPing );
+	ns.addFunction( "LAN_GetPingInfo", lua_LAN_GetPingInfo );
+	ns.addFunction( "MemoryRemaining", lua_MemoryRemaining );
+	ns.addFunction( "GetCDKey", lua_GetCDKey );
+	ns.addFunction( "SetCDKey", lua_SetCDKey );
+	ns.addFunction( "VerifyCDKey", lua_VerifyCDKey );
+	ns.addFunction( "SetPbClStatus", lua_SetPbClStatus );
+	ns.addFunction( "R_SetMatrix", lua_R_SetMatrix );
+
+	ns.endNamespace();
+
 	return 1;
 }

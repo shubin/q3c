@@ -1,13 +1,13 @@
 #ifndef __UI_LOCAL_H__
 #define __UI_LOCAL_H__
 
-#include "../qcommon/q_shared.h"
-#include "../renderercommon/tr_types.h"
-#include "../client/keycodes.h"
-#include "../game/bg_public.h"
-#include "ui_public.h"
 
 extern "C" {
+	#include "../qcommon/q_shared.h"
+	#include "../renderercommon/tr_types.h"
+	#include "../client/keycodes.h"
+	#include "../game/bg_public.h"
+	#include "ui_public.h"
 	#include <lapi.h>
 	#include <lualib.h>
 	#include <lauxlib.h>
