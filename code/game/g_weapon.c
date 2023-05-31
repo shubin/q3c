@@ -169,7 +169,7 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 #define	MACHINEGUN_DAMAGE	10
 #define	MACHINEGUN_TEAM_DAMAGE	7		// wimpier MG in teamplay
 #if defined( QC )
-#define MACHINEGUN_ZOOM_SPREAD	0
+#define MACHINEGUN_ZOOM_SPREAD	30
 #define MACHINEGUN_ZOOM_DAMAGE	15
 #define MACHINEGUN_ZOOM_TEAM_DAMAGE	10
 #define LOUSY_MACHINEGUN_SPREAD 300

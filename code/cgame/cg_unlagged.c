@@ -8,7 +8,9 @@ void CG_Bullet( vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, 
 
 // and this as well
 #if defined( QC ) // WARNING: important to keep it coherent with the same definition in g_weapon.c 
-#define MACHINEGUN_SPREAD	300
+#define MACHINEGUN_SPREAD			300
+#define MACHINEGUN_ZOOM_SPREAD		30
+#define LOUSY_MACHINEGUN_SPREAD		300
 #else
 #define MACHINEGUN_SPREAD	200
 #endif
@@ -170,7 +172,11 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 		}
 	}
 	// was it a machinegun attack?
+#if defined( QC )
+	else if ( ent->weapon == WP_MACHINEGUN || ent->weapon == WP_LOUSY_MACHINEGUN ) {
+#else // QC
 	else if ( ent->weapon == WP_MACHINEGUN ) {
+#endif // QC
 		// do we have it on for the machinegun?
 		if ( cg_delag.integer & 1 || cg_delag.integer & 2 ) {
 			// the server will use this exact time (it'll be serverTime on that end)
@@ -180,12 +186,30 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			qboolean flesh;
 			int fleshEntityNum;
 			vec3_t endPoint;
+#if defined( QC )
+			int spread;
+#endif // QC
+
 
 			// do everything exactly like the server does
 
 			r = Q_random(&seed) * M_PI * 2.0f;
+#if defined( QC )
+			if ( ent->weapon == WP_MACHINEGUN ) {
+				if ( cg.zoomed ) { // QC TODO: is this correct enough?
+					spread = MACHINEGUN_ZOOM_SPREAD;
+				} else {
+					spread = MACHINEGUN_SPREAD;
+				}
+			} else {
+				spread = LOUSY_MACHINEGUN_SPREAD;
+			}
+			u = sin( r ) * Q_crandom( &seed ) * spread * 16;
+			r = cos( r ) * Q_crandom( &seed ) * spread * 16;
+#else  // QC
 			u = sin(r) * Q_crandom(&seed) * MACHINEGUN_SPREAD * 16;
 			r = cos(r) * Q_crandom(&seed) * MACHINEGUN_SPREAD * 16;
+#endif // QC
 
 			VectorMA( muzzlePoint, 8192*16, forward, endPoint );
 			VectorMA( endPoint, r, right, endPoint );
