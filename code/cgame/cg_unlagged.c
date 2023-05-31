@@ -111,7 +111,12 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			}
 
 			// find the rail's end point
+#if defined( QC )
+			CG_TraceEx( cg.predictedPlayerState.clientNum,
+				&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cg.predictedPlayerState.clientNum, CONTENTS_SOLID );
+#else // QC
 			CG_Trace( &trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cg.predictedPlayerState.clientNum, CONTENTS_SOLID );
+#endif // QC
 
 			// do the magic-number adjustment
 			VectorMA( muzzlePoint, 4, right, muzzlePoint );
@@ -215,7 +220,12 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			VectorMA( endPoint, r, right, endPoint );
 			VectorMA( endPoint, u, up, endPoint );
 
-			CG_Trace(&tr, muzzlePoint, NULL, NULL, endPoint, cg.predictedPlayerState.clientNum, MASK_SHOT );
+#if defined( QC )
+			CG_TraceEx( cg.predictedPlayerState.clientNum,
+				&tr, muzzlePoint, NULL, NULL, endPoint, cg.predictedPlayerState.clientNum, MASK_SHOT );
+#else // QC
+			CG_Trace( &tr, muzzlePoint, NULL, NULL, endPoint, cg.predictedPlayerState.clientNum, MASK_SHOT );
+#endif // QC
 
 			if ( tr.surfaceFlags & SURF_NOIMPACT ) {
 				return;

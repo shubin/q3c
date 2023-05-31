@@ -1033,6 +1033,14 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	}
 #endif
 
+#if defined( QC )
+	if ( attacker->client != NULL ) {
+		if ( G_IsEntityFriendly( attacker->s.clientNum, targ->s.number ) ) {
+			return;
+		}
+	}
+#endif
+
 #if !defined( QC )
 	// reduce damage by the attacker's handicap value
 	// unless they are rocket jumping

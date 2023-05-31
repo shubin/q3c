@@ -80,7 +80,11 @@ qboolean CheckGauntletAttack( gentity_t *ent ) {
 
 	VectorMA (muzzle, 32, forward, end);
 
+#if defined( QC )
+	G_TraceEx( ent->s.number, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT );
+#else // QC
 	trap_Trace (&tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
+#endif // QC
 	if ( tr.surfaceFlags & SURF_NOIMPACT ) {
 		return qfalse;
 	}
@@ -217,7 +221,11 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage, int mod ) {
 		// backward-reconcile the other clients
 		G_DoTimeShiftFor( ent );
 #endif
+#if defined( QC )
+		G_TraceEx( passent, &tr, muzzle, NULL, NULL, end, passent, MASK_SHOT );
+#else // QC
 		trap_Trace (&tr, muzzle, NULL, NULL, end, passent, MASK_SHOT);
+#endif // QC
 #if defined( UNLAGGED ) //unlagged - backward reconciliation #2
 		// put them back
 		G_UndoTimeShiftFor( ent );
@@ -380,7 +388,11 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 	VectorCopy( start, tr_start );
 	VectorCopy( end, tr_end );
 	for (i = 0; i < 10; i++) {
+#if defined( QC )
+		G_TraceEx( passent, &tr, tr_start, NULL, NULL, tr_end, passent, MASK_SHOT );
+#else // QC
 		trap_Trace (&tr, tr_start, NULL, NULL, tr_end, passent, MASK_SHOT);
+#endif // QC
 		traceEnt = &g_entities[ tr.entityNum ];
 
 		// send bullet impact
@@ -778,7 +790,11 @@ void weapon_railgun_fire (gentity_t *ent) {
 	hits = 0;
 	passent = ent->s.number;
 	do {
+#if defined( QC )
+		G_TraceEx( passent, &trace, muzzle, NULL, NULL, end, passent, MASK_SHOT );
+#else // QC
 		trap_Trace (&trace, muzzle, NULL, NULL, end, passent, MASK_SHOT );
+#endif // QC
 		if ( trace.entityNum >= ENTITYNUM_MAX_NORMAL ) {
 			break;
 		}
@@ -956,7 +972,11 @@ void Weapon_LightningFire( gentity_t *ent ) {
 		// backward-reconcile the other clients
 		G_DoTimeShiftFor( ent );
 #endif
+#if defined( QC )
+		G_TraceEx( passent, &tr, muzzle, NULL, NULL, end, passent, MASK_SHOT );
+#else // QC
 		trap_Trace( &tr, muzzle, NULL, NULL, end, passent, MASK_SHOT );
+#endif // QC
 #if defined( UNLAGGED )//unlagged - backward reconciliation #2
 		// put them back
 		G_UndoTimeShiftFor( ent );

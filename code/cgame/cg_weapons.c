@@ -2290,10 +2290,16 @@ static void CG_ShotgunPellet( vec3_t start, vec3_t end, int skipNum ) {
 	trace_t		tr;
 	int sourceContentType, destContentType;
 
-	CG_Trace( &tr, start, NULL, NULL, end, skipNum, MASK_SHOT );
 
+#if defined( QC )
+	CG_TraceEx( skipNum, &tr, start, NULL, NULL, end, skipNum, MASK_SHOT );
+	sourceContentType = CG_PointContentsEx( skipNum, start, 0 );
+	destContentType = CG_PointContentsEx( skipNum, tr.endpos, 0 );
+#else // QC
+	CG_Trace( &tr, start, NULL, NULL, end, skipNum, MASK_SHOT );
 	sourceContentType = CG_PointContents( start, 0 );
 	destContentType = CG_PointContents( tr.endpos, 0 );
+#endif // QC
 
 	// FIXME: should probably move this cruft into CG_BubbleTrail
 	if ( sourceContentType == destContentType ) {

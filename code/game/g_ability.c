@@ -26,9 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 #include "bg_local.h"
-#if defined( QC )
 #include "bg_champions.h"
-#endif
 
 /* g_weapon.c */
 void CalcMuzzlePointOrigin ( gentity_t *ent, vec3_t origin, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint );
@@ -178,7 +176,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 	// check if we can teleport right there freely
 
 	VectorMA( destination, -1, dir, probe ); // fly the last unit with Ranger's measures
-	trap_Trace( &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+	G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 	if ( !tr.startsolid && tr.fraction == 1.0f ) { // yes we can
 		TeleportPlayer( self, destination, self->client->ps.viewangles );
 		VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
@@ -189,7 +187,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 	// step back and trace the final section as if we're the orb to see which surface we run into
 	VectorMA( destination, -50, dir, probe );
 	VectorMA( probe, 1000, dir, q );
-	trap_Trace( &tr, probe, orb->r.mins, orb->r.maxs, q, self->s.number, MASK_PLAYERSOLID );
+	G_TraceEx( self->s.clientNum, &tr, probe, orb->r.mins, orb->r.maxs, q, self->s.number, MASK_PLAYERSOLID );
 	if ( tr.startsolid ) {
 		// I can't image why this might happen as the orb already flew to the destination
 		// just in case I assume it's going to be too tight for Ranger so skip the normal backtracing
@@ -198,7 +196,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 	VectorCopy( tr.plane.normal, normal );
 	// step back and trace the final section along the normal as if we're actually the ranger
 	VectorMA( destination, diameter, normal, probe );
-	trap_Trace( &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+	G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 	if ( tr.startsolid || tr.fraction == 0.0f ) { // too tight for Ranger
 		goto skip_normal_backtrace;
 	}
@@ -207,7 +205,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 
 	// check the destination once again (safety first)
 	VectorMA( destination, -1, dir, probe );
-	trap_Trace( &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+	G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 	if ( tr.startsolid || ( 1.0f - tr.fraction ) > 0.001f ) { // shit
 		goto skip_normal_backtrace;
 	}
@@ -227,7 +225,7 @@ skip_normal_backtrace:
 		//if ( DotProduct( orb_probes[i], dir) < 0 )
 		{
 			VectorMA( destination, diameter, orb_probes[i], v );
-			trap_Trace( &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+			G_TraceEx( self->s.clientNum, &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 			if ( !tr.startsolid ) {
 				VectorMA( s, tr.fraction, orb_probes[i], s );
 			}
@@ -236,7 +234,7 @@ skip_normal_backtrace:
 	// it might happen that there's no usable direction actually
 	if ( VectorNormalize( s ) ) {
 		VectorMA( destination, diameter, s, v );
-		trap_Trace( &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+		G_TraceEx( self->s.clientNum, &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 		if ( !tr.startsolid ) {
 			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles );
 			// TeleportPlayer pushes the player forward, I don't like it
@@ -258,7 +256,7 @@ skip_normal_backtrace:
 		if ( d > distance ) {
 			VectorCopy( orb->s.origin, probe );
 		}
-		trap_Trace( &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
+		G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 		if ( !tr.startsolid && tr.fraction != 0.0f ) {
 			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles );
 			VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
@@ -459,3 +457,4 @@ void G_ActivateAbility( gentity_t *ent ) {
 			break;
 	}
 }
+

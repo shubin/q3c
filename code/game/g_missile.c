@@ -24,10 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	MISSILE_PRESTEP_TIME	50
 
-#if defined( QC )
-#define MAX_TOTEMS				3
-#endif
-
 /*
 ================
 G_BounceMissile
@@ -272,252 +268,6 @@ static void ProximityMine_Player( gentity_t *mine, gentity_t *player ) {
 		mine->nextthink = level.time + 10 * 1000;
 	}
 }
-#endif
-
-#if defined( QC )
-
-/*
-static void RemoveExcessiveTotems( gclient_t *client ) {
-	int i;
-	int num = 0;
-	int next;
-
-	for ( i = client->ps.ab_num; i != 0; i = next ) {
-		next = g_entities[i].s.otherEntityNum;
-		if ( num == 1 && next != 0 ) {
-			G_FreeEntity( &g_entities[next] );
-			g_entities[i].s.otherEntityNum = 0;
-			return;
-		}
-		num++;
-	}
-}
-*/
-static void AnnihilateTotem( gentity_t *ent ) {
-	G_FreeEntity( ent );
-}
-/*
-static int CountTotems( gclient_t *client ) {
-	int num_totems = 0;
-	int num;
-	for ( num = client->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-		if ( num != 0 ) {
-			num_totems++;
-		}
-	}
-	return num_totems;
-}
-
-// removes totem from the linked list of totems
-static void RemoveTotem( gentity_t *ent ) {
-	gclient_t *player;
-	int num, prev;
-
-	if ( ent == NULL || ent->parent == NULL ) {
-		AnnihilateTotem( ent );
-		return;
-	}
-
-	player = ent->parent->client;
-	if ( ent->s.number == player->ps.ab_num ) {
-		player->ps.ab_num = 0;
-		AnnihilateTotem( ent );
-		return;
-	}
-
-	prev = player->ps.ab_num;
-	while ( prev ) {
-		num = g_entities[prev].s.otherEntityNum;
-		if ( num == ent->s.number ) {
-			g_entities[prev].s.otherEntityNum = g_entities[num].s.otherEntityNum;
-			AnnihilateTotem( &g_entities[num] );
-			break;
-		}
-		prev = num;
-	}
-	//for ( num = player->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-	//	next = g_entities[num].s.otherEntityNum;
-	//	if ( next == ent->s.number ) {
-	//		g_entities[num].s.otherEntityNum = g_entities[next].s.otherEntityNum;
-	//		AnnihilateTotem( &g_entities[next] );
-	//		break;
-	//	}
-	//}
-}
-
-*/
-
-static int GetTotemArray( gclient_t *client, gentity_t *totems[MAX_TOTEMS+1] ) {
-	int num, p;
-	if ( client->ps.ab_num == 0 ) {
-		totems[0] = NULL;
-		return 0;
-	}
-	p = 0;
-	for ( num = client->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-		if ( num != 0 ) {
-			totems[p] = &g_entities[num];
-			p++;
-		}
-	}
-	totems[p] = NULL;
-	return p;
-}
-
-static int PrintTotems( const char *prompt, gclient_t *client ) {
-	int i, num;
-	gentity_t *totems[MAX_TOTEMS + 1];
-	num = GetTotemArray( client, totems );
-	G_Printf( "%s\n", prompt );
-	for ( i = 0; i < num; i++ ) {
-		G_Printf( "   %d: number = %d  other = %d\n", i, totems[i]->s.number, totems[i]->s.otherEntityNum );
-	}
-}
-
-static int BuildTotemList( gclient_t *client, gentity_t *totems[MAX_TOTEMS+1] ) {
-	int i;
-
-	if ( totems[0] == NULL ) {
-		client->ps.ab_num = 0;
-		return;
-	}
-
-	for ( i = 0; i < MAX_TOTEMS; i++ ) {
-		if ( totems[i + 1] == NULL ) {
-			totems[i]->s.otherEntityNum = 0;
-			break;
-		} else {
-			totems[i]->s.otherEntityNum = totems[i + 1]->s.number;
-		}
-	}
-	client->ps.ab_num = totems[0]->s.number;
-	return i;
-}
-
-void RemoveTotem( gentity_t *ent ) {
-	gclient_t *player;
-	gentity_t *totems[MAX_TOTEMS+1];
-	gentity_t *newtotems[MAX_TOTEMS+1];
-	int num_totems, i, p;
-
-	if ( ent == NULL || ent->parent == NULL ) {
-		AnnihilateTotem( ent );
-		return;
-	}
-
-	player = ent->parent->client;
-
-	PrintTotems( "Remove totems before", player );
-
-	num_totems = GetTotemArray( player, totems );
-	p = 0;
-	for ( i = 0; i < num_totems; i++ ) {
-		if ( totems[i] != ent ) {
-			newtotems[p] = totems[i];
-			p++;
-		}
-	}
-	newtotems[p] = NULL;
-
-	BuildTotemList( player, newtotems );
-
-	PrintTotems( "Remove totems after", player );
-
-
-	AnnihilateTotem( ent );
-}
-
-void RemoveExcessiveTotems( gclient_t *player ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-	gentity_t *newtotems[MAX_TOTEMS + 1];
-	int num_totems, i, p;
-
-	num_totems = GetTotemArray( player, totems );
-	if ( num_totems < MAX_TOTEMS ) {
-		return;
-	}
-	p = 0; 
-	for ( i = 1; i < MAX_TOTEMS; i++ ) {
-		newtotems[p] = totems[i];
-		p++;
-	}
-	newtotems[p] = NULL;
-
-	BuildTotemList( player, newtotems );
-}
-
-int CountTotems( gclient_t *player ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-
-	return GetTotemArray( player, totems );
-}
-
-int InsertTotem( gclient_t *player, gentity_t *totem ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-	gentity_t *newtotems[MAX_TOTEMS + 1];
-	int num_totems, i, p;
-
-	PrintTotems( "Insert totem before", player );
-
-	num_totems = GetTotemArray( player, totems );
-	if ( num_totems == MAX_TOTEMS ) {
-		AnnihilateTotem( totems[MAX_TOTEMS - 1] );
-		num_totems--;
-	}
-
-	p = 0;
-	newtotems[p] = totem;
-	p++;
-	for ( i = 0; i < num_totems; i++ ) {
-		newtotems[p] = totems[i];
-		p++;
-	}
-	newtotems[p] = NULL;
-	p = BuildTotemList( player, newtotems );
-	PrintTotems( "Insert totem after", player );
-	return p;
-}
-
-void totem_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod ) {
-	RemoveTotem( self );
-}
-
-void G_SpawnTotem( gentity_t *ent, trace_t *trace ) {
-	gentity_t *newtotem;
-
-	if ( ent == NULL || ent->parent == NULL || ent->parent->client == NULL ) {
-		G_FreeEntity( ent );
-		return;
-	}
-
-	ent->parent->client->ps.ab_flags = 0;
-	ent->parent->client->ps.ab_time = 0;
-
-	newtotem = G_Spawn();
-	newtotem->classname = "totem";
-	newtotem->s.eType = ET_TOTEM;
-	newtotem->takedamage = qtrue;
-	newtotem->health = 25;
-	newtotem->parent = ent->parent;
-	newtotem->s.generic1 = ent->parent->client->ps.persistant[PERS_TEAM];
-	newtotem->r.contents = CONTENTS_CORPSE;
-	newtotem->die = totem_die;
-	VectorSet( newtotem->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0 );
-	VectorSet( newtotem->r.maxs,  ITEM_RADIUS,  ITEM_RADIUS, 2 * ITEM_RADIUS );
-
-	G_SetOrigin( newtotem, trace->endpos );	
-	newtotem->s.angles[YAW] = ent->s.generic1; // player view YAW at the moment of throwing the totem ball
-
-	trap_LinkEntity( newtotem );
-
-	// the totem egg is not needed anymore
-	G_FreeEntity( ent );
-
-	if ( InsertTotem( newtotem->parent->client, newtotem ) == 3 ) {
-		G_Printf( "NEST IS COMPLETE, OVERHEAL\n" );
-	}
-}
-
 #endif
 
 /*
@@ -815,11 +565,19 @@ void G_RunMissile( gentity_t *ent ) {
 		passent = ent->r.ownerNum;
 	}
 	// trace a line from the previous position to the current position
+#if defined( QC )
+	G_TraceEx( ent->r.ownerNum, &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+#else // QC
 	trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+#endif // QC
 
 	if ( tr.startsolid || tr.allsolid ) {
 		// make sure the tr.entityNum is set to the entity we're stuck in
+#if defined( QC )
+		G_TraceEx( ent->r.ownerNum, &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask );
+#else // QC
 		trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask );
+#endif // QC
 		tr.fraction = 0;
 	}
 	else {
@@ -832,10 +590,10 @@ void G_RunMissile( gentity_t *ent ) {
 #if defined( QC )
 		if ( !strcmp( ent->classname, "orb" ) ) {
 			// run the trace again with different mask for the orb, as the orb should pass through an enemy but inflict some damage
-			trap_Trace( &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, MASK_SOLID );
+			G_TraceEx( ent->r.ownerNum, &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, MASK_SOLID );
 			if ( tr_orb.startsolid || tr_orb.allsolid ) {
 				// make sure the tr.entityNum is set to the entity we're stuck in
-				trap_Trace( &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask );
+				G_TraceEx( ent->r.ownerNum,  &tr_orb, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask );
 				tr_orb.fraction = 0;
 			}
 			else {

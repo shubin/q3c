@@ -718,6 +718,12 @@ void G_GenerateDireOrbProbes( void );
 void G_ActivateAbility( gentity_t *ent );
 void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
 
+//
+// g_totem.c
+//
+void G_ResetPlayerTotems( int clientNum );
+void G_SpawnTotem( gentity_t *ent, trace_t *trace );
+
 #endif
 
 //
@@ -902,6 +908,21 @@ extern  vmCvar_t	g_lightningDamage;
 // this is for convenience - using "sv_fps.integer" is nice :)
 extern	vmCvar_t	sv_fps;
 #endif
+
+#if defined( QC )
+// g_misc.c
+
+// returns true if the entity is friendly to the client (i.e. totem)
+qboolean G_IsEntityFriendly( int clientNum, int traceEnt );
+// Same as trap_Trace but skips friendly entities
+void G_TraceEx( int clientNum,
+	trace_t *results, const vec3_t start, const vec3_t mins,
+	const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
+#endif // QC
+
+#if defined( QC )
+qboolean G_SkipEntityTrace( int clientNum, int entityNum );
+#endif // QC
 
 void	trap_Print( const char *text );
 void	trap_Error( const char *text ) __attribute__((noreturn));
