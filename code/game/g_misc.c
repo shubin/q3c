@@ -484,3 +484,35 @@ void DropPortalSource( gentity_t *player ) {
 
 }
 #endif
+
+#if defined( QC )
+
+// please keep it coherent with the corresponding function in cg_predict.c
+qboolean G_IsEntityFriendly( int clientNum, int traceEnt ) {
+	gentity_t *ent = &g_entities[traceEnt];
+	if ( ent->s.eFlags & EF_NOFF ) {
+		if ( g_gametype.integer >= GT_TEAM ) {
+			return ent->s.generic1 == g_clients[clientNum].ps.persistant[PERS_TEAM];
+		} else {
+			return ent->s.generic1 == clientNum;
+		}
+	}
+	return qfalse;
+}
+
+qboolean G_SkipEntityTrace( int clientNum, int entityNum ) {
+	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
+		return qfalse;
+	}
+	return G_IsEntityFriendly( clientNum, entityNum );
+}
+
+// Same as trap_Trace but skips friendly entities (i.e. totems)
+void G_TraceEx( int clientNum,
+	trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+	int skipNumber, int mask )
+{
+	trap_Trace( result, start, mins, maxs, end, skipNumber | ( clientNum << 24 ), mask | CONTENTS_SKIP);
+}
+
+#endif // QC

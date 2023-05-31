@@ -154,6 +154,37 @@ void	CG_Trace( trace_t *result, const vec3_t start, const vec3_t mins, const vec
 	*result = t;
 }
 
+#if defined( QC )
+// please keep it coherent with the corresponding function in g_misc.c
+static
+qboolean IsEntityFriendly( int clientNum, int traceEnt ) {
+	centity_t *cent = &cg_entities[traceEnt];
+	if ( cent->currentState.eFlags & EF_NOFF ) {
+		if ( cgs.gametype >= GT_TEAM ) {
+			return cent->currentState.generic1 == cgs.clientinfo[clientNum].team;
+		} else {
+			return cent->currentState.generic1 == clientNum;
+		}
+	}
+	return qfalse;
+}
+
+// Same as CG_Trace but skips friendly entities (i.e. totems)
+// QC TODO: handle the situation where end position is stuck into the friendly entity.
+// Current implementation works well for predicting hitscans but may fail for other uses.
+void CG_TraceEx( int clientNum,
+	trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+	int skipNumber, int mask )
+{
+	CG_Trace( result, start, mins, maxs, end, skipNumber, mask );
+	while ( IsEntityFriendly( clientNum, result->entityNum ) ) {
+		// the traced entity is friendly, so continue tracing the next one
+		CG_Trace( result, result->endpos, mins, maxs, end, result->entityNum, mask );
+	};
+}
+
+#endif // QC
+
 /*
 ================
 CG_PointContents
@@ -191,6 +222,46 @@ int		CG_PointContents( const vec3_t point, int passEntityNum ) {
 
 	return contents;
 }
+
+#if defined( QC )
+// same as CG_PointContents but skips friendly entities
+int		CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum ) {
+	int			i;
+	entityState_t *ent;
+	centity_t *cent;
+	clipHandle_t cmodel;
+	int			contents;
+
+	contents = trap_CM_PointContents( point, 0 );
+
+	for ( i = 0; i < cg_numSolidEntities; i++ ) {
+		cent = cg_solidEntities[i];
+
+		ent = &cent->currentState;
+
+		if ( ent->number == passEntityNum ) {
+			continue;
+		}
+
+		if ( IsEntityFriendly( clientNum, ent->number ) ) {
+			continue;
+		}
+
+		if ( ent->solid != SOLID_BMODEL ) { // special value for bmodel
+			continue;
+		}
+
+		cmodel = trap_CM_InlineModel( ent->modelindex );
+		if ( !cmodel ) {
+			continue;
+		}
+
+		contents |= trap_CM_TransformedPointContents( point, cmodel, cent->lerpOrigin, cent->lerpAngles );
+	}
+
+	return contents;
+}
+#endif // QC
 
 
 /*

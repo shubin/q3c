@@ -440,6 +440,10 @@ typedef enum {
 	// The game can issue trap_argc() / trap_argv() commands to get the command
 	// and parameters.  Return qfalse if the game doesn't recognize it as a command.
 
-	BOTAI_START_FRAME				// ( int time );
+	BOTAI_START_FRAME,				// ( int time );
+#if defined( QC )
+	GAME_SKIP_ENTITY_TRACE,			// ( int entityNum );
+	// checks if the entity should be skipped during tracing, needed to implement friendly entities
+#endif // QC
 } gameExport_t;
 

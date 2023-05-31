@@ -1481,6 +1481,11 @@ void CG_Trace( trace_t *result, const vec3_t start, const vec3_t mins, const vec
 void CG_PredictPlayerState( void );
 void CG_LoadDeferredPlayers( void );
 
+#if defined( QC )
+int	CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum );
+void CG_TraceEx( int clientNum, trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs,
+					const vec3_t end, int skipNumber, int mask );
+#endif // QC
 
 //
 // cg_events.c

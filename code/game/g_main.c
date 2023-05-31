@@ -280,6 +280,10 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, i
 		return ConsoleCommand();
 	case BOTAI_START_FRAME:
 		return BotAIStartFrame( arg0 );
+#if defined( QC )
+	case GAME_SKIP_ENTITY_TRACE:
+		return G_SkipEntityTrace( arg0, arg1 );
+#endif //QC
 	}
 
 	return -1;
