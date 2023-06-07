@@ -1383,6 +1383,9 @@ typedef struct entityState_s {
 
 	int		constantLight;	// r + (g<<8) + (b<<16) + (intensity<<24)
 	int		loopSound;		// constantly loop this sound
+#if defined( QC )
+	int		loopSoundDist;	// max distance for the loop sound
+#endif // QC
 
 	int		modelindex;
 	int		modelindex2;
