@@ -95,6 +95,9 @@ field_t fields[] = {
 	{"model", FOFS(model), F_STRING},
 	{"model2", FOFS(model2), F_STRING},
 	{"spawnflags", FOFS(spawnflags), F_INT},
+#if defined( QC )
+	{"areaflags", FOFS(areaflags), F_INT},
+#endif // QC
 	{"speed", FOFS(speed), F_FLOAT},
 	{"target", FOFS(target), F_STRING},
 	{"targetname", FOFS(targetname), F_STRING},
@@ -179,6 +182,9 @@ void SP_team_blueobelisk( gentity_t *ent );
 void SP_team_redobelisk( gentity_t *ent );
 void SP_team_neutralobelisk( gentity_t *ent );
 #endif
+#if defined( QC )
+void SP_area_nototem( gentity_t *ent );
+#endif // QC
 void SP_item_botroam( gentity_t *ent ) { }
 
 spawn_t	spawns[] = {
@@ -252,6 +258,9 @@ spawn_t	spawns[] = {
 	{"team_blueobelisk", SP_team_blueobelisk},
 	{"team_neutralobelisk", SP_team_neutralobelisk},
 #endif
+#if defined( QC )
+	{"area_nototem", SP_area_nototem},
+#endif // QC
 	{"item_botroam", SP_item_botroam},
 
 	{NULL, 0}

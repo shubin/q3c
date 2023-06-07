@@ -48,7 +48,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SVF_NOTSINGLECLIENT		0x00000800	// send entity to everyone but one client
 											// (entityShared_t->singleClient)
 
-
+#if defined( QC )
+#define AREA_NOTOTEMS			0x00000001	// disable totems in the marked area
+#define AREA_ALLOWTOTEMS		0x00000002	// Some areas like hurt_trigger are considered totem-free by default
+											// In case if the mapmaker's task needs to allow planting totems
+											// on hurt triggers then this flag would allow it.
+#endif // QC
 
 //===============================================================
 

@@ -391,6 +391,15 @@ void SP_trigger_hurt( gentity_t *self ) {
 	self->noise_index = G_SoundIndex( "sound/world/electro.wav" );
 	self->touch = hurt_touch;
 
+#if defined( QC )
+	// Hurt triggers are considered totem-free by default because this would allow to play
+	// QC on non-QC maps somehow decently. In case if you want to put totem into a trigger, then
+	// you should set the AREA_FORCEALLOWTOTEMS flag on the trigger entity.
+	if ( !( self->areaflags & AREA_ALLOWTOTEMS ) ) {
+		self->areaflags |= AREA_NOTOTEMS;
+	}
+#endif // QC
+
 	if ( !self->damage ) {
 		self->damage = 5;
 	}
@@ -406,6 +415,24 @@ void SP_trigger_hurt( gentity_t *self ) {
 	}
 }
 
+#if defined( QC )
+void SP_area_nototem( gentity_t *self ) {
+	if ( !VectorCompare( self->s.angles, vec3_origin ) )
+		G_SetMovedir( self->s.angles, self->movedir );
+
+	trap_SetBrushModel( self, self->model );
+	self->r.contents = CONTENTS_AREA;		// replaces the -1 from trap_SetBrushModel
+	self->r.svFlags = SVF_NOCLIENT;
+	self->areaflags = AREA_NOTOTEMS;
+
+	// link in to the world if starting active
+	if ( self->spawnflags & 1 ) {
+		trap_UnlinkEntity( self );
+	} else {
+		trap_LinkEntity( self );
+	}
+}
+#endif // QC
 
 /*
 ==============================================================================
