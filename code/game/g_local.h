@@ -81,6 +81,9 @@ struct gentity_s {
 
 	char		*classname;			// set in QuakeEd
 	int			spawnflags;			// set in QuakeEd
+#if defined( QC )
+	int			areaflags;			// set in netradiant
+#endif // QC
 
 	qboolean	neverFree;			// if true, FreeEntity will only unlink
 									// bodyque uses this

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	CONTENTS_WATER			32
 #define	CONTENTS_FOG			64
 #if defined( QC )
+#define CONTENTS_AREA			128		// special area
 #define CONTENTS_SKIP			256		// Server will call GAME_SKIP_ENTITY_TRACE during tracing to ask the game 
 										// if the next entity should be processed or not. If this flag is set, then higher 8 bits
 										// of passEnt will be passed to GAME_SKIP_ENTITY_TRACE as the value of the 
