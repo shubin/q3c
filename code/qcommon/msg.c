@@ -778,6 +778,9 @@ netField_t	entityStateFields[] =
 { NETF(modelindex), 8 },
 { NETF(otherEntityNum2), GENTITYNUM_BITS },
 { NETF(loopSound), 8 },
+#if defined( QC )
+{ NETF(loopSoundDist), 12 },
+#endif
 { NETF(generic1), 8 },
 { NETF(origin2[2]), 0 },
 { NETF(origin2[0]), 0 },
