@@ -156,14 +156,13 @@ void	CG_Trace( trace_t *result, const vec3_t start, const vec3_t mins, const vec
 
 #if defined( QC )
 // please keep it coherent with the corresponding function in g_misc.c
-static
-qboolean IsEntityFriendly( int clientNum, int traceEnt ) {
+qboolean CG_IsEntityFriendly( int clientNum, int traceEnt ) {
 	centity_t *cent = &cg_entities[traceEnt];
 	if ( cent->currentState.eFlags & EF_NOFF ) {
 		if ( cgs.gametype >= GT_TEAM ) {
-			return cent->currentState.generic1 == cgs.clientinfo[clientNum].team;
+			return cent->currentState.affiliation == cgs.clientinfo[clientNum].team;
 		} else {
-			return cent->currentState.generic1 == clientNum;
+			return cent->currentState.affiliation == clientNum;
 		}
 	}
 	return qfalse;
@@ -177,7 +176,7 @@ void CG_TraceEx( int clientNum,
 	int skipNumber, int mask )
 {
 	CG_Trace( result, start, mins, maxs, end, skipNumber, mask );
-	while ( IsEntityFriendly( clientNum, result->entityNum ) ) {
+	while ( CG_IsEntityFriendly( clientNum, result->entityNum ) ) {
 		// the traced entity is friendly, so continue tracing the next one
 		CG_Trace( result, result->endpos, mins, maxs, end, result->entityNum, mask );
 	};
@@ -243,7 +242,7 @@ int		CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum ) 
 			continue;
 		}
 
-		if ( IsEntityFriendly( clientNum, ent->number ) ) {
+		if ( CG_IsEntityFriendly( clientNum, ent->number ) ) {
 			continue;
 		}
 
