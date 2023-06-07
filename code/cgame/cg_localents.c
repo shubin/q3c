@@ -708,6 +708,38 @@ void CG_AddRefEntity( localEntity_t *le ) {
 }
 
 #endif
+
+#if defined( QC )
+/*
+===================
+CG_AddRefEntity
+===================
+*/
+void CG_AddRefEntity( localEntity_t *le ) {
+	if ( le->endTime < cg.time ) {
+		CG_FreeLocalEntity( le );
+		return;
+	}
+	trap_R_AddRefEntityToScene( &le->refEntity );
+}
+
+/*
+===================
+CG_AddFadeAlpha
+===================
+*/
+void CG_AddFadeAlpha( localEntity_t *le ) {
+	if (le->endTime <= cg.time) {
+		CG_FreeLocalEntity( le );
+		return;
+	}
+	le->refEntity.shaderRGBA[0] = le->color[0];
+	le->refEntity.shaderRGBA[1] = le->color[1];
+	le->refEntity.shaderRGBA[2] = le->color[2];
+	le->refEntity.shaderRGBA[3] = ( 1.0f - Com_Clamp( 0.0f, 1.0f, ( cg.time - le->startTime ) / ( float )( le->endTime - le->startTime ) ) ) * le->color[3];
+	trap_R_AddRefEntityToScene( &le->refEntity );
+}
+#endif // QC
 /*
 ===================
 CG_AddScorePlum
@@ -859,6 +891,14 @@ void CG_AddLocalEntities( void ) {
 		case LE_SCOREPLUM:
 			CG_AddScorePlum( le );
 			break;
+#if defined( QC )
+		case LE_SHOWREFENTITY:
+			CG_AddRefEntity( le );
+			break;
+		case LE_FADE_ALPHA:
+			CG_AddFadeAlpha( le );
+			break;
+#endif // QC
 
 #ifdef MISSIONPACK
 		case LE_KAMIKAZE:
