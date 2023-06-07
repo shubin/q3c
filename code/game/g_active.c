@@ -321,7 +321,6 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	pmove_t	pm;
 	gclient_t	*client;
 #if defined( QC )
-	int followedClientNum;
 	gclient_t *followedClient;
 #endif
 

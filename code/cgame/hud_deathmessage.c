@@ -14,7 +14,6 @@ void hud_drawdeathmessage( void ) {
 	static float bgline[4] = { 0.76f, 0.24f, 0.26f, 0.5f };
 	static float gray[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 	static float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	int i;
 
 	static float wepcolor[4];
 	weapon_t weapon = WP_NONE;

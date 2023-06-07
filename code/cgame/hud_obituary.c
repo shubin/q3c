@@ -40,7 +40,6 @@ void hud_drawobituary( void ) {
 	static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	static float wepcolor[4];
 	static float shadow[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	int i;
 	float dim, y, x;
 	obituary_t *p;
 	weapon_t weapon = WP_NONE;
