@@ -70,6 +70,7 @@ extern champion_stat_t champion_stats[NUM_CHAMPIONS];
 extern char *champion_names[NUM_CHAMPIONS];
 extern char *champion_models[NUM_CHAMPIONS];
 extern char *champion_skins[NUM_CHAMPIONS];
+extern byte	blueRGBA[4], redRGBA[4];
 
 int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );

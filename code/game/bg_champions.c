@@ -686,7 +686,7 @@ char* champion_models[NUM_CHAMPIONS] = {
     "klesk",  // dk
     "doom",   // doom
     "razor",  // eisen
-    "major",  // galena
+    "janet",  // galena
     "ranger", // ranger
     "grunt",  // strogg
     "visor",  // visor
@@ -706,7 +706,7 @@ char* champion_skins[NUM_CHAMPIONS] = {
     "pm", // dk
     "pm", // doom
     "pm", // eisen
-    "pm", // galena
+    "default", // galena
     "pm", // ranger
     "pm", // strogg
     "pm", // visor
@@ -715,6 +715,9 @@ char* champion_skins[NUM_CHAMPIONS] = {
     "pm", // scalebearer
     "pm", // sorlag
 };
+
+byte	blueRGBA[4] = { 0, 150, 255, 255 };
+byte	redRGBA[4] = { 255, 40, 40, 255 };
 
 int ParseChampionName( const char* name ) {
     int i;
