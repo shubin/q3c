@@ -1042,10 +1042,6 @@ Generates and draws a game scene and status information at the given time.
 =================
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {
-#if defined( QC )
-	refdefex_t	*refdefex;
-#endif
-
 	int		inwater;
 
 	cg.time = serverTime;
