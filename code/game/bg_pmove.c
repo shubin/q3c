@@ -2036,8 +2036,6 @@ static void PM_Weapon( void ) {
 			pm->ps->pm_flags &= ~PMF_ABILITY_ACTIVATED;
 		}
 	}
-#endif
-
 	wepTime = pm->ps->weaponTime;
 #endif
 
