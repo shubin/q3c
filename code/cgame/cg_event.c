@@ -1015,6 +1015,10 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		DEBUGNAME("EV_BOLT_HIT");
 		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.sfx_bolthitwall );
 		break;
+	case EV_TOTEM_DECAY:
+		DEBUGNAME( "EV_TOTEM_DECAY" );
+		CG_TotemDecay( cent );
+		break;
 #endif
 
 #ifdef MISSIONPACK

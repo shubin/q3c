@@ -836,6 +836,9 @@ typedef struct {
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;
 	qhandle_t	totemModel;
+	qhandle_t	totemRingModel;
+	qhandle_t	totemHazeModel;
+	qhandle_t	totemDecaySkin;
 #endif
 	qhandle_t	hastePuffShader;
 #ifdef MISSIONPACK
@@ -1328,6 +1331,7 @@ extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
 extern	vmCvar_t		cg_enemyColors;
 extern	vmCvar_t		cg_kickScale;
+extern	vmCvar_t		cg_totemEffects;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;
@@ -1486,6 +1490,7 @@ void CG_PredictPlayerState( void );
 void CG_LoadDeferredPlayers( void );
 
 #if defined( QC )
+qboolean CG_IsEntityFriendly( int clientNum, int traceEnt );
 int	CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum );
 void CG_TraceEx( int clientNum, trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs,
 					const vec3_t end, int skipNumber, int mask );
@@ -1512,7 +1517,9 @@ void CG_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *parent,
 							qhandle_t parentModel, char *tagName );
 void CG_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_t *parent, 
 							qhandle_t parentModel, char *tagName );
-
+#if defined( QC )
+void CG_TotemDecay( centity_t *cent );
+#endif // QC
 
 
 //

@@ -25,6 +25,7 @@ vec4_t hud_weapon_colors[WP_NUM_WEAPONS] = {
 	{ 0.8f, 0.0f, 0.9f, 1.0f },     // WP_LOUSY_PLASMAGUN,
 	// abilities
 	{ 1.0f, 1.0f, 1.0f, 1.0f },     // WP_DIRE_ORB,
+	{ 1.0f, 1.0f, 1.0f, 1.0f },     // WP_TOTEM_EGG,
 	//WP_ACID_SPIT,
 };
 
@@ -50,6 +51,7 @@ const char *hud_weapon_icons[WP_NUM_WEAPONS] = {
     "hud/weapon/shotgunl",       // WP_LOUSY_SHOTGUN,
     "hud/weapon/plasmagunl",     // WP_LOUSY_PLASMAGUN
 	"hud/mod/direorb",			 // WP_DIRE_ORB
+	"hud/mod/generic",			 // WP_TOTEM_EGG
 };
 
 const char *hud_mod_icons[ MOD_NUM ] = {
@@ -70,6 +72,8 @@ const char *hud_mod_icons[ MOD_NUM ] = {
 	"hud/weapon/tribolt",	// MOD_TRIBOLT
 	"hud/weapon/tribolt",	// MOD_TRIBOLT_SPLASH
 	"hud/mod/direorb",		// MOD_DIRE_ORB
+	"hud/mod/generic",		// MOD_TOTEM
+	"hud/mod/generic",		// MOD_TOTEM_SPLASH
 	"hud/mod/generic",		// MOD_WATER
 	"hud/mod/generic",		// MOD_SLIME
 	"hud/mod/generic",		// MOD_LAVA
@@ -131,6 +135,10 @@ void hud_initmedia( void ) {
 		else {
 			hud_media.itemicons[i] = -1;
 		}
+	}
+	for ( i = 0; i < MAX_TOTEMS; i++ ) {
+		hud_media.totems[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/totem%d", i ) );
+		hud_media.totemshadows[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/totemshadow%d", i ) );
 	}
 }
 

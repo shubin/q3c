@@ -247,6 +247,7 @@ vmCvar_t	cg_friendColors;
 vmCvar_t	cg_redTeamColors;
 vmCvar_t	cg_blueTeamColors;
 vmCvar_t	cg_kickScale;
+vmCvar_t	cg_totemEffects;
 #endif
 
 typedef struct {
@@ -431,6 +432,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_redTeamColors, "cg_redTeamColors", "11111", CVAR_ARCHIVE },
 	{ &cg_blueTeamColors, "cg_blueTeamColors", "44444", CVAR_ARCHIVE },
 	{ &cg_kickScale, "cg_kickScale", "1", CVAR_ARCHIVE },
+	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
 #endif
 };
 
@@ -1418,7 +1420,10 @@ static void CG_RegisterGraphics( void ) {
 	}
 
 #if defined( QC )
-	cgs.media.totemModel = trap_R_RegisterModel( "models/special/totem.md3" );
+	cgs.media.totemModel = trap_R_RegisterModel( "models/special/totem/totem.md3" );
+	cgs.media.totemRingModel = trap_R_RegisterModel( "models/special/totem/totemring.md3" );
+	cgs.media.totemHazeModel = trap_R_RegisterModel( "models/special/totem/totemhaze.md3" );
+	cgs.media.totemDecaySkin = trap_R_RegisterSkin( "models/special/totem/totemdecay.skin" );
 #endif
 
 #ifdef MISSIONPACK

@@ -1167,7 +1167,6 @@ typedef struct {
 #define	MAX_STATS				16
 #define	MAX_PERSISTANT			16
 #define	MAX_POWERUPS			16
-#define	MAX_WEAPONS				16		
 #if defined( QC )
 #define	MAX_WEAPONS				24
 #else // QC
@@ -1244,7 +1243,7 @@ typedef struct playerState_s {
 
 	int			ab_time;		// ability timer, semantic depends on the flags
 	int			ab_misctime;	// additional timer for various purposes (i.e. grenade timing for Keel)
-	int			ab_num;			// id of the entity associated with the champion (orb for Ranger)
+	int			ab_num;			// id of the entity associated with the champion (orb for Ranger), number of active totems, etc
 	int			ab_flags;		// some bits to know whats happening with ability progressing
 	qboolean	overbounce;		// overbounce bug handling
 #endif
@@ -1409,6 +1408,10 @@ typedef struct entityState_s {
 	int		torsoAnim;		// mask off ANIM_TOGGLEBIT
 
 	int		generic1;
+#if defined( QC )
+	int		affiliation;	// team for game modes or player index for FFA
+	int		totemcharge;	// for totems
+#endif // QC
 } entityState_t;
 
 typedef enum {

@@ -35,13 +35,68 @@ int get_next_corner( int angle ) {
 	return angle;
 }
 
+#define TOTEM_ANGLE 60
+#define TOTEM_RADIUS 70
+#define TOTEM_BLINK_CYCLE 500
+
+static
+void LerpColor( vec4_t a, vec4_t b, vec4_t c, float t ) {
+	int i;
+
+	// lerp and clamp each component
+	for ( i = 0; i < 4; i++ ) {
+		c[i] = a[i] + t * ( b[i] - a[i] );
+		if ( c[i] < 0 )
+			c[i] = 0;
+		else if ( c[i] > 1.0 )
+			c[i] = 1.0;
+	}
+}
+
+static
+void hud_draw_totems( float cx, float cy, int num_totems ) {
+	float angle, step, x, y;
+	int i;
+	float yellow[] = { 1.0f, 0.75f, 0.4f, 1.0f };
+	float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float color[4];
+
+	angle = ( - TOTEM_ANGLE / 2.0f - 90 ) / 180.0f * 3.14159265359f;
+	step = ( TOTEM_ANGLE / (float)( MAX_TOTEMS - 1 ) ) / 180.0f * 3.14159265359f;
+	for ( i = 0; i < MAX_TOTEMS; i++, angle += step ) {
+		x = cx + TOTEM_RADIUS * cosf( angle );
+		y = cy + TOTEM_RADIUS * sinf( angle );
+		white[3] = 1.0f;
+		trap_R_SetColor( black );
+		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.totemshadows[i] );
+		if ( i < num_totems ) {
+			if ( num_totems == MAX_TOTEMS ) {
+				if ( ( cg.time / TOTEM_BLINK_CYCLE ) % 2 ) {
+					LerpColor( yellow, white, color, (float)( cg.time % TOTEM_BLINK_CYCLE ) / TOTEM_BLINK_CYCLE );
+				} else {
+					LerpColor( white, yellow, color, (float)( cg.time % TOTEM_BLINK_CYCLE ) / TOTEM_BLINK_CYCLE );
+				}
+				trap_R_SetColor( color );
+			} else {
+				trap_R_SetColor( yellow );
+			}
+		} else {
+			white[3] = 0.5f;
+			trap_R_SetColor( white );
+		}
+		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.totems[i] );
+	}
+	trap_R_SetColor( NULL );
+}
+
 // ability status
 void hud_draw_ability( void ) {
 	centity_t *cent;
 	playerState_t *ps;
 	clientInfo_t *ci;
-	static float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
-	static float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
+	float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	float overall, current, dim;
 	int sec_left;
@@ -70,6 +125,10 @@ void hud_draw_ability( void ) {
 	gaugex = ( hud_bounds.left + hud_bounds.right ) / 2;
 	gaugey = hud_bounds.bottom - 160;
 	gaugesize = 128;
+
+	if ( ps->champion == CHAMP_GALENA ) {
+		hud_draw_totems( gaugex, gaugey, ps->ab_num );
+	}
 
 	// ability gauge background
 	white[3] = 0.5f;

@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include "g_local.h"
 
+#if !defined( QC )
 #define	MISSILE_PRESTEP_TIME	50
+#endif // QC
 
 /*
 ================
@@ -286,15 +288,8 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 #if defined( QC )
 	if ( !other->takedamage && !strcmp( ent->classname, "totem egg" ) ) {
-		if ( trace->plane.normal[2] > 0.5f ) {
-			G_Printf( "totem landed\n" );
-			VectorCopy( ent->s.pos.trDelta, ent->s.angles2 ); // cgame infers missile orientation from trDelta, so keep it in the angles2
-			G_SetOrigin( ent, trace->endpos );
-			ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
-			G_AddEvent( ent, EV_BOLT_HIT, 0 );
-			G_SpawnTotem( ent, trace );
-			return;
-		}
+		G_BounceTotemEgg( ent, trace );
+		return;
 	}
 #endif
 
@@ -545,6 +540,7 @@ void G_RunMissile( gentity_t *ent ) {
 #if defined( QC )
 	trace_t		tr_orb;
 	vec3_t		stoppos;
+	gclient_t	*client;
 #endif
 
 	// get current position
@@ -635,14 +631,28 @@ void G_RunMissile( gentity_t *ent ) {
 			G_FreeEntity( ent );
 			return;
 		}
+#if defined( QC )
+		if ( ent->parent && ent->parent->client ) {
+			client = ent->parent->client;
+		}
+		else {
+			client = NULL;
+		}
+#endif // QC
 		G_MissileImpact( ent, &tr );
 		if ( ent->s.eType != ET_MISSILE ) {
+#if defined( QC )
+			if ( client != NULL && !strcmp( ent->classname, "totem egg" ) ) {
+				client->ps.ab_flags = 0;
+				client->ps.ab_time = 0;
+			}
+#endif // QC
 			return;		// exploded
 		}
 	}
 #if defined( QC )
 	}
-#endif
+#endif // QC
 #ifdef MISSIONPACK
 	// if the prox mine wasn't yet outside the player body
 	if (ent->s.weapon == WP_PROX_LAUNCHER && !ent->count) {

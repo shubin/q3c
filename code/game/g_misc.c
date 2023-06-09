@@ -492,9 +492,9 @@ qboolean G_IsEntityFriendly( int clientNum, int traceEnt ) {
 	gentity_t *ent = &g_entities[traceEnt];
 	if ( ent->s.eFlags & EF_NOFF ) {
 		if ( g_gametype.integer >= GT_TEAM ) {
-			return ent->s.generic1 == g_clients[clientNum].ps.persistant[PERS_TEAM];
+			return ent->s.affiliation == g_clients[clientNum].ps.persistant[PERS_TEAM];
 		} else {
-			return ent->s.generic1 == clientNum;
+			return ent->s.affiliation == clientNum;
 		}
 	}
 	return qfalse;

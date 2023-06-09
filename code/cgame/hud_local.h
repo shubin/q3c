@@ -35,6 +35,8 @@ typedef struct {
 	qhandle_t	smallface[NUM_CHAMPIONS];
 	qhandle_t	gradient, radgrad;
 	qhandle_t	itemicons[MAX_ITEMS];
+	qhandle_t	totems[MAX_TOTEMS];
+	qhandle_t	totemshadows[MAX_TOTEMS];
 } hud_media_t;
 
 extern hud_media_t hud_media;

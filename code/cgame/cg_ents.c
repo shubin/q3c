@@ -556,6 +556,24 @@ static void CG_Missile( centity_t *cent ) {
 		trap_R_AddRefEntityToScene( &ent );
 		return;
 	}
+	if ( cent->currentState.weapon == WP_TOTEM_EGG ) {
+		ent.hModel = weapon->missileModel;
+		ent.renderfx = weapon->missileRenderfx | RF_NOSHADOW;
+		if ( VectorNormalize2( s1->pos.trDelta, ent.axis[0] ) == 0 ) {
+			ent.axis[0][2] = 1;
+		}
+		RotateAroundDirection( ent.axis, cg.time / 4 );
+		if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+			memcpy( ent.shaderRGBA, blueRGBA, sizeof( ent.shaderRGBA ) );
+		} else {
+			memcpy( ent.shaderRGBA, redRGBA, sizeof( ent.shaderRGBA ) );
+		}
+		ent.shaderRGBA[0] /= 2;
+		ent.shaderRGBA[1] /= 2;
+		ent.shaderRGBA[2] /= 2;
+		trap_R_AddRefEntityToScene( &ent );
+		return;
+	}
 #endif
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
@@ -1145,28 +1163,90 @@ CG_Totem
 ===============
 */
 static void CG_Totem( centity_t *cent ) {
-	refEntity_t model;
+	refEntity_t totem, ring, haze;
 	vec3_t lightOrigin;
+	vec3_t offset;
+	float phase;
 
-	memset( &model, 0, sizeof( model ) );
-	model.reType = RT_MODEL;
-	VectorCopy( cent->lerpOrigin, model.lightingOrigin );
-	VectorCopy( cent->lerpOrigin, model.origin );
-	AnglesToAxis( cent->currentState.angles, model.axis );
+	phase = Com_Clamp( 0.0f, 1.0f, ( cg.time - cent->currentState.time2 ) / 250.0f );
 
-	model.hModel = cgs.media.totemModel;
-	//if ( cent->currentState.modelindex == TEAM_RED ) {
-	//	model.hModel = cgs.media.redFlagBaseModel;
-	//} else if ( cent->currentState.modelindex == TEAM_BLUE ) {
-	//	model.hModel = cgs.media.blueFlagBaseModel;
-	//} else {
-	//	model.hModel = cgs.media.neutralFlagBaseModel;
-	//}
-	trap_R_AddRefEntityToScene( &model );
-	VectorCopy( cent->lerpOrigin, lightOrigin );
-	lightOrigin[2] += 12;
-	trap_R_AddLightToScene( cent->lerpOrigin, 250, 0.0f, 0.5f, 1.0f );
+	offset[0] = offset[1] = 0.0f;
+	offset[2] = -40.0f;
+
+	memset( &totem, 0, sizeof( totem ) );
+	totem.reType = RT_MODEL;
+	VectorCopy( cent->lerpOrigin, totem.lightingOrigin );
+	VectorMA( cent->lerpOrigin, 1.0f - phase, offset, totem.origin );
+	AnglesToAxis( cent->currentState.angles, totem.axis );
+	totem.hModel = cgs.media.totemModel;
+
+	memset( &haze, 0, sizeof( haze ) );
+	haze.reType = RT_MODEL;
+	VectorCopy( cent->lerpOrigin, haze.lightingOrigin );
+	VectorMA( cent->lerpOrigin, 1.0f - phase, offset, haze.origin );
+	AnglesToAxis( cent->currentState.angles, haze.axis );
+	haze.hModel = cgs.media.totemHazeModel;
+
+	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+		memcpy( totem.shaderRGBA, blueRGBA, sizeof( totem.shaderRGBA ) );
+		memcpy( haze.shaderRGBA, blueRGBA, sizeof( haze.shaderRGBA ) );
+
+		if ( cent->currentState.totemcharge & ( 1 << cg.predictedPlayerState.clientNum ) ) {
+			memset( &ring, 0, sizeof( ring ) );
+			ring.reType = RT_MODEL;
+			VectorCopy( cent->lerpOrigin, ring.lightingOrigin );
+			VectorCopy( cent->lerpOrigin, ring.origin );
+			AnglesToAxis( cent->currentState.angles, ring.axis );
+			ring.hModel = cgs.media.totemRingModel;
+			memcpy( ring.shaderRGBA, blueRGBA, sizeof( ring.shaderRGBA ) );
+			ring.shaderRGBA[3] *= phase;
+			haze.shaderRGBA[3] *= phase;
+			if ( cg_totemEffects.integer ) {
+				trap_R_AddRefEntityToScene( &ring );
+			}
+		} else {
+			totem.shaderRGBA[3] = 128;
+		}
+		trap_R_AddRefEntityToScene( &totem );
+		if ( cg_totemEffects.integer ) {
+			trap_R_AddRefEntityToScene( &haze );
+		}
+	} else {
+		memcpy( totem.shaderRGBA, redRGBA, sizeof( totem.shaderRGBA ) );
+		memcpy( haze.shaderRGBA, totem.shaderRGBA, sizeof( haze.shaderRGBA ) );
+		trap_R_AddRefEntityToScene( &totem );
+		if ( cg_totemEffects.integer ) {
+			trap_R_AddRefEntityToScene( &haze );
+		}
+	}
 }
+
+void CG_TotemDecay( centity_t *cent ) {
+	localEntity_t *le;
+
+	le = CG_AllocLocalEntity();
+	le->leType = LE_FADE_ALPHA;
+	le->refEntity.reType = RT_MODEL;
+	VectorCopy( cent->currentState.pos.trBase, le->refEntity.origin );
+	AnglesToAxis( cent->currentState.angles, le->refEntity.axis );
+	le->refEntity.hModel = cgs.media.totemModel;
+	le->refEntity.customSkin = cgs.media.totemDecaySkin;
+	le->refEntity.shaderTime = cg.time / 1000.0f;
+
+	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+		le->color[0] = blueRGBA[0];
+		le->color[1] = blueRGBA[1];
+		le->color[2] = blueRGBA[2];
+	} else {
+		le->color[0] = redRGBA[0];
+		le->color[1] = redRGBA[1];
+		le->color[2] = redRGBA[2];
+	}
+	le->color[3] = 60;
+	le->startTime = cg.time;
+	le->endTime = cg.time + 250;
+}
+
 #endif
 
 /*

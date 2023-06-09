@@ -278,11 +278,10 @@ typedef enum {
 #define	EF_DEAD				0x00000001		// don't draw a foe marker over players with EF_DEAD
 #if defined( QC )
 #define EF_NOFF				0x00000002		// set if the entity should skip any friendly damage
-#else // QC
+#endif // QC
 #ifdef MISSIONPACK
 #define EF_TICKING			0x00000002		// used to make players play the prox mine ticking sound
 #endif
-#endif // QC
 #define	EF_TELEPORT_BIT		0x00000004		// toggled every time the origin abruptly changes
 #define	EF_AWARD_EXCELLENT	0x00000008		// draw an excellent sprite
 #define EF_PLAYER_EVENT		0x00000010
@@ -370,6 +369,7 @@ typedef enum {
 	WP_LOUSY_PLASMAGUN,
 	// abilities
 	WP_DIRE_ORB,
+	WP_TOTEM_EGG,
 	//WP_ACID_SPIT,
 #endif
 	WP_NUM_WEAPONS
@@ -459,6 +459,7 @@ typedef enum {
 #if defined( QC )
 	EV_ACTIVATE_ABILITY,
 	EV_BOLT_HIT,
+	EV_TOTEM_DECAY,
 #endif
 
 	EV_GENERAL_SOUND,

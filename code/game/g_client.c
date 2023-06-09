@@ -1490,6 +1490,7 @@ void ClientSpawn(gentity_t *ent) {
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 #if defined( QC )
 	if ( champion_switched ) {
+		G_ResetPlayerTotems( client->ps.clientNum );
 		trap_SendServerCommand( client->ps.clientNum, va( "champmodel %s/%s", champion_models[client->ps.champion], champion_skins[client->ps.champion] ) );
 	}
 #endif
@@ -1546,6 +1547,10 @@ void ClientDisconnect( int clientNum ) {
 			TossClientCubes( ent );
 		}
 #endif
+#if defined( QC )
+		// Remove totems if any
+		G_ResetPlayerTotems( ent->s.number );
+#endif // QC
 
 	}
 

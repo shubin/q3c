@@ -574,15 +574,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 		}
 #endif
 #if defined( QC )
-		// ability regeneration timer
-		if ( !( client->ps.ab_flags & ABF_READY ) && ! ( client->ps.ab_flags & ABF_ENGAGED ) ) {
-			if ( client->ps.ab_time < champion_stats[client->ps.champion].ability_cooldown) {
-				client->ps.ab_time++;
-			}
-			if ( client->ps.ab_time == champion_stats[client->ps.champion].ability_cooldown && !( client->ps.ab_flags & ABF_READY ) ) {
-				client->ps.ab_flags |= ABF_READY;
-			}
-		}
+		G_UpdateAbilities( client );
 #endif
 	}
 #ifdef MISSIONPACK

@@ -763,7 +763,11 @@ netField_t	entityStateFields[] =
 { NETF(legsAnim), 8 },
 { NETF(groundEntityNum), GENTITYNUM_BITS },
 { NETF(pos.trType), 8 },
-{ NETF(eFlags), 19 },
+#if defined( QC )
+{ NETF(eFlags), 24 },
+#else // QC
+{ NETF( eFlags ), 19 },
+#endif // QC
 { NETF(otherEntityNum), GENTITYNUM_BITS },
 { NETF(weapon), 8 },
 { NETF(clientNum), 8 },
@@ -781,7 +785,11 @@ netField_t	entityStateFields[] =
 #if defined( QC )
 { NETF(loopSoundDist), 12 },
 #endif
+#if defined( QC )
+{ NETF(generic1), 32 }, // more generic
+#else // QC
 { NETF(generic1), 8 },
+#endif // QC
 { NETF(origin2[2]), 0 },
 { NETF(origin2[0]), 0 },
 { NETF(origin2[1]), 0 },
@@ -802,7 +810,11 @@ netField_t	entityStateFields[] =
 { NETF(angles2[0]), 0 },
 { NETF(angles2[2]), 0 },
 { NETF(constantLight), 32 },
-{ NETF(frame), 16 }
+{ NETF(frame), 16 },
+#if defined( QC )
+{ NETF(affiliation), 8 },
+{ NETF(totemcharge), 32 },
+#endif // QC
 };
 
 
@@ -1125,7 +1137,7 @@ netField_t	playerStateFields[] =
 { PSF(weaponFiringState), 8 },
 { PSF(champion), 5 },
 { PSF(ab_time), 6 }, // up to 64 seconds to recharge an ability
-{ PSF(ab_misctime), 8 }, // up to 25.6 seconds to count
+{ PSF(ab_misctime), 24 }, // can count milliseconds for the fair amount of time
 { PSF(ab_flags), 8 },
 { PSF(ab_num), 32 },
 { PSF(overbounce), 1 },

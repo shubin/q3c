@@ -381,47 +381,14 @@ static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	m->splashDamage *= quadFactor;
 }
 
-static void ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
-	playerState_t *ps;
-	gentity_t *m;
-	int quadFactor;
-
-	ps = &ent->client->ps;
-
-	if ( !BG_CanAbilityBeActivated( ps ) ) {
-		return;
-	}
-
-	ent->client->ps.ab_flags &= ~ABF_READY;
-	ent->client->ps.ab_time = 0;
-
-	// extra vertical velocity
-	forward[2] += 0.2f;
-	VectorNormalize( forward );
-
-	m = fire_grenade( ent, muzzle, forward );
-
-	m->classname = "totem egg";
-	// NERF this grenade a bit
-	m->damage = 75;
-	m->splashDamage = 75;
-	m->splashRadius = 120;
-	m->s.constantLight = 255 | ( 16 << 8 ); // blue glow
-	m->s.generic1 = (int)ent->client->ps.viewangles[YAW]; // pass player view angle in order to fix totem orientation later
-
-	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
-	m->damage *= quadFactor;
-	m->splashDamage *= quadFactor;
-}
-
 void G_ActivateAbility( gentity_t *ent ) {
 	int champ;
 	vec3_t forward, right, up, muzzle;
 
 	champ = ent->client->ps.champion;
 
-	if ( !( pm->ps->ab_flags & ABF_ENGAGED ) ) {
-		pm->ps->ab_flags |= ABF_ENGAGED;
+	if ( !( ent->client->ps.ab_flags & ABF_ENGAGED ) ) {
+		ent->client->ps.ab_flags |= ABF_ENGAGED;
 #if 0
 		if ( champ == CHAMP_SORLAG ) {
 			pm->ps->ab_time = 150; // throw some spit each 0.15 sec
@@ -453,8 +420,26 @@ void G_ActivateAbility( gentity_t *ent ) {
 		//	ThrowAcidSpit( ent, muzzle, forward );
 		//	break
 		case CHAMP_GALENA:
-			ThrowTotem( ent, muzzle, forward );
+			G_ThrowTotem( ent, muzzle, forward );
 			break;
 	}
 }
 
+void G_UpdateAbilities( gclient_t *client ) {
+	// ability regeneration timer
+	if ( !( client->ps.ab_flags & ABF_READY ) && !( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		if ( client->ps.ab_time < champion_stats[client->ps.champion].ability_cooldown ) {
+			client->ps.ab_time++;
+		}
+		if ( client->ps.ab_time == champion_stats[client->ps.champion].ability_cooldown && !( client->ps.ab_flags & ABF_READY ) ) {
+			client->ps.ab_flags |= ABF_READY;
+		}
+	}
+	// visor
+	if ( client->ps.champion == CHAMP_VISOR && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		if ( level.time > client->ps.ab_time ) {
+			client->ps.ab_flags = 0;
+			client->ps.ab_time = 0;
+		}
+	}
+}

@@ -28,11 +28,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bg_local.h"
 #include "bg_champions.h"
 
-#define MAX_TOTEMS				3
+// MAX_TOTEMS is defined in bg_champions.h
+#define MAX_TOTEM_USERS			8  // only first 8 players can use totems
+
+#define TOTEM_HEAL_AMOUNT		50
+#define TOTEM_DAMAGE			50
+#define TOTEM_THINK_INTERVAL	100
+#define TOTEM_HEAL_RADIUS		120
+#define TOTEM_HURT_RADIUS		60
+#define TOTEM_EGG_RADIUS		6
+#if !defined( DEBUG )
+#define TOTEM_COOLDOWN			40000
+#else // DEBUG
+#define TOTEM_COOLDOWN			4000
+#endif // DEBUG
 
 typedef struct {
 	int entnum;
-	int chargetime[MAX_CLIENTS];
+	int chargetime[MAX_TOTEM_USERS];
 } totem_t;
 
 typedef struct {
@@ -40,9 +53,38 @@ typedef struct {
 	int num_totems;
 } totem_bush_t;
 
-static totem_bush_t	s_playertotems[MAX_CLIENTS];
+static totem_bush_t	s_playertotems[MAX_TOTEM_USERS];
 
-static void AnnihilateTotem( gentity_t *ent ) {
+static int ClientAffiliation( gclient_t *client ) {
+	int team;
+
+	team = client->ps.persistant[PERS_TEAM];
+	return team == TEAM_BLUE || team == TEAM_RED ? team : client->ps.clientNum;
+}
+
+static void UpdateTotemCount( int clientNum ) {
+#if defined( DEBUG )
+	assert( clientNum >= 0 );
+	assert( clientNum < MAX_CLIENTS );
+#endif // DEBUG
+	g_clients[clientNum].ps.ab_num = s_playertotems[clientNum].num_totems;
+}
+
+static void DestroyTotem( gentity_t *ent ) {
+	gentity_t *decay;
+
+	decay = G_TempEntity( ent->r.currentOrigin, EV_TOTEM_DECAY );
+	decay->s.eFlags = ent->s.eFlags;
+	decay->r.svFlags |= SVF_BROADCAST;
+	decay->s.affiliation = ent->s.affiliation;
+	VectorCopy( ent->s.angles, decay->s.angles );
+
+	if ( ent->activator ) {
+		G_FreeEntity( ent->activator );
+		ent->activator = NULL;
+	}
+
+	UpdateTotemCount( ent->parent->s.clientNum );
 	G_FreeEntity( ent );
 }
 
@@ -50,260 +92,437 @@ void G_ResetPlayerTotems( int clientNum ) {
 	int i;
 	totem_bush_t *bush;
 
-	if ( clientNum >= 0 && clientNum < MAX_CLIENTS ) {
+	if ( clientNum >= 0 && clientNum < MAX_TOTEM_USERS ) {
 		bush = &s_playertotems[clientNum];
 		for ( i = 0; i < bush->num_totems; i++ ) {
-			AnnihilateTotem( &g_entities[bush->totems[i].entnum] );
+			DestroyTotem( &g_entities[bush->totems[i].entnum] );
 		}
 		memset( bush, 0, sizeof( totem_bush_t ) );
 	}
+	UpdateTotemCount( clientNum );
 }
 
-void totem_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod );
+static void ChargeTotem( totem_t *totem ) {
+	int i;
+	gentity_t *ent;
 
-int InsertTotem( gclient_t *player, gentity_t *totem );
+	ent = &g_entities[totem->entnum];
+	ent->s.totemcharge = 0;
+	for ( i = 0; i < MAX_TOTEM_USERS; i++ ) {
+		totem->chargetime[i] = level.time;
+		ent->s.totemcharge |= ( 1 << i ); // fresh totem is charged for everyone
+	}
+}
 
-void G_SpawnTotem( gentity_t *ent, trace_t *trace ) {
-	gentity_t *newtotem;
-	int team;
+static void RegisterTotem( totem_t *totem, gentity_t *ent ) {
+	totem->entnum = ent->s.number;
+	ChargeTotem( totem );
+}
 
-	if ( ent->parent == NULL || ent->parent->client == NULL ) {
-		G_FreeEntity( ent );
+static totem_bush_t *FindBush( gentity_t *ent ) {
+#if defined( DEBUG )
+	assert( ent != NULL );
+	assert( ent->parent != NULL );
+	assert( ent->parent->client != NULL );
+	assert( ent->parent->client->ps.clientNum >= 0 );
+	assert( ent->parent->client->ps.clientNum < MAX_TOTEM_USERS );
+#endif
+	return &s_playertotems[ent->parent->client->ps.clientNum];
+}
+
+static totem_t *FindTotem( gentity_t *ent ) {
+#if defined( DEBUG )
+	assert( ent != NULL );
+	assert( ent->parent != NULL );
+	assert( ent->parent->client != NULL );
+	assert( ent->parent->client->ps.clientNum >= 0 );
+	assert( ent->parent->client->ps.clientNum < MAX_TOTEM_USERS );
+#endif
+	totem_bush_t *bush;
+	int i;
+	
+	bush = FindBush( ent );
+	for ( int i = 0; i < MAX_TOTEMS; i++ ) {
+		if ( bush->totems[i].entnum == ent->s.number ) {
+			return &bush->totems[i];
+		}
+	}
+	return NULL;
+}
+
+static void AddTotem( gclient_t *player, gentity_t *totem ) {
+	int i, playerNum;
+	totem_bush_t *bush;
+	totem_t totems[MAX_TOTEMS];
+
+	playerNum = player->ps.clientNum;
+	bush = &s_playertotems[playerNum];
+	if ( bush->num_totems == MAX_TOTEMS ) {
+		DestroyTotem( &g_entities[bush->totems[0].entnum] );
+		for ( i = 1; i < MAX_TOTEMS; i++ ) {
+			totems[i - 1] = bush->totems[i];
+		}
+		RegisterTotem( &totems[MAX_TOTEMS - 1], totem );
+	} else {
+		for ( i = 0; i < bush->num_totems; i++ ) {
+			totems[i] = bush->totems[i];
+		}
+		RegisterTotem( &totems[i], totem );
+		bush->num_totems++;
+	}
+	memcpy( bush->totems, totems, sizeof( totems ) );
+	if ( bush->num_totems == MAX_TOTEMS ) {
+		// Turn on all totems for all users
+		for ( i = 0; i < bush->num_totems; i++ ) {
+			ChargeTotem( &bush->totems[i] );
+		}
+	}
+	UpdateTotemCount( player->ps.clientNum );
+}
+
+void RemoveTotem( gentity_t *ent ) {
+	gclient_t *player;
+	totem_bush_t *bush;
+	totem_t totems[MAX_TOTEMS], *t;
+	int i, num_totems;
+
+	if ( ent == NULL || ent->parent == NULL ) {
+		DestroyTotem( ent );
 		return;
 	}
 
-	ent->parent->client->ps.ab_flags = 0;
-	ent->parent->client->ps.ab_time = 0;
+	player = ent->parent->client;
+	bush = &s_playertotems[player->ps.clientNum];
 
-	team = ent->parent->client->ps.persistant[PERS_TEAM];
+	num_totems = 0; //give hourglass;
+	memset( &totems, 0, sizeof( totems ) );
+	for ( i = 0; i < bush->num_totems; i++ ) {
+		t = &bush->totems[i];
+		if ( t->entnum != ent->s.number ) {
+			memcpy( &totems[num_totems], t, sizeof( totem_t ) );
+			num_totems++;
+		}
+	};
+	bush->num_totems = num_totems;
+	memcpy( bush->totems, totems, sizeof( totems ) );
+
+	DestroyTotem( ent );
+}
+
+static void Totem_Die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod ) {
+	RemoveTotem( self );
+}
+
+static void Totem_Think( gentity_t *ent ) {
+	totem_t *totem;
+	int i;
+
+	totem = FindTotem( ent );
+	ent->s.totemcharge = 0;
+	for ( i = 0; i < MAX_TOTEM_USERS; i++ ) {
+		if ( totem->chargetime[i] < level.time ) {
+			ent->s.totemcharge|= 1 << i;
+		}
+	}
+
+	ent->nextthink = level.time + TOTEM_THINK_INTERVAL;
+}
+
+static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
+	vec3_t		v;
+	int r, clientNum;
+	int max, health;
+
+	clientNum = other->client->ps.clientNum;
+
+	r = trigger->r.maxs[0];
+
+	// trigger is a cube, do a distance test now to act as if it's a sphere
+	VectorSubtract( trigger->s.pos.trBase, other->s.pos.trBase, v );
+	if ( VectorLength( v ) > TOTEM_HEAL_RADIUS ) {
+		return;
+	}
+
+	totem_bush_t *bush = FindBush( trigger->parent );
+	totem_t *totem = FindTotem( trigger->parent );
+
+	if ( totem->chargetime[clientNum] > level.time ) {
+		// not charged yet
+		return;
+	}
+
+	if ( bush->num_totems == MAX_TOTEMS ) {
+		max = other->client->ps.stats[STAT_MAX_HEALTH];
+	} else {
+		max = other->client->ps.baseHealth;
+	}
+
+	if ( other->health >= max ) {
+		return;
+	}
+
+	health = other->health + TOTEM_HEAL_AMOUNT;
+
+	if ( health > max ) {
+		health = max;
+	}
+
+	other->health = health;
+	other->client->ps.stats[STAT_HEALTH] = health;
+
+	totem->chargetime[clientNum] = level.time + TOTEM_COOLDOWN;
+}
+
+static void Totem_Hurt( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
+	vec3_t		v;
+	gentity_t	*attacker;
+	int			damage;
+	VectorSubtract( trigger->s.pos.trBase, other->s.pos.trBase, v );
+	if ( VectorLength( v ) > TOTEM_HURT_RADIUS ) {
+		return;
+	}
+	if ( !CanDamage( other, trigger->s.pos.trBase ) ) {
+		return;
+	}
+	damage = TOTEM_DAMAGE;
+	attacker = trigger->parent->parent;
+	if ( attacker->client->ps.powerups[PW_QUAD] ) {
+		damage *= g_quadfactor.value;
+	}
+	G_Damage( other, trigger->parent, attacker, NULL, NULL, damage, DAMAGE_RADIUS, MOD_TOTEM_SPLASH );
+	RemoveTotem( trigger->parent );
+	// boom
+	G_Sound( other, CHAN_ITEM, G_SoundIndex( "sound/abilities/totem_boom.wav" ) );
+}
+
+static void Totem_Trigger( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
+	if ( !other->client ) {
+		return;
+	}
+
+	if ( G_IsEntityFriendly( other->client->ps.clientNum, trigger->s.number ) ) {
+		Totem_Heal( trigger, other, trace );
+	} else {
+		Totem_Hurt( trigger, other, trace );
+	}
+}
+
+static gentity_t* CreateTotemEntity( gentity_t *eggent, const vec3_t pos ) {
+	gentity_t *newtotem;
+	gclient_t *client;
+
+	client = eggent->parent->client;
 
 	newtotem = G_Spawn();
 	newtotem->classname = "totem";
 	newtotem->s.eType = ET_TOTEM;
 	newtotem->takedamage = qtrue;
 	newtotem->health = 25;
-	newtotem->parent = ent->parent;
-	newtotem->s.generic1 = ( team == TEAM_BLUE || team == TEAM_RED ) ? team : ent->parent->client->ps.clientNum;
+	newtotem->parent = eggent->parent;
+	newtotem->s.time2 = level.time;
+
+	// s.affiliation is set to the team of the owner for team game modes and to the owner
+	// client index for FFA modes.
+	// It is needed to perform checking for friendliness, see IsEntityFriendly() in cg_predict.c
+	// and G_IsEntityFriendly() in g_misc.c
+	newtotem->s.affiliation = ClientAffiliation( client );
+	//newtotem->s.affiliation = 9;
+	// s.totemcharge is a bit set, for each client number the corresponding bit shows whether the totem is
+	// charged and ready to heal.
+	newtotem->s.totemcharge = 0; // bit set indicating if the totem is charged for specific client	
 	newtotem->r.contents = CONTENTS_CORPSE;
+	// No Friendly Fire flag, entities with this flag should be ignored by friendly players and their weapons.
+	// Basically it's needed for the G_IsEntityFriendly to ensure that friendship check should be performed.
+	// As long as the entity affiliation is encoded into s.affiliation as above, the G_IsEntityFriendly
+	// function should work well for a variety of entities, not` only for totems.
 	newtotem->s.eFlags = EF_NOFF;
-	newtotem->die = totem_die;
-	newtotem->spawnflags = ent->parent->client->sess.sessionTeam;
+	newtotem->die = Totem_Die;
+	newtotem->think = Totem_Think;
+	newtotem->nextthink = level.time + TOTEM_THINK_INTERVAL;
+	newtotem->spawnflags = client->sess.sessionTeam;
 	VectorSet( newtotem->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0 );
 	VectorSet( newtotem->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 3 * ITEM_RADIUS );
 
-	G_SetOrigin( newtotem, trace->endpos );
-	newtotem->s.angles[YAW] = ent->s.generic1; // player view YAW at the moment of throwing the totem ball
+#if 1
+	newtotem->s.loopSound = G_SoundIndex( "sound/world/x_bobber.wav" );
+#else 
+	newtotem->s.loopSound = G_SoundIndex( "sound/abilities/totem_ambient.wav" );
+#endif
+	newtotem->s.loopSoundDist = 200;
+
+	G_SetOrigin( newtotem, pos );
+	newtotem->s.angles[YAW] = eggent->s.generic1; // player view YAW at the moment of throwing the totem ball
 
 	trap_LinkEntity( newtotem );
+	return newtotem;
+}
 
-	// the totem egg is not needed anymore
+gentity_t *CreateTotemTrigger( gentity_t *totem ) {
+	gentity_t *trigger;
+	gclient_t *client;
+	int r;
+
+	// build the totem trigger
+	trigger = G_Spawn();
+
+	trigger->classname = "totem trigger";
+
+	r = TOTEM_HEAL_RADIUS;
+	VectorSet( trigger->r.mins, -r, -r, -r );
+	VectorSet( trigger->r.maxs, r, r, r );
+
+	G_SetOrigin( trigger, totem->s.pos.trBase );
+
+	client = totem->parent->client;
+
+	trigger->s.eFlags = EF_NOFF;
+	trigger->s.affiliation= totem->s.affiliation; // same affiliation as the totem
+	trigger->parent = totem;
+	trigger->r.contents = CONTENTS_TRIGGER;
+	trigger->touch = Totem_Trigger;
+
+	trap_LinkEntity( trigger );
+
+	// set pointer to trigger so the entity can be freed when totem is destroyed
+	totem->activator = trigger;
+
+	return trigger;
+}
+
+
+qboolean G_CanPutTotemHere( const vec3_t pos, const vec3_t range );
+
+qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace ) {
+	vec3_t	velocity;
+	vec3_t	pos;
+	float	dot;
+	int		hitTime;
+
+	if ( trace->plane.normal[2] > 0.5f ) {
+		VectorCopy( ent->s.pos.trDelta, ent->s.angles2 ); // cgame infers missile orientation from trDelta, so keep it in the angles2
+		G_SetOrigin( ent, trace->endpos );
+		ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
+		G_AddEvent( ent, EV_BOLT_HIT, 0 );
+		VectorCopy( trace->endpos, pos );
+		pos[2] -= TOTEM_EGG_RADIUS;
+		G_SpawnTotem( ent, pos );
+		return qfalse;
+	}
+
+	// reflect the velocity on the trace plane
+	hitTime = level.previousTime + ( level.time - level.previousTime ) * trace->fraction;
+	BG_EvaluateTrajectoryDelta( &ent->s.pos, hitTime, velocity );
+	dot = DotProduct( velocity, trace->plane.normal );
+	VectorMA( velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta );
+
+	VectorScale( ent->s.pos.trDelta, 0.08, ent->s.pos.trDelta );
+
+	VectorAdd( ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin );
+	VectorCopy( ent->r.currentOrigin, ent->s.pos.trBase );
+	ent->s.pos.trTime = level.time;
+
+	return qtrue;
+}
+
+void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
+	gentity_t *newtotem, *trigger;
+	gclient_t *client;
+	vec3_t	plantpos, range;
+
+	if ( ent->parent == NULL || ent->parent->client == NULL ) {
+		G_FreeEntity( ent );
+		return;
+	}
+
+	// We keep totem readyness indicator in the s.totemcharge  field so we can track up to 32 users only.
+	// This should be changed in case if somebody wants to support more than 32 players in-game simultaneously.
+	// I assume that we can only have high number of clients if there are a lot of spectators,
+	// and for spectators in the free flight mode we can hardcode the totem appearance.
+	// QC TODO: ensure that we allocate spectators at the indices above 32.
+	if ( ent->parent->client->ps.clientNum >= MAX_TOTEM_USERS ) {
+		G_FreeEntity( ent );
+		return;
+	}
+
+	client = ent->parent->client;
+	client->ps.ab_flags = 0;
+	client->ps.ab_time = 0;
+
+	range[0] = range[1] = range[2] = 1;
+	VectorCopy( pos, plantpos );
+	plantpos[2] += range[2];
+	if ( !G_CanPutTotemHere( pos, range ) ) {
+		G_FreeEntity( ent );
+		return;
+	}
+	newtotem = CreateTotemEntity( ent, pos );
+	trigger = CreateTotemTrigger( newtotem );
+	AddTotem( client, newtotem );
+	// 
+
 	G_FreeEntity( ent );
-
-	if ( InsertTotem( newtotem->parent->client, newtotem ) == MAX_TOTEMS ) {
-		G_Printf( "BUSH IS COMPLETE, OVERHEAL\n" );
-	}
 }
 
-/*
-static void RemoveExcessiveTotems( gclient_t *client ) {
-	int i;
-	int num = 0;
-	int next;
+void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
+	playerState_t *ps;
+	gentity_t *egg;
+	int quadFactor;
 
-	for ( i = client->ps.ab_num; i != 0; i = next ) {
-		next = g_entities[i].s.otherEntityNum;
-		if ( num == 1 && next != 0 ) {
-			G_FreeEntity( &g_entities[next] );
-			g_entities[i].s.otherEntityNum = 0;
-			return;
-		}
-		num++;
-	}
-}
-*/
-/*
-static int CountTotems( gclient_t *client ) {
-	int num_totems = 0;
-	int num;
-	for ( num = client->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-		if ( num != 0 ) {
-			num_totems++;
-		}
-	}
-	return num_totems;
-}
+	ps = &ent->client->ps;
 
-// removes totem from the linked list of totems
-static void RemoveTotem( gentity_t *ent ) {
-	gclient_t *player;
-	int num, prev;
+	ps->ab_flags &= ~ABF_READY;
+	ps->ab_time = 0;
 
-	if ( ent == NULL || ent->parent == NULL ) {
-		AnnihilateTotem( ent );
-		return;
-	}
+	// extra vertical velocity
+	forward[2] += 0.2f;
+	VectorNormalize( forward );
 
-	player = ent->parent->client;
-	if ( ent->s.number == player->ps.ab_num ) {
-		player->ps.ab_num = 0;
-		AnnihilateTotem( ent );
-		return;
-	}
+	egg = fire_grenade( ent, muzzle, forward );
 
-	prev = player->ps.ab_num;
-	while ( prev ) {
-		num = g_entities[prev].s.otherEntityNum;
-		if ( num == ent->s.number ) {
-			g_entities[prev].s.otherEntityNum = g_entities[num].s.otherEntityNum;
-			AnnihilateTotem( &g_entities[num] );
-			break;
-		}
-		prev = num;
-	}
-	//for ( num = player->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-	//	next = g_entities[num].s.otherEntityNum;
-	//	if ( next == ent->s.number ) {
-	//		g_entities[num].s.otherEntityNum = g_entities[next].s.otherEntityNum;
-	//		AnnihilateTotem( &g_entities[next] );
-	//		break;
-	//	}
-	//}
+	egg->r.mins[0] = egg->r.mins[1] = egg->r.mins[2] = -TOTEM_EGG_RADIUS;
+	egg->r.maxs[0] = egg->r.maxs[1] = egg->r.maxs[2] = TOTEM_EGG_RADIUS;
+
+	egg->classname = "totem egg";
+	egg->s.weapon = WP_TOTEM_EGG;
+	egg->methodOfDeath = MOD_TOTEM;
+	egg->splashMethodOfDeath = MOD_TOTEM_SPLASH;
+	egg->s.eFlags = EF_NOFF;
+	egg->s.affiliation = ClientAffiliation( ent->client );
+	// NERF this grenade a bit
+	egg->damage = 75;
+	egg->splashDamage = 0;
+	egg->splashRadius = 0;
+	egg->s.generic1 = (int)ps->viewangles[YAW]; // pass player view angle in order to fix totem orientation later
+
+	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
+	egg->damage *= quadFactor;
+	egg->splashDamage *= quadFactor;
 }
 
-*/
+// QC TODO: optimize this function, it looks somehow clumsy
+qboolean G_CanPutTotemHere( const vec3_t pos, const vec3_t range ) {
+	vec3_t		mins, maxs;
+	int			i, num;
+	int			touch[MAX_GENTITIES];
+	gentity_t	*hit;
+	qboolean	result;
 
-static int GetTotemArray( gclient_t *client, gentity_t *totems[MAX_TOTEMS + 1] ) {
-	int num, p;
-	if ( client->ps.ab_num == 0 ) {
-		totems[0] = NULL;
-		return 0;
-	}
-	p = 0;
-	for ( num = client->ps.ab_num; num; num = g_entities[num].s.otherEntityNum ) {
-		if ( num != 0 ) {
-			totems[p] = &g_entities[num];
-			p++;
-		}
-	}
-	totems[p] = NULL;
-	return p;
-}
+	VectorSubtract( pos, range, mins );
+	VectorAdd( pos, range, maxs );
+	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
 
-static int PrintTotems( const char *prompt, gclient_t *client ) {
-	int i, num;
-	gentity_t *totems[MAX_TOTEMS + 1];
-	num = GetTotemArray( client, totems );
-	G_Printf( "%s\n", prompt );
+	result = qtrue;
 	for ( i = 0; i < num; i++ ) {
-		G_Printf( "   %d: number = %d  other = %d\n", i, totems[i]->s.number, totems[i]->s.otherEntityNum );
-	}
-	return 0;
-}
-
-static int BuildTotemList( gclient_t *client, gentity_t *totems[MAX_TOTEMS + 1] ) {
-	int i;
-
-	if ( totems[0] == NULL ) {
-		client->ps.ab_num = 0;
-		return 0;
-	}
-
-	for ( i = 0; i < MAX_TOTEMS; i++ ) {
-		if ( totems[i + 1] == NULL ) {
-			totems[i]->s.otherEntityNum = 0;
-			break;
-		} else {
-			totems[i]->s.otherEntityNum = totems[i + 1]->s.number;
+		hit = &g_entities[touch[i]];
+		if ( hit->areaflags & AREA_ALLOWTOTEMS ) {
+			return qtrue; // any area with ALLOWTOTEMS flag overrides all other checks
+		}
+		if ( hit->areaflags & AREA_NOTOTEMS ) {
+			result = qfalse;
 		}
 	}
-	client->ps.ab_num = totems[0]->s.number;
-	return i;
-}
-
-void RemoveTotem( gentity_t *ent ) {
-	gclient_t *player;
-	gentity_t *totems[MAX_TOTEMS + 1];
-	gentity_t *newtotems[MAX_TOTEMS + 1];
-	int num_totems, i, p;
-
-	if ( ent == NULL || ent->parent == NULL ) {
-		AnnihilateTotem( ent );
-		return;
+	if ( trap_PointContents( pos, 0 ) & ( CONTENTS_NODROP | CONTENTS_NOTOTEM ) ) {
+		result = qfalse;
 	}
-
-	player = ent->parent->client;
-
-	PrintTotems( "Remove totems before", player );
-
-	num_totems = GetTotemArray( player, totems );
-	p = 0;
-	for ( i = 0; i < num_totems; i++ ) {
-		if ( totems[i] != ent ) {
-			newtotems[p] = totems[i];
-			p++;
-		}
-	}
-	newtotems[p] = NULL;
-
-	BuildTotemList( player, newtotems );
-
-	PrintTotems( "Remove totems after", player );
-
-
-	AnnihilateTotem( ent );
-}
-
-void RemoveExcessiveTotems( gclient_t *player ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-	gentity_t *newtotems[MAX_TOTEMS + 1];
-	int num_totems, i, p;
-
-	num_totems = GetTotemArray( player, totems );
-	if ( num_totems < MAX_TOTEMS ) {
-		return;
-	}
-	p = 0;
-	for ( i = 1; i < MAX_TOTEMS; i++ ) {
-		newtotems[p] = totems[i];
-		p++;
-	}
-	newtotems[p] = NULL;
-
-	BuildTotemList( player, newtotems );
-}
-
-int CountTotems( gclient_t *player ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-
-	return GetTotemArray( player, totems );
-}
-
-int InsertTotem( gclient_t *player, gentity_t *totem ) {
-	gentity_t *totems[MAX_TOTEMS + 1];
-	gentity_t *newtotems[MAX_TOTEMS + 1];
-	int num_totems, i, p;
-
-	PrintTotems( "Insert totem before", player );
-
-	num_totems = GetTotemArray( player, totems );
-	if ( num_totems == MAX_TOTEMS ) {
-		AnnihilateTotem( totems[MAX_TOTEMS - 1] );
-		num_totems--;
-	}
-
-	p = 0;
-	newtotems[p] = totem;
-	p++;
-	for ( i = 0; i < num_totems; i++ ) {
-		newtotems[p] = totems[i];
-		p++;
-	}
-	newtotems[p] = NULL;
-	p = BuildTotemList( player, newtotems );
-	PrintTotems( "Insert totem after", player );
-	return p;
-}
-
-void totem_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod ) {
-	RemoveTotem( self );
+	return result;
 }

@@ -715,17 +715,28 @@ void G_StartKamikaze( gentity_t *ent );
 
 #if defined( QC )
 //
+// g_missile.c
+//
+
+#define	MISSILE_PRESTEP_TIME	50
+void G_ExplodeMissile( gentity_t *ent );
+
+//
 // g_ability.c
 //
 void G_GenerateDireOrbProbes( void );
 void G_ActivateAbility( gentity_t *ent );
+void G_UpdateAbilities( gclient_t *client );
 void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
 
 //
 // g_totem.c
 //
 void G_ResetPlayerTotems( int clientNum );
-void G_SpawnTotem( gentity_t *ent, trace_t *trace );
+void G_SpawnTotem( gentity_t *ent, const vec3_t pos );
+void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward );
+// returns true if the egg bounced and false if stopped
+qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace );
 
 #endif
 

@@ -2032,8 +2032,11 @@ static void PM_Weapon( void ) {
 			}
 		}
 	} else {
-		pm->ps->pm_flags &= ~PMF_ABILITY_ACTIVATED;
+		if ( !( pm->ps->ab_flags & ABF_ENGAGED ) ) {
+			pm->ps->pm_flags &= ~PMF_ABILITY_ACTIVATED;
+		}
 	}
+#endif
 
 	wepTime = pm->ps->weaponTime;
 #endif

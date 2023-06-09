@@ -74,3 +74,5 @@ extern byte	blueRGBA[4], redRGBA[4];
 
 int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );
+
+#define MAX_TOTEMS		3
