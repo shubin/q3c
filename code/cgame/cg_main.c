@@ -1040,7 +1040,7 @@ static void CG_RegisterSounds( void ) {
 			cgs.media.abilitySounds[i] = 0;
 		}
 	}
-	cgs.media.piercingSightActivationSound = trap_S_RegisterSound( "sound/abilities/visor_piersingsight.wav", qfalse );
+	cgs.media.piercingSightActivationSound = trap_S_RegisterSound( "sound/abilities/visor_piercingsight.wav", qfalse );
 #endif
 
 #ifdef MISSIONPACK
