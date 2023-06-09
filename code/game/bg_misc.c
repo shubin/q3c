@@ -446,7 +446,8 @@ gitem_t	bg_itemlist[] =
 	{
 		"weapon_tribolt", 
 		"sound/misc/w_pkup.wav",
-        { "models/weapons2/tribolt/tribolt.md3", 
+        //{ "models/weapons2/tribolt/tribolt.md3", 
+		{ "models/weapons2/grenadel/grenadel.md3", 
 		NULL, NULL, NULL},
 /* icon */		"qc/icons/iconw_tribolt",
 /* pickup */	"Tribolt",
