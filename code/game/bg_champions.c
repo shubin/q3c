@@ -370,18 +370,18 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         { // start_health
             125, // GT_FFA
             125, // GT_TOURNAMENT
-            100, // GT_SINGLE_PLAYER
-            100, // GT_TEAM
-            100, // GT_TEAM2V2
-            100, // GT_CTF
+            125, // GT_SINGLE_PLAYER
+            125, // GT_TEAM
+            125, // GT_TEAM2V2
+            125, // GT_CTF
         },
         { // start_armor
             50, // GT_FFA
             50, // GT_TOURNAMENT
-            0, // GT_SINGLE_PLAYER
-            0, // GT_TEAM
-            0, // GT_TEAM2V2
-            0, // GT_CTF
+            50, // GT_SINGLE_PLAYER
+            50, // GT_TEAM
+            50, // GT_TEAM2V2
+            50, // GT_CTF
         },
         { // spawn_protection
             0, // GT_FFA
@@ -407,18 +407,18 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         { // start_health
             125, // GT_FFA
             125, // GT_TOURNAMENT
-            100, // GT_SINGLE_PLAYER
-            100, // GT_TEAM
-            100, // GT_TEAM2V2
-            100, // GT_CTF
+            125, // GT_SINGLE_PLAYER
+            125, // GT_TEAM
+            125, // GT_TEAM2V2
+            125, // GT_CTF
         },
         { // start_armor
             50, // GT_FFA
             50, // GT_TOURNAMENT
-            0, // GT_SINGLE_PLAYER
-            0, // GT_TEAM
-            0, // GT_TEAM2V2
-            0, // GT_CTF
+            50, // GT_SINGLE_PLAYER
+            50, // GT_TEAM
+            50, // GT_TEAM2V2
+            50, // GT_CTF
         },
         { // spawn_protection
             0, // GT_FFA
@@ -475,23 +475,23 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         100, // base_armor
         200, // max_health
         200, // max_armor
-        30, // ability_cooldown
-        -1, // ability_duration
+        45, // ability_cooldown
+        50, // ability_duration
         { // start_health
-            100, // GT_FFA
-            100, // GT_TOURNAMENT
-            100, // GT_SINGLE_PLAYER
-            100, // GT_TEAM
-            100, // GT_TEAM2V2
-            100, // GT_CTF
+            125, // GT_FFA
+            125, // GT_TOURNAMENT
+            125, // GT_SINGLE_PLAYER
+            125, // GT_TEAM
+            125, // GT_TEAM2V2
+            125, // GT_CTF
         },
         { // start_armor
-            0, // GT_FFA
-            0, // GT_TOURNAMENT
-            0, // GT_SINGLE_PLAYER
-            0, // GT_TEAM
-            0, // GT_TEAM2V2
-            0, // GT_CTF
+            50, // GT_FFA
+            50, // GT_TOURNAMENT
+            50, // GT_SINGLE_PLAYER
+            50, // GT_TEAM
+            50, // GT_TEAM2V2
+            50, // GT_CTF
         },
         { // spawn_protection
             0, // GT_FFA
