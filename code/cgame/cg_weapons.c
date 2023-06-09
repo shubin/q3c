@@ -1693,8 +1693,9 @@ static qboolean CG_WeaponSelectable( int i ) {
 		return qfalse;
 	}
 #if defined( QC )
-	// starting weapons are not directly selectable
-	if ( i == WP_LOUSY_MACHINEGUN || i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN ) {
+	// starting weapons and ability pseudo weapons are not directly selectable
+	if ( i == WP_LOUSY_MACHINEGUN|| i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN 
+		|| i == WP_DIRE_ORB || i == WP_TOTEM_EGG ) {
 		return qfalse;
 	}
 #endif
@@ -1952,17 +1953,22 @@ void CG_ActivateAbility( centity_t *cent ) {
 	clientInfo_t	*ci;
 	weaponInfo_t	*weap;
 
+	soundChannel_t chan;	
+
 	es = &cent->currentState;
 	event = es->event & ~EV_EVENT_BITS;	
 	clientNum = es->clientNum;
-	ci = &cgs.clientinfo[cent->currentState.clientNum];
+	ci = &cgs.clientinfo[clientNum];
+	chan = clientNum == cg.snap->ps.clientNum == clientNum ? CHAN_ANNOUNCER: CHAN_BODY;
 
 	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
 		clientNum = 0;
 	}
 
-	if ( ( cg.time - ci->abilityActivationTime > 3000 ) || ( ci->abilityActivationTime == 0 ) ) {
-		PlayAbilitySound( ci->champion, es->number );
+	if ( cg.snap->ps.clientNum != clientNum ) {
+		if ( ( cg.time - ci->abilityActivationTime > 3000 ) || ( ci->abilityActivationTime == 0 ) ) {
+			PlayAbilitySound( ci->champion, clientNum );
+		}
 	}
 	ci->abilityActivationTime = cg.time;
 	switch ( ci->champion ) {
@@ -1978,7 +1984,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 				c = rand() % c;
 				if ( weap->flashSound[c] )
 				{
-					trap_S_StartSound( NULL, es->number, CHAN_WEAPON, weap->flashSound[c] );
+					trap_S_StartSound( NULL, clientNum, CHAN_WEAPON, weap->flashSound[c] );
 				}
 			}
 			break;
@@ -1994,7 +2000,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 				c = rand() % c;
 				if ( weap->flashSound[c] )
 				{
-					trap_S_StartSound( NULL, es->number, CHAN_WEAPON, weap->flashSound[c] );
+					trap_S_StartSound( NULL, clientNum, CHAN_WEAPON, weap->flashSound[c] );
 				}
 			}
 			break;
