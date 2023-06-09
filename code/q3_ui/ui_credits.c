@@ -93,7 +93,6 @@ static void UI_CreditMenu_Draw_qc( void ) {
 	int		y;
 	int		i;
 	char	*colon;
-	float	sizeScale, width;
 
 	static char *names[] = {
 		"",
@@ -121,9 +120,7 @@ static void UI_CreditMenu_Draw_qc( void ) {
 	for ( i = 0; names[i]; i++ ) {
 		colon = strchr( names[i], ':' );
 		if ( colon ) {
-			sizeScale = UI_ProportionalSizeScale( UI_SMALLFONT );
 			*colon = '\0';
-			width = UI_ProportionalStringWidth( names[i] ) * sizeScale;
 			UI_DrawProportionalString( 200, y, names[i], UI_RIGHT | UI_SMALLFONT, color_yellow );
 			UI_DrawProportionalString( 200, y, colon + 1, UI_LEFT| UI_SMALLFONT, color_white );
 			*colon = ':';
