@@ -83,6 +83,59 @@ static void UI_CreditMenu_Draw_ioq3( void ) {
 	UI_DrawString( 320, 459, "http://www.ioquake3.org/", UI_CENTER|UI_SMALLFONT, color_red );
 }
 
+#if defined( QC )
+/*
+===============
+UI_CreditMenu_Draw_qc
+===============
+*/
+static void UI_CreditMenu_Draw_qc( void ) {
+	int		y;
+	int		i;
+	char	*colon;
+	float	sizeScale, width;
+
+	static char *names[] = {
+		"",
+		"Programming: Serge Shubin",
+		"Artist: Anton Savinov",
+		"Map maker: Obsessed",
+		"Weapon models: CannerZ45",
+		"",
+		"Client/Engine: based on CNQ3 by myT",
+		"Additional art: Serge Shubin, Alexei Gorelov",
+		"Additional art: Dannaki Kobayashi, Elena Kaisheva",
+		"Additional art: Vladimir Shubin",
+		"PR and marketing: RESP TEAM",
+		"Various assets: OpenArena team",
+		"Misc sound FX: www.playonloop.com (CC BY 4.0)",
+		NULL
+	};
+
+	// Center text vertically on the screen
+	y = ( SCREEN_HEIGHT - ARRAY_LEN( names ) * ( 1.42 * PROP_HEIGHT * PROP_SMALL_SIZE_SCALE ) ) / 2;
+
+	UI_DrawProportionalString( 320, y, "Quake III Champions crew", UI_CENTER | UI_SMALLFONT, color_red);
+	y += 1.42 * PROP_HEIGHT * PROP_SMALL_SIZE_SCALE;
+
+	for ( i = 0; names[i]; i++ ) {
+		colon = strchr( names[i], ':' );
+		if ( colon ) {
+			sizeScale = UI_ProportionalSizeScale( UI_SMALLFONT );
+			*colon = '\0';
+			width = UI_ProportionalStringWidth( names[i] ) * sizeScale;
+			UI_DrawProportionalString( 200, y, names[i], UI_RIGHT | UI_SMALLFONT, color_yellow );
+			UI_DrawProportionalString( 200, y, colon + 1, UI_LEFT| UI_SMALLFONT, color_white );
+			*colon = ':';
+		} else {
+			UI_DrawProportionalString( 320, y, names[i], UI_CENTER | UI_SMALLFONT, color_white );
+		}
+		y += 1.42 * PROP_HEIGHT * PROP_SMALL_SIZE_SCALE;
+	}
+
+	UI_DrawString( 320, 459, "http://www.quake3champions.org/", UI_CENTER | UI_SMALLFONT, color_red );
+}
+#endif // QC
 
 /*
 =================
@@ -95,10 +148,16 @@ static sfxHandle_t UI_CreditMenu_Key( int key ) {
 	}
 
 	s_credits.frame++;
-	if (s_credits.frame == 1) {
+	if ( s_credits.frame == 2 ) {
+		s_credits.menu.draw = UI_CreditMenu_Draw_qc;
+	} else if (s_credits.frame == 1) {
 		s_credits.menu.draw = UI_CreditMenu_Draw_ioq3;
 	} else {
+#if defined( QC )
+		UI_PopMenu();
+#else // QC
 		trap_Cmd_ExecuteText( EXEC_APPEND, "quit\n" );
+#endif // QC
 	}
 	return 0;
 }

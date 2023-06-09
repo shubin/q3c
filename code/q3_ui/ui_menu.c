@@ -43,11 +43,14 @@ MAIN MENU
 #endif
 #define ID_SETUP				12
 #define ID_DEMOS				13
+#if defined( QC )
+#define ID_CREDITS				15
+#endif // QC
 #if !defined( QC )
 #define ID_CINEMATICS			14
 #define ID_TEAMARENA			15
 #define ID_MODS					16
-#endif
+#endif // QC
 #define ID_EXIT					17
 
 #if defined( QC )
@@ -77,6 +80,9 @@ typedef struct {
 	menutext_s		teamArena;
 	menutext_s		mods;
 #endif
+#if defined( QC )
+	menutext_s		credits;
+#endif // QC
 	menutext_s		exit;
 
 	qhandle_t		bannerModel;
@@ -101,8 +107,12 @@ static void MainMenu_ExitAction( qboolean result ) {
 	if( !result ) {
 		return;
 	}
+#if defined( QC )
+	trap_Cmd_ExecuteText( EXEC_APPEND, "quit\n" );
+#else // QC
 	UI_PopMenu();
 	UI_CreditMenu();
+#endif // QC
 }
 
 
@@ -162,6 +172,12 @@ void Main_MenuEvent (void* ptr, int event) {
 		trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart;" );
 		break;
 #endif
+
+#if defined( QC )
+	case ID_CREDITS:
+		UI_CreditMenu();
+		break;
+#endif // QC
 
 	case ID_EXIT:
 		UI_ConfirmMenu( "EXIT GAME?", 0, MainMenu_ExitAction );
@@ -477,6 +493,19 @@ void UI_MainMenu( void ) {
 		s_main.mods.style					= style;
 	}
 #endif
+#if defined( QC )
+	y += MAIN_MENU_VERTICAL_SPACING;
+	s_main.credits.generic.type = MTYPE_PTEXT;
+	s_main.credits.generic.flags = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.credits.generic.x = 320;
+	s_main.credits.generic.y = y;
+	s_main.credits.generic.id = ID_CREDITS;
+	s_main.credits.generic.callback = Main_MenuEvent;
+	s_main.credits.string = "CREDITS";
+	s_main.credits.color = color_red;
+	s_main.credits.style = style;
+#endif // QC
+
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.exit.generic.type				= MTYPE_PTEXT;
 	s_main.exit.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -494,6 +523,7 @@ void UI_MainMenu( void ) {
 	Menu_AddItem( &s_main.menu, &s_main.champions );
 	Menu_AddItem( &s_main.menu,	&s_main.setup );
 	Menu_AddItem( &s_main.menu,	&s_main.demos );
+	Menu_AddItem( &s_main.menu, &s_main.credits );
 	Menu_AddItem( &s_main.menu,	&s_main.exit );             
 #else
 	Menu_AddItem( &s_main.menu,	&s_main.multiplayer );

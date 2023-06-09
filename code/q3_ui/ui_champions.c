@@ -197,8 +197,6 @@ ChampionsMenu_MenuInit
 */
 void ChampionsMenu_MenuInit( qboolean ingame ) {
 	int		x, y;
-	uiClientState_t	cs;
-	char	info[MAX_INFO_STRING];
 	int		i;
 	char	buf[32];
 
