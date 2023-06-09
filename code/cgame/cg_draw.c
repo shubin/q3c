@@ -2717,6 +2717,36 @@ void CG_DrawActive( stereoFrame_t stereoView ) {
 		CG_DrawCrosshair3D();
 
 	// draw 3D view
+#if defined( QC )
+	cg.refdef.rdflags &= ~RDF_FORCEGREYSCALE;
+	cg.refdef.forcedGreyscale = 0.0f;
+
+	if ( cg.snap->ps.champion == CHAMP_VISOR
+		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED ) 
+		&& ( ( cg_piercingSightGreyscale.value > 0 ) || ( cg_piercingSightLight.value > 0 ) )
+		)
+	{
+		float greyscale;
+		if ( cg.time - cg.snap->ps.ab_misctime < champion_stats[CHAMP_VISOR].ability_duration * 100 / 2 ) {
+			greyscale = Com_Clamp( 0.0f, 1.0f, ( cg.time - cg.snap->ps.ab_misctime ) / 300.0f );
+		} else {
+			greyscale = Com_Clamp( 0.0f, 1.0f, ( cg.snap->ps.ab_misctime + champion_stats[CHAMP_VISOR].ability_duration * 100 - cg.time ) / 300.0f );
+		}
+		if ( greyscale > 0 ) {
+			if ( cg_piercingSightGreyscale.value > 0 ) {
+				cg.refdef.rdflags |= RDF_FORCEGREYSCALE;
+				cg.refdef.forcedGreyscale = Com_Clamp( 0.0f, 1.0f, greyscale * cg_piercingSightGreyscale.value );
+			}
+			if ( cg_piercingSightLight.value > 0 ) {
+				trap_R_AddLightToScene( 
+					cg.predictedPlayerEntity.lerpOrigin, 
+					Com_Clamp( 0.0f, 1.0f, greyscale * cg_piercingSightLight.value ) * ( 300 + ( rand() & 31 ) ), 
+					0.2f, 0.5f, 1
+				);
+			}
+		}
+	}
+#endif // QC
 	trap_R_RenderScene( &cg.refdef );
 
 #if defined( QC )
