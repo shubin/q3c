@@ -2351,7 +2351,8 @@ void CG_Player( centity_t *cent ) {
 #endif
 #if defined( QC )
 	float			scale = cg_playerScale.value;
-	vec4_t *modelColors;
+	vec4_t			*modelColors;
+	qboolean		piercingSight;
 #endif
 
 	// the client number is stored in clientNum.  It can't be derived
@@ -2368,6 +2369,12 @@ void CG_Player( centity_t *cent ) {
 	if ( !ci->infoValid ) {
 		return;
 	}
+
+#if defined( QC )
+	piercingSight = cg.snap->ps.clientNum != clientNum
+		&& cg.snap->ps.champion == CHAMP_VISOR
+		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED );
+#endif // QC
 
 	// get the player model information
 	renderfx = 0;
@@ -2455,9 +2462,15 @@ void CG_Player( centity_t *cent ) {
 	legs.shaderRGBA[1] = (int)(modelColors[3][1] * 255.0f);
 	legs.shaderRGBA[2] = (int)(modelColors[3][2] * 255.0f);
 	legs.shaderRGBA[3] = (int)(modelColors[3][3] * 255.0f);
-#endif
-
+	if ( piercingSight) {
+		legs.customShader = cgs.media.piercingSightShader;
+		trap_R_AddRefEntityToScene( &legs );
+	} else {
+		CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
+	}
+#else // QC
 	CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
+#endif // QC
 
 	// if the model failed, allow the default nullmodel to be displayed
 	if (!legs.hModel) {
@@ -2490,11 +2503,16 @@ void CG_Player( centity_t *cent ) {
 	torso.shaderRGBA[1] = (int)(modelColors[2][1] * 255.0f);
 	torso.shaderRGBA[2] = (int)(modelColors[2][2] * 255.0f);
 	torso.shaderRGBA[3] = (int)(modelColors[2][3] * 255.0f);
-	//torso.customShader = cgs.media.wireframeShader;
-	//trap_R_AddRefEntityToScene( &torso );
 	//torso.customShader = 0;
-#endif
+	if ( piercingSight ) {
+		torso.customShader = cgs.media.piercingSightShader;
+		trap_R_AddRefEntityToScene( &torso );
+	} else {
+		CG_AddRefEntityWithPowerups( &torso, &cent->currentState, ci->team );
+	}
+#else // QC
 	CG_AddRefEntityWithPowerups( &torso, &cent->currentState, ci->team );
+#endif // QC
 
 #ifdef MISSIONPACK
 	if ( cent->currentState.eFlags & EF_KAMIKAZE ) {
@@ -2729,8 +2747,15 @@ void CG_Player( centity_t *cent ) {
 	head.shaderRGBA[1] = (int)(modelColors[1][1] * 255.0f);
 	head.shaderRGBA[2] = (int)(modelColors[1][2] * 255.0f);
 	head.shaderRGBA[3] = (int)(modelColors[1][3] * 255.0f);
-#endif
+	if ( piercingSight  ) {
+		head.customShader = cgs.media.piercingSightShader;
+		trap_R_AddRefEntityToScene( &head );
+	} else {
+		CG_AddRefEntityWithPowerups( &head, &cent->currentState, ci->team );
+	}
+#else // QC
 	CG_AddRefEntityWithPowerups( &head, &cent->currentState, ci->team );
+#endif // QC
 
 #ifdef MISSIONPACK
 	CG_BreathPuffs(cent, &head);
@@ -2741,7 +2766,15 @@ void CG_Player( centity_t *cent ) {
 	//
 	// add the gun / barrel / flash
 	//
+#if defined( QC )
+	if ( piercingSight ) {
+		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team, &torso.shaderRGBA );
+	} else {
+		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team, NULL );
+	}
+#else // QC
 	CG_AddPlayerWeapon( &torso, NULL, cent, ci->team );
+#endif // QC
 
 	// add powerups floating behind the player
 	CG_PlayerPowerups( cent, &torso );

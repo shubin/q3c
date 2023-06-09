@@ -833,6 +833,7 @@ typedef struct {
 	qhandle_t	battleSuitShader;
 	qhandle_t	battleWeaponShader;
 #if defined( QC )
+	qhandle_t	piercingSightShader;
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;
 	qhandle_t	totemModel;
@@ -1086,6 +1087,8 @@ typedef struct {
 	qhandle_t	adbox4x1;
 	qhandle_t	adbox8x1;
 	qhandle_t	adboxblack;
+	// ability activation sounds
+	sfxHandle_t	piercingSightActivationSound;
 #endif
 } cgMedia_t;
 
@@ -1331,6 +1334,8 @@ extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
 extern	vmCvar_t		cg_enemyColors;
 extern	vmCvar_t		cg_kickScale;
+extern	vmCvar_t		cg_piercingSightGreyscale;
+extern	vmCvar_t		cg_piercingSightLight;
 extern	vmCvar_t		cg_totemEffects;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
@@ -1544,7 +1549,11 @@ void CG_Bullet( vec3_t origin, int sourceEntityNum, vec3_t normal, qboolean fles
 void CG_RailTrail( clientInfo_t *ci, vec3_t start, vec3_t end );
 void CG_GrappleTrail( centity_t *ent, const weaponInfo_t *wi );
 void CG_AddViewWeapon (playerState_t *ps);
+#if defined( QC )
+void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, byte *piercingSightRGBA );
+#else // QC
 void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team );
+#endif // QC
 void CG_DrawWeaponSelect( void );
 
 void CG_OutOfAmmoChange( void );	// should this be in pmove?

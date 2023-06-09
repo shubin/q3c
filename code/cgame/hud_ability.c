@@ -173,6 +173,14 @@ void hud_draw_ability( void ) {
 			else {
 				cg.blurFactor = 0.0f;
 			}
+		} if ( ps->champion == CHAMP_VISOR ) {
+			current = cg.time - cg.snap->ps.ab_misctime;
+			overall = champion_stats[CHAMP_VISOR].ability_duration * 100;
+			if ( current < 0 || current > overall ) {
+				return;
+			}
+			start_angle = 270;
+			end_angle = ( int )( 270 + ( 1.0f - current / overall ) * 360 );
 		} else {
 			return;
 		}

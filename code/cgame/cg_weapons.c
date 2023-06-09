@@ -1328,7 +1328,11 @@ The main player will have this called for BOTH cases, so effects like light and
 sound should only be done on the world model case.
 =============
 */
+#if defined( QC )
+void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, byte *piercingSightRGBA ) {
+#else // QC
 void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team ) {
+#endif // QC
 	refEntity_t	gun;
 	refEntity_t	barrel;
 	refEntity_t	flash;
@@ -1398,7 +1402,17 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, gun.axis);
 	gun.backlerp = parent->backlerp;
 
+#if defined( QC )
+	if ( piercingSightRGBA != NULL ) {
+		memcpy( gun.shaderRGBA, piercingSightRGBA, sizeof( gun.shaderRGBA ) );
+		gun.customShader = cgs.media.piercingSightShader;
+		trap_R_AddRefEntityToScene( &gun );
+	} else {
+		CG_AddWeaponWithPowerups( &gun, cent->currentState.powerups );
+	}
+#else // QC
 	CG_AddWeaponWithPowerups( &gun, cent->currentState.powerups );
+#endif // QC
 
 	// add the spinning barrel
 	if ( weapon->barrelModel ) {
@@ -1414,8 +1428,17 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		AnglesToAxis( angles, barrel.axis );
 
 		CG_PositionRotatedEntityOnTag( &barrel, &gun, weapon->weaponModel, "tag_barrel" );
-
+#if defined( QC )
+		if ( piercingSightRGBA != NULL ) {
+			memcpy( barrel.shaderRGBA, piercingSightRGBA, sizeof( barrel.shaderRGBA ) );
+			barrel.customShader = cgs.media.piercingSightShader;
+			trap_R_AddRefEntityToScene( &barrel );
+		} else {
+			CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
+		}
+#else // QC
 		CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
+#endif // QC
 	}
 
 	// make sure we aren't looking at cg.predictedPlayerEntity for LG
@@ -1566,7 +1589,11 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 	// add everything onto the hand
+#if defined( QC )
+	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], NULL );
+#else // QC
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM] );
+#endif // QC
 }
 
 /*
@@ -1970,6 +1997,9 @@ void CG_ActivateAbility( centity_t *cent ) {
 					trap_S_StartSound( NULL, es->number, CHAN_WEAPON, weap->flashSound[c] );
 				}
 			}
+			break;
+		case CHAMP_VISOR:
+			trap_S_StartSound( NULL, clientNum, chan, cgs.media.piercingSightActivationSound );
 			break;
 	}
 }

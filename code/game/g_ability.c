@@ -422,6 +422,10 @@ void G_ActivateAbility( gentity_t *ent ) {
 		case CHAMP_GALENA:
 			G_ThrowTotem( ent, muzzle, forward );
 			break;
+		case CHAMP_VISOR:
+			ent->client->ps.ab_time = level.time + champion_stats[CHAMP_VISOR].ability_duration * 100;
+			ent->client->ps.ab_misctime = level.time;
+			break;
 	}
 }
 

@@ -247,6 +247,8 @@ vmCvar_t	cg_friendColors;
 vmCvar_t	cg_redTeamColors;
 vmCvar_t	cg_blueTeamColors;
 vmCvar_t	cg_kickScale;
+vmCvar_t	cg_piercingSightGreyscale;
+vmCvar_t	cg_piercingSightLight;
 vmCvar_t	cg_totemEffects;
 #endif
 
@@ -432,6 +434,8 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_redTeamColors, "cg_redTeamColors", "11111", CVAR_ARCHIVE },
 	{ &cg_blueTeamColors, "cg_blueTeamColors", "44444", CVAR_ARCHIVE },
 	{ &cg_kickScale, "cg_kickScale", "1", CVAR_ARCHIVE },
+	{ &cg_piercingSightGreyscale, "cg_piercingSightGreyscale", "1", CVAR_ARCHIVE },
+	{ &cg_piercingSightLight, "cg_piercingSightLight", "1", CVAR_ARCHIVE },
 	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
 #endif
 };
@@ -1036,6 +1040,7 @@ static void CG_RegisterSounds( void ) {
 			cgs.media.abilitySounds[i] = 0;
 		}
 	}
+	cgs.media.piercingSightActivationSound = trap_S_RegisterSound( "sound/abilities/visor_piersingsight.wav", qfalse );
 #endif
 
 #ifdef MISSIONPACK
@@ -1171,6 +1176,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.battleSuitShader = trap_R_RegisterShader("powerups/battleSuit" );
 	cgs.media.battleWeaponShader = trap_R_RegisterShader("powerups/battleWeapon" );
 #if defined( QC )
+	cgs.media.piercingSightShader = trap_R_RegisterShader( "effects/piercingSight" );
 	cgs.media.protectionShader = trap_R_RegisterShader( "powerups/protection" );
 	cgs.media.protectionWeaponShader = trap_R_RegisterShader( "powerups/protectionWeapon" );
 #endif
