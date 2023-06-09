@@ -959,12 +959,10 @@ void CG_RegisterItemVisuals( int itemNum ) {
 	MAKERGB( cg_weapons[WP_DIRE_ORB].flashDlightColor, 1, 0.75f, 0 );
 	cg_weapons[WP_DIRE_ORB].flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
 
-	//cg_weapons[WP_ACID_SPIT].missileModel = trap_R_RegisterModel( "models/ammo/grenade1.md3" );
-	//cg_weapons[WP_ACID_SPIT].missileTrailFunc = CG_GrenadeTrail;
-	//cg_weapons[WP_ACID_SPIT].wiTrailTime = 700;
-	//cg_weapons[WP_ACID_SPIT].trailRadius = 32;
-	//MAKERGB( cg_weapons[WP_ACID_SPIT].flashDlightColor, 1, 0.70f, 0 );
-	//cg_weapons[WP_ACID_SPIT].flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
+	cg_weapons[WP_TOTEM_EGG].missileModel = trap_R_RegisterModel( "models/special/totem/totemball.md3" );
+	cg_weapons[WP_TOTEM_EGG].wiTrailTime = 700;
+	cg_weapons[WP_TOTEM_EGG].trailRadius = 32;
+
 	cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
 #endif
 }
