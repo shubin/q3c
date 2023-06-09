@@ -726,7 +726,9 @@ void G_ExplodeMissile( gentity_t *ent );
 //
 void G_GenerateDireOrbProbes( void );
 void G_ActivateAbility( gentity_t *ent );
-void G_UpdateAbilities( gclient_t *client );
+void G_AbilityTickTenth( gclient_t *client );
+void G_AbilityTickSecond( gclient_t *client );
+void G_AbilityTickFrame( gclient_t *client );
 void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
 
 //

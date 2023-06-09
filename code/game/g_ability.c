@@ -429,7 +429,36 @@ void G_ActivateAbility( gentity_t *ent ) {
 	}
 }
 
-void G_UpdateAbilities( gclient_t *client ) {
+
+static void UpdateInjection( gclient_t *client ) {
+	if ( !( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		return;
+	}
+
+	client->ps.ab_time++;
+	if ( client->ps.ab_time > champion_stats[CHAMP_ANARKI].ability_duration ) {
+		client->ps.ab_flags = 0;
+		client->ps.ab_time = 0;
+	}
+}
+
+static void UpdateKeelGrenades( gclient_t *client ) {
+	if ( client->ps.ab_misctime != 0 ) {
+		client->ps.ab_misctime -= 100;
+		if ( client->ps.ab_misctime < 0 ) {
+			client->ps.ab_misctime = 0;
+		}
+	}
+}
+
+void G_AbilityTickTenth( gclient_t *client ) {
+	switch ( client->ps.champion ) {
+		case CHAMP_ANARKI: UpdateInjection( client ); break;
+		case CHAMP_KEEL: UpdateKeelGrenades( client ); break;
+	}
+}
+
+void G_AbilityTickSecond( gclient_t *client ) {
 	// ability regeneration timer
 	if ( !( client->ps.ab_flags & ABF_READY ) && !( client->ps.ab_flags & ABF_ENGAGED ) ) {
 		if ( client->ps.ab_time < champion_stats[client->ps.champion].ability_cooldown ) {
@@ -439,6 +468,9 @@ void G_UpdateAbilities( gclient_t *client ) {
 			client->ps.ab_flags |= ABF_READY;
 		}
 	}
+}
+
+void G_AbilityTickFrame( gclient_t *client ) {
 	// visor
 	if ( client->ps.champion == CHAMP_VISOR && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
 		if ( level.time > client->ps.ab_time ) {

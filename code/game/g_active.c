@@ -435,37 +435,6 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	return qtrue;
 }
 
-#if defined( QC )
-
-static void UpdateInjection( gclient_t *client ) {
-	if ( !( client->ps.ab_flags & ABF_ENGAGED ) ) {
-		return;
-	}
-
-	client->ps.ab_time++;
-	if ( client->ps.ab_time > champion_stats[CHAMP_ANARKI].ability_duration ) {
-		client->ps.ab_flags = 0;
-		client->ps.ab_time = 0;
-	}
-}
-
-static void UpdateKeelGrenades( gclient_t *client ) {
-	if ( client->ps.ab_misctime != 0 ) {
-		client->ps.ab_misctime -= 100;
-		if ( client->ps.ab_misctime < 0 ) {
-			client->ps.ab_misctime = 0;
-		}
-	}
-}
-
-static void UpdateAbility( gclient_t *client ) {
-	switch ( client->ps.champion ) {
-		case CHAMP_ANARKI: UpdateInjection( client ); break;
-		case CHAMP_KEEL: UpdateKeelGrenades( client ); break;
-	}
-}
-#endif
-
 /*
 ==================
 ClientTimerActions
@@ -482,10 +451,12 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 	client = ent->client;
 
 #if defined( QC )
+	G_AbilityTickFrame( client );
+
 	client->timeResidualHiRes += msec;
 	while ( client->timeResidualHiRes >= 100 ) {
 		client->timeResidualHiRes -= 100;
-		UpdateAbility( client );
+		G_AbilityTickTenth( client );
 	}
 #endif
 
@@ -568,13 +539,11 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 		if ( client->ps.stats[STAT_ARMOR] > client->ps.baseArmor ) {
 			client->ps.stats[STAT_ARMOR]--;
 		}
+		G_AbilityTickSecond( client );
 #else
 		if ( client->ps.stats[STAT_ARMOR] > client->ps.stats[STAT_MAX_HEALTH] ) {
 			client->ps.stats[STAT_ARMOR]--;
 		}
-#endif
-#if defined( QC )
-		G_UpdateAbilities( client );
 #endif
 	}
 #ifdef MISSIONPACK
