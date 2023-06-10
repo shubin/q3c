@@ -425,6 +425,7 @@ void G_ActivateAbility( gentity_t *ent ) {
 		case CHAMP_VISOR:
 			ent->client->ps.ab_time = level.time + champion_stats[CHAMP_VISOR].ability_duration * 100;
 			ent->client->ps.ab_misctime = level.time;
+			ent->r.piercingSightMask = -1;
 			break;
 	}
 }
@@ -476,6 +477,7 @@ void G_AbilityTickFrame( gclient_t *client ) {
 		if ( level.time > client->ps.ab_time ) {
 			client->ps.ab_flags = 0;
 			client->ps.ab_time = 0;
+			g_entities[client->ps.clientNum].r.piercingSightMask = 0;
 		}
 	}
 }
