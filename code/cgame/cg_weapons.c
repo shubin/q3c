@@ -1703,6 +1703,88 @@ static qboolean CG_WeaponSelectable( int i ) {
 	return qtrue;
 }
 
+#if defined( QC )
+static int s_weaponCycle[] = {
+	WP_MACHINEGUN,
+	WP_SHOTGUN,
+	WP_PLASMAGUN,
+	WP_TRIBOLT,
+	WP_ROCKET_LAUNCHER,
+	#if ENABLE_GRENADEL
+	WP_GRENADE_LAUNCHER,
+	#endif
+	WP_LIGHTNING,
+	WP_RAILGUN,
+};
+
+#define NUM_CYCLING_WEAPONS (sizeof(s_weaponCycle)/sizeof(s_weaponCycle[0]))
+
+static int CG_WeaponCycleIndex( int weapon ) {
+	int i;
+
+	for ( i = 0; i < NUM_CYCLING_WEAPONS; i++ ) {
+		if ( s_weaponCycle[i] == weapon ) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+static int CG_CycleWeapon( int weapon, int dir ) {
+	int original;
+	int i, n;
+
+	if ( weapon == WP_LOUSY_MACHINEGUN ) {
+		weapon = WP_MACHINEGUN;
+	}
+	if ( weapon == WP_LOUSY_SHOTGUN ) {
+		weapon = WP_SHOTGUN;
+	}
+	if ( weapon == WP_LOUSY_PLASMAGUN ) {
+		weapon = WP_PLASMAGUN;
+	}
+
+	n = CG_WeaponCycleIndex( weapon );
+	if ( n == -1 ) {
+		n = NUM_CYCLING_WEAPONS - 1;
+	}
+	for ( i = 0; i < NUM_CYCLING_WEAPONS; i++ ) {
+		n = ( n + dir + NUM_CYCLING_WEAPONS ) % NUM_CYCLING_WEAPONS;
+		weapon = s_weaponCycle[n];
+		if ( CG_WeaponSelectable( weapon ) ) {
+			break;
+		} else {
+			if ( weapon == WP_SHOTGUN
+				&& cg.snap->ps.ammo[WP_SHOTGUN]
+				&& cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_SHOTGUN ) 
+			) {
+				weapon = WP_LOUSY_SHOTGUN;
+				break;
+			}
+			if ( weapon == WP_MACHINEGUN
+				&& cg.snap->ps.ammo[WP_MACHINEGUN]
+				&& cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_MACHINEGUN ) 
+			) {
+				weapon = WP_LOUSY_MACHINEGUN;
+				break;
+			}
+			if ( weapon == WP_PLASMAGUN
+				&& cg.snap->ps.ammo[WP_PLASMAGUN]
+				&& cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << WP_LOUSY_PLASMAGUN ) 
+			) {
+				weapon = WP_LOUSY_PLASMAGUN;
+				break;
+			}
+		}
+	}
+	if ( i == NUM_CYCLING_WEAPONS ) {
+		weapon = original;
+	}
+	return weapon;
+}
+
+#endif // QC
+
 /*
 ===============
 CG_NextWeapon_f
@@ -1710,7 +1792,9 @@ CG_NextWeapon_f
 */
 void CG_NextWeapon_f( void ) {
 	int		i;
+#if !defined( QC )
 	int		original;
+#endif // QC
 
 	if ( !cg.snap ) {
 		return;
@@ -1720,6 +1804,9 @@ void CG_NextWeapon_f( void ) {
 	}
 
 	cg.weaponSelectTime = cg.time;
+#if defined( QC )
+	cg.weaponSelect = CG_CycleWeapon( cg.weaponSelect, 1 );
+#else // QC
 	original = cg.weaponSelect;
 
 	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
@@ -1737,6 +1824,7 @@ void CG_NextWeapon_f( void ) {
 	if ( i == MAX_WEAPONS ) {
 		cg.weaponSelect = original;
 	}
+#endif // QC
 }
 
 /*
@@ -1746,7 +1834,9 @@ CG_PrevWeapon_f
 */
 void CG_PrevWeapon_f( void ) {
 	int		i;
+#if !defined( QC )
 	int		original;
+#endif // QC
 
 	if ( !cg.snap ) {
 		return;
@@ -1756,6 +1846,9 @@ void CG_PrevWeapon_f( void ) {
 	}
 
 	cg.weaponSelectTime = cg.time;
+#if defined( QC )
+	cg.weaponSelect = CG_CycleWeapon( cg.weaponSelect, -1 );
+#else // QC
 	original = cg.weaponSelect;
 
 	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
@@ -1773,6 +1866,7 @@ void CG_PrevWeapon_f( void ) {
 	if ( i == MAX_WEAPONS ) {
 		cg.weaponSelect = original;
 	}
+#endif // QC
 }
 
 /*
