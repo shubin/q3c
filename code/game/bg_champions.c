@@ -706,7 +706,7 @@ char* champion_skins[NUM_CHAMPIONS] = {
     "pm", // dk
     "pm", // doom
     "pm", // eisen
-    "default", // galena
+    "bright", // galena
     "pm", // ranger
     "pm", // strogg
     "pm", // visor

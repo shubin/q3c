@@ -1473,8 +1473,8 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		if ( ps->stats[STAT_ARMOR] >= ps->stats[STAT_MAX_HEALTH] * 2 ) {
 			return qfalse;
 		}
-#endif
 		return qtrue;
+#endif
 
 	case IT_HEALTH:
 		// small and mega healths will go over the max, otherwise

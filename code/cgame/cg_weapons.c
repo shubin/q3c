@@ -1746,7 +1746,7 @@ static int CG_CycleWeapon( int weapon, int dir ) {
 
 	n = CG_WeaponCycleIndex( weapon );
 	if ( n == -1 ) {
-		n = NUM_CYCLING_WEAPONS - 1;
+		n = NUM_CYCLING_WEAPONS - dir;
 	}
 	for ( i = 0; i < NUM_CYCLING_WEAPONS; i++ ) {
 		n = ( n + dir + NUM_CYCLING_WEAPONS ) % NUM_CYCLING_WEAPONS;
