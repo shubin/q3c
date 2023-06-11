@@ -1610,6 +1610,8 @@ qboolean	BG_CanAbilityBeActivated( const playerState_t *ps ) {
 	switch ( ps->champion ) {
 		case CHAMP_KEEL:
 			return ps->ab_time > 9 && ps->ab_misctime == 0;
+		case CHAMP_RANGER:
+			return ps->ab_flags & ABF_READY;
 	}
 	return ps->ab_flags & ABF_READY & !(ps->ab_flags & ABF_ENGAGED);
 }
