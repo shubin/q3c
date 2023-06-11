@@ -961,3 +961,9 @@ qboolean SV_GameCommand( void ) {
 	return VM_Call( gvm, GAME_CONSOLE_COMMAND );
 }
 
+#if defined( QC )
+qboolean SV_SkipEntityTrace( int clientNum, int entityNum )
+{
+	return VM_Call( gvm, GAME_SKIP_ENTITY_TRACE, clientNum, entityNum );
+}
+#endif // QC

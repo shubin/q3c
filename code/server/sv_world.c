@@ -452,6 +452,9 @@ typedef struct {
 	int			passEntityNum;
 	int			contentmask;
 	int			capsule;
+#if defined( QC )
+	int			clientNum;
+#endif // QC
 } moveclip_t;
 
 
@@ -541,6 +544,14 @@ static void SV_ClipMoveToEntities( moveclip_t *clip ) {
 				continue;	// don't clip against other missiles from our owner
 			}
 		}
+#if defined( QC )
+		// filter out friendly entities (i.e. totems)
+		if ( clip->contentmask & CONTENTS_SKIP ) {
+			if ( SV_SkipEntityTrace( clip->clientNum, touch->s.number ) ) {
+				continue;
+			}
+		}
+#endif // QC
 
 		// if it doesn't have any brushes of a type we
 		// are looking for, ignore it
@@ -596,6 +607,16 @@ passEntityNum and entities owned by passEntityNum are explicitly not checked.
 void SV_Trace( trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule ) {
 	moveclip_t	clip;
 	int			i;
+#if defined( QC )
+	int			clientNum;
+
+	if ( passEntityNum == -1 ) {
+		clientNum = -1;
+	} else {
+		clientNum = passEntityNum >> 24;
+		passEntityNum &= 0x00FFFFFF;
+	}
+#endif // QC
 
 	if ( !mins ) {
 		mins = vec3_origin;
@@ -622,6 +643,9 @@ void SV_Trace( trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, c
 	clip.maxs = maxs;
 	clip.passEntityNum = passEntityNum;
 	clip.capsule = capsule;
+#if defined( QC )
+	clip.clientNum = clientNum;
+#endif // QC
 
 	// create the bounding box of the entire move
 	// we can limit it to the part of the move not

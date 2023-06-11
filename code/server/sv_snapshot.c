@@ -361,6 +361,15 @@ static void SV_AddEntitiesVisibleFromPoint( vec3_t origin, clientSnapshot_t *fra
 			continue;
 		}
 
+#if defined( QC )
+		if ( ent->s.number >= 0 && ent->s.number < MAX_CLIENTS &&
+		    ( SV_GentityNum( frame->ps.clientNum )->r.piercingSightMask & ( 1 << ent->s.number ) ) )
+		{
+			SV_AddEntToSnapshot( svEnt, ent, eNums );
+			continue;
+		}
+#endif // QC
+
 		// broadcast entities are always sent
 		if ( ent->r.svFlags & SVF_BROADCAST ) {
 			SV_AddEntToSnapshot( svEnt, ent, eNums );

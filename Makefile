@@ -2797,6 +2797,7 @@ QCGOBJ_ = \
   $(B)/$(QC)/game/bg_promode.o \
   $(B)/$(QC)/game/g_unlagged.o \
   $(B)/$(QC)/game/g_ability.o \
+  $(B)/$(QC)/game/g_totem.o \
   \
   $(B)/$(QC)/qcommon/q_math.o \
   $(B)/$(QC)/qcommon/q_shared.o
