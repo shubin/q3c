@@ -2768,7 +2768,7 @@ void CG_Player( centity_t *cent ) {
 	//
 #if defined( QC )
 	if ( piercingSight ) {
-		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team, &torso.shaderRGBA );
+		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team, &torso.shaderRGBA[0]);
 	} else {
 		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team, NULL );
 	}

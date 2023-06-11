@@ -142,7 +142,7 @@ static totem_t *FindTotem( gentity_t *ent ) {
 	int i;
 	
 	bush = FindBush( ent );
-	for ( int i = 0; i < MAX_TOTEMS; i++ ) {
+	for ( i = 0; i < MAX_TOTEMS; i++ ) {
 		if ( bush->totems[i].entnum == ent->s.number ) {
 			return &bush->totems[i];
 		}
@@ -232,6 +232,8 @@ static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
 	vec3_t		v;
 	int r, clientNum;
 	int max, health;
+	totem_bush_t *bush;
+	totem_t *totem;
 
 	clientNum = other->client->ps.clientNum;
 
@@ -243,8 +245,8 @@ static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
 		return;
 	}
 
-	totem_bush_t *bush = FindBush( trigger->parent );
-	totem_t *totem = FindTotem( trigger->parent );
+	bush = FindBush( trigger->parent );
+	totem = FindTotem( trigger->parent );
 
 	if ( totem->chargetime[clientNum] > level.time ) {
 		// not charged yet

@@ -65,8 +65,8 @@ void hud_draw_totems( float cx, float cy, int num_totems ) {
 	angle = ( - TOTEM_ANGLE / 2.0f - 90 ) / 180.0f * 3.14159265359f;
 	step = ( TOTEM_ANGLE / (float)( MAX_TOTEMS - 1 ) ) / 180.0f * 3.14159265359f;
 	for ( i = 0; i < MAX_TOTEMS; i++, angle += step ) {
-		x = cx + TOTEM_RADIUS * cosf( angle );
-		y = cy + TOTEM_RADIUS * sinf( angle );
+		x = cx + TOTEM_RADIUS * cos( angle );
+		y = cy + TOTEM_RADIUS * sin( angle );
 		white[3] = 1.0f;
 		trap_R_SetColor( black );
 		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.totemshadows[i] );
