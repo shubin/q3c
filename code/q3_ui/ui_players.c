@@ -87,7 +87,17 @@ tryagain:
 		goto tryagain;
 	}
 
+#if defined( QC )
+	if ( weaponNum == WP_LOUSY_MACHINEGUN ) {
+		pi->barrelModel = trap_R_RegisterModel( "models/weapons3/machinegun/machinegun_barrel.md3" );
+	}
+#endif // QC
+
+#if defined( QC )
+	if ( weaponNum == WP_LOUSY_MACHINEGUN || weaponNum == WP_MACHINEGUN || weaponNum == WP_GAUNTLET || weaponNum == WP_BFG ) {
+#else // QC
 	if ( weaponNum == WP_MACHINEGUN || weaponNum == WP_GAUNTLET || weaponNum == WP_BFG ) {
+#endif // QC
 		COM_StripExtension( item->world_model[0], path, sizeof(path) );
 		Q_strcat( path, sizeof(path), "_barrel.md3" );
 		pi->barrelModel = trap_R_RegisterModel( path );
@@ -102,10 +112,16 @@ tryagain:
 		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
 		break;
 
+#if defined( QC )
+	case WP_LOUSY_MACHINEGUN:
+#endif // QC
 	case WP_MACHINEGUN:
 		MAKERGB( pi->flashDlightColor, 1, 1, 0 );
 		break;
 
+#if defined( QC )
+	case WP_LOUSY_SHOTGUN:
+#endif // QC
 	case WP_SHOTGUN:
 		MAKERGB( pi->flashDlightColor, 1, 1, 0 );
 		break;
@@ -131,6 +147,9 @@ tryagain:
 		MAKERGB( pi->flashDlightColor, 1, 0.5f, 0 );
 		break;
 
+#if defined( QC )
+	case WP_LOUSY_PLASMAGUN:
+#endif // QC
 	case WP_PLASMAGUN:
 		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
 		break;
@@ -863,7 +882,11 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	//
 	// add the spinning barrel
 	//
+#if defined( QC )
+	if ( pi->realWeapon == WP_LOUSY_MACHINEGUN || pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#else // QC
 	if ( pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#endif // QC
 		vec3_t	angles;
 
 		memset( &barrel, 0, sizeof(barrel) );

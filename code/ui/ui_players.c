@@ -88,6 +88,12 @@ tryagain:
 		goto tryagain;
 	}
 
+#if defined( QC )
+	if ( weaponNum == WP_MACHINEGUN ) {
+		pi->barrelModel = trap_R_RegisterModel( "models/weapons3/machinegun/machinegun_barrel.md3" );
+	}
+#endif // QC
+
 	if ( weaponNum == WP_MACHINEGUN || weaponNum == WP_GAUNTLET || weaponNum == WP_BFG ) {
 		COM_StripExtension( item->world_model[0], path, sizeof(path) );
 		Q_strcat( path, sizeof(path), "_barrel.md3" );
@@ -864,7 +870,11 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	//
 	// add the spinning barrel
 	//
+#if defined( QC )
+	if ( pi->realWeapon == WP_LOUSY_MACHINEGUN || pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#else // QC
 	if ( pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#endif // QC
 		vec3_t	angles;
 
 		memset( &barrel, 0, sizeof(barrel) );
