@@ -236,6 +236,7 @@ typedef enum {
 #if defined( QC )
 	LE_FADE_ALPHA,
 	LE_SHOWREFENTITY,
+	LE_FADE_LIGHT,
 #endif // QC
 #ifdef MISSIONPACK
 	LE_KAMIKAZE,

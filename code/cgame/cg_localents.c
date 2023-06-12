@@ -739,7 +739,25 @@ void CG_AddFadeAlpha( localEntity_t *le ) {
 	le->refEntity.shaderRGBA[3] = ( 1.0f - Com_Clamp( 0.0f, 1.0f, ( cg.time - le->startTime ) / ( float )( le->endTime - le->startTime ) ) ) * le->color[3];
 	trap_R_AddRefEntityToScene( &le->refEntity );
 }
+
+/*
+===================
+CG_AddFadeLight
+===================
+*/
+void CG_AddFadeLight( localEntity_t *le ) {
+	float c;
+
+	if ( le->endTime <= cg.time ) {
+		CG_FreeLocalEntity( le );
+		return;
+	}
+	c = ( le->endTime - cg.time ) * le->lifeRate;
+	trap_R_AddLightToScene( le->pos.trBase, le->light * c, le->lightColor[0], le->lightColor[1], le->lightColor[2] );
+}
+
 #endif // QC
+
 /*
 ===================
 CG_AddScorePlum
