@@ -43,10 +43,10 @@ static qboolean champ_locked[NUM_CHAMPIONS] = {
     qtrue, // dk
     qtrue, // doom
     qtrue, // eisen
-    qtrue, // galena
+    qfalse, // galena
     qfalse, // ranger
     qtrue, // strogg
-    qtrue, // visor
+    qfalse, // visor
     qtrue, // clutch
     qfalse, // keel
     qtrue, // scalebearer
