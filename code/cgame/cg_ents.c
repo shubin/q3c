@@ -1156,6 +1156,16 @@ static void CG_TeamBase( centity_t *cent ) {
 }
 
 #if defined( QC )
+
+#define TOTEM_LIGHT_INTENSITY			100
+#define TOTEM_LIGHT_HEIGHT				12
+#define TOTEM_DEPLOY_TIME				250
+#define TOTEM_DECAY_TIME				250
+#define TOTEM_DISCHARGED_ALPHA			128
+#define TOTEM_DECAY_ALPHA				60
+// the number below depends on the totem ball dimensions
+#define TOTEM_DEPLOY_HEIGHT_CORRECTION	(-40)
+
 /*
 ===============
 CG_Totem
@@ -1168,10 +1178,10 @@ static void CG_Totem( centity_t *cent ) {
 	vec3_t offset;
 	float phase;
 
-	phase = Com_Clamp( 0.0f, 1.0f, ( cg.time - cent->currentState.time2 ) / 250.0f );
+	phase = Com_Clamp( 0.0f, 1.0f, ( cg.time - cent->currentState.time2 ) / (float)TOTEM_DEPLOY_TIME );
 
 	offset[0] = offset[1] = 0.0f;
-	offset[2] = -40.0f;
+	offset[2] = TOTEM_DEPLOY_HEIGHT_CORRECTION;
 
 	memset( &totem, 0, sizeof( totem ) );
 	totem.reType = RT_MODEL;
@@ -1205,7 +1215,7 @@ static void CG_Totem( centity_t *cent ) {
 				trap_R_AddRefEntityToScene( &ring );
 			}
 		} else {
-			totem.shaderRGBA[3] = 128;
+			totem.shaderRGBA[3] = TOTEM_DISCHARGED_ALPHA;
 		}
 		trap_R_AddRefEntityToScene( &totem );
 		if ( cg_totemEffects.integer ) {
@@ -1218,12 +1228,24 @@ static void CG_Totem( centity_t *cent ) {
 		if ( cg_totemEffects.integer ) {
 			trap_R_AddRefEntityToScene( &haze );
 		}
+		if ( cg_totemLight.integer ) {
+			VectorCopy( cent->lerpOrigin, lightOrigin );
+			lightOrigin[2] += TOTEM_LIGHT_HEIGHT;
+			trap_R_AddLightToScene( lightOrigin, TOTEM_LIGHT_INTENSITY, redRGBA[0] / 255.0f, redRGBA[1] / 255.0f, redRGBA[2] / 255.0f );
+		}
 	}
 }
 
-void CG_TotemDecay( centity_t *cent ) {
-	localEntity_t *le;
+/*
+===============
+CG_TotemDecay
 
+===============
+*/
+void CG_TotemDecay( centity_t *cent ) {
+	localEntity_t	*le;
+
+	// add the totem model with decay shader
 	le = CG_AllocLocalEntity();
 	le->leType = LE_FADE_ALPHA;
 	le->refEntity.reType = RT_MODEL;
@@ -1242,9 +1264,25 @@ void CG_TotemDecay( centity_t *cent ) {
 		le->color[1] = redRGBA[1];
 		le->color[2] = redRGBA[2];
 	}
-	le->color[3] = 60;
+	le->color[3] = TOTEM_DECAY_ALPHA;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 250;
+	le->endTime = cg.time + TOTEM_DECAY_TIME;
+
+	if ( !CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) && cg_totemLight.integer ) {
+		// add fading light for the enemy totem
+		le = CG_AllocLocalEntity();
+		le->leType = LE_FADE_LIGHT;
+
+		VectorCopy( cent->lerpOrigin, le->pos.trBase );
+		le->pos.trBase[2] += TOTEM_LIGHT_HEIGHT;
+		le->light = TOTEM_LIGHT_INTENSITY;
+		le->lightColor[0] = redRGBA[0] / 255.0f;
+		le->lightColor[1] = redRGBA[1] / 255.0f;
+		le->lightColor[2] = redRGBA[2] / 255.0f;
+		le->startTime = cg.time;
+		le->endTime = cg.time + TOTEM_DECAY_TIME;
+		le->lifeRate = 1.0f / TOTEM_DECAY_TIME;
+	}
 }
 
 #endif

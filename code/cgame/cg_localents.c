@@ -916,6 +916,9 @@ void CG_AddLocalEntities( void ) {
 		case LE_FADE_ALPHA:
 			CG_AddFadeAlpha( le );
 			break;
+		case LE_FADE_LIGHT:
+			CG_AddFadeLight( le );
+			break;
 #endif // QC
 
 #ifdef MISSIONPACK

@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TOTEM_DAMAGE			50
 #define TOTEM_THINK_INTERVAL	100
 #define TOTEM_HEAL_RADIUS		120
-#define TOTEM_HURT_RADIUS		60
+#define TOTEM_HURT_RADIUS		75
 #define TOTEM_EGG_RADIUS		6
 #if !defined( DEBUG )
 #define TOTEM_COOLDOWN			40000

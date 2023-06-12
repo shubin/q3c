@@ -1338,6 +1338,7 @@ extern	vmCvar_t		cg_kickScale;
 extern	vmCvar_t		cg_piercingSightGreyscale;
 extern	vmCvar_t		cg_piercingSightLight;
 extern	vmCvar_t		cg_totemEffects;
+extern	vmCvar_t		cg_totemLight;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

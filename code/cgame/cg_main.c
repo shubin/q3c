@@ -250,6 +250,7 @@ vmCvar_t	cg_kickScale;
 vmCvar_t	cg_piercingSightGreyscale;
 vmCvar_t	cg_piercingSightLight;
 vmCvar_t	cg_totemEffects;
+vmCvar_t	cg_totemLight;
 #endif
 
 typedef struct {
@@ -437,6 +438,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_piercingSightGreyscale, "cg_piercingSightGreyscale", "1", CVAR_ARCHIVE },
 	{ &cg_piercingSightLight, "cg_piercingSightLight", "1", CVAR_ARCHIVE },
 	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
+	{ &cg_totemLight, "cg_totemLight", "1", CVAR_ARCHIVE },
 #endif
 };
 
