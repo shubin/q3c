@@ -69,6 +69,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 int item_for_weapon[WP_NUM_WEAPONS];
 #endif
 
+#if defined( QC )
+
+static int RechargeAbility( gentity_t *other, int amount ) {
+	other->client->ps.ab_time += amount;
+	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
+		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
+	}
+	return other->client->ps.ab_time;
+}
+
+#endif // QC
 
 //======================================================================
 
@@ -273,11 +284,9 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 	Add_Ammo (other, ent->item->giTag, quantity);
 
 #if defined( QC )
-	if ( ( other->client != NULL ) && ( other->client->ps.champion == CHAMP_KEEL ) ) { // Keel's ability can be recharged by picking up ammo boxes
-		other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 9 );
-		if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
-			other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
-		}
+	if ( ( other->client != NULL ) && ( other->client->ps.champion == CHAMP_KEEL ) ) {
+		// Keel's ability can be recharged by picking up ammo boxes
+		RechargeAbility( other, ( champion_stats[other->client->ps.champion].ability_cooldown / 9 ) );
 	}
 #endif
 
@@ -356,6 +365,10 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	else
 #endif
 #if defined( QC )
+	if ( other->client->ps.champion == CHAMP_GALENA ) {
+		RechargeAbility( other, ( champion_stats[other->client->ps.champion].ability_cooldown / 15 ) );
+	}
+
 	if ( ent->item->quantity != 5 && ent->item->quantity != 100 ) {
 		max = other->client->ps.baseHealth;
 	} else {
@@ -411,11 +424,8 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 #if defined( QC )
 //======================================================================
 
-int Pickup_Hourglass(gentity_t* ent, gentity_t* other) {
-	other->client->ps.ab_time += ( champion_stats[other->client->ps.champion].ability_cooldown / 9 );
-	if ( other->client->ps.ab_time > champion_stats[other->client->ps.champion].ability_cooldown ) {
-		other->client->ps.ab_time = champion_stats[other->client->ps.champion].ability_cooldown;
-	}
+int Pickup_Hourglass( gentity_t* ent, gentity_t* other ) {
+	RechargeAbility( other, ( champion_stats[other->client->ps.champion].ability_cooldown / 9 ) );
 	other->client->itemstat.hourglass++;
 	return RESPAWN_HOURGLASS;
 }
