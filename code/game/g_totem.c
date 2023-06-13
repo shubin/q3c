@@ -450,10 +450,10 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 	client->ps.ab_flags = 0;
 	client->ps.ab_time = 0;
 
-	range[0] = range[1] = range[2] = 1;
+	VectorSet( range, 5, 5, 20 );
 	VectorCopy( pos, plantpos );
 	plantpos[2] += range[2];
-	if ( !G_CanPutTotemHere( pos, range ) ) {
+	if ( !G_CanPutTotemHere( plantpos, range ) ) {
 		G_FreeEntity( ent );
 		return;
 	}
@@ -516,15 +516,18 @@ qboolean G_CanPutTotemHere( const vec3_t pos, const vec3_t range ) {
 	result = qtrue;
 	for ( i = 0; i < num; i++ ) {
 		hit = &g_entities[touch[i]];
+		if ( !trap_EntityContact( mins, maxs, hit ) ) {
+			continue;
+		}
 		if ( hit->areaflags & AREA_ALLOWTOTEMS ) {
 			return qtrue; // any area with ALLOWTOTEMS flag overrides all other checks
 		}
 		if ( hit->areaflags & AREA_NOTOTEMS ) {
 			result = qfalse;
 		}
-	}
-	if ( trap_PointContents( pos, 0 ) & ( CONTENTS_NODROP | CONTENTS_NOTOTEM ) ) {
-		result = qfalse;
+		if ( hit->r.contents & ( CONTENTS_NODROP | CONTENTS_NOTOTEM ) ) {
+			result = qfalse;
+		}
 	}
 	return result;
 }
