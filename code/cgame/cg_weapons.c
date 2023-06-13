@@ -1734,6 +1734,8 @@ static int CG_CycleWeapon( int weapon, int dir ) {
 	int original;
 	int i, n;
 
+	original = weapon;
+
 	if ( weapon == WP_LOUSY_MACHINEGUN ) {
 		weapon = WP_MACHINEGUN;
 	}
@@ -1791,8 +1793,8 @@ CG_NextWeapon_f
 ===============
 */
 void CG_NextWeapon_f( void ) {
-	int		i;
 #if !defined( QC )
+	int		i;
 	int		original;
 #endif // QC
 
@@ -1833,8 +1835,8 @@ CG_PrevWeapon_f
 ===============
 */
 void CG_PrevWeapon_f( void ) {
-	int		i;
 #if !defined( QC )
+	int		i;
 	int		original;
 #endif // QC
 
