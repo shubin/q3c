@@ -341,6 +341,68 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 	}
 }
 
+#if defined( QC )
+
+/*
+==========================
+CG_RocketTrail
+
+==========================
+*/
+
+static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
+	int		step;
+	vec3_t	origin, lastPos;
+	int		t;
+	int		startTime, contents;
+	int		lastContents;
+	entityState_t *es;
+	vec3_t	up;
+	localEntity_t *smoke;
+
+	if ( cg_noProjectileTrail.integer ) {
+		return;
+	}
+
+	up[0] = 5 - 10 * crandom();
+	up[1] = 5 - 10 * crandom();
+	up[2] = 8 - 5 * crandom();
+
+	step = 18;
+
+	es = &ent->currentState;
+	startTime = ent->trailTime;
+	t = step * ( ( startTime + step ) / step );
+
+	BG_EvaluateTrajectory( &es->pos, cg.time, origin );
+	contents = CG_PointContents( origin, -1 );
+
+	// if object (e.g. grenade) is stationary, don't toss up smoke
+	if ( es->pos.trType == TR_STATIONARY ) {
+		ent->trailTime = cg.time;
+		return;
+	}
+
+	BG_EvaluateTrajectory( &es->pos, ent->trailTime, lastPos );
+	lastContents = CG_PointContents( lastPos, -1 );
+
+	ent->trailTime = cg.time;
+
+	if ( contents & ( CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA ) ) {
+		if ( contents & lastContents & CONTENTS_WATER ) {
+			CG_BubbleTrail( lastPos, origin, 8 );
+		}
+		return;
+	}
+
+	for ( ; t <= ent->trailTime; t += step ) {
+		BG_EvaluateTrajectory( &es->pos, t, lastPos );
+		smoke = CG_SmokePuff( lastPos, up, 27, 1, 1, 1, 0.9f, wi->wiTrailTime, t, 0, 0, cgs.media.smokeShader[rand() % 4] );
+		smoke->leType = LE_MOVE_SCALE_FADE;
+	}
+}
+
+#else // QC
 /*
 ==========================
 CG_RocketTrail
@@ -407,6 +469,7 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	}
 
 }
+#endif // QC
 
 #ifdef MISSIONPACK
 /*

@@ -1043,6 +1043,11 @@ static void CG_RegisterSounds( void ) {
 		}
 	}
 	cgs.media.piercingSightActivationSound = trap_S_RegisterSound( "sound/abilities/visor_piercingsight.wav", qfalse );
+	// smoke particle shaders
+	cgs.media.smokeShader[0] = trap_R_RegisterShader( "gfx/particles/smoke1" );
+	cgs.media.smokeShader[1] = trap_R_RegisterShader( "gfx/particles/smoke2" );
+	cgs.media.smokeShader[2] = trap_R_RegisterShader( "gfx/particles/smoke3" );
+	cgs.media.smokeShader[3] = trap_R_RegisterShader( "gfx/particles/smoke4" );
 #endif
 
 #ifdef MISSIONPACK

@@ -1090,6 +1090,9 @@ typedef struct {
 	qhandle_t	adboxblack;
 	// ability activation sounds
 	sfxHandle_t	piercingSightActivationSound;
+
+	// particle fx shaders
+	qhandle_t	smokeShader[4];
 #endif
 } cgMedia_t;
 
