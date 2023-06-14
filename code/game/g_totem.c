@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TOTEM_HEAL_RADIUS		120
 #define TOTEM_HURT_RADIUS		75
 #define TOTEM_EGG_RADIUS		6
+#define TOTEM_THROW_SPEED		500
 #if !defined( DEBUG )
 #define TOTEM_COOLDOWN			40000
 #else // DEBUG
@@ -427,7 +428,7 @@ qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace ) {
 }
 
 void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
-	gentity_t *newtotem, *trigger;
+	gentity_t *newtotem, *trigger, *te;
 	gclient_t *client;
 	vec3_t	plantpos, range;
 
@@ -484,7 +485,7 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	forward[2] += 0.2f;
 	VectorNormalize( forward );
 
-	egg = fire_grenade( ent, muzzle, forward );
+	egg = fire_grenade( ent, muzzle, forward ); // QC TODO: need to get rid of this considering a lot of params are being overriden below
 
 	egg->r.mins[0] = egg->r.mins[1] = egg->r.mins[2] = -TOTEM_EGG_RADIUS;
 	egg->r.maxs[0] = egg->r.maxs[1] = egg->r.maxs[2] = TOTEM_EGG_RADIUS;
@@ -500,6 +501,9 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	egg->splashDamage = 0;
 	egg->splashRadius = 0;
 	egg->s.generic1 = (int)ps->viewangles[YAW]; // pass player view angle in order to fix totem orientation later
+	//
+	VectorScale( forward, TOTEM_THROW_SPEED, egg->s.pos.trDelta ); // slower than the actual grenade
+	SnapVector( egg->s.pos.trDelta );			// save net bandwidth
 
 	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
 	egg->damage *= quadFactor;
