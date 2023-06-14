@@ -82,7 +82,7 @@ void hud_draw_totems( float cx, float cy, int num_totems ) {
 				trap_R_SetColor( yellow );
 			}
 		} else {
-			white[3] = 0.5f;
+			white[3] = 0.1f;
 			trap_R_SetColor( white );
 		}
 		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.totems[i] );
