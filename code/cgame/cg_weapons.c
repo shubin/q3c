@@ -2130,7 +2130,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 		}
 	}
 	ci->abilityActivationTime = cg.time;
-	switch ( ci->champion ) {
+	switch ( cg.snap->ps.champion ) {
 		case CHAMP_KEEL:
 			weap = &cg_weapons[ WP_GRENADE_LAUNCHER ];
 			// play a sound
@@ -2141,8 +2141,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 			}
 			if ( c > 0 ) {
 				c = rand() % c;
-				if ( weap->flashSound[c] )
-				{
+				if ( weap->flashSound[c] ) {
 					trap_S_StartSound( NULL, clientNum, CHAN_WEAPON, weap->flashSound[c] );
 				}
 			}
@@ -2157,8 +2156,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 			}
 			if ( c > 0 ) {
 				c = rand() % c;
-				if ( weap->flashSound[c] )
-				{
+				if ( weap->flashSound[c] ) {
 					trap_S_StartSound( NULL, clientNum, CHAN_WEAPON, weap->flashSound[c] );
 				}
 			}
