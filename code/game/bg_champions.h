@@ -76,3 +76,8 @@ int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );
 
 #define MAX_TOTEMS		3
+
+typedef enum {
+	RESPAWN_TYPE_CLASSIC,
+	RESPAWN_TYPE_QC,
+} respawn_type_t;

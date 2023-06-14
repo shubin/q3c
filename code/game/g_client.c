@@ -267,59 +267,6 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 	return list_spot[rnd];
 }
 
-#if defined( QC )
-/*
-===========
-SelectTournamentSpawnPoint
-
-Chooses next respawn point for tournament mode, QC-style
-============
-*/
-gentity_t *SelectTournamentSpawnPoint( gclient_t *client, vec3_t origin, vec3_t angles ) {
-	int i;
-	vec3_t opponentOrigin, delta;
-	gentity_t *spot, *spawnPoint;
-	float dist, maxdist;
-
-	for ( i = 0; i < MAX_CLIENTS; i++ ) {
-		if ( i == client->ps.clientNum ) {
-			continue;
-		}
-		if ( g_clients[i].ps.persistant[PERS_TEAM] == TEAM_FREE ) {
-			break;
-		}
-	}
-	if ( i == MAX_CLIENTS ) {
-		return SelectRandomFurthestSpawnPoint( client->ps.origin, origin, angles, qfalse );
-	}
-	VectorCopy( g_clients[i].ps.origin, opponentOrigin );
-
-	spot = NULL;
-	maxdist = 0;
-	spawnPoint = NULL;
-
-	while ( ( spot = G_Find( spot, FOFS( classname ), "info_player_deathmatch" ) ) != NULL ) {
-		VectorSubtract( spot->s.origin, opponentOrigin, delta );
-		dist = VectorLength( delta );
-		if ( dist > maxdist ) {
-			maxdist = dist;
-			spawnPoint = spot;
-		}
-	}
-
-	if ( spawnPoint == NULL ) {
-		return SelectRandomFurthestSpawnPoint( client->ps.origin, origin, angles, qfalse );
-	}
-
-	VectorCopy( spawnPoint->s.origin, origin );
-	origin[2] += 9;
-	VectorCopy( spawnPoint->s.angles, angles );
-
-	return spawnPoint;
-}
-
-#endif
-
 /*
 ===========
 SelectSpawnPoint
@@ -408,6 +355,178 @@ gentity_t *SelectSpectatorSpawnPoint( vec3_t origin, vec3_t angles ) {
 
 	return NULL;
 }
+
+#if defined( QC )
+
+/*
+===========
+SelectRandomSpawnPoint
+
+Chooses the furthest point relative to the given position
+============
+*/
+gentity_t *SelectFurthestSpawnPoint( vec3_t avoidPoint, vec3_t origin, vec3_t angles, qboolean isbot ) {
+	gentity_t *spot;
+	vec3_t		delta;
+	float		dist;
+	float		list_dist[MAX_SPAWN_POINTS];
+	gentity_t *list_spot[MAX_SPAWN_POINTS];
+	int			numSpots, i, j;
+
+	numSpots = 0;
+	spot = NULL;
+
+	while ( ( spot = G_Find( spot, FOFS( classname ), "info_player_deathmatch" ) ) != NULL ) {
+		if ( SpotWouldTelefrag( spot ) )
+			continue;
+
+		if ( ( ( spot->flags & FL_NO_BOTS ) && isbot ) ||
+		   ( ( spot->flags & FL_NO_HUMANS ) && !isbot ) ) {
+			// spot is not for this human/bot player
+			continue;
+		}
+
+		VectorSubtract( spot->s.origin, avoidPoint, delta );
+		dist = VectorLength( delta );
+
+		for ( i = 0; i < numSpots; i++ ) {
+			if ( dist > list_dist[i] ) {
+				if ( numSpots >= MAX_SPAWN_POINTS )
+					numSpots = MAX_SPAWN_POINTS - 1;
+
+				for ( j = numSpots; j > i; j-- ) {
+					list_dist[j] = list_dist[j - 1];
+					list_spot[j] = list_spot[j - 1];
+				}
+
+				list_dist[i] = dist;
+				list_spot[i] = spot;
+
+				numSpots++;
+				break;
+			}
+		}
+
+		if ( i >= numSpots && numSpots < MAX_SPAWN_POINTS ) {
+			list_dist[numSpots] = dist;
+			list_spot[numSpots] = spot;
+			numSpots++;
+		}
+	}
+
+	if ( !numSpots ) {
+		spot = G_Find( NULL, FOFS( classname ), "info_player_deathmatch" );
+
+		if ( !spot )
+			G_Error( "Couldn't find a spawn point" );
+
+		VectorCopy( spot->s.origin, origin );
+		origin[2] += 9;
+		VectorCopy( spot->s.angles, angles );
+		return spot;
+	}
+
+	// select the furthest spawn point
+	VectorCopy( list_spot[0]->s.origin, origin );
+
+	origin[2] += 9;
+	VectorCopy( list_spot[0]->s.angles, angles );
+
+	return list_spot[0];
+}
+
+/*
+===========
+SelectRandomSpawnPoint
+
+Chooses a completely random spawn point
+============
+*/
+gentity_t *SelectRandomSpawnPoint( vec3_t origin, vec3_t angles, qboolean isbot ) {
+	gentity_t *spot;
+	gentity_t *list_spot[MAX_SPAWN_POINTS];
+	int			numSpots, rnd;
+
+	numSpots = 0;
+	spot = NULL;
+
+	while ( ( spot = G_Find( spot, FOFS( classname ), "info_player_deathmatch" ) ) != NULL ) {
+		if ( SpotWouldTelefrag( spot ) )
+			continue;
+
+		if ( ( ( spot->flags & FL_NO_BOTS ) && isbot ) ||
+		   ( ( spot->flags & FL_NO_HUMANS ) && !isbot ) ) {
+			// spot is not for this human/bot player
+			continue;
+		}
+
+		list_spot[numSpots] = spot;
+		numSpots++;
+		if ( numSpots == MAX_SPAWN_POINTS ) {
+			break;
+		}
+	}
+
+	if ( !numSpots ) {
+		spot = G_Find( NULL, FOFS( classname ), "info_player_deathmatch" );
+
+		if ( !spot )
+			G_Error( "Couldn't find a spawn point" );
+
+		VectorCopy( spot->s.origin, origin );
+		origin[2] += 9;
+		VectorCopy( spot->s.angles, angles );
+		return spot;
+	}
+
+	// select a random spot from the spawn points furthest away
+	rnd = ( int )( random() * numSpots ) % numSpots;
+
+	VectorCopy( list_spot[rnd]->s.origin, origin );
+	origin[2] += 9;
+	VectorCopy( list_spot[rnd]->s.angles, angles );
+
+	return list_spot[rnd];
+}
+
+/*
+===========
+SelectTournamentSpawnPoint
+
+Chooses next respawn point for tournament mode, QC-style
+============
+*/
+gentity_t *SelectTournamentSpawnPoint( gclient_t *client, vec3_t origin, vec3_t angles ) {
+	gentity_t *spawnPoint, *randomPoint;
+	int i, opp, numPlayers;
+
+	numPlayers = 0;
+	opp = MAX_CLIENTS;
+	for ( i = 0; i < MAX_CLIENTS; i++ ) {
+		if ( g_clients[i].pers.connected && g_clients[i].ps.persistant[PERS_TEAM] == TEAM_FREE ) {
+			numPlayers++;
+			if ( g_clients[i].pers.teamState.state == TEAM_ACTIVE && client != &g_clients[i] ) {
+#if defined( DEBUG )
+				assert( opp == MAX_CLIENTS );
+#endif // DEBUG
+				opp = i;
+			}
+		}
+	}
+
+	if ( opp == MAX_CLIENTS ) { // we're the first one to respawn
+		// step one: select a random point
+		randomPoint = SelectRandomDeathmatchSpawnPoint( qfalse );
+		// step two: select the point which is furthest to this one
+		spawnPoint = SelectFurthestSpawnPoint( randomPoint->s.origin, origin, angles, qfalse );
+	} else {
+		// we have another client respawned, so we just select the furthest point
+		spawnPoint = SelectFurthestSpawnPoint( g_clients[opp].ps.origin, origin, angles, qfalse );
+	}
+	return spawnPoint;
+}
+
+#endif
 
 /*
 =======================================================================
@@ -1231,6 +1350,19 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	else
 	{
+#if defined( QC )
+		if ( g_gametype.integer == GT_TOURNAMENT && g_respawnType.integer != RESPAWN_TYPE_CLASSIC ) {
+			switch ( g_respawnType.integer ) {
+			case RESPAWN_TYPE_QC:
+				spawnPoint = SelectTournamentSpawnPoint( client, spawn_origin, spawn_angles );
+				break;
+			default:
+				// fall back to classic
+				spawnPoint = SelectSpawnPoint( client->ps.origin, spawn_origin, spawn_angles, !!( ent->r.svFlags & SVF_BOT ) );
+				break;
+			}
+		} else {
+#endif // QC
 		// the first spawn should be at a good looking spot
 		if ( !client->pers.initialSpawn && client->pers.localClient )
 		{
@@ -1238,24 +1370,15 @@ void ClientSpawn(gentity_t *ent) {
 			spawnPoint = SelectInitialSpawnPoint(spawn_origin, spawn_angles,
 							     !!(ent->r.svFlags & SVF_BOT));
 		}
-		else
-		{
-#if defined( QC )
-			if ( g_gametype.value != GT_TOURNAMENT || g_respawnType.value == 0 ) { // classic Quake III Arena spawn selection
-				// don't spawn near existing origin if possible
-				spawnPoint = SelectSpawnPoint(
-					client->ps.origin,
-					spawn_origin, spawn_angles, !!( ent->r.svFlags & SVF_BOT ) );
-			} else {
-				spawnPoint = SelectTournamentSpawnPoint( client, spawn_origin, spawn_angles );
-			}
-#else
+		else {
 			// don't spawn near existing origin if possible
-			spawnPoint = SelectSpawnPoint ( 
-				client->ps.origin, 
-				spawn_origin, spawn_angles, !!(ent->r.svFlags & SVF_BOT));
-#endif
+			spawnPoint = SelectSpawnPoint(
+				client->ps.origin,
+				spawn_origin, spawn_angles, !!( ent->r.svFlags & SVF_BOT ) );
 		}
+#if defined( QC )
+		}
+#endif // QC
 	}
 	client->pers.teamState.state = TEAM_ACTIVE;
 
