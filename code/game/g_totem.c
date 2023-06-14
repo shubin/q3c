@@ -457,6 +457,11 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 		G_FreeEntity( ent );
 		return;
 	}
+
+	te = G_TempEntity( ent->s.pos.trBase, EV_GENERAL_SOUND );
+	te->s.eventParm = G_SoundIndex( "sound/abilities/totem_deploy.wav" );
+	te->r.svFlags |= SVF_BROADCAST;	
+
 	newtotem = CreateTotemEntity( ent, pos );
 	trigger = CreateTotemTrigger( newtotem );
 	AddTotem( client, newtotem );
