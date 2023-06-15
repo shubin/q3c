@@ -1014,13 +1014,13 @@ void CG_RegisterItemVisuals( int itemNum ) {
 #if defined( QC )	
 	cg_weapons[WP_DIRE_ORB].missileModel = trap_R_RegisterModel( "models/weaphits/crackle.md3" );
 	cg_weapons[WP_DIRE_ORB].missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
-	cg_weapons[WP_DIRE_ORB].missileTrailFunc = CG_RocketTrail;
+	//cg_weapons[WP_DIRE_ORB].missileTrailFunc = CG_RocketTrail;
 	cg_weapons[WP_DIRE_ORB].missileDlight = 200;
 	cg_weapons[WP_DIRE_ORB].wiTrailTime = 2000;
 	cg_weapons[WP_DIRE_ORB].trailRadius = 64;		
-	MAKERGB( cg_weapons[WP_DIRE_ORB].missileDlightColor, 1, 0.75f, 0 );
-	MAKERGB( cg_weapons[WP_DIRE_ORB].flashDlightColor, 1, 0.75f, 0 );
-	cg_weapons[WP_DIRE_ORB].flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
+	MAKERGB( cg_weapons[WP_DIRE_ORB].missileDlightColor, 0.5, 0.75f, 1 );
+	MAKERGB( cg_weapons[WP_DIRE_ORB].flashDlightColor, 0, 0.75f, 1 );
+	cg_weapons[WP_DIRE_ORB].flashSound[0] = trap_S_RegisterSound( "sound/weapons/bfg/bfg_fire.wav", qfalse );
 
 	cg_weapons[WP_TOTEM_EGG].missileModel = trap_R_RegisterModel( "models/special/totem/totemball.md3" );
 	cg_weapons[WP_TOTEM_EGG].wiTrailTime = 700;
@@ -2132,7 +2132,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 	ci->abilityActivationTime = cg.time;
 	switch ( cg.snap->ps.champion ) {
 		case CHAMP_KEEL:
-			weap = &cg_weapons[ WP_GRENADE_LAUNCHER ];
+			weap = &cg_weapons[WP_GRENADE_LAUNCHER];
 			// play a sound
 			for ( c = 0 ; c < 4 ; c++ ) {
 				if ( !weap->flashSound[c] ) {
@@ -2147,7 +2147,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 			}
 			break;
 		case CHAMP_RANGER:
-			weap = &cg_weapons[ WP_BFG ];
+			weap = &cg_weapons[WP_DIRE_ORB];
 			// play a sound
 			for ( c = 0 ; c < 4 ; c++ ) {
 				if ( !weap->flashSound[c] ) {
