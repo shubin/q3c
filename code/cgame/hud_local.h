@@ -37,6 +37,8 @@ typedef struct {
 	qhandle_t	itemicons[MAX_ITEMS];
 	qhandle_t	totems[MAX_TOTEMS];
 	qhandle_t	totemshadows[MAX_TOTEMS];
+	qhandle_t	grenades[MAX_GRENADES];
+	qhandle_t	grenadeshadows[MAX_GRENADES];
 } hud_media_t;
 
 extern hud_media_t hud_media;

@@ -140,6 +140,10 @@ void hud_initmedia( void ) {
 		hud_media.totems[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/totem%d", i ) );
 		hud_media.totemshadows[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/totemshadow%d", i ) );
 	}
+	for ( i = 0; i < MAX_GRENADES; i++ ) {
+		hud_media.grenades[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/grenade%d", i ) );
+		hud_media.grenadeshadows[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/grenadeshadow%d", i ) );
+	}
 }
 
 // dir: gradient direction, 0: left to right, 1: right to left, 2: top to bottom, 3: bottom to top

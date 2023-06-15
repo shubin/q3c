@@ -76,6 +76,7 @@ int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );
 
 #define MAX_TOTEMS		3
+#define MAX_GRENADES	5
 
 typedef enum {
 	RESPAWN_TYPE_CLASSIC,

@@ -39,6 +39,9 @@ int get_next_corner( int angle ) {
 #define TOTEM_RADIUS 70
 #define TOTEM_BLINK_CYCLE 500
 
+#define GRENADE_ANGLE 120
+#define GRENADE_RADIUS 70
+
 static
 void LerpColor( vec4_t a, vec4_t b, vec4_t c, float t ) {
 	int i;
@@ -79,13 +82,41 @@ void hud_draw_totems( float cx, float cy, int num_totems ) {
 				}
 				trap_R_SetColor( color );
 			} else {
-				trap_R_SetColor( yellow );
+				trap_R_SetColor( white );
 			}
 		} else {
 			white[3] = 0.1f;
 			trap_R_SetColor( white );
 		}
 		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.totems[i] );
+	}
+	trap_R_SetColor( NULL );
+}
+
+static
+void hud_draw_grenades( float cx, float cy, int num_grenades ) {
+	float angle, step, x, y;
+	int i;
+	float yellow[] = { 1.0f, 0.75f, 0.4f, 1.0f };
+	float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	//float color[4];
+
+	angle = ( -GRENADE_ANGLE / 2.0f - 90 ) / 180.0f * 3.14159265359f;
+	step = ( GRENADE_ANGLE / ( float )( MAX_GRENADES - 1 ) ) / 180.0f * 3.14159265359f;
+	for ( i = 0; i < MAX_GRENADES; i++, angle += step ) {
+		x = cx + GRENADE_RADIUS * cos( angle );
+		y = cy + GRENADE_RADIUS * sin( angle );
+		white[3] = 1.0f;
+		trap_R_SetColor( black );
+		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.grenadeshadows[i] );
+		if ( i < num_grenades ) {
+			trap_R_SetColor( white );
+		} else {
+			white[3] = 0.1f;
+			trap_R_SetColor( white );
+		}
+		hud_drawpic( x, y, 32, 32, 0.5, 0.5, hud_media.grenades[i] );
 	}
 	trap_R_SetColor( NULL );
 }
@@ -128,8 +159,9 @@ void hud_draw_ability( void ) {
 
 	gaugex = Com_Clamp( 560, 1520, gaugex + cg_abilityGaugeOffset.value );
 
-	if ( ps->champion == CHAMP_GALENA ) {
-		hud_draw_totems( gaugex, gaugey, ps->ab_num );
+	switch ( ps->champion ) {
+		case CHAMP_GALENA:	hud_draw_totems( gaugex, gaugey, ps->ab_num ); break;
+		case CHAMP_KEEL:	hud_draw_grenades( gaugex, gaugey, ps->ab_time / ( champion_stats[ps->champion].ability_cooldown / MAX_GRENADES ) ); break;
 	}
 
 	// ability gauge background
