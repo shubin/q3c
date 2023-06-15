@@ -357,7 +357,6 @@ gentity_t *SelectSpectatorSpawnPoint( vec3_t origin, vec3_t angles ) {
 }
 
 #if defined( QC )
-
 /*
 ===========
 SelectRandomSpawnPoint
@@ -366,11 +365,11 @@ Chooses the furthest point relative to the given position
 ============
 */
 gentity_t *SelectFurthestSpawnPoint( vec3_t avoidPoint, vec3_t origin, vec3_t angles, qboolean isbot ) {
-	gentity_t *spot;
+	gentity_t	*spot;
 	vec3_t		delta;
 	float		dist;
 	float		list_dist[MAX_SPAWN_POINTS];
-	gentity_t *list_spot[MAX_SPAWN_POINTS];
+	gentity_t	*list_spot[MAX_SPAWN_POINTS];
 	int			numSpots, i, j;
 
 	numSpots = 0;
@@ -1398,7 +1397,6 @@ void ClientSpawn(gentity_t *ent) {
 #endif
 
 #if defined( QC )
-
 	if ( client->ps.champion != client->pers.champion ) {
 		ab_time = 0;
 		ab_flags = 0;
