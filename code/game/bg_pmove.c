@@ -2032,7 +2032,7 @@ static void PM_Weapon( void ) {
 			}
 		}
 	} else {
-		if ( BG_CanAbilityBeActivated( pm->ps ) ) {
+		if ( !!( pm->ps->pm_flags & PMF_ABILITY_ACTIVATED ) && BG_CanAbilityBeActivated( pm->ps ) ) {
 			pm->ps->pm_flags &= ~PMF_ABILITY_ACTIVATED;
 		}
 	}
