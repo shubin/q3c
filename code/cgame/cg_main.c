@@ -2326,6 +2326,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	CG_InitMarkPolys();
 #if defined( QC )
+	CG_InitDecalPolys();
 	CG_InitQCHUD();
 #endif
 

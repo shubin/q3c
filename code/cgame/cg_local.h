@@ -66,6 +66,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define	MAX_VERTS_ON_POLY	10
 #define	MAX_MARK_POLYS		256
 
+#if defined( QC )
+#define MAX_VERTS_ON_DECAL_POLY		32
+#define MAX_DECAL_POLYS				1024
+#endif // QC
+
 #define STAT_MINUS			10	// num frame for '-' stats digit
 
 #define	ICON_SIZE			48
@@ -222,6 +227,17 @@ typedef struct markPoly_s {
 	polyVert_t	verts[MAX_VERTS_ON_POLY];
 } markPoly_t;
 
+#if defined( QC )
+typedef struct decalPoly_s {
+	struct decalPoly_s		*prevDecal, *nextDecal;
+	int						time;
+	qhandle_t				shader;
+	qboolean				alphaFade;		// fade alpha instead of rgb
+	float					color[4];
+	poly_t					poly;
+	polyVert_t				verts[MAX_VERTS_ON_POLY];
+} decalPoly_t;
+#endif // QC
 
 typedef enum {
 	LE_MARK,
@@ -1576,6 +1592,20 @@ void	CG_ImpactMark( qhandle_t markShader,
 					qboolean alphaFade, 
 					float radius, qboolean temporary );
 
+#if defined( QC )
+//
+// cg_decals.c
+//
+void	CG_InitDecalPolys( void );
+void	CG_AddDecals( void );
+void	CG_Decal( qhandle_t decalShader,
+					const vec3_t origin, const vec3_t dir,
+					float orientation,
+					float r, float g, float b, float a,
+					qboolean alphaFade,
+					float radius, qboolean temporary );
+#endif // QC
+
 //
 // cg_localents.c
 //
@@ -1777,6 +1807,14 @@ int			trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 			const vec3_t projection,
 			int maxPoints, vec3_t pointBuffer,
 			int maxFragments, markFragment_t *fragmentBuffer );
+
+#if defined( QC )
+// Returns the projection of a polygon onto the solid brushes in the world
+int			trap_CM_ProjectDecal( int numPoints, const vec3_t *points,
+			const vec3_t projection,
+			int maxPoints, vec3_t pointBuffer,
+			int maxFragments, markFragment_t *fragmentBuffer );
+#endif // QC
 
 // normal sounds will have their volume dynamically changed as their entity
 // moves and the listener moves

@@ -19,95 +19,105 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+
+/*
+===========================================================================
+Copyright (C) 2003 Sergei Shubin
+
+This file is part of Quake III Champions source code.
+Quake and Quake III Arena are trademarks of id Software, Inc.
+===========================================================================
+*/
+
 //
-// cg_marks.c -- wall marks
+// cg_decals.c -- wall decals
 
 #include "cg_local.h"
 
 /*
 ===================================================================
 
-MARK POLYS
+DECAL POLYS
 
 ===================================================================
 */
 
 
-markPoly_t	cg_activeMarkPolys;			// double linked list
-markPoly_t	*cg_freeMarkPolys;			// single linked list
-markPoly_t	cg_markPolys[MAX_MARK_POLYS];
-static		int	markTotal;
+decalPoly_t		cg_activeDecalPolys;	// double linked list
+decalPoly_t		*cg_freeDecalPolys;		// single linked list
+decalPoly_t		cg_decalPolys[MAX_DECAL_POLYS];
+static			int	decalTotal;
 
 /*
 ===================
-CG_InitMarkPolys
+CG_InitDecalPolys
 
 This is called at startup and for tournement restarts
 ===================
 */
-void	CG_InitMarkPolys( void ) {
+void	CG_InitDecalPolys( void ) {
 	int		i;
 
-	memset( cg_markPolys, 0, sizeof(cg_markPolys) );
+	memset( cg_decalPolys, 0, sizeof(cg_decalPolys) );
 
-	cg_activeMarkPolys.nextMark = &cg_activeMarkPolys;
-	cg_activeMarkPolys.prevMark = &cg_activeMarkPolys;
-	cg_freeMarkPolys = cg_markPolys;
-	for ( i = 0 ; i < MAX_MARK_POLYS - 1 ; i++ ) {
-		cg_markPolys[i].nextMark = &cg_markPolys[i+1];
+	cg_activeDecalPolys.nextDecal = &cg_activeDecalPolys;
+	cg_activeDecalPolys.prevDecal = &cg_activeDecalPolys;
+	cg_freeDecalPolys = cg_decalPolys;
+	for ( i = 0 ; i < MAX_DECAL_POLYS - 1 ; i++ ) {
+		cg_decalPolys[i].nextDecal = &cg_decalPolys[i+1];
 	}
 }
 
 
 /*
 ==================
-CG_FreeMarkPoly
+CG_FreeDecalPoly
 ==================
 */
-void CG_FreeMarkPoly( markPoly_t *le ) {
-	if ( !le->prevMark || !le->nextMark ) {
+void CG_FreeDecalPoly( decalPoly_t *le ) {
+	if ( !le->prevDecal || !le->nextDecal ) {
 		CG_Error( "CG_FreeLocalEntity: not active" );
 	}
 
 	// remove from the doubly linked active list
-	le->prevMark->nextMark = le->nextMark;
-	le->nextMark->prevMark = le->prevMark;
+	le->prevDecal->nextDecal = le->nextDecal;
+	le->nextDecal->prevDecal = le->prevDecal;
 
 	// the free list is only singly linked
-	le->nextMark = cg_freeMarkPolys;
-	cg_freeMarkPolys = le;
+	le->nextDecal = cg_freeDecalPolys;
+	cg_freeDecalPolys = le;
 }
 
 /*
 ===================
-CG_AllocMark
+CG_AllocDecal
 
-Will allways succeed, even if it requires freeing an old active mark
+Will allways succeed, even if it requires freeing an old active decal
 ===================
 */
-markPoly_t	*CG_AllocMark( void ) {
-	markPoly_t	*le;
+decalPoly_t	*CG_AllocDecal( void ) {
+	decalPoly_t	*le;
 	int time;
 
-	if ( !cg_freeMarkPolys ) {
+	if ( !cg_freeDecalPolys ) {
 		// no free entities, so free the one at the end of the chain
 		// remove the oldest active entity
-		time = cg_activeMarkPolys.prevMark->time;
-		while (cg_activeMarkPolys.prevMark && time == cg_activeMarkPolys.prevMark->time) {
-			CG_FreeMarkPoly( cg_activeMarkPolys.prevMark );
+		time = cg_activeDecalPolys.prevDecal->time;
+		while (cg_activeDecalPolys.prevDecal && time == cg_activeDecalPolys.prevDecal->time) {
+			CG_FreeDecalPoly( cg_activeDecalPolys.prevDecal );
 		}
 	}
 
-	le = cg_freeMarkPolys;
-	cg_freeMarkPolys = cg_freeMarkPolys->nextMark;
+	le = cg_freeDecalPolys;
+	cg_freeDecalPolys = cg_freeDecalPolys->nextDecal;
 
 	memset( le, 0, sizeof( *le ) );
 
 	// link into the active list
-	le->nextMark = cg_activeMarkPolys.nextMark;
-	le->prevMark = &cg_activeMarkPolys;
-	cg_activeMarkPolys.nextMark->prevMark = le;
-	cg_activeMarkPolys.nextMark = le;
+	le->nextDecal = cg_activeDecalPolys.nextDecal;
+	le->prevDecal = &cg_activeDecalPolys;
+	cg_activeDecalPolys.nextDecal->prevDecal = le;
+	cg_activeDecalPolys.nextDecal = le;
 	return le;
 }
 
@@ -115,29 +125,38 @@ markPoly_t	*CG_AllocMark( void ) {
 
 /*
 =================
-CG_ImpactMark
+CG_ImpactDecal
 
 origin should be a point within a unit of the plane
 dir should be the plane normal
 
-temporary marks will not be stored or randomly oriented, but immediately
+temporary decals will not be stored or randomly oriented, but immediately
 passed to the renderer.
 =================
 */
-#define	MAX_MARK_FRAGMENTS	128
-#define	MAX_MARK_POINTS		384
+#define	MAX_DECAL_FRAGMENTS		512
+#define	MAX_DECAL_POINTS		1536
 
-void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
-				   float orientation, float red, float green, float blue, float alpha,
-				   qboolean alphaFade, float radius, qboolean temporary ) {
+void CG_Decal(
+	qhandle_t decalShader,
+	const vec3_t origin,
+	const vec3_t dir, 
+	float orientation,
+	float red, float green, float blue, float alpha,
+	qboolean alphaFade,
+	float radius,
+	qboolean temporary
+)
+{
 	vec3_t			axis[3];
 	float			texCoordScale;
 	vec3_t			originalPoints[4];
 	byte			colors[4];
 	int				i, j;
 	int				numFragments;
-	markFragment_t	markFragments[MAX_MARK_FRAGMENTS], *mf;
-	vec3_t			markPoints[MAX_MARK_POINTS];
+	static markFragment_t	markFragments[MAX_DECAL_FRAGMENTS];
+	markFragment_t	*mf;
+	static vec3_t	markPoints[MAX_DECAL_POINTS];
 	vec3_t			projection;
 
 	if ( !cg_addMarks.integer ) {
@@ -145,17 +164,10 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 	}
 
 	if ( radius <= 0 ) {
-		CG_Error( "CG_ImpactMark called with <= 0 radius" );
+		CG_Error( "CG_ImpactDecal called with <= 0 radius" );
 	}
 
-#if defined( QC )
-	if ( cg_addMarks.integer == 2 ) {
-		CG_Decal( markShader, origin, dir, orientation, red, green, blue, alpha, alphaFade, radius, temporary );
-		return;
-	}
-#endif // QC
-
-	//if ( markTotal >= MAX_MARK_POLYS ) {
+	//if ( decalTotal >= MAX_MARK_POLYS ) {
 	//	return;
 	//}
 
@@ -167,19 +179,29 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 	texCoordScale = 0.5 * 1.0 / radius;
 
-	// create the full polygon
-	for ( i = 0 ; i < 3 ; i++ ) {
-		originalPoints[0][i] = origin[i] - radius * axis[1][i] - radius * axis[2][i];
-		originalPoints[1][i] = origin[i] + radius * axis[1][i] - radius * axis[2][i];
-		originalPoints[2][i] = origin[i] + radius * axis[1][i] + radius * axis[2][i];
-		originalPoints[3][i] = origin[i] - radius * axis[1][i] + radius * axis[2][i];
-	}
+	//// create the full polygon
+	//for ( i = 0 ; i < 3 ; i++ ) {
+	//	originalPoints[0][i] = origin[i] - radius * axis[1][i] - radius * axis[2][i];
+	//	originalPoints[1][i] = origin[i] + radius * axis[1][i] - radius * axis[2][i];
+	//	originalPoints[2][i] = origin[i] + radius * axis[1][i] + radius * axis[2][i];
+	//	originalPoints[3][i] = origin[i] - radius * axis[1][i] + radius * axis[2][i];
+	//}
 
 	// get the fragments
-	VectorScale( dir, -20, projection );
-	numFragments = trap_CM_MarkFragments( 4, (void *)originalPoints,
-					projection, MAX_MARK_POINTS, markPoints[0],
-					MAX_MARK_FRAGMENTS, markFragments );
+	//VectorScale( dir, -60, projection );
+#if 0
+	numFragments = trap_CM_ProjectDecal( 4, (void *)originalPoints,
+					projection, MAX_DECAL_POINTS, markPoints[0],
+					MAX_DECAL_FRAGMENTS, markFragments );
+#else 
+	vec3_t	xpoints[4];
+	VectorSet( xpoints[0], orientation, radius, 0 );
+	VectorCopy( dir, xpoints[1] );
+	VectorCopy( origin, xpoints[2] );
+
+	numFragments = trap_CM_ProjectDecal( 0, ( void * )xpoints, NULL,
+		MAX_DECAL_POINTS, markPoints, MAX_DECAL_FRAGMENTS, markFragments );
+#endif
 
 	colors[0] = red * 255;
 	colors[1] = green * 255;
@@ -188,13 +210,13 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 	for ( i = 0, mf = markFragments ; i < numFragments ; i++, mf++ ) {
 		polyVert_t	*v;
-		polyVert_t	verts[MAX_VERTS_ON_POLY];
-		markPoly_t	*mark;
+		polyVert_t	verts[MAX_VERTS_ON_DECAL_POLY];
+		decalPoly_t	*decal;
 
 		// we have an upper limit on the complexity of polygons
 		// that we store persistantly
-		if ( mf->numPoints > MAX_VERTS_ON_POLY ) {
-			mf->numPoints = MAX_VERTS_ON_POLY;
+		if ( mf->numPoints > MAX_VERTS_ON_DECAL_POLY ) {
+			mf->numPoints = MAX_VERTS_ON_DECAL_POLY;
 		}
 		for ( j = 0, v = verts ; j < mf->numPoints ; j++, v++ ) {
 			vec3_t		delta;
@@ -209,22 +231,22 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 		// if it is a temporary (shadow) mark, add it immediately and forget about it
 		if ( temporary ) {
-			trap_R_AddPolyToScene( markShader, mf->numPoints, verts );
+			trap_R_AddPolyToScene( decalShader, mf->numPoints, verts );
 			continue;
 		}
 
 		// otherwise save it persistantly
-		mark = CG_AllocMark();
-		mark->time = cg.time;
-		mark->alphaFade = alphaFade;
-		mark->markShader = markShader;
-		mark->poly.numVerts = mf->numPoints;
-		mark->color[0] = red;
-		mark->color[1] = green;
-		mark->color[2] = blue;
-		mark->color[3] = alpha;
-		memcpy( mark->verts, verts, mf->numPoints * sizeof( verts[0] ) );
-		markTotal++;
+		decal = CG_AllocDecal();
+		decal->time = cg.time;
+		decal->alphaFade = alphaFade;
+		decal->shader = decalShader;
+		decal->poly.numVerts = mf->numPoints;
+		decal->color[0] = red;
+		decal->color[1] = green;
+		decal->color[2] = blue;
+		decal->color[3] = alpha;
+		memcpy( decal->verts, verts, mf->numPoints * sizeof( verts[0] ) );
+		decalTotal++;
 	}
 }
 
@@ -237,9 +259,9 @@ CG_AddMarks
 #define	MARK_TOTAL_TIME		10000
 #define	MARK_FADE_TIME		1000
 
-void CG_AddMarks( void ) {
+void CG_AddDecals( void ) {
 	int			j;
-	markPoly_t	*mp, *next;
+	decalPoly_t	*mp, *next;
 	int			t;
 	int			fade;
 
@@ -247,20 +269,20 @@ void CG_AddMarks( void ) {
 		return;
 	}
 
-	mp = cg_activeMarkPolys.nextMark;
-	for ( ; mp != &cg_activeMarkPolys ; mp = next ) {
+	mp = cg_activeDecalPolys.nextDecal;
+	for ( ; mp != &cg_activeDecalPolys ; mp = next ) {
 		// grab next now, so if the local entity is freed we
 		// still have it
-		next = mp->nextMark;
+		next = mp->nextDecal;
 
 		// see if it is time to completely remove it
 		if ( cg.time > mp->time + MARK_TOTAL_TIME ) {
-			CG_FreeMarkPoly( mp );
+			CG_FreeDecalPoly( mp );
 			continue;
 		}
 
 		// fade out the energy bursts
-		if ( mp->markShader == cgs.media.energyMarkShader ) {
+		if ( mp->shader == cgs.media.energyMarkShader ) {
 
 			fade = 450 - 450 * ( (cg.time - mp->time ) / 3000.0 );
 			if ( fade < 255 ) {
@@ -295,6 +317,6 @@ void CG_AddMarks( void ) {
 		}
 
 
-		trap_R_AddPolyToScene( mp->markShader, mp->poly.numVerts, mp->verts );
+		trap_R_AddPolyToScene( mp->shader, mp->poly.numVerts, mp->verts );
 	}
 }

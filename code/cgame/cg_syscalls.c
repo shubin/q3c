@@ -186,6 +186,15 @@ int		trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 	return syscall( CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer );
 }
 
+#if defined( QC )
+int			trap_CM_ProjectDecal( int numPoints, const vec3_t *points,
+			const vec3_t projection,
+			int maxPoints, vec3_t pointBuffer,
+			int maxFragments, markFragment_t *fragmentBuffer ) {
+	return syscall( CG_CM_PROJECTDECAL, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer );
+}
+#endif // QC
+
 void	trap_S_StartSound( vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx ) {
 	syscall( CG_S_STARTSOUND, origin, entityNum, entchannel, sfx );
 }

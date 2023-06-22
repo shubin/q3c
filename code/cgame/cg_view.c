@@ -1113,6 +1113,9 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	if ( !cg.hyperspace ) {
 		CG_AddPacketEntities();			// adter calcViewValues, so predicted player state is correct
 		CG_AddMarks();
+#if defined( QC )
+		CG_AddDecals();
+#endif // QC
 		CG_AddParticles ();
 		CG_AddLocalEntities();
 	}
