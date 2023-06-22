@@ -26,7 +26,7 @@ vec4_t hud_weapon_colors[WP_NUM_WEAPONS] = {
 	// abilities
 	{ 1.0f, 1.0f, 1.0f, 1.0f },     // WP_DIRE_ORB,
 	{ 1.0f, 1.0f, 1.0f, 1.0f },     // WP_TOTEM_EGG,
-	//WP_ACID_SPIT,
+	{ 1.0f, 1.0f, 1.0f, 1.0f },		//WP_ACID_SPIT,
 };
 
 const char *hud_weapon_icons[WP_NUM_WEAPONS] = {
@@ -52,6 +52,7 @@ const char *hud_weapon_icons[WP_NUM_WEAPONS] = {
     "hud/weapon/plasmagunl",     // WP_LOUSY_PLASMAGUN
 	"hud/mod/direorb",			 // WP_DIRE_ORB
 	"hud/mod/generic",			 // WP_TOTEM_EGG
+	"hud/mod/generic",			 // WP_ACID_SPIT
 };
 
 const char *hud_mod_icons[ MOD_NUM ] = {

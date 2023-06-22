@@ -740,6 +740,9 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward );
 // returns true if the egg bounced and false if stopped
 qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace );
 
+// g_acidspit.c
+void G_SpitHitWall( gentity_t *ent, trace_t *trace );
+
 #endif
 
 //

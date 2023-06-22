@@ -1026,6 +1026,10 @@ void CG_RegisterItemVisuals( int itemNum ) {
 	cg_weapons[WP_TOTEM_EGG].wiTrailTime = 700;
 	cg_weapons[WP_TOTEM_EGG].trailRadius = 32;
 
+	cg_weapons[WP_ACID_SPIT].missileModel = trap_R_RegisterModel( "models/special/totem/totemball.md3" );
+	cg_weapons[WP_ACID_SPIT].wiTrailTime = 700;
+	cg_weapons[WP_ACID_SPIT].trailRadius = 32;
+
 	cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
 #endif
 }
@@ -1758,7 +1762,7 @@ static qboolean CG_WeaponSelectable( int i ) {
 #if defined( QC )
 	// starting weapons and ability pseudo weapons are not directly selectable
 	if ( i == WP_LOUSY_MACHINEGUN|| i == WP_LOUSY_SHOTGUN || i == WP_LOUSY_PLASMAGUN 
-		|| i == WP_DIRE_ORB || i == WP_TOTEM_EGG ) {
+		|| i == WP_DIRE_ORB || i == WP_TOTEM_EGG || i == WP_ACID_SPIT ) {
 		return qfalse;
 	}
 #endif
@@ -2164,6 +2168,9 @@ void CG_ActivateAbility( centity_t *cent ) {
 		case CHAMP_VISOR:
 			trap_S_StartSound( NULL, clientNum, chan, cgs.media.piercingSightActivationSound );
 			break;
+		case CHAMP_SORLAG:
+			//trap_S_Startsound( NULL, clientNum, chan, cgs.media.acitSpitSound );
+			break;
 	}
 }
 #endif
@@ -2389,6 +2396,11 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 
 		radius = 4;
 		break;
+	case WP_ACID_SPIT:
+		mark = cgs.media.acidSpitShader;
+		radius = 50;
+		sfx = 0;
+		break;
 #endif
 	}
 
@@ -2418,7 +2430,11 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	//
 	// impact mark
 	//
+#if defined( QC )
+	alphaFade = ( mark == cgs.media.energyMarkShader ) || weapon == WP_ACID_SPIT;
+#else // QC
 	alphaFade = (mark == cgs.media.energyMarkShader);	// plasma fades alpha, all others fade color
+#endif // QC
 	if ( weapon == WP_RAILGUN ) {
 		float	*color;
 

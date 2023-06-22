@@ -287,9 +287,14 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	other = &g_entities[trace->entityNum];
 
 #if defined( QC )
-	if ( !other->takedamage && !strcmp( ent->classname, "totem egg" ) ) {
-		G_BounceTotemEgg( ent, trace );
-		return;
+	if ( !other->takedamage ) {
+		if ( !strcmp( ent->classname, "totem egg" ) ) {
+			G_BounceTotemEgg( ent, trace );
+			return;
+		}
+		//else if ( !strcmp( ent->classname, "spit" ) ) {
+		//	G_SpitHitWall( ent, trace );
+		//}
 	}
 #endif
 
@@ -440,6 +445,16 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	// is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 
+#if defined( QC )
+	vec3_t	hitdir;
+	if ( !other->takedamage && !strcmp( ent->classname, "spit" ) ) {
+		// calc the hit direction to create a nice looking decal on the cgame side
+		BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, hitdir );
+		VectorNormalize( hitdir );
+		VectorNegate( hitdir, ent->s.angles2 );
+//		G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
+	} 
+#endif // QC
 	if ( other->takedamage && other->client ) {
 		G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
 		ent->s.otherEntityNum = other->s.number;
@@ -478,6 +493,11 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 #if defined( QC )
 	if ( !strcmp( ent->classname, "orb" ) ) {
 		// unlink the orb from its owner
+		ent->parent->client->ps.ab_num = 0;
+		ent->parent->client->ps.ab_flags = 0;
+		ent->parent->client->ps.ab_time = 0;
+	}
+	if ( !strcmp( ent->classname, "spit" ) ) {
 		ent->parent->client->ps.ab_num = 0;
 		ent->parent->client->ps.ab_flags = 0;
 		ent->parent->client->ps.ab_time = 0;

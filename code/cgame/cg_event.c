@@ -1102,7 +1102,15 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 	case EV_MISSILE_MISS:
 		DEBUGNAME("EV_MISSILE_MISS");
+#if defined( QC )
+		if ( es->weapon == WP_ACID_SPIT ) {
+			VectorCopy( cent->currentState.angles2, dir );
+		} else {
+			ByteToDir( es->eventParm, dir );
+		}
+#else // QC
 		ByteToDir( es->eventParm, dir );
+#endif // QC
 		CG_MissileHitWall( es->weapon, 0, position, dir, IMPACTSOUND_DEFAULT );
 		break;
 

@@ -370,7 +370,7 @@ typedef enum {
 	// abilities
 	WP_DIRE_ORB,
 	WP_TOTEM_EGG,
-	//WP_ACID_SPIT,
+	WP_ACID_SPIT,
 #endif
 	WP_NUM_WEAPONS
 } weapon_t;

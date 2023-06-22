@@ -295,7 +295,7 @@ void G_AcidThink( gentity_t *ent ) {
 	trap_LinkEntity( ent );
 }
 
-#if 0
+#if 1
 static
 gentity_t *ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
 	gentity_t	*bolt;
@@ -309,21 +309,22 @@ gentity_t *ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_ACID_SPIT;
-	bolt->s.eFlags = EF_BOUNCE_HALF;
+	bolt->s.eFlags = 0;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
 	bolt->damage = 15;
 	bolt->splashDamage = 0;
 	bolt->splashRadius = 0;
-	bolt->methodOfDeath = MOD_ACID_SPIT;
-	bolt->splashMethodOfDeath = MOD_ACID_SPIT;
+	bolt->methodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
+	bolt->splashMethodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
 	bolt->clipmask = MASK_SHOT;
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - 50;		// move a bit on the very first frame
+	bolt->s.pos.trGravity = DEFAULT_GRAVITY;
 	VectorCopy( start, bolt->s.pos.trBase );
-	VectorScale( dir, 700, bolt->s.pos.trDelta );
+	VectorScale( dir, 550, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
 
 	VectorCopy (start, bolt->r.currentOrigin);
@@ -416,9 +417,11 @@ void G_ActivateAbility( gentity_t *ent ) {
 		case CHAMP_KEEL:
 			ThrowGrenade( ent, muzzle, forward );
 			break;
-		//case CHAMP_SORLAG:
-		//	ThrowAcidSpit( ent, muzzle, forward );
-		//	break
+		case CHAMP_SORLAG:
+			ent->client->ps.ab_num = MAX_SPITS - 1;
+			ent->client->ps.ab_misctime = level.time + SPIT_DELAY;
+			ThrowAcidSpit( ent, muzzle, forward );
+			break;
 		case CHAMP_GALENA:
 			G_ThrowTotem( ent, muzzle, forward );
 			break;
@@ -472,6 +475,8 @@ void G_AbilityTickSecond( gclient_t *client ) {
 }
 
 void G_AbilityTickFrame( gclient_t *client ) {
+	vec3_t forward, right, up, muzzle;
+
 	// visor
 	if ( client->ps.champion == CHAMP_VISOR && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
 		if ( level.time > client->ps.ab_time ) {
@@ -480,4 +485,23 @@ void G_AbilityTickFrame( gclient_t *client ) {
 			g_entities[client->ps.clientNum].r.piercingSightMask = 0;
 		}
 	}
+	// sorlag
+	if ( client->ps.champion == CHAMP_SORLAG && client->ps.ab_num > 0 && level.time > client->ps.ab_misctime ) {
+		client->ps.ab_num--;
+		client->ps.ab_misctime += 150;
+		AngleVectors( client->ps.viewangles, forward, right, up );
+		CalcMuzzlePointOrigin( &g_entities[client->ps.clientNum], client->oldOrigin, forward, right, up, muzzle );
+		ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );
+	}
+}
+
+void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
+	gclient_t *client;
+
+	client = ent->parent->client;
+
+	client->ps.ab_flags = 0;
+	client->ps.ab_time = 0;
+
+	G_FreeEntity( ent );
 }

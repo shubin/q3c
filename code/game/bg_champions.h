@@ -77,6 +77,8 @@ int ParseStartingWeapon( const char *name );
 
 #define MAX_TOTEMS		3
 #define MAX_GRENADES	5
+#define MAX_SPITS		3
+#define SPIT_DELAY		150
 
 typedef enum {
 	RESPAWN_TYPE_CLASSIC,
