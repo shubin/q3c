@@ -173,6 +173,7 @@ void CG_Decal(
 
 	// create the texture axis
 	VectorNormalize2( dir, axis[0] );
+	VectorInverse( axis[0] );
 	PerpendicularVector( axis[1], axis[0] );
 	RotatePointAroundVector( axis[2], axis[0], axis[1], orientation );
 	CrossProduct( axis[0], axis[2], axis[1] );
@@ -193,13 +194,8 @@ void CG_Decal(
 	numFragments = trap_CM_ProjectDecal( 4, (void *)originalPoints,
 					projection, MAX_DECAL_POINTS, markPoints[0],
 					MAX_DECAL_FRAGMENTS, markFragments );
-#else 
-	vec3_t	xpoints[4];
-	VectorSet( xpoints[0], orientation, radius, 0 );
-	VectorCopy( dir, xpoints[1] );
-	VectorCopy( origin, xpoints[2] );
-
-	numFragments = trap_CM_ProjectDecal( 0, ( void * )xpoints, NULL,
+#else
+	numFragments = trap_CM_ProjectDecal( origin, dir, radius, 0, orientation, //0, ( void * )xpoints, NULL,
 		MAX_DECAL_POINTS, markPoints, MAX_DECAL_FRAGMENTS, markFragments );
 #endif
 

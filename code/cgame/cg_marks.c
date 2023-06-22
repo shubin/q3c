@@ -150,7 +150,8 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 
 #if defined( QC )
 	if ( cg_addMarks.integer == 2 ) {
-		CG_Decal( markShader, origin, dir, orientation, red, green, blue, alpha, alphaFade, radius, temporary );
+		VectorNegate( dir, projection );
+		CG_Decal( markShader, origin, projection, orientation, red, green, blue, alpha, alphaFade, radius, temporary );
 		return;
 	}
 #endif // QC
