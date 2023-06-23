@@ -165,7 +165,7 @@ void CG_Decal(
 		CG_Error( "CG_Decal called with <= 0 radius" );
 	}
 
-	numFragments = trap_CM_ProjectDecal( origin, dir, radius, radius, orientation,
+	numFragments = trap_CM_ProjectDecal( origin, dir, radius, radius * 1.5f, orientation,
 		MAX_DECAL_POINTS, decalPoints, decalAttribs,
 		MAX_DECAL_FRAGMENTS, decalFragments );
 
@@ -177,6 +177,7 @@ void CG_Decal(
 	for ( i = 0, mf = decalFragments ; i < numFragments ; i++, mf++ ) {
 		polyVert_t	*v;
 		polyVert_t	verts[MAX_VERTS_ON_DECAL_POLY];
+		float		vertAlpha[MAX_VERTS_ON_DECAL_POLY];
 		decalPoly_t	*decal;
 
 		// we have an upper limit on the complexity of polygons
@@ -192,6 +193,7 @@ void CG_Decal(
 			v->st[1] = decalAttribs[mf->firstPoint + j][1];
 			*(int *)v->modulate = *(int *)colors;
 			v->modulate[3] = decalAttribs[mf->firstPoint + j][2] * 255;
+			vertAlpha[j] = decalAttribs[mf->firstPoint + j][2];
 		}
 
 		// if it is a temporary (shadow) mark, add it immediately and forget about it
@@ -211,6 +213,7 @@ void CG_Decal(
 		decal->color[2] = blue;
 		decal->color[3] = alpha;
 		memcpy( decal->verts, verts, mf->numPoints * sizeof( verts[0] ) );
+		memcpy( decal->vertAlpha, vertAlpha, mf->numPoints * sizeof( vertAlpha[0] ) );
 		decalTotal++;
 	}
 }
@@ -259,6 +262,7 @@ void CG_AddDecals( void ) {
 						mp->verts[j].modulate[0] = mp->color[0] * fade;
 						mp->verts[j].modulate[1] = mp->color[1] * fade;
 						mp->verts[j].modulate[2] = mp->color[2] * fade;
+						mp->verts[j].modulate[3] = mp->vertAlpha[j] * 255.0f;
 					}
 				}
 			}
@@ -270,13 +274,14 @@ void CG_AddDecals( void ) {
 			fade = 255 * t / MARK_FADE_TIME;
 			if ( mp->alphaFade ) {
 				for ( j = 0 ; j < mp->poly.numVerts ; j++ ) {
-					mp->verts[j].modulate[3] = fade;
+					mp->verts[j].modulate[3] = fade * mp->vertAlpha[j];
 				}
 			} else {
 				for ( j = 0 ; j < mp->poly.numVerts ; j++ ) {
 					mp->verts[j].modulate[0] = mp->color[0] * fade;
 					mp->verts[j].modulate[1] = mp->color[1] * fade;
 					mp->verts[j].modulate[2] = mp->color[2] * fade;
+					mp->verts[j].modulate[3] = mp->vertAlpha[j] * fade;
 				}
 			}
 		}

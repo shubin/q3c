@@ -2398,7 +2398,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		break;
 	case WP_ACID_SPIT:
 		mark = cgs.media.acidSpitShader;
-		radius = 50;
+		radius = 60;
 		sfx = 0;
 		break;
 #endif

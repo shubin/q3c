@@ -236,6 +236,7 @@ typedef struct decalPoly_s {
 	float					color[4];
 	poly_t					poly;
 	polyVert_t				verts[MAX_VERTS_ON_DECAL_POLY];
+	float					vertAlpha[MAX_VERTS_ON_DECAL_POLY];
 } decalPoly_t;
 #endif // QC
 
