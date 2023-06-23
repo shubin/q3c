@@ -125,10 +125,11 @@ decalPoly_t	*CG_AllocDecal( void ) {
 
 /*
 =================
-CG_ImpactDecal
+CG_Decal
 
 origin should be a point within a unit of the plane
 dir should be the plane normal
+QC TODO: write a proper description here
 
 temporary decals will not be stored or randomly oriented, but immediately
 passed to the renderer.
@@ -148,63 +149,32 @@ void CG_Decal(
 	qboolean temporary
 )
 {
-	vec3_t			axis[3];
-	float			texCoordScale;
-	vec3_t			originalPoints[4];
 	byte			colors[4];
 	int				i, j;
 	int				numFragments;
-	static markFragment_t	markFragments[MAX_DECAL_FRAGMENTS];
+	static markFragment_t	decalFragments[MAX_DECAL_FRAGMENTS];
 	markFragment_t	*mf;
-	static vec3_t	markPoints[MAX_DECAL_POINTS];
-	vec3_t			projection;
+	static vec3_t	decalPoints[MAX_DECAL_POINTS];
+	static vec3_t	decalAttribs[MAX_DECAL_POINTS];
 
 	if ( !cg_addMarks.integer ) {
 		return;
 	}
 
 	if ( radius <= 0 ) {
-		CG_Error( "CG_ImpactDecal called with <= 0 radius" );
+		CG_Error( "CG_Decal called with <= 0 radius" );
 	}
 
-	//if ( decalTotal >= MAX_MARK_POLYS ) {
-	//	return;
-	//}
-
-	// create the texture axis
-	VectorNormalize2( dir, axis[0] );
-	VectorInverse( axis[0] );
-	PerpendicularVector( axis[1], axis[0] );
-	RotatePointAroundVector( axis[2], axis[0], axis[1], orientation );
-	CrossProduct( axis[0], axis[2], axis[1] );
-
-	texCoordScale = 0.5 * 1.0 / radius;
-
-	//// create the full polygon
-	//for ( i = 0 ; i < 3 ; i++ ) {
-	//	originalPoints[0][i] = origin[i] - radius * axis[1][i] - radius * axis[2][i];
-	//	originalPoints[1][i] = origin[i] + radius * axis[1][i] - radius * axis[2][i];
-	//	originalPoints[2][i] = origin[i] + radius * axis[1][i] + radius * axis[2][i];
-	//	originalPoints[3][i] = origin[i] - radius * axis[1][i] + radius * axis[2][i];
-	//}
-
-	// get the fragments
-	//VectorScale( dir, -60, projection );
-#if 0
-	numFragments = trap_CM_ProjectDecal( 4, (void *)originalPoints,
-					projection, MAX_DECAL_POINTS, markPoints[0],
-					MAX_DECAL_FRAGMENTS, markFragments );
-#else
-	numFragments = trap_CM_ProjectDecal( origin, dir, radius, 0, orientation, //0, ( void * )xpoints, NULL,
-		MAX_DECAL_POINTS, markPoints, MAX_DECAL_FRAGMENTS, markFragments );
-#endif
+	numFragments = trap_CM_ProjectDecal( origin, dir, radius, radius, orientation,
+		MAX_DECAL_POINTS, decalPoints, decalAttribs,
+		MAX_DECAL_FRAGMENTS, decalFragments );
 
 	colors[0] = red * 255;
 	colors[1] = green * 255;
 	colors[2] = blue * 255;
 	colors[3] = alpha * 255;
 
-	for ( i = 0, mf = markFragments ; i < numFragments ; i++, mf++ ) {
+	for ( i = 0, mf = decalFragments ; i < numFragments ; i++, mf++ ) {
 		polyVert_t	*v;
 		polyVert_t	verts[MAX_VERTS_ON_DECAL_POLY];
 		decalPoly_t	*decal;
@@ -217,12 +187,11 @@ void CG_Decal(
 		for ( j = 0, v = verts ; j < mf->numPoints ; j++, v++ ) {
 			vec3_t		delta;
 
-			VectorCopy( markPoints[mf->firstPoint + j], v->xyz );
-
-			VectorSubtract( v->xyz, origin, delta );
-			v->st[0] = 0.5 + DotProduct( delta, axis[1] ) * texCoordScale;
-			v->st[1] = 0.5 + DotProduct( delta, axis[2] ) * texCoordScale;
+			VectorCopy( decalPoints[mf->firstPoint + j], v->xyz );
+			v->st[0] = decalAttribs[mf->firstPoint + j][0];
+			v->st[1] = decalAttribs[mf->firstPoint + j][1];
 			*(int *)v->modulate = *(int *)colors;
+			v->modulate[3] = decalAttribs[mf->firstPoint + j][2] * 255;
 		}
 
 		// if it is a temporary (shadow) mark, add it immediately and forget about it

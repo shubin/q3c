@@ -235,7 +235,7 @@ typedef struct decalPoly_s {
 	qboolean				alphaFade;		// fade alpha instead of rgb
 	float					color[4];
 	poly_t					poly;
-	polyVert_t				verts[MAX_VERTS_ON_POLY];
+	polyVert_t				verts[MAX_VERTS_ON_DECAL_POLY];
 } decalPoly_t;
 #endif // QC
 
@@ -1814,7 +1814,7 @@ int			trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 int			trap_CM_ProjectDecal( 
 			const vec3_t origin, const vec3_t dir,
 			vec_t radius, vec_t depth, vec_t orientation,
-			int maxPoints, vec3_t pointBuffer,
+			int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
 			int maxFragments, markFragment_t *fragmentBuffer );
 #endif // QC
 

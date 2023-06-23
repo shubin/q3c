@@ -190,12 +190,13 @@ int		trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 int			trap_CM_ProjectDecal( 
 			const vec3_t origin, const vec3_t dir,
 			vec_t radius, vec_t depth, vec_t orientation,
-			int maxPoints, vec3_t pointBuffer,
+			int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
 			int maxFragments, markFragment_t *fragmentBuffer ) {
 	return syscall( CG_CM_PROJECTDECAL,
 		origin, dir, 
 		PASSFLOAT( radius ), PASSFLOAT( depth ), PASSFLOAT( orientation ),
-		maxPoints, pointBuffer, maxFragments, fragmentBuffer
+		maxPoints, pointBuffer, attribBuffer,
+		maxFragments, fragmentBuffer
 	);
 }
 #endif // QC
