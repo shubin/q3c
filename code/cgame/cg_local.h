@@ -852,6 +852,8 @@ typedef struct {
 	qhandle_t	battleWeaponShader;
 #if defined( QC )
 	qhandle_t	acidSpitShader;
+	qhandle_t	acidTrailShader;
+	qhandle_t	acidBallShader;
 	qhandle_t	piercingSightShader;
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;

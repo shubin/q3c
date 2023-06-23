@@ -680,6 +680,41 @@ static void CG_GrenadeTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	CG_RocketTrail( ent, wi );
 }
 
+#if defined( QC )
+/*
+==========================
+CG_AcidSpitTrail
+==========================
+*/
+static void CG_AcidSpitTrail( centity_t *ent, const weaponInfo_t *wi ) {
+	int		t;
+	int		t2;
+	int		step;
+	vec3_t	newOrigin;
+	localEntity_t *acid;
+
+	step = 25;
+	t = step * ( ( cg.time - cg.frametime + step ) / step );
+	t2 = step * ( cg.time / step );
+
+	for ( ; t <= t2; t += step ) {
+		BG_EvaluateTrajectory( &ent->currentState.pos, t, newOrigin );
+
+		acid = CG_SmokePuff( newOrigin, vec3_origin,
+					  20,		// radius
+					  1, 1, 1, 1,	// color
+					  1000,		// trailTime
+					  t,		// startTime
+					  0,		// fadeInTime
+					  0,		// flags
+					  cgs.media.acidTrailShader );
+		// use the optimized version
+		acid->leType = LE_FALL_SCALE_FADE;
+		// drop a total of 40 units over its lifetime
+		acid->pos.trDelta[2] = 40;
+	}
+}
+#endif // QC
 
 /*
 =================
@@ -1026,7 +1061,7 @@ void CG_RegisterItemVisuals( int itemNum ) {
 	cg_weapons[WP_TOTEM_EGG].wiTrailTime = 700;
 	cg_weapons[WP_TOTEM_EGG].trailRadius = 32;
 
-	cg_weapons[WP_ACID_SPIT].missileModel = trap_R_RegisterModel( "models/special/totem/totemball.md3" );
+	cg_weapons[WP_ACID_SPIT].missileTrailFunc = CG_AcidSpitTrail;
 	cg_weapons[WP_ACID_SPIT].wiTrailTime = 700;
 	cg_weapons[WP_ACID_SPIT].trailRadius = 32;
 

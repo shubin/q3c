@@ -1186,6 +1186,8 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.battleWeaponShader = trap_R_RegisterShader("powerups/battleWeapon" );
 #if defined( QC )
 	cgs.media.acidSpitShader = trap_R_RegisterShader( "acidSpitMark" );
+	cgs.media.acidTrailShader = trap_R_RegisterShader( "acidTrail" );
+	cgs.media.acidBallShader = trap_R_RegisterShader( "acidBall" );
 	cgs.media.piercingSightShader = trap_R_RegisterShader( "effects/piercingSight" );
 	cgs.media.protectionShader = trap_R_RegisterShader( "powerups/protection" );
 	cgs.media.protectionWeaponShader = trap_R_RegisterShader( "powerups/protectionWeapon" );

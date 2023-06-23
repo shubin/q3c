@@ -574,6 +574,14 @@ static void CG_Missile( centity_t *cent ) {
 		trap_R_AddRefEntityToScene( &ent );
 		return;
 	}
+	if ( cent->currentState.weapon = WP_ACID_SPIT ) {
+		ent.reType = RT_SPRITE;
+		ent.radius = 20;
+		ent.rotation = 0;
+		ent.customShader = cgs.media.acidBallShader;
+		trap_R_AddRefEntityToScene( &ent );
+		return;
+	}
 #endif
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
