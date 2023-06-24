@@ -1272,7 +1272,7 @@ int		bg_numItems = ARRAY_LEN( bg_itemlist ) - 1;
 #if defined( QC )
 
 int bg_maxAmmo[WP_NUM_WEAPONS] = {
-	 -1, // WP_NONE,
+     -1, // WP_NONE,
      -1, // WP_GAUNTLET,
     150, // WP_MACHINEGUN,
      25, // WP_SHOTGUN,
@@ -1302,9 +1302,9 @@ int bg_startAmmo[WP_NUM_WEAPONS] = {
       5, // WP_BFG,
      -1, // WP_GRAPPLING_HOOK,
 	 10, // WP_TRIBOLT,
-	100, // WP_LOUSY_MACHINEGUN,
-	 10, // WP_LOUSY_SHOTGUN,
-	100, // WP_LOUSY_PLASMAGUN,
+    100, // WP_LOUSY_MACHINEGUN,
+     10, // WP_LOUSY_SHOTGUN,
+    100, // WP_LOUSY_PLASMAGUN,
 };
 
 #endif
