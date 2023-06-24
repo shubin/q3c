@@ -2174,7 +2174,7 @@ static void PM_Weapon( void ) {
 		break;
 #if defined( QC )
 	case WP_LOUSY_MACHINEGUN:
-		addTime = 75;
+		addTime = 100;
 		break;
 #endif
 	case WP_GRENADE_LAUNCHER:
