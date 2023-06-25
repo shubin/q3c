@@ -405,7 +405,11 @@ qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace ) {
 		VectorCopy( ent->s.pos.trDelta, ent->s.angles2 ); // cgame infers missile orientation from trDelta, so keep it in the angles2
 		G_SetOrigin( ent, trace->endpos );
 		ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
+		ent->freeAfterEvent = qtrue;
+		ent->s.eType = ET_GENERAL;
+		ent->s.eType = ET_TOTEM;
 		G_AddEvent( ent, EV_BOLT_HIT, 0 );
+
 		VectorCopy( trace->endpos, pos );
 		pos[2] -= TOTEM_EGG_RADIUS;
 		G_SpawnTotem( ent, pos );
@@ -433,7 +437,6 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 	vec3_t	plantpos, range;
 
 	if ( ent->parent == NULL || ent->parent->client == NULL ) {
-		G_FreeEntity( ent );
 		return;
 	}
 
@@ -443,7 +446,6 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 	// and for spectators in the free flight mode we can hardcode the totem appearance.
 	// QC TODO: ensure that we allocate spectators at the indices above 32.
 	if ( ent->parent->client->ps.clientNum >= MAX_TOTEM_USERS ) {
-		G_FreeEntity( ent );
 		return;
 	}
 
@@ -455,7 +457,6 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 	VectorCopy( pos, plantpos );
 	plantpos[2] += range[2];
 	if ( !G_CanPutTotemHere( plantpos, range ) ) {
-		G_FreeEntity( ent );
 		return;
 	}
 
@@ -467,8 +468,6 @@ void G_SpawnTotem( gentity_t *ent, const vec3_t pos ) {
 	trigger = CreateTotemTrigger( newtotem );
 	AddTotem( client, newtotem );
 	// 
-
-	G_FreeEntity( ent );
 }
 
 void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {

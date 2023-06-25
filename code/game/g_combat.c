@@ -1226,7 +1226,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
             if ( attacker->client != NULL ) {
                 attackerClientNum = attacker->client->ps.clientNum;
             }
-			DamageDir( targ, attackerClientNum, inflictor->r.currentOrigin, damage );
+			if ( !inflictor->s.number == ENTITYNUM_WORLD ) {
+				DamageDir( targ, attackerClientNum, inflictor->r.currentOrigin, damage );
+			}
         }
 #endif
 

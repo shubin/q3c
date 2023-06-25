@@ -284,11 +284,14 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	vec3_t			forward, impactpoint, bouncedir;
 	int				eFlags;
 #endif
+#if defined( QC )
+	vec3_t			hitdir;
+#endif // QC
 	other = &g_entities[trace->entityNum];
 
 #if defined( QC )
 	if ( !other->takedamage ) {
-		if ( !strcmp( ent->classname, "totem egg" ) ) {
+		if ( ent->s.weapon == WP_TOTEM_EGG ) { // !strcmp( ent->classname, "totem egg" ) ) {
 			G_BounceTotemEgg( ent, trace );
 			return;
 		}
@@ -296,6 +299,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		//	G_SpitHitWall( ent, trace );
 		//}
 	}
+	/*if ( !other->client ) {
+		if ( ent->s.weapon == WP_ACID_SPIT ) {
+			G_BounceAcidSpit( ent, trace );
+			return;
+		}
+	}*/
 #endif
 
 	// check for bounce
@@ -446,13 +455,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	// one, rather than changing the missile into the explosion?
 
 #if defined( QC )
-	vec3_t	hitdir;
-	if ( !other->takedamage && !strcmp( ent->classname, "spit" ) ) {
+	if ( !other->takedamage && ent->s.weapon == WP_ACID_SPIT ) {
 		// calc the hit direction to create a nice looking decal on the cgame side
 		BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, hitdir );
 		VectorNormalize( hitdir );
 		VectorNegate( hitdir, ent->s.angles2 );
-//		G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
+		G_SpitHitWall( ent, trace );
 	} 
 #endif // QC
 	if ( other->takedamage && other->client ) {

@@ -298,42 +298,42 @@ void G_AcidThink( gentity_t *ent ) {
 #if 1
 static
 gentity_t *ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
-	gentity_t	*bolt;
+	gentity_t	*spit;
 
 	VectorNormalize (dir);
 
-	bolt = G_Spawn();
-	bolt->classname = "spit";
-	bolt->nextthink = level.time + 2500;
-	bolt->think = G_AcidThink;
-	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	bolt->s.weapon = WP_ACID_SPIT;
-	bolt->s.eFlags = 0;
-	bolt->r.ownerNum = self->s.number;
-	bolt->parent = self;
-	bolt->damage = 15;
-	bolt->splashDamage = 0;
-	bolt->splashRadius = 0;
-	bolt->methodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
-	bolt->splashMethodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
-	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	spit = G_Spawn();
+	spit->classname = "spit";
+	spit->nextthink = level.time + 2500;
+	spit->think = G_AcidThink;
+	spit->s.eType = ET_MISSILE;
+	spit->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+	spit->s.weapon = WP_ACID_SPIT;
+	spit->s.eFlags = 0;
+	spit->r.ownerNum = self->s.number;
+	spit->parent = self;
+#if defined( UNLAGGED ) //unlagged - projectile nudge
+	// we'll need this for nudging projectiles later
+	spit->s.otherEntityNum = self->s.number;
+#endif
+	spit->damage = 15;
+	spit->splashDamage = 0;
+	spit->splashRadius = 0;
+	spit->methodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
+	spit->splashMethodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
+	spit->clipmask = MASK_SHOT;
+	spit->target_ent = NULL;
 
-	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trTime = level.time - 50;		// move a bit on the very first frame
-	bolt->s.pos.trGravity = DEFAULT_GRAVITY;
-	VectorCopy( start, bolt->s.pos.trBase );
-	VectorScale( dir, 550, bolt->s.pos.trDelta );
-	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
+	spit->s.pos.trType = TR_GRAVITY;
+	spit->s.pos.trTime = level.time - 50;		// move a bit on the very first frame
+	spit->s.pos.trGravity = DEFAULT_GRAVITY;
+	VectorCopy( start, spit->s.pos.trBase );
+	VectorScale( dir, 550, spit->s.pos.trDelta );
+	SnapVector( spit->s.pos.trDelta );			// save net bandwidth
 
-	VectorCopy (start, bolt->r.currentOrigin);
+	VectorCopy( start, spit->r.currentOrigin );
 
-	return bolt;
-}
-
-void G_PoisonPlayer(gentity_t* ent, gentity_t* other, qboolean direct) {
-	G_Printf("Poisoned\n");
+	return spit;
 }
 #endif
 
@@ -474,8 +474,16 @@ void G_AbilityTickSecond( gclient_t *client ) {
 	}
 }
 
+#define ACID_SPIT_RADIUS		50
+#define ACID_DOT_TIMES			5
+#define ACID_DOT_AMOUNT			10
+#define ACID_DOT_TICK			1000
+#define ACID_LIFETIME			10000
+
 void G_AbilityTickFrame( gclient_t *client ) {
-	vec3_t forward, right, up, muzzle;
+	vec3_t		forward, right, up, muzzle;
+	int			damage;
+	gclient_t	*other;
 
 	// visor
 	if ( client->ps.champion == CHAMP_VISOR && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
@@ -493,15 +501,89 @@ void G_AbilityTickFrame( gclient_t *client ) {
 		CalcMuzzlePointOrigin( &g_entities[client->ps.clientNum], client->oldOrigin, forward, right, up, muzzle );
 		ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );
 	}
+
+	if ( client->ps.dotAcidNum > 0 && level.time > client->ps.dotAcidTime ) {
+		other = &g_clients[client->ps.dotAcidOwner];
+		client->ps.dotAcidNum--;
+		client->ps.dotAcidTime = level.time + ACID_DOT_TICK;
+		damage = ACID_DOT_AMOUNT;
+		damage *= other->ps.powerups[PW_QUAD] ? g_quadfactor.value : 1;
+		G_Damage( 
+			&g_entities[client->ps.clientNum], NULL, 
+			&g_entities[other->ps.clientNum],
+			NULL, NULL, damage, DAMAGE_NO_KNOCKBACK, MOD_SLIME
+		);
+		//G_Printf( "ACID DOT\n" );
+	}
+}
+
+static void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
+	playerState_t *ps;
+
+	ps = &other->client->ps;
+	if ( ps->dotAcidNum == 0 ) {
+		ps->dotAcidNum = ACID_DOT_TIMES;
+		ps->dotAcidTime = level.time + 50; // first tick soon
+		G_Printf( "POISONED\n" );
+	}
+}
+
+static void AcidSpit_Think( gentity_t *ent ) {
+}
+
+static void AcidSpit_Trigger( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
+	vec3_t		v;
+	gentity_t *attacker;
+	int			damage;
+
+	if ( !other->client ) {
+		return;
+	}
+	if ( G_IsEntityFriendly( other->client->ps.clientNum, trigger->s.number ) ) {
+		//return;
+	}
+
+	VectorSubtract( trigger->s.pos.trBase, other->s.pos.trBase, v );
+	if ( VectorLength( v) > ACID_SPIT_RADIUS ) {
+		return;
+	}
+	if ( !CanDamage( other, trigger->s.pos.trBase ) ) {
+		return;
+	}
+	G_PoisonPlayer( trigger, other, qfalse );
 }
 
 void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
+	gentity_t *trigger;
 	gclient_t *client;
+	int r;
+
+	if ( ent->parent == NULL || ent->parent->client == NULL ) {
+		return;
+	}
+
+	// build the totem trigger
+	trigger = G_Spawn();
+
+	trigger->classname = "spit trigger";
+
+	r = ACID_SPIT_RADIUS;
+	VectorSet( trigger->r.mins, -r, -r, -r );
+	VectorSet( trigger->r.maxs, r, r, r );
+
+	G_SetOrigin( trigger, ent->s.pos.trBase );
 
 	client = ent->parent->client;
 
-	client->ps.ab_flags = 0;
-	client->ps.ab_time = 0;
+	trigger->s.eFlags = EF_NOFF;
+	trigger->s.affiliation = ent->s.affiliation; // same affiliation as the totem
+	trigger->parent = ent->parent;
+	trigger->r.contents = CONTENTS_TRIGGER;
+	trigger->touch = AcidSpit_Trigger;
+	trigger->nextthink = level.time + ACID_LIFETIME;
+	trigger->think = AcidSpit_Think;
 
-	G_FreeEntity( ent );
+	trap_LinkEntity( trigger );
+
+	return trigger;
 }

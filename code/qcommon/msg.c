@@ -1141,6 +1141,12 @@ netField_t	playerStateFields[] =
 { PSF(ab_flags), 8 },
 { PSF(ab_num), 32 },
 { PSF(overbounce), 1 },
+{ PSF(dotAcidTime), 32 },
+{ PSF(dotAcidNum), 4 },	// up to 16 ticks of acid damage
+{ PSF(dotAcidInflictor), 6 },
+{ PSF(dotFireTime), 32 },
+{ PSF(dotFireNum), 4 }, // up to 16 ticks of fire damage
+{ PSF(dotFireInflictor), 6 },
 { PSF(baseHealth), 8 }, // base health can't exceed 256
 { PSF(baseArmor), 8 }, // base armor can't exceed 256
 #endif

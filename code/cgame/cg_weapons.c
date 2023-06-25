@@ -701,9 +701,9 @@ static void CG_AcidSpitTrail( centity_t *ent, const weaponInfo_t *wi ) {
 		BG_EvaluateTrajectory( &ent->currentState.pos, t, newOrigin );
 
 		acid = CG_SmokePuff( newOrigin, vec3_origin,
-					  20,		// radius
-					  1, 1, 1, 1,	// color
-					  1000,		// trailTime
+					  wi->trailRadius,	// radius
+					  1, 1, 1, 1,		// color
+					  wi->wiTrailTime,	// trailTime
 					  t,		// startTime
 					  0,		// fadeInTime
 					  0,		// flags
@@ -1062,8 +1062,8 @@ void CG_RegisterItemVisuals( int itemNum ) {
 	cg_weapons[WP_TOTEM_EGG].trailRadius = 32;
 
 	cg_weapons[WP_ACID_SPIT].missileTrailFunc = CG_AcidSpitTrail;
-	cg_weapons[WP_ACID_SPIT].wiTrailTime = 700;
-	cg_weapons[WP_ACID_SPIT].trailRadius = 32;
+	cg_weapons[WP_ACID_SPIT].wiTrailTime = 1000;
+	cg_weapons[WP_ACID_SPIT].trailRadius = 20;
 
 	cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
 #endif

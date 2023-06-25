@@ -1246,6 +1246,13 @@ typedef struct playerState_s {
 	int			ab_num;			// id of the entity associated with the champion (orb for Ranger), number of active totems, etc
 	int			ab_flags;		// some bits to know whats happening with ability progressing
 	qboolean	overbounce;		// overbounce bug handling
+	// damage over time
+	int			dotAcidTime;
+	int			dotAcidNum;
+	int			dotAcidOwner;
+	int			dotFireTime;
+	int			dotFireNum;
+	int			dotFireOwner;
 #endif
 
 	vec3_t		viewangles;		// for fixed views
@@ -1276,8 +1283,7 @@ typedef struct playerState_s {
 	int			attackerNum;
 	int			attackerTime;
 	int			ringoutKiller;
-#endif
-
+#endif // QC
 } playerState_t;
 
 #if defined( QC )
