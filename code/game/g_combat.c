@@ -1499,6 +1499,9 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 		}
 
 		points = damage * ( 1.0 - dist / radius );
+		if ( points < 10.0 ) {
+			points = 10.0;
+		}
 
 		if( CanDamage (ent, origin) ) {
 			if( LogAccuracyHit( ent, attacker ) ) {
