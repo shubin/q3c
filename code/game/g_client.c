@@ -1467,7 +1467,11 @@ void ClientSpawn(gentity_t *ent) {
 #endif
 	// clear entity values
 #if defined( QC )
-	client->ps.baseHealth = champion_stats[client->pers.champion].base_health;
+	if ( client->pers.champion == CHAMP_ANARKI && !champion_switched ) {
+		client->ps.baseHealth = client->pers.baseHealth;
+	} else {
+		client->ps.baseHealth = client->pers.baseHealth = champion_stats[client->pers.champion].base_health;
+	}
 	client->ps.stats[STAT_MAX_HEALTH] = champion_stats[client->pers.champion].max_health;
 	client->ps.stats[STAT_HEALTH] = champion_stats[client->pers.champion].start_health[g_gametype.integer];
 	client->ps.baseArmor = champion_stats[client->pers.champion].base_armor;

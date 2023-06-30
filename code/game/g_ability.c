@@ -346,7 +346,7 @@ static
 		ent->health = champion_stats[CHAMP_ANARKI].max_health;
 	}
 	ent->client->ps.powerups[PW_SCOUT] = level.time + champion_stats[CHAMP_ANARKI].ability_duration * 100;
-	ent->client->ps.baseHealth++;
+	ent->client->ps.baseHealth = ent->client->pers.baseHealth ++;
  }
 
 static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
