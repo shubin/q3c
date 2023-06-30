@@ -747,7 +747,7 @@ static void PM_WaterMove( void ) {
 #if defined( QC )
 	DEFINE_MOVEMENT_PARAMETERS
 #endif
-
+		return;
 	if ( PM_CheckWaterJump() ) {
 		PM_WaterJumpMove();
 		return;
