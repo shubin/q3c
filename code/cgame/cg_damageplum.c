@@ -178,8 +178,11 @@ typedef struct damage_plum_data_s {
 
 #define MAX_DAMAGE_PLUMS 64
 
-#define DAMAGE_PLUM_WIDTH	12
-#define DAMAGE_PLUM_HEIGHT	12
+#define DAMAGE_PLUM_WIDTH	6
+#define DAMAGE_PLUM_HEIGHT	6
+
+#define DAMAGE_PLUM_MIN_SIZE_FACTOR 0.0f
+#define DAMAGE_PLUM_MAX_SIZE_FACTOR 3.0f
 
 #define DAMAGE_PLUM_STAY_TIME				200
 #define DAMAGE_PLUM_PULSE_SCALE				1.5f
@@ -307,6 +310,7 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 	float x, y;
 	float w, h;
 	float pulsezoom;
+	float damagePlumSizeFactor;
 
 	float color[4];
 
@@ -326,8 +330,11 @@ void DrawDamagePlum( damage_plum_data_t* dn ) {
 
 	if ( ProjectPoint( &cg.refdef, pos, screenpos ) ) {
 		screenpos[1] = cg.refdef.height - screenpos[1];
- 		char_width = DAMAGE_PLUM_WIDTH * cg.refdef.height / 480.0f;
-		char_height = DAMAGE_PLUM_HEIGHT * cg.refdef.height / 480.0f;
+
+		damagePlumSizeFactor = MIN( DAMAGE_PLUM_MAX_SIZE_FACTOR, MAX( DAMAGE_PLUM_MIN_SIZE_FACTOR, cg_damagePlumSizeFactor.value ) );
+
+		char_width  = DAMAGE_PLUM_WIDTH  * damagePlumSizeFactor * cg.refdef.height / 480.0f;
+		char_height = DAMAGE_PLUM_HEIGHT * damagePlumSizeFactor * cg.refdef.height / 480.0f;
 
 		pulsezoom = DAMAGE_PLUM_DEFAULT_SCALE;
 		if ( dmgtime < DAMAGE_PLUM_STAY_TIME && cg_damagePlumPulse.integer != 0 ) {
