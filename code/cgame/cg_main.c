@@ -238,8 +238,8 @@ vmCvar_t	cg_plOut;
 
 #if defined( QC )
 vmCvar_t    cg_damagePlum;			// the number which pops up out of an enemy when you hit them
-vmCvar_t    cg_damagePlumSize;		// size of that number
-vmCvar_t    cg_damagePlumPulse;     // whether to animate the popping up number or not to
+vmCvar_t    cg_damagePlumSizeFactor;// size factor of that number
+vmCvar_t    cg_damagePlumPulse;		// whether to animate the popping up number or not to
 vmCvar_t    cg_damageDirection;		// damage indicator around the crosshair showing the direction the damage came from
 vmCvar_t    cg_hitCross;			// diagonal cross which blinks around the crosshair when you hit an enemy
 vmCvar_t	cg_enemyColors;
@@ -427,7 +427,7 @@ static cvarTable_t cvarTable[] = {
 //	{ &cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO | CVAR_ARCHIVE }
 #if defined( QC )
     { &cg_damagePlum, "cg_damagePlum", "2", CVAR_ARCHIVE },
-    { &cg_damagePlumSize, "cg_damagePlumSize", "12", CVAR_ARCHIVE },
+    { &cg_damagePlumSizeFactor, "cg_damagePlumSizeFactor", "1.2", CVAR_ARCHIVE },
     { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
     { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
     { &cg_hitCross, "cg_hitCross", "1", CVAR_ARCHIVE },

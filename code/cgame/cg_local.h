@@ -1332,7 +1332,7 @@ extern	vmCvar_t		cg_obeliskRespawnDelay;
 #endif
 #if defined( QC )
 extern  vmCvar_t        cg_damagePlum;
-extern  vmCvar_t        cg_damagePlumSize;
+extern  vmCvar_t        cg_damagePlumSizeFactor;
 extern  vmCvar_t        cg_damagePlumPulse;
 extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;

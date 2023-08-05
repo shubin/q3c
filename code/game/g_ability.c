@@ -222,7 +222,7 @@ skip_normal_backtrace:
 	// iterate over evenly distributed direction vectors and calculate which direction around
 	// the destination point is the "freest"
 	for ( i = 0; i < NUM_PROBES; i++ ) {
-		//if ( DotProduct( orb_probes[i], dir) < 0 )
+		if ( DotProduct( orb_probes[i], dir ) < 0 )
 		{
 			VectorMA( destination, diameter, orb_probes[i], v );
 			G_TraceEx( self->s.clientNum, &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
@@ -346,7 +346,7 @@ static
 		ent->health = champion_stats[CHAMP_ANARKI].max_health;
 	}
 	ent->client->ps.powerups[PW_SCOUT] = level.time + champion_stats[CHAMP_ANARKI].ability_duration * 100;
-	ent->client->ps.baseHealth++;
+	ent->client->ps.baseHealth = ent->client->pers.baseHealth += 1;
  }
 
 static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
