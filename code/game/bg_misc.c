@@ -293,7 +293,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/iconw_machinegun",
 #endif
 /* pickup */	"Machinegun",
+#if defined( QC )
+		100,
+#else
 		40,
+#endif
 		IT_WEAPON,
 		WP_MACHINEGUN,
 /* precache */ "",
@@ -393,7 +397,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/iconw_plasma",
 #endif
 /* pickup */	"Plasma Gun",
+#if defined( QC )
+		100,
+#else
 		50,
+#endif
 		IT_WEAPON,
 		WP_PLASMAGUN,
 /* precache */ "",
@@ -483,7 +491,7 @@ gitem_t	bg_itemlist[] =
 		NULL, NULL, NULL},
 /* icon */		"qc/icons/iconw_machinegun",
 /* pickup */	"Lousy Machinegun",
-		40,
+		100,
 		IT_WEAPON,
 		WP_LOUSY_MACHINEGUN,
 /* precache */ "",
@@ -499,7 +507,7 @@ gitem_t	bg_itemlist[] =
 		NULL, NULL, NULL},
 /* icon */		"icons/iconw_plasma",
 /* pickup */	"Lousy Plasma Gun",
-		50,
+		100,
 		IT_WEAPON,
 		WP_LOUSY_PLASMAGUN,
 /* precache */ "",
@@ -524,7 +532,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/icona_shotgun",
 #endif
 /* pickup */	"Shells",
+#if defined( QC )
+		5,
+#else
 		10,
+#endif
 		IT_AMMO,
 		WP_SHOTGUN,
 /* precache */ "",
@@ -584,7 +596,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/icona_plasma",
 #endif
 /* pickup */	"Cells",
+#if defined( QC )
+		50,
+#else
 		30,
+#endif
 		IT_AMMO,
 		WP_PLASMAGUN,
 /* precache */ "",
@@ -604,7 +620,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/icona_lightning",
 #endif
 /* pickup */	"Lightning",
+#if defined( QC )
+		50,
+#else
 		60,
+#endif
 		IT_AMMO,
 		WP_LIGHTNING,
 /* precache */ "",
@@ -662,7 +682,11 @@ gitem_t	bg_itemlist[] =
 /* icon */		"icons/icona_railgun",
 #endif
 /* pickup */	"Slugs",
+#if defined( QC )
+		5,
+#else
 		10,
+#endif
 		IT_AMMO,
 		WP_RAILGUN,
 /* precache */ "",
@@ -1223,44 +1247,64 @@ Only in One Flag CTF games
 	{NULL}
 };
 
+/*
+    Quake Champions ammo quantity table
+	Actual for 1.19.RETAIL.124639/124652 (2023-06-13) QC version
+
+    | Gun                 | Start ammo | Pickup ammo | Max ammo | Pickup exist gun |
+    |---------------------+------------+-------------+----------+------------------|
+    | WP_MACHINEGUN       |        100 |         +50 |      150 |              +10 |
+    | WP_SHOTGUN          |         10 |          +5 |       25 |               +1 |
+    | WP_ROCKET_LAUNCHER  |         10 |          +5 |       25 |               +1 |
+    | WP_LIGHTNING        |        100 |         +50 |      150 |              +10 |
+    | WP_RAILGUN          |         10 |          +5 |       25 |               +1 |
+    | WP_PLASMAGUN        |        100 |         +50 |      150 |              +10 |
+    | WP_TRIBOLT          |         10 |          +5 |       15 |               +1 |
+    | WP_LOUSY_MACHINEGUN |        100 |             |      150 |                  |
+    | WP_LOUSY_SHOTGUN    |         10 |             |      150 |                  |
+    | WP_LOUSY_PLASMAGUN  |        100 |             |       25 |                  |
+
+	TODO: Implement "Pickup exist gun"
+*/
+
 int		bg_numItems = ARRAY_LEN( bg_itemlist ) - 1;
 
 #if defined( QC )
 
 int bg_maxAmmo[WP_NUM_WEAPONS] = {
-    -1,  // WP_NONE,
-    -1,  // WP_GAUNTLET,
+     -1, // WP_NONE,
+     -1, // WP_GAUNTLET,
     150, // WP_MACHINEGUN,
-    25,  // WP_SHOTGUN,
-    15,  // WP_GRENADE_LAUNCHER,
-    25,  // WP_ROCKET_LAUNCHER,
+     25, // WP_SHOTGUN,
+     15, // WP_GRENADE_LAUNCHER,
+     25, // WP_ROCKET_LAUNCHER,
     150, // WP_LIGHTNING,
-    25,  // WP_RAILGUN,
-    250, // WP_PLASMAGUN,
-    15,  // WP_BFG,
-    -1,  // WP_GRAPPLING_HOOK,
-	25,  // WP_TRIBOLT,
-	150, // WP_LOUSY_MACHINEGUN,
-	25,  // WP_LOUSY_SHOTGUN,
-	250, // WP_LOUSY_PLASMAGUN,
+     25, // WP_RAILGUN,
+    150, // WP_PLASMAGUN,
+     15, // WP_BFG,
+     -1, // WP_GRAPPLING_HOOK,
+     15, // WP_TRIBOLT,
+    150, // WP_LOUSY_MACHINEGUN,
+     25, // WP_LOUSY_SHOTGUN,
+    150, // WP_LOUSY_PLASMAGUN,
 };
 
 int bg_startAmmo[WP_NUM_WEAPONS] = {
-    -1,  // WP_NONE,
-    -1,  // WP_GAUNTLET,
-    50,  // WP_MACHINEGUN,
-    10,  // WP_SHOTGUN,
-     5,  // WP_GRENADE_LAUNCHER,
-     5,  // WP_ROCKET_LAUNCHER,
-    50,  // WP_LIGHTNING,
-     5,  // WP_RAILGUN,
-    50,  // WP_PLASMAGUN,
-     5,  // WP_BFG,
-    -1,  // WP_GRAPPLING_HOOK,
-	25,  // WP_TRIBOLT,
-	50,  // WP_LOUSY_MACHINEGUN,
-	10,  // WP_LOUSY_SHOTGUN,
-	50,  // WP_LOUSY_PLASMAGUN,
+     -1, // WP_NONE,
+     -1, // WP_GAUNTLET,
+    100, // WP_MACHINEGUN,
+     10, // WP_SHOTGUN,
+      5, // WP_GRENADE_LAUNCHER,
+     10, // WP_ROCKET_LAUNCHER,
+    100, // WP_LIGHTNING,
+     10, // WP_RAILGUN,
+    100, // WP_PLASMAGUN,
+      5, // WP_BFG,
+     -1, // WP_GRAPPLING_HOOK,
+     10, // WP_TRIBOLT,
+    100, // WP_LOUSY_MACHINEGUN,
+     10, // WP_LOUSY_SHOTGUN,
+    100, // WP_LOUSY_PLASMAGUN,
 };
 
 #endif

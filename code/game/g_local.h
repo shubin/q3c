@@ -271,6 +271,7 @@ typedef struct {
 #if defined( QC )
 	int			champion;			// selected champion
 	int			startingWeapon;		// weapon with which the player spawns by default, could be one of "lousy" weapons
+	int			baseHealth;			// base health persistence (needed for Anarki)
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 	// these correspond with variables in the userinfo string

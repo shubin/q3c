@@ -725,7 +725,11 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->s.otherEntityNum = self->s.number;
 #endif
 	bolt->parent = self;
+#if defined( QC )
+	bolt->damage = 15;
+#else
 	bolt->damage = 20;
+#endif
 	bolt->splashDamage = 15;
 	bolt->splashRadius = 20;
 	bolt->methodOfDeath = MOD_PLASMA;

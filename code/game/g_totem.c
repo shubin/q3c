@@ -229,6 +229,15 @@ static void Totem_Think( gentity_t *ent ) {
 	ent->nextthink = level.time + TOTEM_THINK_INTERVAL;
 }
 
+static void TotemEgg_Think( gentity_t *ent ) {
+	if ( ent->parent->client ) {
+		// just in case don't let the totem logic be stuck
+		ent->parent->client->ps.ab_flags = 0;
+		ent->parent->client->ps.ab_time = 0;
+	}
+	G_FreeEntity( ent );
+}
+
 static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
 	vec3_t		v;
 	int r, clientNum;
@@ -379,7 +388,7 @@ gentity_t *CreateTotemTrigger( gentity_t *totem ) {
 	client = totem->parent->client;
 
 	trigger->s.eFlags = EF_NOFF;
-	trigger->s.affiliation= totem->s.affiliation; // same affiliation as the totem
+	trigger->s.affiliation = totem->s.affiliation; // same affiliation as the totem
 	trigger->parent = totem;
 	trigger->r.contents = CONTENTS_TRIGGER;
 	trigger->touch = Totem_Trigger;
@@ -474,6 +483,8 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	playerState_t *ps;
 	gentity_t *egg;
 	int quadFactor;
+	trace_t tr;
+	vec3_t v;
 
 	ps = &ent->client->ps;
 
@@ -486,8 +497,23 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 
 	egg = fire_grenade( ent, muzzle, forward ); // QC TODO: need to get rid of this considering a lot of params are being overriden below
 
+	egg->think = TotemEgg_Think;
+
 	egg->r.mins[0] = egg->r.mins[1] = egg->r.mins[2] = -TOTEM_EGG_RADIUS;
 	egg->r.maxs[0] = egg->r.maxs[1] = egg->r.maxs[2] = TOTEM_EGG_RADIUS;
+
+	// check if we throw it right up to a wall
+
+	trap_Trace( &tr, ent->s.pos.trBase, egg->r.mins, egg->r.maxs, muzzle, ent->s.number, MASK_SHOT );
+
+	if ( tr.startsolid || tr.fraction < 1.0f ) {
+		// the egg is stuck right at the start
+		// let the egg just fall down
+		VectorCopy( tr.endpos, egg->s.pos.trBase );
+		VectorCopy( tr.endpos, egg->r.currentOrigin );
+		VectorSet( egg->s.pos.trDelta, 0, 0, 0 );
+		egg->s.pos.trTime = level.time;
+	}
 
 	egg->classname = "totem egg";
 	egg->s.weapon = WP_TOTEM_EGG;
