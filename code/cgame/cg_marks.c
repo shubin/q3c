@@ -24,6 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "cg_local.h"
 
+#if defined( QC )
+#define	MARK_TOTAL_TIME		10000
+#define	MARK_FADE_TIME		1000
+#endif // QC
+
 /*
 ===================================================================
 
@@ -151,7 +156,7 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 #if defined( QC )
 	if ( cg_addMarks.integer == 2 ) {
 		VectorNegate( dir, projection );
-		CG_Decal( markShader, origin, projection, orientation, red, green, blue, alpha, alphaFade, radius, temporary );
+		CG_Decal( markShader, origin, projection, orientation, red, green, blue, alpha, alphaFade, radius, temporary ? -1 : MARK_TOTAL_TIME, -1 );
 		return;
 	}
 #endif // QC
@@ -235,8 +240,10 @@ void CG_ImpactMark( qhandle_t markShader, const vec3_t origin, const vec3_t dir,
 CG_AddMarks
 ===============
 */
+#if !defined( QC )
 #define	MARK_TOTAL_TIME		10000
 #define	MARK_FADE_TIME		1000
+#endif // QC
 
 void CG_AddMarks( void ) {
 	int			j;

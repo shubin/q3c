@@ -343,11 +343,14 @@ static
 	ent->client->ps.ab_flags &= ~ABF_READY;
 	ent->client->ps.ab_time = 0;
 	ent->health += 50;
+
 	if ( ent->health > champion_stats[CHAMP_ANARKI].max_health ) {
 		ent->health = champion_stats[CHAMP_ANARKI].max_health;
 	}
 	ent->client->ps.powerups[PW_SCOUT] = level.time + champion_stats[CHAMP_ANARKI].ability_duration * 100;
 	ent->client->ps.baseHealth++;
+
+	G_RemoveDOT( ent, DOT_ALL );
  }
 
 static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
@@ -474,12 +477,6 @@ void G_AbilityTickSecond( gclient_t *client ) {
 	}
 }
 
-#define ACID_SPIT_RADIUS		50
-#define ACID_DOT_TIMES			5
-#define ACID_DOT_AMOUNT			10
-#define ACID_DOT_TICK			1000
-#define ACID_LIFETIME			10000
-
 void G_AbilityTickFrame( gclient_t *client ) {
 	vec3_t		forward, right, up, muzzle;
 	int			damage;
@@ -524,18 +521,17 @@ static void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) 
 	if ( ps->dotAcidNum == 0 ) {
 		ps->dotAcidNum = ACID_DOT_TIMES;
 		ps->dotAcidTime = level.time + 50; // first tick soon
-		G_Printf( "POISONED\n" );
 	}
 }
 
 static void AcidSpit_Think( gentity_t *ent ) {
+	G_FreeEntity( ent );
 }
 
 static void AcidSpit_Trigger( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
-	vec3_t		v;
-	gentity_t *attacker;
-	int			damage;
-
+	vec3_t		lower, upper;
+	vec3_t		v1, v2;
+//
 	if ( !other->client ) {
 		return;
 	}
@@ -543,8 +539,14 @@ static void AcidSpit_Trigger( gentity_t *trigger, gentity_t *other, trace_t *tra
 		//return;
 	}
 
-	VectorSubtract( trigger->s.pos.trBase, other->s.pos.trBase, v );
-	if ( VectorLength( v) > ACID_SPIT_RADIUS ) {
+	// two-point check
+	VectorCopy( other->s.pos.trBase, lower );
+	VectorCopy( lower, upper );
+	upper[2] += 50;
+
+	VectorSubtract( trigger->s.pos.trBase, lower, v1 );
+	VectorSubtract( trigger->s.pos.trBase, upper, v2 );
+	if ( VectorLength( v1 ) > ACID_SPIT_RADIUS && VectorLength( v2 ) > ACID_SPIT_RADIUS ) {
 		return;
 	}
 	if ( !CanDamage( other, trigger->s.pos.trBase ) ) {
@@ -571,10 +573,11 @@ void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
 	VectorSet( trigger->r.mins, -r, -r, -r );
 	VectorSet( trigger->r.maxs, r, r, r );
 
-	G_SetOrigin( trigger, ent->s.pos.trBase );
+	G_SetOrigin( trigger, trace->endpos );
 
 	client = ent->parent->client;
 
+	trigger->s.eType = ET_ACID_TRIGGER;
 	trigger->s.eFlags = EF_NOFF;
 	trigger->s.affiliation = ent->s.affiliation; // same affiliation as the totem
 	trigger->parent = ent->parent;
@@ -583,7 +586,29 @@ void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
 	trigger->nextthink = level.time + ACID_LIFETIME;
 	trigger->think = AcidSpit_Think;
 
+	// Copy hit direction and position to the trigger entity so we can restore the decal on the client side if needed.
+	// There may be cases when user does not receive the impact event so we should make sure thet
+	// we'll not have invisible acid spit triggers.
+	VectorNegate( ent->s.angles2, trigger->s.angles2 );
+	VectorCopy( trace->endpos, trigger->s.origin2 );
+	trigger->s.time2 = level.time;
+	trigger->s.loopSoundDist = ( int )( random() * 360 );
+#if defined( _DEBUG )
+	trigger->s.generic1 = r;
+#endif // _DEBUG
 	trap_LinkEntity( trigger );
 
 	return trigger;
+}
+
+void G_RemoveDOT( gentity_t *ent, int flags ) {
+	if ( !ent->client ) {
+		return;
+	}
+	if ( DOT_ACID & flags ) {
+		ent->client->ps.dotAcidNum = 0;
+	}
+	if ( DOT_FIRE & flags ) {
+		ent->client->ps.dotFireNum = 0;
+	}
 }

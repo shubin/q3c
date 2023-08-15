@@ -574,7 +574,7 @@ static void CG_Missile( centity_t *cent ) {
 		trap_R_AddRefEntityToScene( &ent );
 		return;
 	}
-	if ( cent->currentState.weapon = WP_ACID_SPIT ) {
+	if ( cent->currentState.weapon == WP_ACID_SPIT ) {
 		ent.reType = RT_SPRITE;
 		ent.radius = cg_weapons[WP_ACID_SPIT].trailRadius;
 		ent.rotation = 0;
@@ -1293,7 +1293,135 @@ void CG_TotemDecay( centity_t *cent ) {
 	}
 }
 
+void CG_AcidSpitDecal( centity_t *cent ) {
+	if ( cg.time - cent->currentState.time2 < ACID_LIFETIME + 450 ) {
+		CG_Decal( 
+			cgs.media.acidSpitShader, 
+			cent->currentState.origin2,
+			cent->currentState.angles2,
+			cent->currentState.loopSoundDist,
+			1, 1, 1, 1, qtrue,
+			60, ACID_LIFETIME - ( cg.time - cent->currentState.time2 ) + 500,
+			cent->currentState.number
+		);
+	}
+}
+
 #endif
+
+#if defined( QC ) && defined( _DEBUG )
+/*
+===============
+CG_AddBBox
+
+===============
+*/
+void CG_AddBBox( centity_t *cent ) {
+	polyVert_t verts[4];
+	int i;
+	vec3_t mins, maxs;
+	vec_t extx, exty, extz;
+	vec3_t corners[8];
+	qhandle_t bboxShader, bboxShader_nocull;
+
+	bboxShader = trap_R_RegisterShader( "bbox" );
+	bboxShader_nocull = trap_R_RegisterShader( "bbox_nocull" );
+
+	//int x, zd, zu;
+
+	//// grab the encoded bounding box
+	//x = ( cent->currentState.solid & 255 );
+	//zd = ( ( cent->currentState.solid >> 8 ) & 255 );
+	//zu = ( ( cent->currentState.solid >> 16 ) & 255 ) - 32;
+	int r = cent->currentState.generic1;
+
+	mins[0] = mins[1] = -r;
+	maxs[0] = maxs[1] = r;
+	mins[2] = -r;
+	maxs[2] = r;
+
+	// get the extents (size)
+	extx = maxs[0] - mins[0];
+	exty = maxs[1] - mins[1];
+	extz = maxs[2] - mins[2];
+
+	// set the polygon's texture coordinates
+	verts[0].st[0] = 0;
+	verts[0].st[1] = 0;
+	verts[1].st[0] = 0;
+	verts[1].st[1] = 1;
+	verts[2].st[0] = 1;
+	verts[2].st[1] = 1;
+	verts[3].st[0] = 1;
+	verts[3].st[1] = 0;
+
+	for ( i = 0; i < 4; i++ ) {
+		verts[i].modulate[0] = 0;
+		verts[i].modulate[1] = 128;
+		verts[i].modulate[2] = 0;
+		verts[i].modulate[3] = 255;
+	}
+
+	VectorAdd( cent->lerpOrigin, maxs, corners[3] );
+
+	VectorCopy( corners[3], corners[2] );
+	corners[2][0] -= extx;
+
+	VectorCopy( corners[2], corners[1] );
+	corners[1][1] -= exty;
+
+	VectorCopy( corners[1], corners[0] );
+	corners[0][0] += extx;
+
+	for ( i = 0; i < 4; i++ ) {
+		VectorCopy( corners[i], corners[i + 4] );
+		corners[i + 4][2] -= extz;
+	}
+
+	// top
+	VectorCopy( corners[0], verts[0].xyz );
+	VectorCopy( corners[1], verts[1].xyz );
+	VectorCopy( corners[2], verts[2].xyz );
+	VectorCopy( corners[3], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+	// bottom
+	VectorCopy( corners[7], verts[0].xyz );
+	VectorCopy( corners[6], verts[1].xyz );
+	VectorCopy( corners[5], verts[2].xyz );
+	VectorCopy( corners[4], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+	// top side
+	VectorCopy( corners[3], verts[0].xyz );
+	VectorCopy( corners[2], verts[1].xyz );
+	VectorCopy( corners[6], verts[2].xyz );
+	VectorCopy( corners[7], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+	// left side
+	VectorCopy( corners[2], verts[0].xyz );
+	VectorCopy( corners[1], verts[1].xyz );
+	VectorCopy( corners[5], verts[2].xyz );
+	VectorCopy( corners[6], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+	// right side
+	VectorCopy( corners[0], verts[0].xyz );
+	VectorCopy( corners[3], verts[1].xyz );
+	VectorCopy( corners[7], verts[2].xyz );
+	VectorCopy( corners[4], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+	// bottom side
+	VectorCopy( corners[1], verts[0].xyz );
+	VectorCopy( corners[0], verts[1].xyz );
+	VectorCopy( corners[4], verts[2].xyz );
+	VectorCopy( corners[5], verts[3].xyz );
+	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+}
+
+#endif // QC && _DEBUG
 
 /*
 ===============
@@ -1355,6 +1483,17 @@ static void CG_AddCEntity( centity_t *cent ) {
 	case ET_TOTEM:
 		CG_Totem( cent );
 		break;
+	case ET_ACID_TRIGGER:
+		CG_AcidSpitDecal( cent );
+#if defined( QC )
+		//CG_AddBBox( cent ); 
+#endif // QC
+		break;
+#if defined( _DEBUG )
+	case ET_DEBUG_TRIGGER:
+		CG_AddBBox( cent );
+		break;
+#endif // _DEBUG
 #endif
 	}
 }

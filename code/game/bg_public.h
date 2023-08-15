@@ -775,8 +775,11 @@ typedef enum {
 	ET_TEAM,
 #if defined( QC )
 	ET_TOTEM,
+	ET_ACID_TRIGGER,
 #endif
-
+#if defined( QC ) && defined( _DEBUG )
+	ET_DEBUG_TRIGGER,
+#endif // QC && DEBUG
 	ET_EVENTS				// any of the EV_* events can be added freestanding
 							// by setting eType to ET_EVENTS + eventNum
 							// this avoids having to set eFlags and eventNum

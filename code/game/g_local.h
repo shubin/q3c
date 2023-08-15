@@ -731,6 +731,14 @@ void G_AbilityTickSecond( gclient_t *client );
 void G_AbilityTickFrame( gclient_t *client );
 void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
 
+typedef enum {
+	DOT_ACID = 1,
+	DOT_FIRE = 2,
+	DOT_ALL = 0xFF
+} dotFlag_t;
+
+void G_RemoveDOT( gentity_t *ent, int flags );
+
 //
 // g_totem.c
 //

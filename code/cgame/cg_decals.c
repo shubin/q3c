@@ -34,6 +34,9 @@ Quake and Quake III Arena are trademarks of id Software, Inc.
 
 #include "cg_local.h"
 
+#define	MARK_TOTAL_TIME		10000
+#define	MARK_FADE_TIME		1000
+
 /*
 ===================================================================
 
@@ -48,6 +51,10 @@ decalPoly_t		*cg_freeDecalPolys;		// single linked list
 decalPoly_t		cg_decalPolys[MAX_DECAL_POLYS];
 static			int	decalTotal;
 
+// Very persistent decals that are attached to an entity (i.e. acid spit).
+// They must be visible even if a client have never received the event which placed this decal.
+decalPoly_t		*cg_entityDecals[ENTITYNUM_MAX_NORMAL];
+
 /*
 ===================
 CG_InitDecalPolys
@@ -58,7 +65,8 @@ This is called at startup and for tournement restarts
 void	CG_InitDecalPolys( void ) {
 	int		i;
 
-	memset( cg_decalPolys, 0, sizeof(cg_decalPolys) );
+	memset( cg_decalPolys, 0, sizeof( cg_decalPolys ) );
+	memset( cg_entityDecals, 0, sizeof( cg_entityDecals ) );
 
 	cg_activeDecalPolys.nextDecal = &cg_activeDecalPolys;
 	cg_activeDecalPolys.prevDecal = &cg_activeDecalPolys;
@@ -79,6 +87,9 @@ void CG_FreeDecalPoly( decalPoly_t *le ) {
 		CG_Error( "CG_FreeLocalEntity: not active" );
 	}
 
+	if ( le->entnum >= 0 && le->entnum < ENTITYNUM_MAX_NORMAL ) {
+		cg_entityDecals[le->entnum] = NULL;
+	}
 	// remove from the doubly linked active list
 	le->prevDecal->nextDecal = le->nextDecal;
 	le->nextDecal->prevDecal = le->prevDecal;
@@ -118,6 +129,8 @@ decalPoly_t	*CG_AllocDecal( void ) {
 	le->prevDecal = &cg_activeDecalPolys;
 	cg_activeDecalPolys.nextDecal->prevDecal = le;
 	cg_activeDecalPolys.nextDecal = le;
+	le->lifetime = MARK_TOTAL_TIME;
+	le->fadetime = MARK_FADE_TIME;
 	return le;
 }
 
@@ -133,6 +146,9 @@ QC TODO: write a proper description here
 
 temporary decals will not be stored or randomly oriented, but immediately
 passed to the renderer.
+lifetime == 0: default time for explosion marks etc
+lifetime < 0: temprorary decal for a single frame
+lifetime > 0: amount of milliseconds 
 =================
 */
 #define	MAX_DECAL_FRAGMENTS		512
@@ -146,7 +162,8 @@ void CG_Decal(
 	float red, float green, float blue, float alpha,
 	qboolean alphaFade,
 	float radius,
-	qboolean temporary
+	int lifetime,
+	int entnum
 )
 {
 	byte			colors[4];
@@ -163,6 +180,12 @@ void CG_Decal(
 
 	if ( radius <= 0 ) {
 		CG_Error( "CG_Decal called with <= 0 radius" );
+	}
+
+	// check if already have this entity decal
+	if ( entnum >= 0 && entnum < ENTITYNUM_MAX_NORMAL && cg_entityDecals[entnum] != NULL ) {
+		//cg_entityDecals[entnum]->lifetime = cg_entityDecals[entnum]->fadetime;
+		return;
 	}
 
 	numFragments = trap_CM_ProjectDecal( origin, dir, radius, radius * 1.5f, orientation,
@@ -197,13 +220,17 @@ void CG_Decal(
 		}
 
 		// if it is a temporary (shadow) mark, add it immediately and forget about it
-		if ( temporary ) {
+		if ( lifetime < 0 ) {
 			trap_R_AddPolyToScene( decalShader, mf->numPoints, verts );
 			continue;
 		}
 
 		// otherwise save it persistantly
 		decal = CG_AllocDecal();
+		if ( lifetime > 0 ) {
+			decal->lifetime = lifetime;
+		}
+		decal->entnum = entnum;
 		decal->time = cg.time;
 		decal->alphaFade = alphaFade;
 		decal->shader = decalShader;
@@ -215,17 +242,17 @@ void CG_Decal(
 		memcpy( decal->verts, verts, mf->numPoints * sizeof( verts[0] ) );
 		memcpy( decal->vertAlpha, vertAlpha, mf->numPoints * sizeof( vertAlpha[0] ) );
 		decalTotal++;
+		if ( entnum >= 0 && entnum < ENTITYNUM_MAX_NORMAL ) {
+			cg_entityDecals[entnum] = decal;
+		}
 	}
 }
-
 
 /*
 ===============
 CG_AddMarks
 ===============
 */
-#define	MARK_TOTAL_TIME		10000
-#define	MARK_FADE_TIME		1000
 
 void CG_AddDecals( void ) {
 	int			j;
@@ -244,7 +271,7 @@ void CG_AddDecals( void ) {
 		next = mp->nextDecal;
 
 		// see if it is time to completely remove it
-		if ( cg.time > mp->time + MARK_TOTAL_TIME ) {
+		if ( cg.time > mp->time + mp->lifetime ) {
 			CG_FreeDecalPoly( mp );
 			continue;
 		}
@@ -269,9 +296,9 @@ void CG_AddDecals( void ) {
 		}
 
 		// fade all marks out with time
-		t = mp->time + MARK_TOTAL_TIME - cg.time;
-		if ( t < MARK_FADE_TIME ) {
-			fade = 255 * t / MARK_FADE_TIME;
+		t = mp->time + mp->lifetime - cg.time;
+		if ( t < mp->fadetime ) {
+			fade = 255 * t / mp->fadetime;
 			if ( mp->alphaFade ) {
 				for ( j = 0 ; j < mp->poly.numVerts ; j++ ) {
 					mp->verts[j].modulate[3] = fade * mp->vertAlpha[j];

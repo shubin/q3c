@@ -230,13 +230,14 @@ typedef struct markPoly_s {
 #if defined( QC )
 typedef struct decalPoly_s {
 	struct decalPoly_s		*prevDecal, *nextDecal;
-	int						time;
+	int						time, lifetime, fadetime;
 	qhandle_t				shader;
 	qboolean				alphaFade;		// fade alpha instead of rgb
 	float					color[4];
 	poly_t					poly;
 	polyVert_t				verts[MAX_VERTS_ON_DECAL_POLY];
 	float					vertAlpha[MAX_VERTS_ON_DECAL_POLY];
+	int						entnum;
 } decalPoly_t;
 #endif // QC
 
@@ -1607,7 +1608,9 @@ void	CG_Decal( qhandle_t decalShader,
 					float orientation,
 					float r, float g, float b, float a,
 					qboolean alphaFade,
-					float radius, qboolean temporary );
+					float radius,
+					int temporary,
+					int entnum );
 #endif // QC
 
 //
