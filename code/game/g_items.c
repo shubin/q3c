@@ -364,11 +364,13 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	}
 	else
 #endif
+
 #if defined( QC )
+	G_RemoveDOT( other, DOT_ALL );
+
 	if ( other->client->ps.champion == CHAMP_GALENA ) {
 		RechargeAbility( other, ( champion_stats[other->client->ps.champion].ability_cooldown / 15 ) );
 	}
-
 	if ( ent->item->quantity != 5 && ent->item->quantity != 100 ) {
 		max = other->client->ps.baseHealth;
 	} else {

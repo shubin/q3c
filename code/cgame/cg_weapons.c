@@ -2169,7 +2169,8 @@ void CG_ActivateAbility( centity_t *cent ) {
 		clientNum = 0;
 	}
 
-	if ( cg.snap->ps.clientNum != clientNum ) {
+	//if ( cg.snap->ps.clientNum != clientNum )
+	{
 		if ( ( cg.time - ci->abilityActivationTime > 3000 ) || ( ci->abilityActivationTime == 0 ) ) {
 			PlayAbilitySound( ci->champion, clientNum );
 		}
@@ -2437,10 +2438,9 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 
 		radius = 4;
 		break;
+
 	case WP_ACID_SPIT:
-		mark = cgs.media.acidSpitShader;
-		radius = 60;
-		sfx = 0;
+		sfx = 0; // QC TODO: play then acid splash sound
 		break;
 #endif
 	}
@@ -2448,6 +2448,13 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	if ( sfx ) {
 		trap_S_StartSound( origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx );
 	}
+
+#if defined( QC )
+	if ( weapon == WP_ACID_SPIT ) {
+		// sound only for acid spit; see CG_AcidSpitDecal in cg_ents.c for the decal planting code
+		return;
+	}
+#endif // QC
 
 	//
 	// create the explosion
@@ -2471,17 +2478,13 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	//
 	// impact mark
 	//
-#if defined( QC )
-	alphaFade = ( mark == cgs.media.energyMarkShader ) || weapon == WP_ACID_SPIT;
-#else // QC
 	alphaFade = (mark == cgs.media.energyMarkShader);	// plasma fades alpha, all others fade color
-#endif // QC
 	if ( weapon == WP_RAILGUN ) {
-		float	*color;
+		float *color;
 
 		// colorize with client color
 		color = cgs.clientinfo[clientNum].color1;
-		CG_ImpactMark( mark, origin, dir, random()*360, color[0],color[1], color[2],1, alphaFade, radius, qfalse );
+		CG_ImpactMark( mark, origin, dir, random() * 360, color[0], color[1], color[2], 1, alphaFade, radius, qfalse );
 	} else {
 		CG_ImpactMark( mark, origin, dir, random()*360, 1,1,1,1, alphaFade, radius, qfalse );
 	}

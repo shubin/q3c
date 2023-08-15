@@ -283,6 +283,8 @@ static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
 	other->client->ps.stats[STAT_HEALTH] = health;
 
 	totem->chargetime[clientNum] = level.time + TOTEM_COOLDOWN;
+
+	G_RemoveDOT( other, DOT_ALL );
 }
 
 static void Totem_Hurt( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
