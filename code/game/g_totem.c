@@ -418,7 +418,6 @@ qboolean G_BounceTotemEgg( gentity_t *ent, trace_t *trace ) {
 		ent->s.pos.trDelta[0] = ent->s.pos.trDelta[1] = ent->s.pos.trDelta[2] = 0.1f;
 		ent->freeAfterEvent = qtrue;
 		ent->s.eType = ET_GENERAL;
-		ent->s.eType = ET_TOTEM;
 		G_AddEvent( ent, EV_BOLT_HIT, 0 );
 
 		VectorCopy( trace->endpos, pos );
