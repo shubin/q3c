@@ -514,7 +514,7 @@ void G_AbilityTickFrame( gclient_t *client ) {
 	}
 }
 
-static void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
+void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
 	playerState_t *ps;
 
 	ps = &other->client->ps;
@@ -597,8 +597,6 @@ void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
 	trigger->s.generic1 = r;
 #endif // _DEBUG
 	trap_LinkEntity( trigger );
-
-	return trigger;
 }
 
 void G_RemoveDOT( gentity_t *ent, int flags ) {

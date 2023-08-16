@@ -43,6 +43,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define  HEAVY_CHAMPION_STARTING_HEALTH {    125,           125,              125,       125,     125,    125 }
 #define  HEAVY_CHAMPION_STARTING_ARMOUR {     75,            75,               75,        75,      75,     75 }
 
+                                     //   mins               maxs
+#define  LIGHT_CHAMPION_DIMENSIONS      { -12, -12, -24 }, { 12, 12, 45 }
+#define MEDIUM_CHAMPION_DIMENSIONS      { -15, -15, -24 }, { 15, 15, 45 }
+#define  HEAVY_CHAMPION_DIMENSIONS      { -18, -18, -24 }, { 18, 18, 45 }
+
 #define MAX_HEALTH_INCREMENT 75
 #define MAX_ARMOUR_INCREMENT 75
 
@@ -67,8 +72,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          320, // speed
         9999, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  40 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // anarki
     {
@@ -90,8 +94,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         320, // speed
         640, // maxspeed
-        { -12, -12, -24 }, // mins
-        {  12,  12,  40 }, // maxs
+        LIGHT_CHAMPION_DIMENSIONS,
     },
     // athena
     {
@@ -113,8 +116,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          320, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        LIGHT_CHAMPION_DIMENSIONS,
     },
     // nyx
     {
@@ -136,8 +138,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          320, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        LIGHT_CHAMPION_DIMENSIONS,
     },
     // slash
     {
@@ -159,8 +160,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         320, // speed
         750, // maxspeed
-        { -15, -15, -24 }, // mins
-        { 15, 15, 32 }, // maxs
+        LIGHT_CHAMPION_DIMENSIONS,
     },
     // bj
     {
@@ -182,8 +182,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // dk
     {
@@ -205,8 +204,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // doomguy
     {
@@ -228,8 +226,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // eisen
     {
@@ -251,8 +248,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // galena
     {
@@ -274,8 +270,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        { 15, 15, 40 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // ranger
     {
@@ -297,8 +292,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         310, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        { 15, 15, 40 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // strogg
     {
@@ -320,8 +314,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         310, // speed
         750, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // visor
     {
@@ -342,9 +335,8 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_CTF
         },
          320, // speed
-        2000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        9999, // maxspeed
+        MEDIUM_CHAMPION_DIMENSIONS,
     },
     // clutch
     {
@@ -380,8 +372,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         300, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        { 15, 15, 32 }, // maxs
+        HEAVY_CHAMPION_DIMENSIONS,
     },
     // keel
     {
@@ -403,8 +394,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          300, // speed
         1000, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  40 }, // maxs
+        HEAVY_CHAMPION_DIMENSIONS,
     },
     // scalebearer
     {
@@ -426,8 +416,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
          300, // speed
         1000, // maxspeed
-        { -18, -18, -24 }, // mins
-        {  18,  18,  32 }, // maxs
+        HEAVY_CHAMPION_DIMENSIONS,
     },
     // sorlag
     {
@@ -449,8 +438,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         },
         300, // speed
         750, // maxspeed
-        { -15, -15, -24 }, // mins
-        {  15,  15,  32 }, // maxs
+        HEAVY_CHAMPION_DIMENSIONS,
     },
 };
 

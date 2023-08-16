@@ -189,7 +189,7 @@ void CG_Decal(
 	}
 
 	numFragments = trap_CM_ProjectDecal( origin, dir, radius, radius * 1.5f, orientation,
-		MAX_DECAL_POINTS, decalPoints, decalAttribs,
+		MAX_DECAL_POINTS, decalPoints[0], decalAttribs[0],
 		MAX_DECAL_FRAGMENTS, decalFragments );
 
 	colors[0] = red * 255;
@@ -208,9 +208,7 @@ void CG_Decal(
 		if ( mf->numPoints > MAX_VERTS_ON_DECAL_POLY ) {
 			mf->numPoints = MAX_VERTS_ON_DECAL_POLY;
 		}
-		for ( j = 0, v = verts ; j < mf->numPoints ; j++, v++ ) {
-			vec3_t		delta;
-
+		for ( j = 0, v = verts ; j < mf->numPoints ; j++, v++ ) {			
 			VectorCopy( decalPoints[mf->firstPoint + j], v->xyz );
 			v->st[0] = decalAttribs[mf->firstPoint + j][0];
 			v->st[1] = decalAttribs[mf->firstPoint + j][1];

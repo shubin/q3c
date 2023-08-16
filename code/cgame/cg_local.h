@@ -1943,7 +1943,9 @@ void trap_CIN_DrawCinematic (int handle);
 void trap_CIN_SetExtents (int handle, int x, int y, int w, int h);
 
 int			trap_RealTime(qtime_t *qtime);
+#if !defined( QC )
 void		trap_SnapVector( float *v );
+#endif // QC
 
 qboolean	trap_loadCamera(const char *name);
 void		trap_startCamera(int time);

@@ -1154,6 +1154,7 @@ void	trap_BotFreeWeaponState(int weaponstate);
 void	trap_BotResetWeaponState(int weaponstate);
 
 int		trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent1, int *parent2, int *child);
-
+#if !defined( QC )
 void	trap_SnapVector( float *v );
+#endif // QC
 

@@ -288,7 +288,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
 #if defined( QC )
 	{ &cg_drawQ3hud, "cg_drawQ3hud", "0", CVAR_ARCHIVE  },
-	{ &cg_playerScale, "cg_playerScale", "1.06", CVAR_CHEAT },
+	{ &cg_playerScale, "cg_playerScale", "1.15", CVAR_CHEAT },
 #endif
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },

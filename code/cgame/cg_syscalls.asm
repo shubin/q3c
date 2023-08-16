@@ -106,6 +106,7 @@ equ acos						-112
 
 equ trap_Get_Advertisements	-501
 equ trap_R_DrawTriangle		-502
+equ trap_CM_ProjectDecal	-503
 
 equ trap_GetValue		-701
 equ trap_LocateIteropData	-702

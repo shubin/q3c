@@ -2599,6 +2599,7 @@ QCCGOBJ_ = \
   $(B)/$(QC)/cgame/bg_slidemove.o \
   $(B)/$(QC)/cgame/bg_lib.o \
   $(B)/$(QC)/cgame/cg_consolecmds.o \
+  $(B)/$(QC)/cgame/cg_decals.o \
   $(B)/$(QC)/cgame/cg_draw.o \
   $(B)/$(QC)/cgame/cg_drawtools.o \
   $(B)/$(QC)/cgame/cg_effects.o \

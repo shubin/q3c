@@ -2372,7 +2372,9 @@ PmoveSingle
 
 ================
 */
+#if !defined( QC )
 void trap_SnapVector( float *v );
+#endif // QC
 
 void PmoveSingle (pmove_t *pmove) {
 	pm = pmove;
@@ -2565,7 +2567,7 @@ void PmoveSingle (pmove_t *pmove) {
 #if defined( QC )
 	//But only if pmove_float is not enabled. We always snap on slick surfaces to prevent acceleration.
 	if ( !( pm->pmove_float ) || pml.groundTrace.surfaceFlags & SURF_SLICK ) {
-		trap_SnapVector( pm->ps->velocity );
+		SnapVector( pm->ps->velocity );
 	}
 #else
 	trap_SnapVector( pm->ps->velocity );

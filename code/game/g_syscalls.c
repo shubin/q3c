@@ -226,9 +226,11 @@ int trap_RealTime( qtime_t *qtime ) {
 	return syscall( G_REAL_TIME, qtime );
 }
 
+#if !defined( QC )
 void trap_SnapVector( float *v ) {
 	syscall( G_SNAPVECTOR, v );
 }
+#endif // QC
 
 // BotLib traps start here
 int trap_BotLibSetup( void ) {

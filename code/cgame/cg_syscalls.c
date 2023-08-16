@@ -187,7 +187,7 @@ int		trap_CM_MarkFragments( int numPoints, const vec3_t *points,
 }
 
 #if defined( QC )
-int			trap_CM_ProjectDecal( 
+int		trap_CM_ProjectDecal( 
 			const vec3_t origin, const vec3_t dir,
 			vec_t radius, vec_t depth, vec_t orientation,
 			int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
@@ -419,9 +419,11 @@ int trap_RealTime(qtime_t *qtime) {
 	return syscall( CG_REAL_TIME, qtime );
 }
 
+#if !defined( QC )
 void trap_SnapVector( float *v ) {
 	syscall( CG_SNAPVECTOR, v );
 }
+#endif // QC
 
 // this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)
 int trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int height, int bits) {
