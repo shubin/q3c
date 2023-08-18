@@ -301,6 +301,9 @@ typedef enum {
 #define	EF_AWARD_ASSIST		0x00020000		// draw a assist sprite
 #define EF_AWARD_DENIED		0x00040000		// denied
 #define EF_TEAMVOTED		0x00080000		// already cast a team vote
+#if defined( QC )
+#define EF_FMUTE			0x00100000		// mute this entity for friends
+#endif // QC
 
 // NOTE: may not have more than 16
 typedef enum {
@@ -656,6 +659,8 @@ typedef enum {
 	MOD_DIRE_ORB,
 	MOD_TOTEM,
 	MOD_TOTEM_SPLASH,
+	MOD_ACID_SPIT,
+	MOD_ACID_SPLASH,
 #endif
 	MOD_WATER,
 	MOD_SLIME,

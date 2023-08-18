@@ -59,12 +59,12 @@ void hud_drawfragmessage( void ) {
 	shadow[3] = color[3];
 	y = hud_bounds.top + 436;
 	w = hud_measurecolorstring( 0.5f, hud_media.font_regular, hud_fragmessage );
-	x = ( hud_bounds.right - hud_bounds.left - w ) / 2.0f;
+	x = ( hud_bounds.right + hud_bounds.left - w ) / 2.0f;
 
 	trap_R_SetColor( color );
 	hud_drawcolorstring( x, y, 0.5f, hud_media.font_regular, hud_fragmessage, shadow, 3, 3, qfalse );
 	w = hud_measurestring( 0.4f, hud_media.font_regular, hud_rankmessage );
-	x = ( hud_bounds.right - hud_bounds.left -w ) / 2.0f;
+	x = ( hud_bounds.right + hud_bounds.left - w ) / 2.0f;
 	color[0] = color[1] = color[2] = 0.75f;
 
 	trap_R_SetColor( color );

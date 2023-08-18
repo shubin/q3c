@@ -33,6 +33,22 @@ void CalcMuzzlePointOrigin ( gentity_t *ent, vec3_t origin, vec3_t forward, vec3
 
 /*
 ================
+G_ClientAffiliation
+
+Get the "affiliation" value for entity friendliness checking.
+This value equals to team for teamplay and to the client number for FFA/tournament.
+================
+*/
+
+int G_ClientAffiliation( gclient_t *client ) {
+	int team;
+
+	team = client->ps.persistant[PERS_TEAM];
+	return team == TEAM_BLUE || team == TEAM_RED ? team : client->ps.clientNum;
+}
+
+/*
+================
 G_GenerateDireOrbProbes
 
 Generate probe directions for the Dire Orb teleportation using the Fibonacci sphere method
@@ -178,7 +194,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 	VectorMA( destination, -1, dir, probe ); // fly the last unit with Ranger's measures
 	G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 	if ( !tr.startsolid && tr.fraction == 1.0f ) { // yes we can
-		TeleportPlayer( self, destination, self->client->ps.viewangles );
+		TeleportPlayer( self, destination, self->client->ps.viewangles, 0 );
 		VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
 		return;
 	}
@@ -209,7 +225,7 @@ void TeleportToTheOrb( gentity_t *self ) {
 	if ( tr.startsolid || ( 1.0f - tr.fraction ) > 0.001f ) { // shit
 		goto skip_normal_backtrace;
 	}
-	TeleportPlayer( self, destination, self->client->ps.viewangles );
+	TeleportPlayer( self, destination, self->client->ps.viewangles, 0 );
 	// TeleportPlayer pushes the player forward, I don't like it
 	VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
 	return;
@@ -236,7 +252,7 @@ skip_normal_backtrace:
 		VectorMA( destination, diameter, s, v );
 		G_TraceEx( self->s.clientNum, &tr, v, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 		if ( !tr.startsolid ) {
-			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles );
+			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles, 0 );
 			// TeleportPlayer pushes the player forward, I don't like it
 			VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
 			return;
@@ -258,7 +274,7 @@ skip_normal_backtrace:
 		}
 		G_TraceEx( self->s.clientNum, &tr, probe, pmins, pmaxs, destination, self->s.number, MASK_PLAYERSOLID );
 		if ( !tr.startsolid && tr.fraction != 0.0f ) {
-			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles );
+			TeleportPlayer( self, tr.endpos, self->client->ps.viewangles, 0 );
 			VectorScale( self->client->ps.velocity, 0.0f, self->client->ps.velocity );
 			break;
 		}
@@ -267,74 +283,7 @@ skip_normal_backtrace:
 }
 
 
-void G_AcidThink( gentity_t *ent ) {
-	vec3_t		dir;
-	vec3_t		origin;
-
-	BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
-	SnapVector( origin );
-	G_SetOrigin( ent, origin );
-
-	// we don't have a valid direction, so just point straight up
-	dir[0] = dir[1] = 0;
-	dir[2] = 1;
-
-	ent->s.eType = ET_GENERAL;
-	G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
-
-	ent->freeAfterEvent = qtrue;
-
-	// splash damage
-	//if ( ent->splashDamage ) {
-	//	if( G_RadiusDamage( ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent
-	//		, ent->splashMethodOfDeath ) ) {
-	//		g_entities[ent->r.ownerNum].client->accuracy_hits++;
-	//	}
-	//}
-
-	trap_LinkEntity( ent );
-}
-
 #if 1
-static
-gentity_t *ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
-	gentity_t	*spit;
-
-	VectorNormalize (dir);
-
-	spit = G_Spawn();
-	spit->classname = "spit";
-	spit->nextthink = level.time + 2500;
-	spit->think = G_AcidThink;
-	spit->s.eType = ET_MISSILE;
-	spit->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	spit->s.weapon = WP_ACID_SPIT;
-	spit->s.eFlags = 0;
-	spit->r.ownerNum = self->s.number;
-	spit->parent = self;
-#if defined( UNLAGGED ) //unlagged - projectile nudge
-	// we'll need this for nudging projectiles later
-	spit->s.otherEntityNum = self->s.number;
-#endif
-	spit->damage = 15;
-	spit->splashDamage = 0;
-	spit->splashRadius = 0;
-	spit->methodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
-	spit->splashMethodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
-	spit->clipmask = MASK_SHOT;
-	spit->target_ent = NULL;
-
-	spit->s.pos.trType = TR_GRAVITY;
-	spit->s.pos.trTime = level.time - 50;		// move a bit on the very first frame
-	spit->s.pos.trGravity = DEFAULT_GRAVITY;
-	VectorCopy( start, spit->s.pos.trBase );
-	VectorScale( dir, 550, spit->s.pos.trDelta );
-	SnapVector( spit->s.pos.trDelta );			// save net bandwidth
-
-	VectorCopy( start, spit->r.currentOrigin );
-
-	return spit;
-}
 #endif
 
 
@@ -423,7 +372,7 @@ void G_ActivateAbility( gentity_t *ent ) {
 		case CHAMP_SORLAG:
 			ent->client->ps.ab_num = MAX_SPITS - 1;
 			ent->client->ps.ab_misctime = level.time + SPIT_DELAY;
-			ThrowAcidSpit( ent, muzzle, forward );
+			G_ThrowAcidSpit( ent, muzzle, forward );
 			break;
 		case CHAMP_GALENA:
 			G_ThrowTotem( ent, muzzle, forward );
@@ -496,7 +445,7 @@ void G_AbilityTickFrame( gclient_t *client ) {
 		client->ps.ab_misctime += 150;
 		AngleVectors( client->ps.viewangles, forward, right, up );
 		CalcMuzzlePointOrigin( &g_entities[client->ps.clientNum], client->oldOrigin, forward, right, up, muzzle );
-		ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );
+		G_ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );
 	}
 
 	if ( client->ps.dotAcidNum > 0 && level.time > client->ps.dotAcidTime ) {
@@ -504,99 +453,13 @@ void G_AbilityTickFrame( gclient_t *client ) {
 		client->ps.dotAcidNum--;
 		client->ps.dotAcidTime = level.time + ACID_DOT_TICK;
 		damage = ACID_DOT_AMOUNT;
-		damage *= other->ps.powerups[PW_QUAD] ? g_quadfactor.value : 1;
+		damage *= ( other->ps.powerups[PW_QUAD] ? g_quadfactor.value : 1 );
 		G_Damage( 
 			&g_entities[client->ps.clientNum], NULL, 
 			&g_entities[other->ps.clientNum],
-			NULL, NULL, damage, DAMAGE_NO_KNOCKBACK, MOD_SLIME
+			NULL, NULL, damage, DAMAGE_NO_KNOCKBACK, MOD_ACID_SPLASH
 		);
-		//G_Printf( "ACID DOT\n" );
 	}
-}
-
-void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
-	playerState_t *ps;
-
-	ps = &other->client->ps;
-	if ( ps->dotAcidNum == 0 ) {
-		ps->dotAcidNum = ACID_DOT_TIMES;
-		ps->dotAcidTime = level.time + 50; // first tick soon
-	}
-}
-
-static void AcidSpit_Think( gentity_t *ent ) {
-	G_FreeEntity( ent );
-}
-
-static void AcidSpit_Trigger( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
-	vec3_t		lower, upper;
-	vec3_t		v1, v2;
-//
-	if ( !other->client ) {
-		return;
-	}
-	if ( G_IsEntityFriendly( other->client->ps.clientNum, trigger->s.number ) ) {
-		//return;
-	}
-
-	// two-point check
-	VectorCopy( other->s.pos.trBase, lower );
-	VectorCopy( lower, upper );
-	upper[2] += 50;
-
-	VectorSubtract( trigger->s.pos.trBase, lower, v1 );
-	VectorSubtract( trigger->s.pos.trBase, upper, v2 );
-	if ( VectorLength( v1 ) > ACID_SPIT_RADIUS && VectorLength( v2 ) > ACID_SPIT_RADIUS ) {
-		return;
-	}
-	if ( !CanDamage( other, trigger->s.pos.trBase ) ) {
-		return;
-	}
-	G_PoisonPlayer( trigger, other, qfalse );
-}
-
-void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
-	gentity_t *trigger;
-	gclient_t *client;
-	int r;
-
-	if ( ent->parent == NULL || ent->parent->client == NULL ) {
-		return;
-	}
-
-	// build the totem trigger
-	trigger = G_Spawn();
-
-	trigger->classname = "spit trigger";
-
-	r = ACID_SPIT_RADIUS;
-	VectorSet( trigger->r.mins, -r, -r, -r );
-	VectorSet( trigger->r.maxs, r, r, r );
-
-	G_SetOrigin( trigger, trace->endpos );
-
-	client = ent->parent->client;
-
-	trigger->s.eType = ET_ACID_TRIGGER;
-	trigger->s.eFlags = EF_NOFF;
-	trigger->s.affiliation = ent->s.affiliation; // same affiliation as the totem
-	trigger->parent = ent->parent;
-	trigger->r.contents = CONTENTS_TRIGGER;
-	trigger->touch = AcidSpit_Trigger;
-	trigger->nextthink = level.time + ACID_LIFETIME;
-	trigger->think = AcidSpit_Think;
-
-	// Copy hit direction and position to the trigger entity so we can restore the decal on the client side if needed.
-	// There may be cases when user does not receive the impact event so we should make sure thet
-	// we'll not have invisible acid spit triggers.
-	VectorNegate( ent->s.angles2, trigger->s.angles2 );
-	VectorCopy( trace->endpos, trigger->s.origin2 );
-	trigger->s.time2 = level.time;
-	trigger->s.loopSoundDist = ( int )( random() * 360 );
-#if defined( _DEBUG )
-	trigger->s.generic1 = r;
-#endif // _DEBUG
-	trap_LinkEntity( trigger );
 }
 
 void G_RemoveDOT( gentity_t *ent, int flags ) {

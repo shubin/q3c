@@ -75,6 +75,8 @@ const char *hud_mod_icons[ MOD_NUM ] = {
 	"hud/mod/direorb",		// MOD_DIRE_ORB
 	"hud/mod/generic",		// MOD_TOTEM
 	"hud/mod/generic",		// MOD_TOTEM_SPLASH
+	"hud/mod/generic",		// MOD_ACID_SPIT
+	"hud/mod/generic",		// MOD_ACID_SPLASH
 	"hud/mod/generic",		// MOD_WATER
 	"hud/mod/generic",		// MOD_SLIME
 	"hud/mod/generic",		// MOD_LAVA

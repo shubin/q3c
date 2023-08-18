@@ -1792,7 +1792,11 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 	trap_Argv( 4, buffer, sizeof( buffer ) );
 	angles[YAW] = atof( buffer );
 
+#if defined( QC )
+	TeleportPlayer( ent, origin, angles, 0 );
+#else // QC
 	TeleportPlayer( ent, origin, angles );
+#endif // QC
 }
 
 

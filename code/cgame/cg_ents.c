@@ -125,6 +125,10 @@ static void CG_EntityEffects( centity_t *cent ) {
 #if defined( QC )
 	vec3_t	dist;
 
+	if ( ( cent->currentState.eFlags & EF_FMUTE ) && CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) ) {
+		return;
+	}
+
 	dist[0] = cent->currentState.loopSoundDist;
 #endif // QC
 
@@ -563,7 +567,7 @@ static void CG_Missile( centity_t *cent ) {
 			ent.axis[0][2] = 1;
 		}
 		RotateAroundDirection( ent.axis, cg.time / 4 );
-		if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+		if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) ) {
 			memcpy( ent.shaderRGBA, blueRGBA, sizeof( ent.shaderRGBA ) );
 		} else {
 			memcpy( ent.shaderRGBA, redRGBA, sizeof( ent.shaderRGBA ) );
@@ -1205,7 +1209,7 @@ static void CG_Totem( centity_t *cent ) {
 	AnglesToAxis( cent->currentState.angles, haze.axis );
 	haze.hModel = cgs.media.totemHazeModel;
 
-	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) ) {
 		memcpy( totem.shaderRGBA, blueRGBA, sizeof( totem.shaderRGBA ) );
 		memcpy( haze.shaderRGBA, blueRGBA, sizeof( haze.shaderRGBA ) );
 
@@ -1263,7 +1267,7 @@ void CG_TotemDecay( centity_t *cent ) {
 	le->refEntity.customSkin = cgs.media.totemDecaySkin;
 	le->refEntity.shaderTime = cg.time / 1000.0f;
 
-	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) ) {
+	if ( CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) ) {
 		le->color[0] = blueRGBA[0];
 		le->color[1] = blueRGBA[1];
 		le->color[2] = blueRGBA[2];
@@ -1276,7 +1280,7 @@ void CG_TotemDecay( centity_t *cent ) {
 	le->startTime = cg.time;
 	le->endTime = cg.time + TOTEM_DECAY_TIME;
 
-	if ( !CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent->currentState.number ) && cg_totemLight.integer ) {
+	if ( !CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) && cg_totemLight.integer ) {
 		// add fading light for the enemy totem
 		le = CG_AllocLocalEntity();
 		le->leType = LE_FADE_LIGHT;
@@ -1299,7 +1303,7 @@ void CG_AcidSpitDecal( centity_t *cent ) {
 			cgs.media.acidSpitShader, 
 			cent->currentState.origin2,
 			cent->currentState.angles2,
-			cent->currentState.loopSoundDist,
+			cent->currentState.modelindex2 * 2,
 			1, 1, 1, 1, qtrue,
 			60, ACID_LIFETIME - ( cg.time - cent->currentState.time2 ) + 500,
 			cent->currentState.number
@@ -1309,16 +1313,16 @@ void CG_AcidSpitDecal( centity_t *cent ) {
 
 #endif
 
-#if defined( QC ) && defined( _DEBUG )
+#if defined( QC )
 /*
 ===============
 CG_AddBBox
 
 ===============
 */
-void CG_AddBBox( centity_t *cent ) {
+void CG_AddTriggerBBox( centity_t *cent ) {
 	polyVert_t verts[4];
-	int i;
+	int i, r;
 	vec3_t mins, maxs;
 	vec_t extx, exty, extz;
 	vec3_t corners[8];
@@ -1333,7 +1337,7 @@ void CG_AddBBox( centity_t *cent ) {
 	//x = ( cent->currentState.solid & 255 );
 	//zd = ( ( cent->currentState.solid >> 8 ) & 255 );
 	//zu = ( ( cent->currentState.solid >> 16 ) & 255 ) - 32;
-	int r = cent->currentState.generic1;
+	r = cent->currentState.generic1;
 
 	mins[0] = mins[1] = -r;
 	maxs[0] = maxs[1] = r;
@@ -1421,7 +1425,7 @@ void CG_AddBBox( centity_t *cent ) {
 	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
 }
 
-#endif // QC && _DEBUG
+#endif // QC
 
 /*
 ===============
@@ -1485,13 +1489,13 @@ static void CG_AddCEntity( centity_t *cent ) {
 		break;
 	case ET_ACID_TRIGGER:
 		CG_AcidSpitDecal( cent );
-#if defined( QC )
-		//CG_AddBBox( cent ); 
-#endif // QC
+		if ( cg_drawBBox.integer ) {
+			CG_AddTriggerBBox( cent );
+		}
 		break;
 #if defined( _DEBUG )
 	case ET_DEBUG_TRIGGER:
-		CG_AddBBox( cent );
+		CG_AddTriggerBBox( cent );
 		break;
 #endif // _DEBUG
 #endif

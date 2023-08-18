@@ -1529,6 +1529,10 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		else
 #endif
 #if defined( QC )
+		if ( ps->dotAcidNum || ps->dotFireNum ) {
+			return qtrue;
+		}
+
 		if ( item->quantity == 5 || item->quantity == 100 ) {
 			if ( ps->stats[STAT_HEALTH] >= ps->stats[STAT_MAX_HEALTH] ) {
 				return qfalse;

@@ -252,7 +252,10 @@ vmCvar_t	cg_piercingSightLight;
 vmCvar_t	cg_totemEffects;
 vmCvar_t	cg_totemLight;
 vmCvar_t	cg_abilityGaugeOffset;
-#endif
+// weapon effect appearance
+vmCvar_t	cg_railCoreWidth;
+vmCvar_t	cg_lightingBeamWidth;
+#endif // QC
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -441,6 +444,8 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
 	{ &cg_totemLight, "cg_totemLight", "1", CVAR_ARCHIVE },
 	{ &cg_abilityGaugeOffset, "cg_abilityGaugeOffset", "0", CVAR_ARCHIVE },
+	{ &cg_railCoreWidth, "cg_railCoreWidth", "8", CVAR_ARCHIVE },
+	{ &cg_lightingBeamWidth, "cg_lightingBeamWidth", "8", CVAR_ARCHIVE },
 #endif
 };
 

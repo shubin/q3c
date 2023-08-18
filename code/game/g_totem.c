@@ -38,10 +38,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TOTEM_HURT_RADIUS		75
 #define TOTEM_EGG_RADIUS		6
 #define TOTEM_THROW_SPEED		580
-#if !defined( DEBUG )
-#define TOTEM_COOLDOWN			40000
-#else // DEBUG
+#if defined( DEBUG )
 #define TOTEM_COOLDOWN			4000
+#else // DEBUG
+#define TOTEM_COOLDOWN			40000
 #endif // DEBUG
 
 typedef struct {
@@ -55,13 +55,6 @@ typedef struct {
 } totem_bush_t;
 
 static totem_bush_t	s_playertotems[MAX_TOTEM_USERS];
-
-static int ClientAffiliation( gclient_t *client ) {
-	int team;
-
-	team = client->ps.persistant[PERS_TEAM];
-	return team == TEAM_BLUE || team == TEAM_RED ? team : client->ps.clientNum;
-}
 
 static void UpdateTotemCount( int clientNum ) {
 #if defined( DEBUG )
@@ -339,7 +332,7 @@ static gentity_t* CreateTotemEntity( gentity_t *eggent, const vec3_t pos ) {
 	// client index for FFA modes.
 	// It is needed to perform checking for friendliness, see IsEntityFriendly() in cg_predict.c
 	// and G_IsEntityFriendly() in g_misc.c
-	newtotem->s.affiliation = ClientAffiliation( client );
+	newtotem->s.affiliation = G_ClientAffiliation( client );
 	//newtotem->s.affiliation = 9;
 	// s.totemcharge is a bit set, for each client number the corresponding bit shows whether the totem is
 	// charged and ready to heal.
@@ -485,7 +478,6 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	gentity_t *egg;
 	int quadFactor;
 	trace_t tr;
-	vec3_t v;
 
 	ps = &ent->client->ps;
 
@@ -521,7 +513,7 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	egg->methodOfDeath = MOD_TOTEM;
 	egg->splashMethodOfDeath = MOD_TOTEM_SPLASH;
 	egg->s.eFlags = EF_NOFF;
-	egg->s.affiliation = ClientAffiliation( ent->client );
+	egg->s.affiliation = G_ClientAffiliation( ent->client );
 	// NERF this grenade a bit
 	egg->damage = 75;
 	egg->splashDamage = 0;

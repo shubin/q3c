@@ -76,11 +76,21 @@ TELEPORTERS
 =================================================================================
 */
 
+#if defined( QC )
+void TeleportPlayer( gentity_t * player, vec3_t origin, vec3_t angles, int flags ) {
+#else // QC
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
+#endif // QC
 	gentity_t	*tent;
 	qboolean noAngles;
 
+#if defined( QC )
+	float	speed = 0;
+
+	noAngles = flags & TP_NOANGLES;
+#else // QC
 	noAngles = (angles[0] > 999999.0);
+#endif // QC
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if ( player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
@@ -102,10 +112,25 @@ void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 #endif
 	if (!noAngles) {
 	// spit the player out
+#if defined( QC )
+	if ( !(flags & TP_RESETSPEED ) ) {
+		// horizontal speed
+		speed = 1.0f / Q_rsqrt( player->client->ps.velocity[0] * player->client->ps.velocity[0] + player->client->ps.velocity[1] * player->client->ps.velocity[1] );
+	}
+	speed = MAX( speed, 400 );
+#endif // QC
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
+#if defined( QC )
+	VectorScale( player->client->ps.velocity, speed, player->client->ps.velocity );
+	if ( !( flags & TP_NOHOLD ) ) {
+		player->client->ps.pm_time = 160;		// hold time
+		player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	}
+#else // QC
 	VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
 	player->client->ps.pm_time = 160;		// hold time
 	player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+#endif // QC
 	// set angles
 	SetClientViewAngle(player, angles);
 	}

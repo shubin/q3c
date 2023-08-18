@@ -2153,13 +2153,25 @@ static void CG_PlayerSplash( centity_t *cent ) {
 	trace_t		trace;
 	int			contents;
 	polyVert_t	verts[4];
+#if defined( QC )
+	float		minz, maxz;
+#endif // QC
+
+#if defined( QC )
+	minz = champion_stats[cgs.clientinfo[cent->currentState.clientNum].champion].mins[2];
+	maxz = champion_stats[cgs.clientinfo[cent->currentState.clientNum].champion].maxs[2];
+#endif // QC
 
 	if ( !cg_shadows.integer ) {
 		return;
 	}
 
 	VectorCopy( cent->lerpOrigin, end );
+#if defined( QC )
+	end[2] += minz;
+#else // QC
 	end[2] -= 24;
+#endif // QC
 
 	// if the feet aren't in liquid, don't make a mark
 	// this won't handle moving water brushes, but they wouldn't draw right anyway...
@@ -2169,7 +2181,11 @@ static void CG_PlayerSplash( centity_t *cent ) {
 	}
 
 	VectorCopy( cent->lerpOrigin, start );
-	start[2] += 32;
+#if defined( QC )
+	start[2] += maxz;
+#else // QC
+	start[2] += 32;		
+#endif // QC
 
 	// if the head isn't out of liquid, don't make a mark
 	contents = CG_PointContents( start, 0 );

@@ -366,6 +366,11 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity,
 				ent->s.origin, ent->damage, 
 				0, ent->methodOfDeath);
+#if defined( QC )
+			if ( ent->s.weapon == WP_ACID_SPIT ) {
+				G_PoisonPlayer( ent, other, qtrue );
+			}
+#endif // QC
 		}
 	}
 

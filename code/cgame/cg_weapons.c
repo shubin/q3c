@@ -243,6 +243,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 	re->shaderTime = cg.time / 1000.0f;
 #if defined( QC )
 	re->reType = RT_LIGHTNING;
+	re->radius = Com_Clamp( 1, 32, cg_railCoreWidth.integer );
 #else
 	re->reType = RT_RAIL_CORE;
 #endif
@@ -268,6 +269,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 	{
 		// nudge down a bit so it isn't exactly in center
 		re->origin[2] -= 6;
+		re->oldorigin[2] -= 6;
 		return;
 	}
 #else
@@ -1268,6 +1270,9 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	VectorCopy( origin, beam.origin );
 
 	beam.reType = RT_LIGHTNING;
+#if defined( QC )
+	beam.radius = Com_Clamp( 1, 32, cg_lightingBeamWidth.integer );
+#endif // QC
 	beam.customShader = cgs.media.lightningShader;
 	trap_R_AddRefEntityToScene( &beam );
 

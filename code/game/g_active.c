@@ -154,12 +154,19 @@ void P_WorldEffects( gentity_t *ent ) {
 			if ( envirosuit ) {
 				G_AddEvent( ent, EV_POWERUP_BATTLESUIT, 0 );
 			} else {
+#if defined( QC )
+				if ( ent->watertype & CONTENTS_LAVA && ent->client->ps.champion != CHAMP_DK ) {
+#else // QC
 				if (ent->watertype & CONTENTS_LAVA) {
+#endif // QC
 					G_Damage (ent, NULL, NULL, NULL, NULL, 
 						30*waterlevel, 0, MOD_LAVA);
 				}
-
+#if defined( QC )
+				if ( ent->watertype & CONTENTS_SLIME && ent->client->ps.champion != CHAMP_SORLAG ) {
+#else // QC
 				if (ent->watertype & CONTENTS_SLIME) {
+#endif // QC
 					G_Damage (ent, NULL, NULL, NULL, NULL, 
 						10*waterlevel, 0, MOD_SLIME);
 				}
@@ -710,7 +717,11 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			}
 #endif
 			SelectSpawnPoint( ent->client->ps.origin, origin, angles, qfalse );
+#if defined( QC )
+			TeleportPlayer( ent, origin, angles, 0 );
+#else // QC
 			TeleportPlayer( ent, origin, angles );
+#endif // QC
 			break;
 
 		case EV_USE_ITEM2:		// medkit

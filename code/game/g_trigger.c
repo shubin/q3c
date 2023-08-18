@@ -295,7 +295,12 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 		return;
 	}
 
+#if defined( QC )
+	// spawnflag 2 for the teleport trigger means that this teleporter keeps the player speed
+	TeleportPlayer( other, dest->s.origin, dest->s.angles, ( self->spawnflags & 2 ) ? TP_RESETSPEED : 0 );
+#else // QC
 	TeleportPlayer( other, dest->s.origin, dest->s.angles );
+#endif // QC
 }
 
 

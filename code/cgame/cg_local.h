@@ -1100,8 +1100,8 @@ typedef struct {
 
 #if defined( QC )
 	// champion models
-	clientInfo_t championModels[NUM_CHAMPIONS];
-	sfxHandle_t	abilitySounds[NUM_CHAMPIONS];
+	clientInfo_t	championModels[NUM_CHAMPIONS];
+	sfxHandle_t		abilitySounds[NUM_CHAMPIONS];
 	// QL ads
 	qhandle_t	adbox1x1;
 	qhandle_t	adbox2x1;
@@ -1364,6 +1364,8 @@ extern	vmCvar_t		cg_piercingSightLight;
 extern	vmCvar_t		cg_totemEffects;
 extern	vmCvar_t		cg_totemLight;
 extern	vmCvar_t		cg_abilityGaugeOffset;
+extern	vmCvar_t		cg_railCoreWidth;
+extern	vmCvar_t		cg_lightingBeamWidth;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;
@@ -1522,7 +1524,7 @@ void CG_PredictPlayerState( void );
 void CG_LoadDeferredPlayers( void );
 
 #if defined( QC )
-qboolean CG_IsEntityFriendly( int clientNum, int traceEnt );
+qboolean CG_IsEntityFriendly( int clientNum, centity_t *cent );
 int	CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum );
 void CG_TraceEx( int clientNum, trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs,
 					const vec3_t end, int skipNumber, int mask );

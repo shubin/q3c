@@ -846,7 +846,11 @@ static void Touch_DoorTriggerSpectator( gentity_t *ent, gentity_t *other, trace_
 		origin[axis] = doorMax + 10;
 	}
 
+#if defined( QC )
+	TeleportPlayer( other, origin, NULL, TP_NOANGLES );
+#else // QC
 	TeleportPlayer(other, origin, tv(10000000.0, 0, 0));
+#endif // QC
 }
 
 /*

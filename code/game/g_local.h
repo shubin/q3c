@@ -646,7 +646,16 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 //
 // g_misc.c
 //
+#if defined( QC )
+
+#define TP_NOANGLES		1
+#define TP_NOHOLD		2
+#define TP_RESETSPEED	4
+
+void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles, int flags );
+#else // QC
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles );
+#endif // QC
 #ifdef MISSIONPACK
 void DropPortalSource( gentity_t *ent );
 void DropPortalDestination( gentity_t *ent );
@@ -726,11 +735,12 @@ void G_ExplodeMissile( gentity_t *ent );
 // g_ability.c
 //
 void G_GenerateDireOrbProbes( void );
+int  G_ClientAffiliation( gclient_t *client );
 void G_ActivateAbility( gentity_t *ent );
 void G_AbilityTickTenth( gclient_t *client );
 void G_AbilityTickSecond( gclient_t *client );
 void G_AbilityTickFrame( gclient_t *client );
-void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
+
 
 typedef enum {
 	DOT_ACID = 1,
@@ -739,6 +749,13 @@ typedef enum {
 } dotFlag_t;
 
 void G_RemoveDOT( gentity_t *ent, int flags );
+
+//
+// g_acidspit.c
+//
+
+void G_ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir );
+void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct );
 
 //
 // g_totem.c

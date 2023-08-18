@@ -368,6 +368,10 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 #if defined( QC )
 	G_RemoveDOT( other, DOT_ALL );
 
+	if ( !BG_CanItemBeGrabbed( g_gametype.integer, &ent->s, &other->client->ps ) ) {
+		goto skip;
+	}
+
 	if ( other->client->ps.champion == CHAMP_GALENA ) {
 		RechargeAbility( other, ( champion_stats[other->client->ps.champion].ability_cooldown / 15 ) );
 	}
@@ -408,6 +412,7 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 		return RESPAWN_MEGAHEALTH;
 	}
 #if defined( QC )
+skip:
 	if ( ent->item->quantity == 5 ) {
 		return RESPANW_BUBBLE;
 	}
