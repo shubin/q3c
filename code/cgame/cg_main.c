@@ -255,6 +255,11 @@ vmCvar_t	cg_abilityGaugeOffset;
 // weapon effect appearance
 vmCvar_t	cg_railCoreWidth;
 vmCvar_t	cg_lightingBeamWidth;
+vmCvar_t	cg_bubbleTrail;
+vmCvar_t	cg_muzzleFlash;
+vmCvar_t	cg_smokeRadius_RL;
+vmCvar_t	cg_smokeRadius_GL;
+vmCvar_t	cg_smokeRadius_TB;
 #endif // QC
 
 typedef struct {
@@ -446,6 +451,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_abilityGaugeOffset, "cg_abilityGaugeOffset", "0", CVAR_ARCHIVE },
 	{ &cg_railCoreWidth, "cg_railCoreWidth", "8", CVAR_ARCHIVE },
 	{ &cg_lightingBeamWidth, "cg_lightingBeamWidth", "8", CVAR_ARCHIVE },
+	{ &cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
+	{ &cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
+	{ &cg_smokeRadius_RL, "cg_smokeRadius_RL", "32", CVAR_ARCHIVE },
+	{ &cg_smokeRadius_GL, "cg_smokeRadius_GL", "64", CVAR_ARCHIVE },
+	{ &cg_smokeRadius_TB, "cg_smokeRadius_TB", "24", CVAR_ARCHIVE },
 #endif
 };
 

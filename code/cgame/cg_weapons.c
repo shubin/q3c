@@ -347,12 +347,12 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 
 /*
 ==========================
-CG_RocketTrail
+CG_SmokeTrail
 
 ==========================
 */
 
-static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
+static void CG_SmokeTrail( centity_t *ent, int trailRadius, float trailTime ) {
 	int		step;
 	vec3_t	origin, lastPos;
 	int		t;
@@ -365,6 +365,12 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	if ( cg_noProjectileTrail.integer ) {
 		return;
 	}
+
+	if ( trailRadius == 0.0f || trailTime == 0.0f ) {
+		return;
+	}
+
+	trailRadius = Com_Clamp( 0, 128, trailRadius );
 
 	up[0] = 5 - 10 * crandom();
 	up[1] = 5 - 10 * crandom();
@@ -399,9 +405,27 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 
 	for ( ; t <= ent->trailTime; t += step ) {
 		BG_EvaluateTrajectory( &es->pos, t, lastPos );
-		smoke = CG_SmokePuff( lastPos, up, 27, 1, 1, 1, 0.9f, wi->wiTrailTime, t, 0, 0, cgs.media.smokeShader[rand() % 4] );
+		smoke = CG_SmokePuff( lastPos, up, trailRadius, 1, 1, 1, 0.9f, trailTime, t, 0, 0, cgs.media.smokeShader[rand() % 4] );
 		smoke->leType = LE_MOVE_SCALE_FADE;
 	}
+}
+
+/*
+==========================
+CG_RocketTrail
+==========================
+*/
+static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
+	CG_SmokeTrail( ent, cg_smokeRadius_RL.integer, wi->wiTrailTime );
+}
+
+/*
+==========================
+CG_TriboltTrail
+==========================
+*/
+static void CG_TriboltTrail( centity_t *ent, const weaponInfo_t *wi ) {
+	CG_SmokeTrail( ent, cg_smokeRadius_TB.integer, wi->wiTrailTime );
 }
 
 #else // QC
@@ -679,7 +703,11 @@ CG_GrenadeTrail
 ==========================
 */
 static void CG_GrenadeTrail( centity_t *ent, const weaponInfo_t *wi ) {
+#if defined( QC )
+	CG_SmokeTrail( ent, cg_smokeRadius_GL.integer, wi->wiTrailTime );
+#else // QC
 	CG_RocketTrail( ent, wi );
+#endif // QC
 }
 
 #if defined( QC )
@@ -885,7 +913,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 	case WP_TRIBOLT:
 		weaponInfo->missileModel = trap_R_RegisterModel( "models/ammo/tribolt/bolt.md3" );
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
-		weaponInfo->missileTrailFunc = CG_RocketTrail;
+		weaponInfo->missileTrailFunc = CG_TriboltTrail;
 		weaponInfo->missileDlight = 100;
 		weaponInfo->wiTrailTime = 2000;
 		weaponInfo->trailRadius = 32;
@@ -1454,6 +1482,9 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	weaponInfo_t	*weapon;
 	centity_t	*nonPredictedCent;
 	orientation_t	lerped;
+#if defined( QC )
+	qboolean	muzzleFlash;
+#endif // QC
 
 	weaponNum = cent->currentState.weapon;
 
@@ -1601,7 +1632,22 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	}
 
 	CG_PositionRotatedEntityOnTag( &flash, &gun, weapon->weaponModel, "tag_flash");
+
+#if defined( QC )
+	muzzleFlash = qtrue;
+
+	if ( ps != NULL ) {
+		if ( !cg_muzzleFlash.integer ) {
+			muzzleFlash = qfalse;
+		}
+	}
+
+	if ( muzzleFlash ) {
+		trap_R_AddRefEntityToScene( &flash );
+	}
+#else // QC
 	trap_R_AddRefEntityToScene( &flash );
+#endif // QC
 
 	if ( ps || cg.renderingThirdPerson ||
 		cent->currentState.number != cg.predictedPlayerState.clientNum ) {

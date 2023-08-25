@@ -1366,6 +1366,11 @@ extern	vmCvar_t		cg_totemLight;
 extern	vmCvar_t		cg_abilityGaugeOffset;
 extern	vmCvar_t		cg_railCoreWidth;
 extern	vmCvar_t		cg_lightingBeamWidth;
+extern	vmCvar_t		cg_bubbleTrail;
+extern	vmCvar_t		cg_muzzleFlash;
+extern	vmCvar_t		cg_smokeRadius_RL;
+extern	vmCvar_t		cg_smokeRadius_GL;
+extern	vmCvar_t		cg_smokeRadius_TB;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

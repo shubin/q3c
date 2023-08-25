@@ -43,6 +43,12 @@ void CG_BubbleTrail( vec3_t start, vec3_t end, float spacing ) {
 		return;
 	}
 
+#if defined( QC )
+	if ( !cg_bubbleTrail.integer ) {
+		return;
+	}
+#endif // QC
+
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
