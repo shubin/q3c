@@ -156,7 +156,11 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			VectorScale( v, 32, v );
 			VectorAdd( muzzlePoint, v, v );
 
+#if defined( QC )
+			if ( cg_smoke_SG.integer ) {
+#else // QC
 			if ( cgs.glconfig.hardwareType != GLHW_RAGEPRO ) {
+#endif // QC
 				// ragepro can't alpha fade, so don't even bother with smoke
 				vec3_t			up;
 
