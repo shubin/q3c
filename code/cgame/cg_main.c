@@ -262,6 +262,7 @@ vmCvar_t	cg_smokeRadius_GL;
 vmCvar_t	cg_smokeRadius_TB;
 vmCvar_t	cg_smoke_SG;
 vmCvar_t	cg_bob;
+vmCvar_t	cg_crosshairPulse;
 #endif // QC
 
 typedef struct {
@@ -460,6 +461,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_smokeRadius_TB, "cg_smokeRadius_TB", "24", CVAR_ARCHIVE },
 	{ &cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
 	{ &cg_bob, "cg_bob", "1", CVAR_ARCHIVE },
+	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
 #endif
 };
 

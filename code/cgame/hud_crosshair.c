@@ -45,6 +45,7 @@ void hud_drawcrosshair( void ) {
 	f = cg.time - cg.itemPickupBlendTime;
 	if ( f > 0 && f < ITEM_BLOB_TIME ) {
 		f /= ITEM_BLOB_TIME;
+		f *= cg_crosshairPulse.value;
 		w *= ( 1 + f );
 		h *= ( 1 + f );
 	}

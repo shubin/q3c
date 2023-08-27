@@ -1952,6 +1952,9 @@ static void CG_DrawCrosshair(void)
 	f = cg.time - cg.itemPickupBlendTime;
 	if ( f > 0 && f < ITEM_BLOB_TIME ) {
 		f /= ITEM_BLOB_TIME;
+#if defined( QC )
+		f *= Com_Clamp( 0.0f, 2.0f, cg_crosshairPulse.value );
+#endif // QC
 		w *= ( 1 + f );
 		h *= ( 1 + f );
 	}
