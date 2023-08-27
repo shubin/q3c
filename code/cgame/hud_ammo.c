@@ -39,8 +39,8 @@ void hud_drawammo( void ) {
 	// currently selected weapon
 	weapon = cent->currentState.weapon;
 	if ( weapon ) {
-		if ( weapon != WP_GAUNTLET ) {
-			icon = cg_weapons[weapon].ammoIcon;
+		icon = cg_weapons[weapon].weaponIcon;
+		if ( weapon != WP_GAUNTLET ) {			
 			value = ps->ammo[cent->currentState.weapon];
 			if ( value < 0 ) {
 				value = 0;
@@ -48,9 +48,6 @@ void hud_drawammo( void ) {
 			ammo = va( "%d", value );
 			ammow = hud_measurestring( 1.15f, hud_media.font_qcde, ammo );
 			hud_drawstring( hud_bounds.right - 185 - ammow, hud_bounds.bottom - 95, 1.15f, hud_media.font_qcde, va( "%d", value ), NULL, 0, 0 );
-		}
-		else {
-			icon = cg_weapons[weapon].weaponIcon;
 		}
 		hud_drawpic( hud_bounds.right - 135, hud_bounds.bottom - 128, 64, 64, 0.5f, 0.5f, icon );
 	}
