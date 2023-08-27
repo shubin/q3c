@@ -43,7 +43,11 @@ void CG_CheckAmmo( void ) {
 	// see about how many seconds of ammo we have remaining
 	weapons = cg.snap->ps.stats[ STAT_WEAPONS ];
 	total = 0;
+#if defined( QC )
+	for ( i = WP_MACHINEGUN ; i < WP_DIRE_ORB; i++ ) {
+#else // QC
 	for ( i = WP_MACHINEGUN ; i < WP_NUM_WEAPONS ; i++ ) {
+#endif // QC
 		if ( ! ( weapons & ( 1 << i ) ) ) {
 			continue;
 		}

@@ -378,9 +378,15 @@ static void CG_OffsetFirstPersonView( void ) {
 	VectorCopy( cg.predictedPlayerState.velocity, predictedVelocity );
 
 	delta = DotProduct ( predictedVelocity, cg.refdef.viewaxis[0]);
+#if defined( QC )
+	delta *= Com_Clamp( 0.0f, 1.0f, cg_bob.value );
+#endif // QC
 	angles[PITCH] += delta * cg_runpitch.value;
 	
 	delta = DotProduct ( predictedVelocity, cg.refdef.viewaxis[1]);
+#if defined( QC )
+	delta *= Com_Clamp( 0.0f, 1.0f, cg_bob.value );
+#endif // QC
 	angles[ROLL] -= delta * cg_runroll.value;
 
 	// add angles based on bob
@@ -389,6 +395,9 @@ static void CG_OffsetFirstPersonView( void ) {
 	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 	delta = cg.bobfracsin * cg_bobpitch.value * speed;
+#if defined( QC )
+	delta *= Com_Clamp( 0.0f, 1.0f, cg_bob.value );
+#endif // QC
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
 		delta *= 3;		// crouching
 	angles[PITCH] += delta;
@@ -397,6 +406,9 @@ static void CG_OffsetFirstPersonView( void ) {
 		delta *= 3;		// crouching accentuates roll
 	if (cg.bobcycle & 1)
 		delta = -delta;
+#if defined( QC )
+	delta *= Com_Clamp( 0.0f, 1.0f, cg_bob.value );
+#endif // QC
 	angles[ROLL] += delta;
 
 //===================================
@@ -413,6 +425,9 @@ static void CG_OffsetFirstPersonView( void ) {
 
 	// add bob height
 	bob = cg.bobfracsin * cg.xyspeed * cg_bobup.value;
+#if defined( QC )
+	bob *= Com_Clamp( 0.0f, 1.0f, cg_bob.value );
+#endif // QC
 	if (bob > 6) {
 		bob = 6;
 	}
