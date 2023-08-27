@@ -1682,7 +1682,11 @@ static void CG_DrawDisconnect( void ) {
 CG_DrawLagometer
 ==============
 */
+#if defined( QC )
+void CG_DrawLagometer( void ) {
+#else // QC
 static void CG_DrawLagometer( void ) {
+#endif // QC
 	int		a, x, y, i;
 	float	v;
 	float	ax, ay, aw, ah, mid, range;

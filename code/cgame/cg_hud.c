@@ -78,6 +78,8 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 		return;
 	}
 
+	CG_DrawLagometer();
+
 	hud_draw_ability();
 	hud_drawstatus();
 	hud_drawammo();

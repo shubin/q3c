@@ -1521,6 +1521,13 @@ sfxHandle_t	CG_CustomSound( int clientNum, const char *soundName );
 qboolean CG_RegisterChampionModels( void );
 #endif
 
+#if defined( QC )
+//
+// cg_draw.c
+//
+void CG_DrawLagometer( void );
+#endif // QC
+
 //
 // cg_predict.c
 //
