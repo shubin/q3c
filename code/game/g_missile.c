@@ -491,7 +491,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 #if defined( QC )
 		if( G_RadiusDamage( trace->endpos, ent, ent->splashDamage, ent->minSplashDamage,
 			ent->splashRadius, other, ent->splashMethodOfDeath ) ) {
-			if ( !hitClient ) {
+			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 				g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
 			}
@@ -499,7 +499,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 #else
 		if( G_RadiusDamage( trace->endpos, ent->parent, ent->splashDamage, ent->splashRadius,
 			other, ent->splashMethodOfDeath ) ) {
-			if ( !hitClient ) {
+			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 			}
 		}
