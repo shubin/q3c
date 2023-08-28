@@ -69,6 +69,7 @@ Explode a missile without an impact
 void G_ExplodeMissile( gentity_t *ent ) {
 	vec3_t		dir;
 	vec3_t		origin;
+	qboolean	isRadiusDamage = qfalse;
 
 	BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
 	SnapVector( origin );
@@ -86,16 +87,30 @@ void G_ExplodeMissile( gentity_t *ent ) {
 	// splash damage
 	if ( ent->splashDamage ) {
 #if defined( QC )
-		if( G_RadiusDamage( ent->r.currentOrigin, ent, ent->splashDamage, ent->splashRadius, ent
-			, ent->splashMethodOfDeath ) ) {
+		isRadiusDamage = G_RadiusDamage(
+			ent->r.currentOrigin,
+			ent,
+			ent->splashDamage,
+			ent->minSplashDamage,
+			ent->splashRadius,
+			ent,
+			ent->splashMethodOfDeath
+		);
 #else
-		if( G_RadiusDamage( ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent
-			, ent->splashMethodOfDeath ) ) {
+		isRadiusDamage = G_RadiusDamage(
+			ent->r.currentOrigin,
+			ent->parent,
+			ent->splashDamage,
+			ent->splashRadius,
+			ent,
+			ent->splashMethodOfDeath
+		);
 #endif
+		if ( isRadiusDamage ) {
 			g_entities[ent->r.ownerNum].client->accuracy_hits++;
-	#if defined( QC )
+#if defined( QC )
 			g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
-	#endif
+#endif
 		}
 	}
 
@@ -278,8 +293,9 @@ G_MissileImpact
 ================
 */
 void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
-	gentity_t *other;
-	qboolean		hitClient = qfalse;
+	gentity_t	*other;
+	qboolean	hitClient = qfalse;
+	qboolean	isRadiusDamage = qfalse;
 #ifdef MISSIONPACK
 	vec3_t			forward, impactpoint, bouncedir;
 	int				eFlags;
@@ -489,16 +505,31 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	// splash damage (doesn't apply to person directly hit)
 	if ( ent->splashDamage ) {
 #if defined( QC )
-		if( G_RadiusDamage( trace->endpos, ent, ent->splashDamage, ent->splashRadius, 
+		isRadiusDamage = G_RadiusDamage(
+			trace->endpos,
+			ent,
+			ent->splashDamage,
+			ent->minSplashDamage,
+			ent->splashRadius,
+			other,
+			ent->splashMethodOfDeath
+		);
 #else
-		if( G_RadiusDamage( trace->endpos, ent->parent, ent->splashDamage, ent->splashRadius, 
+		isRadiusDamage = G_RadiusDamage(
+			trace->endpos,
+			ent->parent,
+			ent->splashDamage,
+			ent->splashRadius,
+			other,
+			ent->splashMethodOfDeath
+		);
 #endif
-			other, ent->splashMethodOfDeath ) ) {
+		if ( isRadiusDamage ) {
 			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
-	#if defined( QC )
+#if defined( QC )
 				g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
-	#endif
+#endif
 			}
 		}
 	}
@@ -726,6 +757,7 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 #endif
 	bolt->parent = self;
 #if defined( QC )
+	bolt->minSplashDamage = 1;
 	bolt->damage = 15;
 #else
 	bolt->damage = 20;
@@ -773,6 +805,7 @@ gentity_t *fire_lousy_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->s.otherEntityNum = self->s.number;
 #endif
 	bolt->parent = self;
+	bolt->minSplashDamage = 1;
 	bolt->damage = 12;
 	bolt->splashDamage = 8;
 	bolt->splashRadius = 15;
@@ -816,8 +849,9 @@ gentity_t *fire_bolt (gentity_t *self, vec3_t start, vec3_t dir) {
 #endif
 	bolt->parent = self;
 	bolt->damage = 35;
+	bolt->minSplashDamage = 10;
 	bolt->splashDamage = 35;
-	bolt->splashRadius = 80;
+	bolt->splashRadius = 100;
 	bolt->methodOfDeath = MOD_TRIBOLT;
 	bolt->splashMethodOfDeath = MOD_TRIBOLT_SPLASH;
 	bolt->clipmask = MASK_SHOT;
@@ -863,6 +897,9 @@ gentity_t *fire_grenade (gentity_t *self, vec3_t start, vec3_t dir) {
 #endif
 	bolt->parent = self;
 	bolt->damage = 100;
+#if defined( QC )
+	bolt->minSplashDamage = 1;
+#endif
 	bolt->splashDamage = 100;
 	bolt->splashRadius = 150;
 	bolt->methodOfDeath = MOD_GRENADE;
@@ -911,6 +948,9 @@ gentity_t *fire_bfg (gentity_t *self, vec3_t start, vec3_t dir) {
 #endif
 	bolt->parent = self;
 	bolt->damage = 100;
+#if defined( QC )
+	bolt->minSplashDamage = 10;
+#endif
 	bolt->splashDamage = 100;
 	bolt->splashRadius = 120;
 	bolt->methodOfDeath = MOD_BFG;
@@ -955,6 +995,9 @@ gentity_t *fire_rocket (gentity_t *self, vec3_t start, vec3_t dir) {
 #endif
 	bolt->parent = self;
 	bolt->damage = 100;
+#if defined( QC )
+	bolt->minSplashDamage = 10;
+#endif
 	bolt->splashDamage = 100;
 	bolt->splashRadius = 120;
 	bolt->methodOfDeath = MOD_ROCKET;
@@ -1112,6 +1155,9 @@ gentity_t *fire_prox( gentity_t *self, vec3_t start, vec3_t dir ) {
 #endif
 	bolt->parent = self;
 	bolt->damage = 0;
+#if defined( QC )
+	bolt->minSplashDamage = 1;
+#endif
 	bolt->splashDamage = 100;
 	bolt->splashRadius = 150;
 	bolt->methodOfDeath = MOD_PROXIMITY_MINE;
