@@ -161,6 +161,7 @@ void G_ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
 	spit->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	spit->s.weapon = WP_ACID_SPIT;
 	spit->s.eFlags = 0;
+	spit->s.affiliation = G_ClientAffiliation( self->client );
 	spit->r.ownerNum = self->s.number;
 	spit->parent = self;
 #if defined( UNLAGGED ) //unlagged - projectile nudge
