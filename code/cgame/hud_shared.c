@@ -39,8 +39,8 @@ const char *hud_weapon_icons[WP_NUM_WEAPONS] = {
     "hud/weapon/lightning",
     "hud/weapon/railgun",
     "hud/weapon/plasmagun",
-    "", // WP_BFG,
-    "", // WP_GRAPPLING_HOOK,
+    "hud/mod/generic",			// WP_BFG,
+    "hud/mod/generic",			// WP_GRAPPLING_HOOK,
 #ifdef MISSIONPACK
     "", // WP_NAILGUN,
     "", // WP_PROX_LAUNCHER,
