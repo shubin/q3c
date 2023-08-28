@@ -262,22 +262,19 @@ static void Totem_Heal( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
 		max = other->client->ps.baseHealth;
 	}
 
-	if ( other->health >= max ) {
-		return;
+	if ( other->health < max ) {
+		health = other->health + TOTEM_HEAL_AMOUNT;
+		if ( health > max ) {
+			health = max;
+		}
+		other->health = health;
+		other->client->ps.stats[STAT_HEALTH] = health;
+		totem->chargetime[clientNum] = level.time + TOTEM_COOLDOWN;
+		G_RemoveDOT( other, DOT_ALL );
+	} else if ( ( other->client->ps.dotAcidNum > 0 ) || ( other->client->ps.dotFireNum > 0 ) ) {
+		totem->chargetime[clientNum] = level.time + TOTEM_COOLDOWN;
+		G_RemoveDOT( other, DOT_ALL );
 	}
-
-	health = other->health + TOTEM_HEAL_AMOUNT;
-
-	if ( health > max ) {
-		health = max;
-	}
-
-	other->health = health;
-	other->client->ps.stats[STAT_HEALTH] = health;
-
-	totem->chargetime[clientNum] = level.time + TOTEM_COOLDOWN;
-
-	G_RemoveDOT( other, DOT_ALL );
 }
 
 static void Totem_Hurt( gentity_t *trigger, gentity_t *other, trace_t *trace ) {
