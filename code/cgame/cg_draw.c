@@ -557,7 +557,9 @@ static void CG_DrawStatusBar( void ) {
 					   cg_weapons[ cent->currentState.weapon ].ammoModel, 0, origin, angles );
 	}
 
+#if !defined( QC )
 	CG_DrawStatusBarHead( 185 + CHAR_WIDTH*3 + TEXT_ICON_SPACE );
+#endif // QC
 
 	if( cg.predictedPlayerState.powerups[PW_REDFLAG] ) {
 		CG_DrawStatusBarFlag( 185 + CHAR_WIDTH*3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_RED );
@@ -649,6 +651,7 @@ static void CG_DrawStatusBar( void ) {
 	CG_DrawSmallString( 20, 32, va("ab_flags : %d", cg.snap->ps.ab_flags), 1.0f );
 	CG_DrawSmallString( 20, 44, va("ab_num   : %d", cg.snap->ps.ab_num), 1.0f );
 #endif
+	hud_draw_ability();
 }
 #endif
 

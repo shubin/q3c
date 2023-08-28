@@ -157,7 +157,11 @@ void hud_draw_ability( void ) {
 	gaugey = hud_bounds.bottom - 160;
 	gaugesize = 128;
 
-	gaugex = Com_Clamp( 560, 1520, gaugex + cg_abilityGaugeOffset.value );
+	gaugex = gaugex + cg_abilityGaugeOffset.value;
+
+	if ( cg_drawQ3hud.integer ) {
+		gaugey += 100;
+	}
 
 	switch ( ps->champion ) {
 		case CHAMP_GALENA:	hud_draw_totems( gaugex, gaugey, ps->ab_num ); break;
