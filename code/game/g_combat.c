@@ -1446,7 +1446,7 @@ G_RadiusDamage
 ============
 */
 #if defined( QC )
-qboolean G_RadiusDamage ( vec3_t origin, gentity_t *inflictor, float damage, float radius,
+qboolean G_RadiusDamage ( vec3_t origin, gentity_t *inflictor, float damage, float minDamage, float radius,
 #else
 qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, float radius,
 #endif
@@ -1500,7 +1500,11 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 			continue;
 		}
 
+#if defined( QC )
+		points = minDamage + ( ( damage - minDamage ) * ( 1.0 - dist / radius ) );
+#else
 		points = damage * ( 1.0 - dist / radius );
+#endif
 
 		if( CanDamage (ent, origin) ) {
 			if( LogAccuracyHit( ent, attacker ) ) {
