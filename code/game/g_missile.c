@@ -69,7 +69,6 @@ Explode a missile without an impact
 void G_ExplodeMissile( gentity_t *ent ) {
 	vec3_t		dir;
 	vec3_t		origin;
-	qboolean	isRadiusDamage = qfalse;
 
 	BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
 	SnapVector( origin );
@@ -87,31 +86,17 @@ void G_ExplodeMissile( gentity_t *ent ) {
 	// splash damage
 	if ( ent->splashDamage ) {
 #if defined( QC )
-		isRadiusDamage = G_RadiusDamage(
-			ent->r.currentOrigin,
-			ent,
-			ent->splashDamage,
-			ent->minSplashDamage,
-			ent->splashRadius,
-			ent,
-			ent->splashMethodOfDeath
-		);
-#else
-		isRadiusDamage = G_RadiusDamage(
-			ent->r.currentOrigin,
-			ent->parent,
-			ent->splashDamage,
-			ent->splashRadius,
-			ent,
-			ent->splashMethodOfDeath
-		);
-#endif
-		if ( isRadiusDamage ) {
+		if ( G_RadiusDamage( ent->r.currentOrigin, ent, ent->splashDamage, ent->minSplashDamage
+			, ent->splashRadius, ent, ent->splashMethodOfDeath ) ) {
 			g_entities[ent->r.ownerNum].client->accuracy_hits++;
-#if defined( QC )
 			g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
-#endif
 		}
+#else
+		if ( G_RadiusDamage( ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent
+			, ent->splashMethodOfDeath ) ) {
+			g_entities[ent->r.ownerNum].client->accuracy_hits++;
+		}
+#endif
 	}
 
 	trap_LinkEntity( ent );
@@ -295,7 +280,6 @@ G_MissileImpact
 void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	gentity_t	*other;
 	qboolean	hitClient = qfalse;
-	qboolean	isRadiusDamage = qfalse;
 #ifdef MISSIONPACK
 	vec3_t			forward, impactpoint, bouncedir;
 	int				eFlags;
@@ -505,33 +489,21 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	// splash damage (doesn't apply to person directly hit)
 	if ( ent->splashDamage ) {
 #if defined( QC )
-		isRadiusDamage = G_RadiusDamage(
-			trace->endpos,
-			ent,
-			ent->splashDamage,
-			ent->minSplashDamage,
-			ent->splashRadius,
-			other,
-			ent->splashMethodOfDeath
-		);
-#else
-		isRadiusDamage = G_RadiusDamage(
-			trace->endpos,
-			ent->parent,
-			ent->splashDamage,
-			ent->splashRadius,
-			other,
-			ent->splashMethodOfDeath
-		);
-#endif
-		if ( isRadiusDamage ) {
-			if( !hitClient ) {
+		if ( G_RadiusDamage( trace->endpos, ent, ent->splashDamage, ent->minSplashDamage
+			, ent->splashRadius, other, ent->splashMethodOfDeath ) ) {
+			if ( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
-#if defined( QC )
 				g_entities[ent->r.ownerNum].client->wepstat[ent->s.weapon].hits++;
-#endif
 			}
 		}
+#else
+		if ( G_RadiusDamage( trace->endpos, ent->parent, ent->splashDamage, ent->splashRadius
+			, other, ent->splashMethodOfDeath ) ) {
+			if ( !hitClient ) {
+				g_entities[ent->r.ownerNum].client->accuracy_hits++;
+			}
+		}
+#endif
 	}
 
 #if defined( QC )
