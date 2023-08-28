@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define RESPAWN_HEALTH50	30
 #define RESPAWN_HEALTH25	30
 #define RESPANW_BUBBLE		30
-#define RESPAWN_HOURGLASS	15
+#define RESPAWN_HOURGLASS	30
 #define	RESPAWN_HOLDABLE	60
 #define	RESPAWN_POWERUP		120
 
