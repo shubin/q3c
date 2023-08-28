@@ -1821,7 +1821,9 @@ char *eventnames[] = {
 	"EV_GRENADE_BOUNCE",		// eventParm will be the soundindex
 
 #if defined( QC )
+	"EV_ACTIVATE_ABILITY",
 	"EV_BOLT_HIT",
+	"EV_TOTEM_DECAY",
 #endif
 
 	"EV_GENERAL_SOUND",
