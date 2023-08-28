@@ -510,11 +510,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		ent->parent->client->ps.ab_flags = 0;
 		ent->parent->client->ps.ab_time = 0;
 	}
-	if ( !strcmp( ent->classname, "spit" ) ) {
-		ent->parent->client->ps.ab_num = 0;
-		ent->parent->client->ps.ab_flags = 0;
-		ent->parent->client->ps.ab_time = 0;
-	}
 #endif
 
 	trap_LinkEntity( ent );

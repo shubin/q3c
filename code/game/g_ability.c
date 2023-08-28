@@ -446,6 +446,10 @@ void G_AbilityTickFrame( gclient_t *client ) {
 		AngleVectors( client->ps.viewangles, forward, right, up );
 		CalcMuzzlePointOrigin( &g_entities[client->ps.clientNum], client->oldOrigin, forward, right, up, muzzle );
 		G_ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );
+		if ( client->ps.ab_num == 0 ) {
+			client->ps.ab_flags = 0;
+			client->ps.ab_time = 0;
+		}
 	}
 
 	if ( client->ps.dotAcidNum > 0 && level.time > client->ps.dotAcidTime ) {
