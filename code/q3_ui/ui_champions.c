@@ -50,7 +50,7 @@ static qboolean champ_locked[NUM_CHAMPIONS] = {
     qtrue, // clutch
     qfalse, // keel
     qtrue, // scalebearer
-    qtrue, // sorlag
+    qfalse, // sorlag
 };
 
 typedef struct {
