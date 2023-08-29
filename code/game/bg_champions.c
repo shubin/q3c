@@ -92,7 +92,8 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_TEAM2V2
             0, // GT_CTF
         },
-        320, // speed
+        //320, // speed
+        315, // nerfed a bit for 3th of September RESP League event
         640, // maxspeed
         LIGHT_CHAMPION_DIMENSIONS,
     },
