@@ -1333,7 +1333,7 @@ static void CG_PlayerAnimation( centity_t *cent, int *legsOld, int *legs, float 
 	} 
 #if defined( QC )
 	else if ( cent->currentState.powerups & ( 1 << PW_SCOUT ) ) {
-		speedScale = 1.5;
+		speedScale = 1.05;
 	}
 #endif
 	else {

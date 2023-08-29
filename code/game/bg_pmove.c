@@ -2226,7 +2226,7 @@ static void PM_Weapon( void ) {
 #endif
 #if defined( QC )
 	if ( pm->ps->powerups[PW_SCOUT] ) {
-		addTime /= 1.15;
+		addTime /= 1.05;
 	}
 #endif
 	if ( pm->ps->powerups[PW_HASTE] ) {

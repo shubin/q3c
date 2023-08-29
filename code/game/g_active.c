@@ -1072,7 +1072,7 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 #if defined( QC )
 	if ( client->ps.powerups[PW_SCOUT] ) {
-		client->ps.speed *= 1.2;
+		client->ps.speed *= 1.05;
 	}
 #endif
 	// Let go of the hook if we aren't firing
