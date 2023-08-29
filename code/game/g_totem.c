@@ -513,6 +513,7 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	egg->s.affiliation = G_ClientAffiliation( ent->client );
 	// NERF this grenade a bit
 	egg->damage = 75;
+	egg->minSplashDamage = 0;
 	egg->splashDamage = 0;
 	egg->splashRadius = 0;
 	egg->s.generic1 = (int)ps->viewangles[YAW]; // pass player view angle in order to fix totem orientation later
@@ -521,6 +522,7 @@ void G_ThrowTotem( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	SnapVector( egg->s.pos.trDelta );			// save net bandwidth
 
 	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
+	egg->minSplashDamage *= quadFactor;
 	egg->damage *= quadFactor;
 	egg->splashDamage *= quadFactor;
 }

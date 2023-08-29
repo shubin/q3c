@@ -170,6 +170,7 @@ void G_ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
 #endif
 	spit->damage = 15;
 	spit->splashDamage = 0;
+	spit->minSplashDamage = 0;
 	spit->splashRadius = 0;
 	spit->methodOfDeath = MOD_UNKNOWN;// MOD_ACID_SPIT;
 	spit->splashMethodOfDeath = MOD_ACID_SPIT;

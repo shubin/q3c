@@ -177,7 +177,7 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 #define MACHINEGUN_ZOOM_DAMAGE	15
 #define MACHINEGUN_ZOOM_TEAM_DAMAGE	10
 #define LOUSY_MACHINEGUN_SPREAD 300
-#define LOUSY_MACHINEGUN_DAMAGE 8
+#define LOUSY_MACHINEGUN_DAMAGE 6
 #define LOUSY_MACHINEGUN_TEAM_DAMAGE 5
 #endif
 
@@ -306,6 +306,9 @@ void BFG_Fire ( gentity_t *ent ) {
 
 	m = fire_bfg (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -670,6 +673,9 @@ void weapon_grenadelauncher_fire (gentity_t *ent) {
 
 	m = fire_grenade (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -688,6 +694,9 @@ void Weapon_RocketLauncher_Fire (gentity_t *ent) {
 
 	m = fire_rocket (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -707,6 +716,9 @@ void Weapon_Tribolt_Fire (gentity_t *ent) {
 
 	m = fire_bolt (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -726,6 +738,9 @@ void Weapon_Plasmagun_Fire (gentity_t *ent) {
 
 	m = fire_plasma (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -737,6 +752,9 @@ void Weapon_LousyPlasmagun_Fire (gentity_t *ent) {
 
 	m = fire_lousy_plasma (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
@@ -1056,6 +1074,9 @@ void Weapon_Nailgun_Fire (gentity_t *ent) {
 	for( count = 0; count < NUM_NAILSHOTS; count++ ) {
 		m = fire_nail (ent, muzzle, forward, right, up );
 		m->damage *= s_quadFactor;
+#if defined( QC )
+		m->minSplashDamage *= s_quadFactor;
+#endif
 		m->splashDamage *= s_quadFactor;
 	}
 
@@ -1080,6 +1101,9 @@ void weapon_proxlauncher_fire (gentity_t *ent) {
 
 	m = fire_prox (ent, muzzle, forward);
 	m->damage *= s_quadFactor;
+#if defined( QC )
+	m->minSplashDamage *= s_quadFactor;
+#endif
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics

@@ -126,6 +126,7 @@ gentity_t *ThrowDireOrb( gentity_t *self, vec3_t start, vec3_t dir ) {
 	orb->s.otherEntityNum = self->s.number;
 #endif
 	orb->damage = 100;
+	orb->minSplashDamage = 1;
 	orb->splashDamage = 100;
 	orb->splashRadius = 120;
 	orb->methodOfDeath = MOD_ROCKET;
@@ -325,12 +326,14 @@ static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 
 	// NERF this grenade a bit
 	m->damage = 75;
+	m->minSplashDamage = 1;
 	m->splashDamage = 75;
 	m->splashRadius = 120;
 	m->s.constantLight = 255 | ( 16 << 24 ); // red glow
 
 	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
 	m->damage *= quadFactor;
+	m->minSplashDamage *= quadFactor;
 	m->splashDamage *= quadFactor;
 }
 
