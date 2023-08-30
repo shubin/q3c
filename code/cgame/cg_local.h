@@ -1374,6 +1374,9 @@ extern	vmCvar_t		cg_smokeRadius_TB;
 extern	vmCvar_t		cg_smoke_SG;
 extern	vmCvar_t		cg_bob;
 extern	vmCvar_t		cg_crosshairPulse;
+extern	vmCvar_t		cg_noAmmoSound;
+extern	vmCvar_t		cg_changeWeaponNoAmmoSound;
+extern	vmCvar_t		cg_changeWeaponSound;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

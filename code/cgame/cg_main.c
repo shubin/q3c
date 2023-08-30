@@ -263,6 +263,10 @@ vmCvar_t	cg_smokeRadius_TB;
 vmCvar_t	cg_smoke_SG;
 vmCvar_t	cg_bob;
 vmCvar_t	cg_crosshairPulse;
+// weapon sound control
+vmCvar_t	cg_noAmmoSound;
+vmCvar_t	cg_changeWeaponNoAmmoSound;
+vmCvar_t	cg_changeWeaponSound;
 #endif // QC
 
 typedef struct {
@@ -462,6 +466,9 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
 	{ &cg_bob, "cg_bob", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
+	{ &cg_noAmmoSound, "cg_noAmmoSound", "1", CVAR_ARCHIVE },
+	{ &cg_changeWeaponNoAmmoSound, "cg_changeWeaponNoAmmoSound", "0", CVAR_ARCHIVE },
+	{ &cg_changeWeaponSound, "cg_changeWeaponSound", "1", CVAR_ARCHIVE },
 #endif
 };
 
