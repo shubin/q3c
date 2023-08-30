@@ -145,9 +145,12 @@ static sfxHandle_t UI_CreditMenu_Key( int key ) {
 	}
 
 	s_credits.frame++;
+#if defined( QC )
 	if ( s_credits.frame == 2 ) {
 		s_credits.menu.draw = UI_CreditMenu_Draw_qc;
-	} else if (s_credits.frame == 1) {
+	} else 
+#endif // QC
+	if (s_credits.frame == 1) {
 		s_credits.menu.draw = UI_CreditMenu_Draw_ioq3;
 	} else {
 #if defined( QC )

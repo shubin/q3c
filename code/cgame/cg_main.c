@@ -318,7 +318,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_crosshairY, "cg_crosshairY", "0", CVAR_ARCHIVE },
 	{ &cg_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE },
 	{ &cg_simpleItems, "cg_simpleItems", "0", CVAR_ARCHIVE },
+#if defined( QC )
+	{ &cg_addMarks, "cg_marks", "2", CVAR_ARCHIVE },
+#else // QC
 	{ &cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE },
+#endif // QC
 	{ &cg_lagometer, "cg_lagometer", "1", CVAR_ARCHIVE },
 	{ &cg_railTrailTime, "cg_railTrailTime", "400", CVAR_ARCHIVE  },
 	{ &cg_gun_x, "cg_gunX", "0", CVAR_CHEAT },
