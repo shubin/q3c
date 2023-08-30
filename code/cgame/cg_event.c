@@ -905,7 +905,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		break;
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");
-#if defined ( QC )
+#if defined( QC )
 		if ( cg_changeWeaponSound.integer ) {
 			trap_S_StartSound( NULL, es->number, CHAN_AUTO, cgs.media.selectSound );
 		}
