@@ -892,14 +892,29 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 	//
 	case EV_NOAMMO:
 		DEBUGNAME("EV_NOAMMO");
+#if defined( QC )
+		if ( cg_noAmmoSound.integer ) {
+			trap_S_StartSound( NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound );
+		}
+#else
 //		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound );
+#endif
 		if ( es->number == cg.snap->ps.clientNum ) {
 			CG_OutOfAmmoChange();
 		}
 		break;
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");
+#if defined( QC )
+		if ( cg_changeWeaponSound.integer ) {
+			trap_S_StartSound( NULL, es->number, CHAN_AUTO, cgs.media.selectSound );
+		}
+		if ( cg_changeWeaponNoAmmoSound.integer && !cg.snap->ps.ammo[cg.weaponSelect] ) {
+			trap_S_StartSound( NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound );
+		}
+#else
 		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.selectSound );
+#endif
 		break;
 	case EV_FIRE_WEAPON:
 		DEBUGNAME("EV_FIRE_WEAPON");
