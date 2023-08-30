@@ -427,7 +427,7 @@ static void PM_Friction( void ) {
 
 	// apply water friction even if just wading
 #if defined( QC )
-	if ( pm->waterlevel > 3 ) {
+	if ( pm->waterlevel > 1 ) {
 #else
 	if ( pm->waterlevel ) {
 #endif
@@ -1113,7 +1113,11 @@ static void PM_WalkMove( void ) {
 #endif
 
 	// clamp the speed lower if wading or walking on the bottom
+#if defined( QC )
+	if ( pm->waterlevel > 1 ) {
+#else // QC
 	if ( pm->waterlevel ) {
+#endif // QC
 		float	waterScale;
 
 		waterScale = pm->waterlevel / 3.0;
@@ -2223,11 +2227,6 @@ static void PM_Weapon( void ) {
 		addTime /= 1.3;
 	}
 	else
-#endif
-#if defined( QC )
-	if ( pm->ps->powerups[PW_SCOUT] ) {
-		addTime /= 1.05;
-	}
 #endif
 	if ( pm->ps->powerups[PW_HASTE] ) {
 		addTime /= 1.3;

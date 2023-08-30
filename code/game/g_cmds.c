@@ -382,6 +382,9 @@ void Cmd_Give_f (gentity_t *ent)
 		VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
 		it_ent->classname = it->classname;
 		G_SpawnItem (it_ent, it);
+#if defined( QC )
+		it_ent->spawnflags |= 1; // prevent the following call of FinishSpawningItem from tracing down the position of item and therefore prevent the possible failure
+#endif // QC
 		FinishSpawningItem(it_ent );
 		memset( &trace, 0, sizeof( trace ) );
 		Touch_Item (it_ent, ent, &trace);
