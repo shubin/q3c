@@ -1072,7 +1072,7 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 #if defined( QC )
 	if ( client->ps.powerups[PW_SCOUT] ) {
-		client->ps.speed *= 1.05;
+		client->ps.speed *= ANARKI_SPEED_BOOST;
 	}
 #endif
 	// Let go of the hook if we aren't firing

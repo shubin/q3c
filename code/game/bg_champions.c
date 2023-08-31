@@ -99,7 +99,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_CTF
         },
         //320, // speed
-        320,
+        315,
         640, // maxspeed
         LIGHT_CHAMPION_DIMENSIONS,
     },
