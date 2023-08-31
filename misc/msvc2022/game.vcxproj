@@ -1206,7 +1206,10 @@ xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\qc\" /K /D /H /Y</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release TA|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release TA|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\code\game\g_acidspit.c" />
+    <ClCompile Include="..\..\code\game\g_acidspit.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\code\game\g_active.c">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug TA|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug TA|x64'">Disabled</Optimization>
@@ -1916,7 +1919,10 @@ xcopy $(TargetPath) "$(SolutionDir)..\..\..\workdir\qc\" /K /D /H /Y</Command>
     <ClInclude Include="..\..\code\game\chars.h" />
     <ClInclude Include="..\..\code\game\g_local.h" />
     <ClInclude Include="..\..\code\game\g_public.h" />
-    <ClInclude Include="..\..\code\game\g_team.h" />
+    <ClInclude Include="..\..\code\game\g_team.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\code\game\inv.h" />
     <ClInclude Include="..\..\code\game\match.h" />
     <ClInclude Include="..\..\code\game\syn.h" />
