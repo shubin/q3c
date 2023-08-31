@@ -120,6 +120,7 @@ void hud_initmedia( void ) {
 	hud_media.ringgauge = trap_R_RegisterShaderNoMip( "hud/ring");
 	hud_media.ringglow = trap_R_RegisterShaderNoMip( "hud/ring_glow" );
 	hud_media.abbg = trap_R_RegisterShaderNoMip( "hud/abbg" );
+	hud_media.icon_speedometer = trap_R_RegisterShaderNoMip( "hud/speedometer" );
 	for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
 		hud_media.skillicon[i] = trap_R_RegisterShaderNoMip( va( "hud/skill/%s", champion_names[i] ) );
 		hud_media.bigface[i] = trap_R_RegisterShaderNoMip( va( "hud/faces/big/%s", champion_names[i] ) );

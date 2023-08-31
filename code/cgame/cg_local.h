@@ -712,6 +712,8 @@ typedef struct {
 	vec4_t			friendColors[5];
 	vec4_t			redTeamColors[5];
 	vec4_t			blueTeamColors[5];
+	int				playerSpeed;
+	vec4_t			crosshairColor;
 #endif
 #if defined( UNLAGGED ) //unlagged - optimized prediction
 	int			lastPredictedCommand;
@@ -1374,9 +1376,12 @@ extern	vmCvar_t		cg_smokeRadius_TB;
 extern	vmCvar_t		cg_smoke_SG;
 extern	vmCvar_t		cg_bob;
 extern	vmCvar_t		cg_crosshairPulse;
+extern	vmCvar_t		cg_crosshairColor;
 extern	vmCvar_t		cg_noAmmoSound;
 extern	vmCvar_t		cg_changeWeaponNoAmmoSound;
 extern	vmCvar_t		cg_changeWeaponSound;
+extern	vmCvar_t		cg_speedometer;
+extern	vmCvar_t		cg_speedometerOffset;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;

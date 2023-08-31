@@ -617,6 +617,10 @@ void CG_PredictPlayerState( void ) {
 	int numPredicted = 0, numPlayedBack = 0; // debug code
 #endif
 
+#if defined( QC )
+	cg.playerSpeed = 0;
+#endif // QC
+
 	cg.hyperspace = qfalse;	// will be set if touching a trigger_teleport
 
 	// if this is the first frame we must guarantee
@@ -920,6 +924,10 @@ void CG_PredictPlayerState( void ) {
 #else
 		Pmove (&cg_pmove);
 #endif
+
+#if defined( QC )
+		cg.playerSpeed = cg_pmove.xyspeed;
+#endif // QC
 
 		moved = qtrue;
 

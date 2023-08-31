@@ -43,10 +43,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define  HEAVY_CHAMPION_STARTING_HEALTH {    125,           125,              125,       125,     125,    125 }
 #define  HEAVY_CHAMPION_STARTING_ARMOUR {     75,            75,               75,        75,      75,     75 }
 
-                                     //   mins               maxs
-#define  LIGHT_CHAMPION_DIMENSIONS      { -12, -12, -24 }, { 12, 12, 45 }
-#define MEDIUM_CHAMPION_DIMENSIONS      { -15, -15, -24 }, { 15, 15, 45 }
-#define  HEAVY_CHAMPION_DIMENSIONS      { -18, -18, -24 }, { 18, 18, 45 }
+#define  LIGHT_CHAMPION_RADIUS      13
+#define MEDIUM_CHAMPION_RADIUS      15
+#define  HEAVY_CHAMPION_RADIUS      17
+#define HITBOX_BOTTOM               -24
+#define HITBOX_TOP                  45
+
+                                        //   mins                                                                 maxs
+#define  LIGHT_CHAMPION_DIMENSIONS      { -  LIGHT_CHAMPION_RADIUS, -  LIGHT_CHAMPION_RADIUS, HITBOX_BOTTOM }, {  LIGHT_CHAMPION_RADIUS,  LIGHT_CHAMPION_RADIUS, HITBOX_TOP }
+#define MEDIUM_CHAMPION_DIMENSIONS      { - MEDIUM_CHAMPION_RADIUS, - MEDIUM_CHAMPION_RADIUS, HITBOX_BOTTOM }, { MEDIUM_CHAMPION_RADIUS, MEDIUM_CHAMPION_RADIUS, HITBOX_TOP }
+#define  HEAVY_CHAMPION_DIMENSIONS      { -  HEAVY_CHAMPION_RADIUS, -  HEAVY_CHAMPION_RADIUS, HITBOX_BOTTOM }, {  HEAVY_CHAMPION_RADIUS,  HEAVY_CHAMPION_RADIUS, HITBOX_TOP }
 
 #define MAX_HEALTH_INCREMENT 75
 #define MAX_ARMOUR_INCREMENT 75
@@ -93,7 +99,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_CTF
         },
         //320, // speed
-        315, // nerfed a bit for 3th of September RESP League event
+        320,
         640, // maxspeed
         LIGHT_CHAMPION_DIMENSIONS,
     },

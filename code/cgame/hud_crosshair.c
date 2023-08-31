@@ -36,10 +36,10 @@ void hud_drawcrosshair( void ) {
 		CG_ColorForHealth( hcolor );
 		trap_R_SetColor( hcolor );
 	} else {
-		trap_R_SetColor( NULL );
+		trap_R_SetColor( cg.crosshairColor );
 	}
 
-	w = h = cg_crosshairSize.value * 2.25f;
+	w = h = cg_crosshairSize.value * 2.25f; // Adjust from 480p to 1080p
 
 	// pulse the size of the crosshair when picking up items
 	f = cg.time - cg.itemPickupBlendTime;

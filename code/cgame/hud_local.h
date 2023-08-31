@@ -29,7 +29,7 @@ typedef struct {
 	qhandle_t	icon_mod[MOD_NUM];				// means of death icons
 
 	qhandle_t	ammobar_background, ammobar_full, ammobar_empty; // various graphic for the vertical ammo status bar
-	qhandle_t	ringgauge, ringglow, abbg;
+	qhandle_t	ringgauge, ringglow, abbg, icon_speedometer;
 	qhandle_t	skillicon[NUM_CHAMPIONS];
 	qhandle_t	bigface[NUM_CHAMPIONS];
 	qhandle_t	smallface[NUM_CHAMPIONS];

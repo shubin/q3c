@@ -35,8 +35,9 @@ void CG_InitQCHUD( void ) {
 	hud_initobituary();
 }
 
-void hud_drawfollow( void ) {
-	float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+void hud_drawfollow( void ) {	
 	const char *text;
 	float centerx, dim;
 	if ( cg.snap->ps.clientNum != cg.clientNum && !cg.showScores ) {
@@ -45,6 +46,73 @@ void hud_drawfollow( void ) {
 		dim = hud_measurecolorstring( 0.6f, hud_media.font_regular, text );
 		hud_drawcolorstring( centerx - dim / 2, hud_bounds.bottom - 48, 0.6f, hud_media.font_regular, text, black, 2, 2, qfalse );
 	}
+}
+
+/*
+=================
+hud_drawspeedometer
+=================
+*/
+
+void hud_drawspeedometer( void ) {
+	const int icon_width = 48;
+	const int icon_height = 24;
+
+	float pivot_x, pivot_y;
+	float icon_x, icon_y;
+	float text_x, text_y, text_w;
+	float crosshairRadius;
+	int offset;
+	char *text;
+	static float color[] = { 0.96f, 0.85f, 0.37f, 1.0f };
+
+	if ( !cg_speedometer.integer ) {
+		return;
+	}
+
+	text = va( "%d", cg.playerSpeed );
+	text_w = hud_measurestring( 0.5f, hud_media.font_regular, text );
+	offset = cg_speedometerOffset.integer;
+
+	if ( cg_speedometer.integer == 1 ) { // around the crosshair
+		pivot_x = 0.5f * ( hud_bounds.right + hud_bounds.left );
+		crosshairRadius = 0.5f * cg_crosshairSize.value * 2.25f; // 2.25 to adjust from 480p to 1080p
+		if ( offset < 0 ) {
+			if ( -offset < crosshairRadius ) {
+				offset = -crosshairRadius;
+			}
+		} else {
+			if ( offset < crosshairRadius ) {
+				offset = crosshairRadius;
+			}
+		}
+		pivot_y = 0.5f * ( hud_bounds.bottom + hud_bounds.top ) + offset;
+		if ( offset < 0 ) {
+			pivot_y -= icon_height + 8;
+		}
+		icon_x = pivot_x - icon_width * 0.5f;
+		icon_y = pivot_y;
+		text_x = pivot_x - text_w * 0.5f;
+		text_y = pivot_y + icon_height + 8;
+		if ( offset >= 0 ) {
+			text_y += 24;
+		} else {
+			icon_y -= icon_height;
+		}
+	} else { // under the portrait
+		pivot_x = hud_bounds.left + 100;
+		pivot_y = hud_bounds.bottom - 40;
+		icon_x = pivot_x;
+		icon_y = pivot_y - icon_height;
+		text_x = pivot_x + icon_width + 8;
+		text_y = pivot_y;
+	}
+
+	trap_R_SetColor( black );
+	hud_drawpic( icon_x + 2, icon_y + 2, icon_width, icon_height, 0.0f, 0.0f, hud_media.icon_speedometer ); // icon shadow
+	trap_R_SetColor( color );
+	hud_drawpic( icon_x, icon_y, icon_width, icon_height, 0.0f, 0.0f, hud_media.icon_speedometer );
+	hud_drawstring( text_x, text_y, 0.5f, hud_media.font_regular, text, black, 2, 2 );
 }
 
 /*
@@ -83,6 +151,9 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	hud_draw_ability();
 	hud_drawstatus();
 	hud_drawammo();
+
+	hud_drawspeedometer();
+
 	hud_drawfragmessage();
 	hud_drawpickups();
 	hud_drawobituary();

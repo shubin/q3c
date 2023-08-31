@@ -38,6 +38,7 @@ int enemyColorsModificationCount = -1;
 int friendColorsModificationCount = -1;
 int redTeamColorsModificationCount = -1;
 int blueTeamColorsModificationCount = -1;
+int crosshairColorModificationCount = -1;
 #endif
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
@@ -261,12 +262,16 @@ vmCvar_t	cg_smokeRadius_RL;
 vmCvar_t	cg_smokeRadius_GL;
 vmCvar_t	cg_smokeRadius_TB;
 vmCvar_t	cg_smoke_SG;
+//
 vmCvar_t	cg_bob;
 vmCvar_t	cg_crosshairPulse;
+vmCvar_t	cg_crosshairColor;
 // weapon sound control
 vmCvar_t	cg_noAmmoSound;
 vmCvar_t	cg_changeWeaponNoAmmoSound;
 vmCvar_t	cg_changeWeaponSound;
+vmCvar_t	cg_speedometer;
+vmCvar_t	cg_speedometerOffset;
 #endif // QC
 
 typedef struct {
@@ -317,7 +322,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
 	{ &cg_drawRewards, "cg_drawRewards", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairSize, "cg_crosshairSize", "24", CVAR_ARCHIVE },
+#if defined( QC )
+	{ &cg_crosshairHealth, "cg_crosshairHealth", "0", CVAR_ARCHIVE },
+#else // QC
 	{ &cg_crosshairHealth, "cg_crosshairHealth", "1", CVAR_ARCHIVE },
+#endif // QC
 	{ &cg_crosshairX, "cg_crosshairX", "0", CVAR_ARCHIVE },
 	{ &cg_crosshairY, "cg_crosshairY", "0", CVAR_ARCHIVE },
 	{ &cg_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE },
@@ -470,9 +479,12 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
 	{ &cg_bob, "cg_bob", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
+	{ &cg_crosshairColor, "cg_crosshairColor", "7", CVAR_ARCHIVE },
 	{ &cg_noAmmoSound, "cg_noAmmoSound", "1", CVAR_ARCHIVE },
 	{ &cg_changeWeaponNoAmmoSound, "cg_changeWeaponNoAmmoSound", "0", CVAR_ARCHIVE },
 	{ &cg_changeWeaponSound, "cg_changeWeaponSound", "1", CVAR_ARCHIVE },
+	{ &cg_speedometer, "cg_speedometer", "0", CVAR_ARCHIVE },
+	{ &cg_speedometerOffset, "cg_speedometerOffset", "130", CVAR_ARCHIVE },
 #endif
 };
 
@@ -592,6 +604,16 @@ static void CG_UpdateBlueTeamColors( void ) {
 	CG_UpdateColors( &cg_blueTeamColors, cg.blueTeamColors );
 }
 
+static void CG_UpdateCrosshairColor( void ) {
+	int colorIndex;
+	if ( cg_crosshairColor.string[0] ) {
+		colorIndex = ColorIndex( cg_crosshairColor.string[0] );
+		memcpy( cg.crosshairColor, &g_color_table[colorIndex], sizeof( vec4_t ) );
+	} else {
+		MAKERGBA( cg.crosshairColor, 1, 1, 1, 1 );
+	}
+}
+
 #endif
 
 /*
@@ -672,6 +694,10 @@ void CG_UpdateCvars( void ) {
 	if ( blueTeamColorsModificationCount != cg_blueTeamColors.modificationCount ) {
 		blueTeamColorsModificationCount = cg_blueTeamColors.modificationCount;
 		CG_UpdateBlueTeamColors();
+	}
+	if ( crosshairColorModificationCount != cg_crosshairColor.modificationCount ) {
+		crosshairColorModificationCount = cg_crosshairColor.modificationCount;
+		CG_UpdateCrosshairColor();
 	}
 #endif
 }
