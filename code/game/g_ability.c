@@ -445,7 +445,7 @@ void G_AbilityTickFrame( gclient_t *client ) {
 	// sorlag
 	if ( client->ps.champion == CHAMP_SORLAG && client->ps.ab_num > 0 && level.time > client->ps.ab_misctime ) {
 		client->ps.ab_num--;
-		client->ps.ab_misctime += 150;
+		client->ps.ab_misctime += SPIT_DELAY;
 		AngleVectors( client->ps.viewangles, forward, right, up );
 		CalcMuzzlePointOrigin( &g_entities[client->ps.clientNum], client->oldOrigin, forward, right, up, muzzle );
 		G_ThrowAcidSpit( &g_entities[client->ps.clientNum], muzzle, forward );

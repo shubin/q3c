@@ -77,11 +77,12 @@ int ParseStartingWeapon( const char *name );
 
 #define MAX_TOTEMS			3
 #define MAX_GRENADES		5
-#define MAX_SPITS			3
-#define SPIT_DELAY			150
+#define MAX_SPITS			5
+#define SPIT_DELAY			200
+#define SPIT_DISTANCE       850
 
 #define ACID_SPIT_RADIUS	80
-#define ACID_DOT_TIMES		5
+#define ACID_DOT_TIMES		7
 #define ACID_DOT_AMOUNT		10
 #define ACID_DOT_TICK		1000
 #define ACID_LIFETIME		10000

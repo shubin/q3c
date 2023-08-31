@@ -181,7 +181,7 @@ void G_ThrowAcidSpit( gentity_t *self, vec3_t start, vec3_t dir ) {
 	spit->s.pos.trTime = level.time - 50;		// move a bit on the very first frame
 	spit->s.pos.trGravity = DEFAULT_GRAVITY;
 	VectorCopy( start, spit->s.pos.trBase );
-	VectorScale( dir, 550, spit->s.pos.trDelta );
+	VectorScale( dir, SPIT_DISTANCE, spit->s.pos.trDelta );
 	SnapVector( spit->s.pos.trDelta );			// save net bandwidth
 
 	VectorCopy( start, spit->r.currentOrigin );
