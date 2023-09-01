@@ -444,7 +444,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_CTF
         },
         300, // speed
-        750, // maxspeed
+        600, // maxspeed
         HEAVY_CHAMPION_DIMENSIONS,
     },
 };

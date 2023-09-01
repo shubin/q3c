@@ -661,7 +661,7 @@ static qboolean PM_CheckJump( void ) {
 	pm->ps->crouchSlideTime = 0;
 #endif
 
-#if defined( QC ) && defined( SPEED_LIMIT )
+#if defined( QC )
 	if ( pm->pmove_speedlimit ) {
 		speedLimit = champion_stats[pm->ps->champion].maxspeed;
 		if ( speedLimit > 0 ) {
