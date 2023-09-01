@@ -492,6 +492,6 @@ void G_AbilityDie( gentity_t *ent ) {
 	switch ( ps->champion ) {
 		case CHAMP_SORLAG:
 			ps->ab_num = 0;
-			return 0;
+			break;
 	}
 }
