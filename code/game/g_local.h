@@ -743,6 +743,7 @@ void G_ActivateAbility( gentity_t *ent );
 void G_AbilityTickTenth( gclient_t *client );
 void G_AbilityTickSecond( gclient_t *client );
 void G_AbilityTickFrame( gclient_t *client );
+void G_AbilityDie( gentity_t *ent );
 
 
 typedef enum {

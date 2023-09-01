@@ -480,3 +480,18 @@ void G_RemoveDOT( gentity_t *ent, int flags ) {
 		ent->client->ps.dotFireNum = 0;
 	}
 }
+
+void G_AbilityDie( gentity_t *ent ) {
+	playerState_t *ps;
+
+	ps = &ent->client->ps;
+
+	ps->ab_flags = 0;
+	ps->ab_time = 0;
+
+	switch ( ps->champion ) {
+		case CHAMP_SORLAG:
+			ps->ab_num = 0;
+			return 0;
+	}
+}

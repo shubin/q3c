@@ -838,8 +838,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 #if defined( QC )
 	if ( self->client->ps.ab_flags & ABF_ENGAGED ) {
-		self->client->ps.ab_flags = 0;
-		self->client->ps.ab_time = 0;
+		G_AbilityDie( self );
 	}
 #endif // QC
 
