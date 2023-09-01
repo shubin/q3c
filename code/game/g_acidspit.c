@@ -40,6 +40,7 @@ void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
 	if ( ps->dotAcidNum == 0 ) {
 		ps->dotAcidNum = ACID_DOT_TIMES;
 		ps->dotAcidTime = level.time + 50; // first tick soon
+		ps->dotAcidOwner = ent->s.number;
 	}
 }
 
@@ -71,7 +72,7 @@ static void AcidSpit_Trigger( gentity_t *trigger, gentity_t *other, trace_t *tra
 	if ( !CanDamage( other, trigger->s.pos.trBase ) ) {
 		return;
 	}
-	G_PoisonPlayer( trigger, other, qfalse );
+	G_PoisonPlayer( trigger->parent, other, qfalse);
 }
 
 void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {

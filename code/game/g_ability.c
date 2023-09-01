@@ -475,9 +475,11 @@ void G_RemoveDOT( gentity_t *ent, int flags ) {
 	}
 	if ( DOT_ACID & flags ) {
 		ent->client->ps.dotAcidNum = 0;
+		ent->client->ps.dotAcidOwner = -1;
 	}
 	if ( DOT_FIRE & flags ) {
 		ent->client->ps.dotFireNum = 0;
+		ent->client->ps.dotFireOwner = -1;
 	}
 }
 

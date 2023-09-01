@@ -42,9 +42,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //  #define LEGACY_PROTOCOL	// You probably don't need this for your standalone game
 #else
 #if defined( QC )
-  #define PRODUCT_NAME				"Quake III Champions"
+  #define PRODUCT_NAME				"Blood Run"
   #define BASEGAME					"baseq3"
-  #define CLIENT_WINDOW_TITLE		"Quake III Champions"
+  #define CLIENT_WINDOW_TITLE		"Blood Run"
   #define CLIENT_WINDOW_MIN_TITLE	"QC"
   #define HOMEPATH_NAME_UNIX		".q3c"
   #define HOMEPATH_NAME_WIN			"Quake3Champions"
