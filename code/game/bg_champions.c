@@ -76,8 +76,8 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // G_TEAM2V2
             0, // GT_CTF
         },
-         320, // speed
-        9999, // maxspeed
+        320, // speed
+        0, // maxspeed
         MEDIUM_CHAMPION_DIMENSIONS,
     },
     // anarki
@@ -341,8 +341,8 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
             0, // GT_TEAM2V2
             0, // GT_CTF
         },
-         320, // speed
-        9999, // maxspeed
+        320, // speed
+        0,   // maxspeed
         MEDIUM_CHAMPION_DIMENSIONS,
     },
     // clutch

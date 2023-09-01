@@ -600,6 +600,8 @@ PM_CheckJump
 static qboolean PM_CheckJump( void ) {
 #if defined( QC )
 	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );
+
+	float	groundSpeed, speedLimit, speedScale;
 #endif
 
 	if ( pm->ps->pm_flags & PMF_RESPAWNED ) {
@@ -658,6 +660,21 @@ static qboolean PM_CheckJump( void ) {
 #if defined( QC )
 	pm->ps->crouchSlideTime = 0;
 #endif
+
+#if defined( QC ) && defined( SPEED_LIMIT )
+	if ( pm->pmove_speedlimit ) {
+		speedLimit = champion_stats[pm->ps->champion].maxspeed;
+		if ( speedLimit > 0 ) {
+			speedLimit *= speedLimit;
+			groundSpeed = pm->ps->velocity[0] * pm->ps->velocity[0] + pm->ps->velocity[1] * pm->ps->velocity[1];
+			if ( groundSpeed > speedLimit ) {
+				speedScale = Q_rsqrt( groundSpeed / speedLimit );
+				pm->ps->velocity[0] *= speedScale;
+				pm->ps->velocity[1] *= speedScale;
+			}
+		}
+	}
+#endif // QC
 	return qtrue;
 }
 

@@ -211,6 +211,7 @@ typedef struct {
 	int         pmove_float;
 	//Flags effecting movement (see dmflags)
 	int         pmove_flags;
+	int			pmove_speedlimit;
 #endif
 
 	// callbacks to test the world

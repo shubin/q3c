@@ -86,6 +86,7 @@ vmCvar_t	pmove_fixed;
 vmCvar_t	pmove_msec;
 #if defined( QC )
 vmCvar_t	pmove_float;
+vmCvar_t	pmove_speedlimit;
 #endif
 vmCvar_t	g_rankings;
 vmCvar_t	g_listEntity;
@@ -211,6 +212,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse},
 #if defined( QC )
 	{ &pmove_float, "pmove_float", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
+	{ &pmove_speedlimit, "pmove_speedlimit", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
 #endif
 	{ &g_rankings, "g_rankings", "0", 0, 0, qfalse},
 	{ &g_localTeamPref, "g_localTeamPref", "", 0, 0, qfalse },

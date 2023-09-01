@@ -1322,6 +1322,7 @@ extern	vmCvar_t		pmove_fixed;
 extern	vmCvar_t		pmove_msec;
 #if defined( QC )
 extern	vmCvar_t pmove_float;
+extern	vmCvar_t pmove_speedlimit;
 #endif
 //extern	vmCvar_t		cg_pmove_fixed;
 extern	vmCvar_t		cg_cameraOrbit;
@@ -1361,6 +1362,8 @@ extern  vmCvar_t        cg_damageDirection;
 extern  vmCvar_t        cg_hitCross;
 extern	vmCvar_t		cg_enemyColors;
 extern	vmCvar_t		cg_kickScale;
+extern	vmCvar_t		cg_anarkiSarge;
+extern	vmCvar_t		cg_playerLean;
 extern	vmCvar_t		cg_piercingSightGreyscale;
 extern	vmCvar_t		cg_piercingSightLight;
 extern	vmCvar_t		cg_totemEffects;

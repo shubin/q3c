@@ -34,6 +34,7 @@ displayContextDef_t cgDC;
 int forceModelModificationCount = -1;
 #endif
 #if defined( QC )
+int anarkiSargeModificationCount = -1;
 int enemyColorsModificationCount = -1;
 int friendColorsModificationCount = -1;
 int redTeamColorsModificationCount = -1;
@@ -191,6 +192,7 @@ vmCvar_t	pmove_fixed;
 vmCvar_t	pmove_msec;
 #if defined( QC )
 vmCvar_t	pmove_float;
+vmCvar_t	pmove_speedlimit;
 #endif
 vmCvar_t	cg_pmove_msec;
 vmCvar_t	cg_cameraMode;
@@ -247,7 +249,9 @@ vmCvar_t	cg_enemyColors;
 vmCvar_t	cg_friendColors;
 vmCvar_t	cg_redTeamColors;
 vmCvar_t	cg_blueTeamColors;
+vmCvar_t	cg_anarkiSarge;			// use Sarge model for the Anarki champion; this is a temporary measure as some players complain loudly that it's nearly impossible to aim at Anarki.
 vmCvar_t	cg_kickScale;
+vmCvar_t	cg_playerLean;
 vmCvar_t	cg_piercingSightGreyscale;
 vmCvar_t	cg_piercingSightLight;
 vmCvar_t	cg_totemEffects;
@@ -427,6 +431,7 @@ static cvarTable_t cvarTable[] = {
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO},
 #if defined( QC )
 	{ &pmove_float, "pmove_float", "1", CVAR_SYSTEMINFO},
+	{ &pmove_speedlimit, "pmove_speedlimit", "0", CVAR_SYSTEMINFO },
 #endif
 #ifdef MISSIONPACK
 	{ &cg_smallFont, "ui_smallFont", "0.25", CVAR_ARCHIVE},
@@ -464,6 +469,8 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_redTeamColors, "cg_redTeamColors", "11111", CVAR_ARCHIVE },
 	{ &cg_blueTeamColors, "cg_blueTeamColors", "44444", CVAR_ARCHIVE },
 	{ &cg_kickScale, "cg_kickScale", "1", CVAR_ARCHIVE },
+	{ &cg_anarkiSarge, "cg_anarkiSarge", "0", CVAR_ARCHIVE },
+	{ &cg_playerLean, "cg_playerLean", "1", CVAR_ARCHIVE },
 	{ &cg_piercingSightGreyscale, "cg_piercingSightGreyscale", "1", CVAR_ARCHIVE },
 	{ &cg_piercingSightLight, "cg_piercingSightLight", "1", CVAR_ARCHIVE },
 	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
@@ -679,6 +686,11 @@ void CG_UpdateCvars( void ) {
 #endif
 
 #if defined( QC )
+	if ( anarkiSargeModificationCount != cg_anarkiSarge.modificationCount ) {
+		anarkiSargeModificationCount = cg_anarkiSarge.modificationCount;
+		CG_ForceModelChange();
+	}
+
 	if ( enemyColorsModificationCount != cg_enemyColors.modificationCount ) {
 		enemyColorsModificationCount = cg_enemyColors.modificationCount;
 		CG_UpdateEnemyColors();

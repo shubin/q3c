@@ -1158,6 +1158,7 @@ void ClientThink_real( gentity_t *ent ) {
 #if defined( QC )
 	pm.pmove_float = pmove_float.integer;
 	pm.pmove_flags = g_dmflags.integer;
+	pm.pmove_speedlimit = pmove_speedlimit.integer;
 #endif
 
 	VectorCopy( client->ps.origin, client->oldOrigin );

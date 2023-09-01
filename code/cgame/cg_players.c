@@ -728,10 +728,11 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 	}
 
 	// sounds
-	dir = ci->modelName;
 #if defined( QC )
+	dir = champion_models[ci->champion];
 	fallback = DEFAULT_MODEL;
 #else
+	dir = ci->modelName;
 	fallback = (cgs.gametype >= GT_TEAM) ? DEFAULT_TEAM_MODEL : DEFAULT_MODEL;
 #endif
 
@@ -1014,6 +1015,11 @@ void CG_NewClientInfo( int clientNum ) {
 	// model
 #if defined( QC )
 	v = va( "%s/%s", champion_models[newInfo.champion], champion_skins[newInfo.champion] );
+	if ( cg_anarkiSarge.integer ) {
+		if ( newInfo.champion == CHAMP_ANARKI ) {
+			v = va( "%s/%s", champion_models[CHAMP_SARGE], champion_skins[CHAMP_SARGE] );
+		}
+	}
 #else
 	v = Info_ValueForKey( configstring, "model" );
 #endif
@@ -1535,6 +1541,9 @@ static void CG_PlayerAngles( centity_t *cent, vec3_t legs[3], vec3_t torso[3], v
 	// lean towards the direction of travel
 	VectorCopy( cent->currentState.pos.trDelta, velocity );
 	speed = VectorNormalize( velocity );
+#if defined( QC )
+	speed *= Com_Clamp( 0.0f, 1.0f, cg_playerLean.value );
+#endif // QC
 	if ( speed ) {
 		vec3_t	axis[3];
 		float	side;

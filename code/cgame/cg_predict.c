@@ -705,6 +705,7 @@ void CG_PredictPlayerState( void ) {
 	cg_pmove.pmove_msec = pmove_msec.integer;
 #if defined( QC )
 	cg_pmove.pmove_float = pmove_float.integer;
+	cg_pmove.pmove_speedlimit = pmove_speedlimit.integer;
     cg_pmove.pmove_flags = cgs.dmflags;
 #endif
 

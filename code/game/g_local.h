@@ -933,6 +933,7 @@ extern	vmCvar_t	pmove_fixed;
 extern	vmCvar_t	pmove_msec;
 #if defined( QC )
 extern	vmCvar_t	pmove_float;
+extern	vmCvar_t	pmove_speedlimit;
 #endif
 extern	vmCvar_t	g_rankings;
 extern	vmCvar_t	g_enableDust;
