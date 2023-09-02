@@ -244,6 +244,7 @@ vmCvar_t    cg_damagePlum;			// the number which pops up out of an enemy when yo
 vmCvar_t    cg_damagePlumSizeFactor;// size factor of that number
 vmCvar_t    cg_damagePlumPulse;		// whether to animate the popping up number or not to
 vmCvar_t    cg_damageDirection;		// damage indicator around the crosshair showing the direction the damage came from
+vmCvar_t	cg_screenDamage;		// blood spurts on the screen when receiving damage
 vmCvar_t    cg_hitCross;			// diagonal cross which blinks around the crosshair when you hit an enemy
 vmCvar_t	cg_enemyColors;
 vmCvar_t	cg_friendColors;
@@ -395,7 +396,11 @@ static cvarTable_t cvarTable[] = {
 	// but we also reference them here
 	{ &cg_buildScript, "com_buildScript", "0", 0 },	// force loading of all possible data amd error on failures
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
+#if defined( QC )
+	{ &cg_blood, "cg_blood", "1", CVAR_ARCHIVE },
+#else // QC
 	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE },
+#endif // QC
 	{ &cg_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO },
 #ifdef MISSIONPACK
 	{ &cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
@@ -463,6 +468,7 @@ static cvarTable_t cvarTable[] = {
     { &cg_damagePlumSizeFactor, "cg_damagePlumSizeFactor", "1.2", CVAR_ARCHIVE },
     { &cg_damagePlumPulse, "cg_damagePlumPulse", "2", CVAR_ARCHIVE },
     { &cg_damageDirection, "cg_damageDirection", "1", CVAR_ARCHIVE },
+	{ &cg_screenDamage, "cg_screenDamage", "1", CVAR_ARCHIVE },
     { &cg_hitCross, "cg_hitCross", "1", CVAR_ARCHIVE },
 	{ &cg_friendColors, "cg_friendColors", "66666", CVAR_ARCHIVE },
 	{ &cg_enemyColors, "cg_enemyColors", "22222", CVAR_ARCHIVE },

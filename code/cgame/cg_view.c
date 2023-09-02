@@ -586,9 +586,15 @@ static void CG_DamageBlendBlob( void ) {
 	int			maxTime;
 	refEntity_t		ent;
 
+#if defined( QC )
+	if ( !cg_screenDamage.integer ) {
+		return;
+	}
+#else // QC
 	if (!cg_blood.integer) {
 		return;
 	}
+#endif // QC
 
 	if ( !cg.damageValue ) {
 		return;

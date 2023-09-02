@@ -1359,6 +1359,7 @@ extern  vmCvar_t        cg_damagePlum;
 extern  vmCvar_t        cg_damagePlumSizeFactor;
 extern  vmCvar_t        cg_damagePlumPulse;
 extern  vmCvar_t        cg_damageDirection;
+extern	vmCvar_t		cg_screenDamage;
 extern  vmCvar_t        cg_hitCross;
 extern	vmCvar_t		cg_enemyColors;
 extern	vmCvar_t		cg_kickScale;

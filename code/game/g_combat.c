@@ -361,10 +361,12 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	if ( self->health > GIB_HEALTH ) {
 		return;
 	}
+#if !defined( QC )
 	if ( !g_blood.integer ) {
 		self->health = GIB_HEALTH+1;
 		return;
 	}
+#endif // QC
 
 #if defined( QC )
 	GibEntity( self, ENTITYNUM_NONE ); // event parameter is killer client number in QC, so pass ENTITYNUM_NONE to avoid directional gib dispersion
@@ -782,15 +784,17 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	// never gib in a nodrop
 	contents = trap_PointContents( self->r.currentOrigin, -1 );
 
-	if ( (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP) && g_blood.integer) || meansOfDeath == MOD_SUICIDE) {
-		// gib death
 #if defined( QC )
+	if ( (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP)) || meansOfDeath == MOD_SUICIDE) {
+		// gib death
 		if ( meansOfDeath == MOD_SHOTGUN && attacker != NULL && attacker->client != NULL ) {
 			GibEntity( self, attacker->client->ps.clientNum ); // we send killer id for directional gibs by shotgun kills
 		} else {
 			GibEntity( self, ENTITYNUM_NONE );
 		}
 #else
+	if ( ( self->health <= GIB_HEALTH && !( contents & CONTENTS_NODROP ) && g_blood.integer ) || meansOfDeath == MOD_SUICIDE ) {
+			// gib death
 		GibEntity( self, killer );
 #endif
 	} else {

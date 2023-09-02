@@ -593,9 +593,15 @@ void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
 	giblist[7] = cgs.media.gibLeg;
 	giblist[8] = cgs.media.gibLeg;
 
+#if defined( QC )
+	if ( !cg_gibs.integer ) {
+		return;
+	}
+#else // QC
 	if ( !cg_blood.integer ) {
 		return;
 	}
+#endif // QC
 
 	if ( killerOrigin != NULL ) {
 		// brutal shotgun gib knock, recommended with cg_gibs = 3
@@ -623,10 +629,12 @@ void CG_GibPlayer( vec3_t playerOrigin, vec3_t killerOrigin ) {
 		CG_LaunchGib( origin, velocity, cgs.media.gibBrain );
 	}
 
+#if !defined( QC )
 	// allow gibs to be turned off for speed
 	if ( !cg_gibs.integer ) {
 		return;
 	}
+#endif // QC
 
 	for ( i = 0; i < cg_gibs.integer && i < 5; i++ ) {
 		for ( gib = 0; gib < ARRAY_LEN(giblist); gib++ ) {
@@ -766,9 +774,15 @@ Generated a bunch of gibs launching out from the bodies location
 void CG_BigExplode( vec3_t playerOrigin ) {
 	vec3_t	origin, velocity;
 
+#if defined( QC )
+	if ( !cg_gibs.integer ) {
+		return;
+	}
+#else // QC
 	if ( !cg_blood.integer ) {
 		return;
 	}
+#endif // QC
 
 	VectorCopy( playerOrigin, origin );
 	velocity[0] = crandom()*EXP_VELOCITY;
