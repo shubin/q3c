@@ -55,6 +55,7 @@ MAIN MENU
 
 #if defined( QC )
 #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner_champions.md3"
+#define MAIN_BANNER_SHADER				"menubanner"
 #else
 #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner5.md3"
 #endif
@@ -85,7 +86,11 @@ typedef struct {
 #endif // QC
 	menutext_s		exit;
 
+#if defined( QC )
+	qhandle_t		bannerShader;
+#else // QC
 	qhandle_t		bannerModel;
+#endif // QC
 } mainmenu_t;
 
 
@@ -192,7 +197,11 @@ MainMenu_Cache
 ===============
 */
 void MainMenu_Cache( void ) {
+#if defined( QC )
+	s_main.bannerShader = trap_R_RegisterShaderNoMip( MAIN_BANNER_SHADER );
+#else // QC
 	s_main.bannerModel = trap_R_RegisterModel( MAIN_BANNER_MODEL );
+#endif // QC
 }
 
 sfxHandle_t ErrorMessage_Key(int key)
@@ -210,14 +219,19 @@ TTimo: this function is common to the main menu and errorMessage menu
 */
 
 static void Main_MenuDraw( void ) {
+#if !defined( QC )
 	refdef_t		refdef;
 	refEntity_t		ent;
+#endif // QC
+#if !defined( QC )
 	vec3_t			origin;
 	vec3_t			angles;
 	float			adjust;
 	float			x, y, w, h;
+#endif // QC
 	vec4_t			color = {0.5, 0, 0, 1};
 
+#if !defined( QC )
 	// setup the refdef
 
 	memset( &refdef, 0, sizeof( refdef ) );
@@ -264,6 +278,9 @@ static void Main_MenuDraw( void ) {
 	trap_R_AddRefEntityToScene( &ent );
 
 	trap_R_RenderScene( &refdef );
+#else // QC
+	UI_DrawHandlePic( 0, 30, 640, 120, s_main.bannerShader );
+#endif // QC
 	
 	if (strlen(s_errorMessage.errorMessage))
 	{
