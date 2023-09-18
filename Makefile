@@ -140,7 +140,7 @@ MISSIONPACK=missionpack
 endif
 
 ifndef QC
-QC=qc
+QC=base
 endif
 
 ifndef MISSIONPACK_CFLAGS
