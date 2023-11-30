@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include "cpp.h"
 
 static char wbuf[2*OBS];
@@ -267,7 +268,7 @@ peektokens(Tokenrow *trp, char *str)
 	if (str)
 		fprintf(stderr, "%s ", str);
 	if (tp<trp->bp || tp>trp->lp)
-		fprintf(stderr, "(tp offset %d) ", tp-trp->bp);
+		fprintf(stderr, "(tp offset " PRIuPTR ") ", tp-trp->bp);
 	for (tp=trp->bp; tp<trp->lp && tp<trp->bp+32; tp++) {
 		if (tp->type!=NL) {
 			int c = tp->t[tp->len];

@@ -191,8 +191,10 @@ extern char *stringf(const char *, ...);
 extern int suffix(char *, char *[], int);
 extern char *tempname(char *);
 
+#if !defined( _WIN32 )
 extern int access(const char *, int);
 extern int getpid(void);
+#endif // _WIN32
 
 extern char *cpp[], *include[], *com[], inputs[], *suffixes[];
 extern int option(char *);

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{98384480-62DE-479A-A99F-23A4B835A848}</ProjectGuid>
+    <RootNamespace>cgame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <OutputFile>$(OutDir)lburg.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\tools\lcc\lburg\gram.c" />
+    <ClCompile Include="..\code\tools\lcc\lburg\lburg.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\code\tools\lcc\lburg\lburg.h" />
+  </ItemGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
