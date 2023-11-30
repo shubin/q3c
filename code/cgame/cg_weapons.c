@@ -876,7 +876,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 #endif
 
 	case WP_MACHINEGUN:
+#if defined( QC )
+		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0.5f );
+#else // QC
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
+#endif // QC
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf1b.wav", qfalse );
 		weaponInfo->flashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2b.wav", qfalse );
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
@@ -887,7 +891,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 #if defined( QC )
 	case WP_LOUSY_MACHINEGUN:
-		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0.5f );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf1b.wav", qfalse );
 		weaponInfo->flashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2b.wav", qfalse );
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
@@ -898,14 +902,18 @@ void CG_RegisterWeapon( int weaponNum ) {
 #endif
 
 	case WP_SHOTGUN:
+#if defined( QC )
+		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0.5f );
+#else // QC
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
+#endif // QC
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/shotgun/sshotf1b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
 		break;
 
 #if defined( QC )
 	case WP_LOUSY_SHOTGUN:
-		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0 );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0.5f );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/shotgun/sshotf1b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
 		break;
@@ -918,8 +926,8 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->wiTrailTime = 2000;
 		weaponInfo->trailRadius = 32;
 		
-		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0 );
-		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
+		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0.5f );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0.5f );
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/tribolt/fire.wav", qfalse );
 		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
@@ -934,8 +942,13 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->wiTrailTime = 2000;
 		weaponInfo->trailRadius = 64;
 		
+#if defined( QC )
+		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0.5f );
+		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0.5f );
+#else // QC
 		MAKERGB( weaponInfo->missileDlightColor, 1, 0.75f, 0 );
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
+#endif // QC
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
 		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
@@ -975,7 +988,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->missileTrailFunc = CG_GrenadeTrail;
 		weaponInfo->wiTrailTime = 700;
 		weaponInfo->trailRadius = 32;
+#if defined( QC )
+		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0.5f );
+#else // QC
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0 );
+#endif // QC
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
 		cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
 		break;
@@ -2359,9 +2376,15 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		light = 300;
 		isSprite = qtrue;
 		duration = 1000;
+#if defined( QC )
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.5;
+#else // QC
 		lightColor[0] = 1;
 		lightColor[1] = 0.75;
 		lightColor[2] = 0.0;
+#endif // QC
 		if (cg_oldRocket.integer == 0) {
 			// explosion sprite animation
 			VectorMA( origin, 24, dir, sprOrg );
@@ -2382,7 +2405,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		duration = 1000;
 		lightColor[0] = 1;
 		lightColor[1] = 0.75;
-		lightColor[2] = 0.0;
+		lightColor[2] = 0.5;
 		if (cg_oldRocket.integer == 0) {
 			// explosion sprite animation
 			VectorMA( origin, 24, dir, sprOrg );

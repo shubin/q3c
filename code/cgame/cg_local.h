@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
 #if defined( QC )
-#include "../renderergl2/tr_extratypes.h"
 #include "../qcommon/qfiles.h"  // MAX_MAP_ADVERTISEMENTS
 #endif
 #include "../game/bg_public.h"

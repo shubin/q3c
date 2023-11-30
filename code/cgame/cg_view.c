@@ -801,7 +801,7 @@ static void CG_DrawAdvertisements (void)
 	qboolean useSingleShader;
 	int r;
 	//int lightmap;
-	const char *shaderName;
+	const char *shaderName = NULL;
 	qboolean shaderOverride;
 	qboolean turn90 = qfalse;
 
