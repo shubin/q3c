@@ -1,3 +1,4 @@
 ﻿build
 *.user
 makefiles/.vs
+*.log
