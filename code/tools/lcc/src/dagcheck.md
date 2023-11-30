@@ -180,6 +180,8 @@ static void reduce(NODEPTR_TYPE p, int goalnt) {
 		xx(inttype);
 		xx(longtype);
 		xx(longlong);
+		xx(signedptr);
+		xx(unsignedptr);
 		break;
 	case F:
 		xx(floattype);

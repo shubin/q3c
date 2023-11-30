@@ -29,13 +29,22 @@ static List filelist;	/* list of file names */
 static Symbol funclist;	/* list of struct func *'s */
 static Symbol afunc;	/* current function's struct func */
 
+/* bbpad - emit space, if necessary, to make size%align == 0; return new size */
+static int bbpad(int size, int align) {
+	if (size%align) {
+		(*IR->space)(align - size%align);
+		size = roundup(size, align);
+	}
+	return size;
+}
+
 /* bbcall - build tree to set _callsite at call site *cp, emit call site data */
 static void bbcall(Symbol yycounts, Coordinate *cp, Tree *e) {
 	static Symbol caller;
 	Value v;
 	union coordinate u;
 	Symbol p = genident(STATIC, array(voidptype, 0, 0), GLOBAL);
-	Tree t = *e;
+	Tree t;
 
 	defglobal(p, LIT);
 	defpointer(cp->file ? mkstr(cp->file)->u.c.loc : (Symbol)0);
@@ -48,42 +57,42 @@ static void bbcall(Symbol yycounts, Coordinate *cp, Tree *e) {
 		u.be.y = cp->y;
 	}
 	(*IR->defconst)(U, unsignedtype->size, (v.u = u.coord, v));
+	bbpad(2*voidptype->size + unsignedtype->size, p->type->align);	
 	if (caller == 0) {
 		caller = mksymbol(EXTERN, "_caller", ptr(voidptype));
 		caller->defined = 0;
 	}
-	if (generic((*e)->op) != CALL)
-		t = (*e)->kids[0];
+	for (t = *e; generic(t->op) != CALL; t = t->kids[0])
+		assert(t->op == RIGHT || !t->kids[1]);
 	assert(generic(t->op) == CALL);
 	t = tree(t->op, t->type,
 		tree(RIGHT, t->kids[0]->type,
 			t->kids[0],
 			tree(RIGHT, t->kids[0]->type, asgn(caller, idtree(p)), t->kids[0])),
 		t->kids[1]);
-	if (generic((*e)->op) != CALL)
-		t = tree((*e)->op, (*e)->type, t, (*e)->kids[1]);
+	for ( ; generic((*e)->op) != CALL; e = &(*e)->kids[0])
+		;
 	*e = t;
 }
 
 /* bbentry - return tree for _prologue(&afunc, &YYlink)' */
-static void bbentry(Symbol yylink, Symbol f) {
+static void bbentry(Symbol yylink, Symbol f, void *ignore) {
 	static Symbol prologue;
-	
+
 	afunc = genident(STATIC, array(voidptype, 4, 0), GLOBAL);
 	if (prologue == 0) {
-		prologue = mksymbol(EXTERN, "_prologue", ftype(inttype, voidptype));
+		prologue = mksymbol(EXTERN, "_prologue", ftype(inttype, voidptype, voidptype, NULL));
 		prologue->defined = 0;
 	}
 	walk(vcall(prologue, voidtype, pointer(idtree(afunc)), pointer(idtree(yylink)), NULL), 0, 0);
-
 }
 
 /* bbexit - return tree for _epilogue(&afunc)' */
 static void bbexit(Symbol yylink, Symbol f, Tree e) {
 	static Symbol epilogue;
-	
+
 	if (epilogue == 0) {
-		epilogue = mksymbol(EXTERN, "_epilogue", ftype(inttype, voidptype));
+		epilogue = mksymbol(EXTERN, "_epilogue", ftype(inttype, voidptype, NULL));
 		epilogue->defined = 0;
 	}
 	walk(vcall(epilogue, voidtype, pointer(idtree(afunc)), NULL), 0, 0);
@@ -108,7 +117,7 @@ static int bbfile(char *file) {
 }
 
 /* bbfunc - emit function name and src coordinates */
-static void bbfunc(Symbol yylink, Symbol f) {
+static void bbfunc(Symbol yylink, Symbol f, void *ignore) {
 	Value v;
 	union coordinate u;
 
@@ -126,6 +135,7 @@ static void bbfunc(Symbol yylink, Symbol f) {
 		u.be.index = bbfile(f->u.f.pt.file);
 	}
 	(*IR->defconst)(U, unsignedtype->size, (v.u = u.coord, v));
+	bbpad(3*voidptype->size + unsignedtype->size, afunc->type->align);
 	funclist = afunc;
 }
 
@@ -134,6 +144,8 @@ static void bbincr(Symbol yycounts, Coordinate *cp, Tree *e) {
 	struct map *mp = maplist->x;
 	Tree t;
 
+	if (needconst)
+		return;
 	/* append *cp to source map */
 	if (mp->size >= NELEMS(mp->u)) {
 		NEW(mp, PERM);
@@ -158,7 +170,7 @@ static void bbincr(Symbol yycounts, Coordinate *cp, Tree *e) {
 }
 
 /* bbvars - emit definition for basic block counting data */
-static void bbvars(Symbol yylink) {
+static void bbvars(Symbol yylink, void *ignore, void *ignore2) {
 	int i, j, n = npoints;
 	Value v;
 	struct map **mp;
@@ -169,8 +181,9 @@ static void bbvars(Symbol yylink) {
 	if (YYcounts) {
 		if (n <= 0)
 			n = 1;
-		YYcounts->type = array(unsignedtype, n, 0);
+		YYcounts->type = array(inttype, n, 0);
 		defglobal(YYcounts, BSS);
+		(*IR->space)(YYcounts->type->size);
 	}
 	files = genident(STATIC, array(charptype, 1, 0), GLOBAL);
 	defglobal(files, LIT);
@@ -184,10 +197,11 @@ static void bbvars(Symbol yylink) {
 			(*IR->defconst)(U, unsignedtype->size, (v.u = (*mp)->u[j].coord, v));
 	if (i > 0)
 		(*IR->space)(i*coords->type->type->size);
-	defpointer(NULL);
+	(*IR->defconst)(U, unsignedtype->size, (v.u = 0, v));
 	defglobal(yylink, DATA);
 	defpointer(NULL);
-	(*IR->defconst)(U, unsignedtype->size, (v.u = n, v));
+	(*IR->defconst)(U, inttype->size, (v.u = n, v));
+	bbpad(voidptype->size + inttype->size, yylink->type->align);
 	defpointer(YYcounts);
 	defpointer(coords);
 	defpointer(files);
@@ -195,34 +209,24 @@ static void bbvars(Symbol yylink) {
 }
 
 /* profInit - initialize basic block profiling options */
-void prof_init(int argc, char *argv[]) {
-	int i;
-	static int inited;
-
-	if (inited)
-		return;
-	inited = 1;
-	type_init(argc, argv);
-	if (IR) {
-		for (i = 1; i < argc; i++)
-			if (strncmp(argv[i], "-a", 2) == 0) {
-				if (ncalled == -1
-				&& process(argv[i][2] ? &argv[i][2] : "prof.out") > 0)
-					ncalled = 0;
-			} else if ((strcmp(argv[i], "-b") == 0
-			         || strcmp(argv[i], "-C") == 0) && YYlink == 0) {
-				YYlink = genident(STATIC, array(unsignedtype, 0, 0), GLOBAL);
-				attach((Apply)bbentry, YYlink, &events.entry);
-				attach((Apply)bbexit,  YYlink, &events.returns);
-				attach((Apply)bbfunc,  YYlink, &events.exit);
-				attach((Apply)bbvars,  YYlink, &events.end);
-				if (strcmp(argv[i], "-b") == 0) {
-					YYcounts = genident(STATIC, array(unsignedtype, 0, 0), GLOBAL);
-					maplist = append(allocate(sizeof (struct map), PERM), maplist);
-					((struct map *)maplist->x)->size = 0;
-					attach((Apply)bbcall, YYcounts, &events.calls);
-					attach((Apply)bbincr, YYcounts, &events.points);
-				}
-			}
-  }
+void profInit(char *arg) {
+	if (strncmp(arg, "-a", 2) == 0) {
+		if (ncalled == -1
+		&& process(arg[2] ? &arg[2] : "prof.out") > 0)
+			ncalled = 0;
+	} else if ((strcmp(arg, "-b") == 0
+	         || strcmp(arg, "-C") == 0) && YYlink == 0) {
+		YYlink = genident(STATIC, array(voidptype, 0, 0), GLOBAL);
+		attach((Apply)bbentry, YYlink, &events.entry);
+		attach((Apply)bbexit,  YYlink, &events.returns);
+		attach((Apply)bbfunc,  YYlink, &events.exit);
+		attach((Apply)bbvars,  YYlink, &events.end);
+		if (strcmp(arg, "-b") == 0) {
+			YYcounts = genident(STATIC, array(inttype, 0, 0), GLOBAL);
+			maplist = append(allocate(sizeof (struct map), PERM), maplist);
+			((struct map *)maplist->x)->size = 0;
+			attach((Apply)bbcall, YYcounts, &events.calls);
+			attach((Apply)bbincr, YYcounts, &events.points);
+		}
+	}
 }

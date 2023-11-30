@@ -2,9 +2,9 @@
 
 
 #define iscall(op) (generic(op) == CALL \
-	|| (IR->mulops_calls \
+	|| IR->mulops_calls \
 	&& (generic(op)==DIV||generic(op)==MOD||generic(op)==MUL) \
-	&& ( optype(op)==U  || optype(op)==I)))
+	&& ( optype(op)==U  || optype(op)==I))
 static Node forest;
 static struct dag {
 	struct node node;
@@ -25,7 +25,7 @@ static Symbol equated(Symbol);
 static void fixup(Node);
 static void labelnode(int);
 static void list(Node);
-static void kill(Symbol);
+static void killnodes(Symbol);
 static Node node(int, Node, Node, Symbol);
 static void printdag1(Node, int, int);
 static void printnode(Node, int, int);
@@ -40,7 +40,7 @@ void walk(Tree tp, int tlab, int flab) {
 	if (forest) {
 		Node list = forest->link;
 		forest->link = NULL;
-		if (!IR->wants_dag)
+		if (!IR->wants_dag && errcnt == 0)
 			list = undag(list);
 		code(Gen)->u.forest = list;
 		forest = NULL;
@@ -64,6 +64,15 @@ static Node node(int op, Node l, Node r, Symbol sym) {
 	++nodecount;
 	return &p->node;
 }
+
+static Node constnode( int op, Symbol sym ) {
+	int i;
+	struct dag *p;
+	p = dagnode( op, NULL, NULL, sym );
+	++nodecount;
+	return &p->node;
+}
+
 static struct dag *dagnode(int op, Node l, Node r, Symbol sym) {
 	struct dag *p;
 
@@ -79,7 +88,7 @@ static struct dag *dagnode(int op, Node l, Node r, Symbol sym) {
 Node newnode(int op, Node l, Node r, Symbol sym) {
 	return &dagnode(op, l, r, sym)->node;
 }
-static void kill(Symbol p) {
+static void killnodes(Symbol p) {
 	int i;
 	struct dag **q;
 
@@ -102,12 +111,15 @@ Node listnodes(Tree tp, int tlab, int flab) {
 	Node p = NULL, l, r;
 	int op;
 
-	assert(tlab || flab || (tlab == 0 && flab == 0));
+	assert(tlab == 0 || flab == 0);
 	if (tp == NULL)
 		return NULL;
 	if (tp->node)
 		return tp->node;
-	op = tp->op + sizeop(tp->type->size);
+	if (isarray(tp->type))
+		op = tp->op + sizeop(voidptype->size);
+	else
+		op = tp->op + sizeop(tp->type->size);
 	switch (generic(tp->op)) {
 	case AND:   { if (depth++ == 0) reset();
 		      if (flab) {
@@ -169,11 +181,16 @@ Node listnodes(Tree tp, int tlab, int flab) {
 		      else if (ty->u.sym->addressed)
 		      	p = listnodes(cvtconst(tp), 0, 0);
 		      else
-		      	p = node(op, NULL, NULL, constant(ty, tp->u.v)); } break;
+				/* always generate new node for constants */
+				if ( isscalar( ty ) )
+					p = constnode( op, constant( ty, tp->u.v ) );
+				else
+					p = node(op, NULL, NULL, constant(ty, tp->u.v)); 
+			} break;
 	case RIGHT: { if (   tp->kids[0] && tp->kids[1]
 			  &&  generic(tp->kids[1]->op) == ASGN
-			  && ((generic(tp->kids[0]->op) == INDIR
-			  && tp->kids[0]->kids[0] == tp->kids[1]->kids[0])
+			  && (generic(tp->kids[0]->op) == INDIR
+			  && tp->kids[0]->kids[0] == tp->kids[1]->kids[0]
 			  || (tp->kids[0]->op == FIELD
 			  &&  tp->kids[0] == tp->kids[1]->kids[0]))) {
 		      	assert(tlab == 0 && flab == 0);
@@ -276,11 +293,11 @@ Node listnodes(Tree tp, int tlab, int flab) {
 				unsigned int fmask = fieldmask(f);
 				unsigned int  mask = fmask<<fieldright(f);
 				Tree q = tp->kids[1];
-				if ((q->op == CNST+I && q->u.v.i == 0)
-				||  (q->op == CNST+U && q->u.v.u == 0))
+				if (q->op == CNST+I && q->u.v.i == 0
+				||  q->op == CNST+U && q->u.v.u == 0)
 					q = bittree(BAND, x, cnsttree(unsignedtype, (unsigned long)~mask));
-				else if ((q->op == CNST+I && (q->u.v.i&fmask) == fmask)
-				||       (q->op == CNST+U && (q->u.v.u&fmask) == fmask))
+				else if (q->op == CNST+I && (q->u.v.i&fmask) == fmask
+				||       q->op == CNST+U && (q->u.v.u&fmask) == fmask)
 					q = bittree(BOR, x, cnsttree(unsignedtype, (unsigned long)mask));
 				else {
 					listnodes(q, 0, 0);
@@ -306,7 +323,7 @@ Node listnodes(Tree tp, int tlab, int flab) {
 		      forest->syms[1] = intconst(tp->kids[1]->type->align);
 		      if (isaddrop(tp->kids[0]->op)
 		      && !tp->kids[0]->u.sym->computed)
-		      	kill(tp->kids[0]->u.sym);
+		      	killnodes(tp->kids[0]->u.sym);
 		      else
 		      	reset();
 		      p = listnodes(tp->kids[1], 0, 0); } break;
@@ -365,7 +382,7 @@ Node listnodes(Tree tp, int tlab, int flab) {
 		      p = node(tp->op + sizeop(voidptype->size), NULL, NULL, tp->u.sym);
  } break;
 	case ADDRL: { assert(tlab == 0 && flab == 0);
-		      if (tp->u.sym->temporary)
+		      if (tp->u.sym->generated)
 		      	addlocal(tp->u.sym);
 		      p = node(tp->op + sizeop(voidptype->size), NULL, NULL, tp->u.sym); } break;
 	default:assert(0);
@@ -448,7 +465,8 @@ void gencode(Symbol caller[], Symbol callee[]) {
 	cp = codehead.next;
 	for ( ; errcnt <= 0 && cp; cp = cp->next)
 		switch (cp->kind) {
-		case Address:  (*IR->address)(cp->u.addr.sym, cp->u.addr.base,
+		case Address:  assert(IR->address);
+			       (*IR->address)(cp->u.addr.sym, cp->u.addr.base,
 			       	cp->u.addr.offset); break;
 		case Blockbeg: {
 			       	Symbol *p = cp->u.block.locals;
@@ -525,7 +543,8 @@ void emitcode(void) {
 			       	swtoseg(CODE);
 			       } break;
 		case Switch:   {	int i;
-			       	defglobal(cp->u.swtch.table, LIT);
+					/* emit jump targets in data segment */
+					defglobal( cp->u.swtch.table, DATA );
 			       	(*IR->defaddress)(equated(cp->u.swtch.labels[0]));
 			       	for (i = 1; i < cp->u.swtch.size; i++) {
 			       		long k = cp->u.swtch.values[i-1];
@@ -621,11 +640,11 @@ static Node prune(Node forest) {
 	return forest;
 }
 static Node visit(Node p, int listed) {
-	if (p) {
+	if (p)
 		if (p->syms[2])
 			p = tmpnode(p);
-		else if ((p->count <= 1 && !iscall(p->op))
-		||       (p->count == 0 &&  iscall(p->op))) {
+		else if (p->count <= 1 && !iscall(p->op)
+		||       p->count == 0 &&  iscall(p->op)) {
 			p->kids[0] = visit(p->kids[0], 0);
 			p->kids[1] = visit(p->kids[1], 0);
 		}
@@ -654,7 +673,6 @@ static Node visit(Node p, int listed) {
 			if (!listed)
 				p = tmpnode(p);
 		};
-	}
 	return p;
 }
 static Node tmpnode(Node p) {

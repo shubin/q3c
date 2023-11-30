@@ -1,6 +1,6 @@
 #include "c.h"
 
-static char rcsid[] = "main.c - faked rcsid";
+static char rcsid[] = "$Name$($Id$)";
 
 static void typestab(Symbol, void *);
 
@@ -50,6 +50,32 @@ int main(int argc, char *argv[]) {
 	init(argc, argv);
 	t = gettok();
 	(*IR->progbeg)(argc, argv);
+	for (i = 1; i < argc; i++)
+		if (strcmp(argv[i], "-n") == 0) {
+			if (!YYnull) {
+				YYnull = install(string("_YYnull"), &globals, GLOBAL, PERM);
+				YYnull->type = func(voidptype, NULL, 1);
+				YYnull->sclass = EXTERN;
+				(*IR->defsymbol)(YYnull);
+			}
+		} else if (strncmp(argv[i], "-n", 2) == 0) {	/* -nvalid[,check] */
+			char *p = strchr(argv[i], ',');
+			if (p) {
+				YYcheck = install(string(p+1), &globals, GLOBAL, PERM);
+				YYcheck->type = func(voidptype, NULL, 1);
+				YYcheck->sclass = EXTERN;
+				(*IR->defsymbol)(YYcheck);
+				p = stringn(argv[i]+2, p - (argv[i]+2));
+			} else
+				p = string(argv[i]+2);
+			YYnull = install(p, &globals, GLOBAL, PERM);
+			YYnull->type = func(voidptype, NULL, 1);
+			YYnull->sclass = EXTERN;
+			(*IR->defsymbol)(YYnull);
+		} else {
+			profInit(argv[i]);
+			traceInit(argv[i]);
+		}
 	if (glevel && IR->stabinit)
 		(*IR->stabinit)(firstfile, argc, argv);
 	program();
@@ -85,7 +111,6 @@ void main_init(int argc, char *argv[]) {
 	if (inited)
 		return;
 	inited = 1;
-	type_init(argc, argv);
 	for (i = 1; i < argc; i++)
 		if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-g2") == 0)
 			glevel = 2;
@@ -111,28 +136,7 @@ void main_init(int argc, char *argv[]) {
 			Pflag++;
 		else if (strcmp(argv[i], "-w") == 0)
 			wflag++;
-		else if (strcmp(argv[i], "-n") == 0) {
-			if (!YYnull) {
-				YYnull = install(string("_YYnull"), &globals, GLOBAL, PERM);
-				YYnull->type = func(voidptype, NULL, 1);
-				YYnull->sclass = EXTERN;
-				(*IR->defsymbol)(YYnull);
-			}
-		} else if (strncmp(argv[i], "-n", 2) == 0) {	/* -nvalid[,check] */
-			char *p = strchr(argv[i], ',');
-			if (p) {
-				YYcheck = install(string(p+1), &globals, GLOBAL, PERM);
-				YYcheck->type = func(voidptype, NULL, 1);
-				YYcheck->sclass = EXTERN;
-				(*IR->defsymbol)(YYcheck);
-				p = stringn(argv[i]+2, p - (argv[i]+2));
-			} else
-				p = string(argv[i]+2);
-			YYnull = install(p, &globals, GLOBAL, PERM);
-			YYnull->type = func(voidptype, NULL, 1);
-			YYnull->sclass = EXTERN;
-			(*IR->defsymbol)(YYnull);
-		} else if (strcmp(argv[i], "-v") == 0)
+		else if (strcmp(argv[i], "-v") == 0)
 			fprint(stderr, "%s %s\n", argv[0], rcsid);
 		else if (strncmp(argv[i], "-s", 2) == 0)
 			density = strtod(&argv[i][2], NULL);

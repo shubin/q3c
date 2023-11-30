@@ -40,11 +40,11 @@ static void I(defconst)(int suffix, int size, Value v) {
 	case P: print("byte %d %U\n", size, (unsigned long)v.p); return;
 	case F:
 		if (size == 4) {
-			floatint_t fi;
-			fi.f = v.d;
-			print("byte 4 %u\n", fi.ui);
+			float f = (float)v.d;
+			print("byte 4 %u\n", *(unsigned *)&f);
 		} else {
-			unsigned *p = (unsigned *)&v.d;
+			double d = v.d;
+			unsigned *p = (unsigned *)&d;
 			print("byte 4 %u\n", p[swap]);
 			print("byte 4 %u\n", p[1 - swap]);
 		}
@@ -68,10 +68,10 @@ static void I(defsymbol)(Symbol p) {
 		case P: p->x.name = stringf("%U", p->u.c.v.p); break;
 		case F:
 			{	// JDC: added this to get inline floats
-				floatint_t temp;
+				unsigned temp;
 
-				temp.f = p->u.c.v.d;
-				p->x.name = stringf("%U", temp.ui );
+				*(float *)&temp = (float)p->u.c.v.d;
+				p->x.name = stringf("%U", temp );
 			}
 			break;// JDC: added this
 		default: assert(0);
@@ -129,11 +129,23 @@ static void dumptree(Node p) {
 		if ( !p->count ) { printf("pop\n"); };	// JDC
 		return;
 	case ASGN: case BOR: case BAND: case BXOR: case RSH: case LSH:
-	case ADD: case SUB: case DIV: case MUL: case MOD:
+	case ADD: case SUB: case DIV: case MOD:
 		assert(p->kids[0]);
 		assert(p->kids[1]);
 		dumptree(p->kids[0]);
 		dumptree(p->kids[1]);
+		print("%s\n", opname(p->op));
+		return;
+	case MUL: 
+		/* try to commute - it will reduce max. stack depth 
+		   and will allow more optimizations in our jit compiler */
+		if ( generic(p->kids[0]->op) == CNST && !p->kids[0]->kids[0] && !p->kids[0]->kids[1] ) {
+			dumptree(p->kids[1]);
+			dumptree(p->kids[0]);
+		} else {
+			dumptree(p->kids[0]);
+			dumptree(p->kids[1]);
+		}
 		print("%s\n", opname(p->op));
 		return;
 	case EQ: case NE: case GT: case GE: case LE: case LT:
@@ -321,16 +333,16 @@ static void I(stabline)(Coordinate *cp) {
 #define b_blockend blockend
 
 Interface bytecodeIR = {
-	{1, 1, 0},	/* char */
-	{2, 2, 0},	/* short */
-	{4, 4, 0},	/* int */
-	{4, 4, 0},	/* long */
-	{4, 4, 0},	/* long long */
-	{4, 4, 0},	/* float */				// JDC: use inline floats
-	{4, 4, 0},	/* double */			// JDC: don't ever emit 8 byte double code
-	{4, 4, 0},	/* long double */		// JDC: don't ever emit 8 byte double code
-	{4, 4, 0},	/* T* */
-	{0, 4, 0},	/* struct */
+	1, 1, 0,	/* char */
+	2, 2, 0,	/* short */
+	4, 4, 0,	/* int */
+	4, 4, 0,	/* long */
+	4, 4, 0,	/* long long */
+	4, 4, 0,	/* float */           // JDC: use inline floats
+	4, 4, 0,	/* double */          // JDC: don't ever emit 8 byte double code
+	4, 4, 0,	/* long double */     // JDC: don't ever emit 8 byte double code
+	4, 4, 0,	/* T* */
+	0, 4, 0,	/* struct */
 	0,		/* little_endian */
 	0,		/* mulops_calls */
 	0,		/* wants_callb */

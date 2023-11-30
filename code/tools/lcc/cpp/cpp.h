@@ -1,3 +1,4 @@
+#include <stdio.h>
 #define	INS	32768		/* input buffer */
 #define	OBS	4096		/* outbut buffer */
 #define	NARG	32		/* Max number arguments to a macro */
@@ -24,7 +25,7 @@ enum toktype { END, UNCLASS, NAME, NUMBER, STRING, CCON, NL, WS, DSHARP,
 		DSHARP1, NAME1, DEFINED, UMINUS };
 
 enum kwtype { KIF, KIFDEF, KIFNDEF, KELIF, KELSE, KENDIF, KINCLUDE, KDEFINE,
-		KUNDEF, KLINE, KWARNING, KERROR, KPRAGMA, KDEFINED,
+		KUNDEF, KLINE, KERROR, KPRAGMA, KDEFINED,
 		KLINENO, KFILE, KDATE, KTIME, KSTDC, KEVAL };
 
 #define	ISDEFINED	01	/* has #defined value */
@@ -59,7 +60,7 @@ typedef struct source {
 	uchar	*inb;		/* input buffer */
 	uchar	*inp;		/* input pointer */
 	uchar	*inl;		/* end of input */
-	int	fd;		/* input source */
+	FILE*	fd;		/* input source */
 	int	ifdepth;	/* conditional nesting in include */
 	struct	source *next;	/* stack for #include */
 } Source;
@@ -92,7 +93,7 @@ void	fixlex(void);
 void	setup(int, char **);
 int	gettokens(Tokenrow *, int);
 int	comparetokens(Tokenrow *, Tokenrow *);
-Source	*setsource(char *, int, char *);
+Source	*setsource(char *, FILE *, char *);
 void	unsetsource(void);
 void	puttokens(Tokenrow *);
 void	process(Tokenrow *);
@@ -141,9 +142,9 @@ void	iniths(void);
 void	setobjname(char *);
 #define	rowlen(tokrow)	((tokrow)->lp - (tokrow)->bp)
 
-char *basepath( char *fname );
+char 	*basepath( char *fname );
 
-extern	char *outbufp;
+extern	char *out_p;
 extern	Token	nltoken;
 extern	Source *cursource;
 extern	char *curtime;
@@ -157,10 +158,3 @@ extern	int Cplusplus;
 extern	Nlist *kwdefined;
 extern	Includelist includelist[NINCLUDE];
 extern	char wd[];
-
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
-#include <fcntl.h>

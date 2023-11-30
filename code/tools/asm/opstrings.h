@@ -32,12 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 { "CNSTI1", OP_CONST },
 { "CNSTU1", OP_CONST },
 
-//{ "ARGB", OP_ARG },
-//{ "ARGF", OP_ARG },
-//{ "ARGI", OP_ARG },
-//{ "ARGP", OP_ARG },
-//{ "ARGU", OP_ARG },
-
 { "ASGNB", 	OP_BLOCK_COPY },
 { "ASGNF4", OP_STORE4 },
 { "ASGNI4", OP_STORE4 },
@@ -50,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 { "ASGNI1", OP_STORE1 },
 { "ASGNU1", OP_STORE1 },
 
-{ "INDIRB", OP_IGNORE },	// block copy deals with this
+{ "INDIRB", OP_IGNORE },  // block copy deals with this
 { "INDIRF4", OP_LOAD4 },
 { "INDIRI4", OP_LOAD4 },
 { "INDIRP4", OP_LOAD4 },
@@ -66,7 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 { "CVFI4", OP_CVFI },
 
 { "CVIF4", OP_CVIF },
-{ "CVII4", OP_SEX8 },	// will be either SEX8 or SEX16
+{ "CVII4", OP_SEX8 },  // will be either SEX8 or SEX16
 { "CVII1", OP_IGNORE },
 { "CVII2", OP_IGNORE },
 { "CVIU4", OP_IGNORE },
@@ -77,28 +71,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 { "CVUP4", OP_IGNORE },
 { "CVUU4", OP_IGNORE },
 
+{ "CVUU2", OP_IGNORE },
 { "CVUU1", OP_IGNORE },
 
 { "NEGF4", OP_NEGF },
 { "NEGI4", OP_NEGI },
 
-//{ "CALLB", OP_UNDEF },
-//{ "CALLF", OP_UNDEF },
-//{ "CALLI", OP_UNDEF },
-//{ "CALLP", OP_UNDEF },
-//{ "CALLU", OP_UNDEF },
-//{ "CALLV", OP_CALL },
-
-//{ "RETF", OP_UNDEF },
-//{ "RETI", OP_UNDEF },
-//{ "RETP", OP_UNDEF },
-//{ "RETU", OP_UNDEF },
-//{ "RETV", OP_UNDEF },
-
 { "ADDRGP4", OP_CONST },
 
-//{ "ADDRFP", OP_PARM },
-//{ "ADDRLP", OP_LOCAL },
+//{ "ADDRFP", OP_PARM, ASMP(ADDR) },
+//{ "ADDRLP", OP_LOCAL,ASMP(ADDR) },
 
 { "ADDF4", OP_ADDF },
 { "ADDI4", OP_ADD },
@@ -166,10 +148,51 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 { "JUMPV", OP_JUMP },
 
-{ "LOADB4", OP_UNDEF },
-{ "LOADF4", OP_UNDEF },
-{ "LOADI4", OP_UNDEF },
-{ "LOADP4", OP_UNDEF },
-{ "LOADU4", OP_UNDEF },
+//{ "LOADB4", OP_UNDEF },
+//{ "LOADF4", OP_UNDEF },
+//{ "LOADI4", OP_UNDEF },
+//{ "LOADP4", OP_UNDEF },
+//{ "LOADU4", OP_UNDEF },
 
+{ "proc",    DIR_PROC,    ASMP(PROC)    },
+{ "endproc", DIR_ENDPROC, ASMP(ENDPROC) },
+{ "address", DIR_ADDRESS, ASMP(ADDRESS) },
+{ "export",  DIR_EXPORT,  ASMP(EXPORT)  },
+{ "import",  DIR_IMPORT,  ASMP(IMPORT)  },
+{ "code",    DIR_CODE,    ASMP(CODE)    },
+{ "data",    DIR_DATA,    ASMP(DATA)    },
+{ "lit",     DIR_LIT,     ASMP(LIT)     },
+{ "bss",     DIR_BSS,     ASMP(BSS)     },
+{ "line",    DIR_LINE,    ASMP(LINE)    },
+{ "file",    DIR_FILE,    ASMP(FILE)    },
+{ "equ",     DIR_EQU,     ASMP(EQU)     },
+{ "align",   DIR_ALIGN,   ASMP(ALIGN)   },
+{ "byte",    DIR_BYTE,    ASMP(BYTE)    },
+{ "skip",    DIR_SKIP,    ASMP(SKIP)    },
+
+{ "pop",    OP_IGNORE,     ASMP(POP) },
+
+{ "ARGB", OP_IGNORE, ASMP(ARG) },
+{ "ARGF4", OP_IGNORE, ASMP(ARG) },
+{ "ARGI4", OP_IGNORE, ASMP(ARG) },
+{ "ARGP4", OP_IGNORE, ASMP(ARG) },
+{ "ARGU4", OP_IGNORE, ASMP(ARG) },
+
+//{ "CALLB", OP_IGNORE, ASMP(CALL) },
+{ "CALLF4", OP_IGNORE, ASMP(CALL) },
+{ "CALLI4", OP_IGNORE, ASMP(CALL) },
+{ "CALLP4", OP_IGNORE, ASMP(CALL) },
+{ "CALLU4", OP_IGNORE, ASMP(CALL) },
+{ "CALLV", OP_IGNORE,  ASMP(CALL) },
+
+{ "RETF4", OP_IGNORE, ASMP(RET) },
+{ "RETI4", OP_IGNORE, ASMP(RET) },
+{ "RETP4", OP_IGNORE, ASMP(RET) },
+{ "RETU4", OP_IGNORE, ASMP(RET) },
+//{ "RETV", OP_IGNORE, ASMP(RET) },
+
+{ "ADDRFP4", OP_IGNORE, ASMP(ADDRF) },
+{ "ADDRLP4", OP_IGNORE, ASMP(ADDRL) },
+
+{ "LABELV", OP_IGNORE, ASMP(LABEL) },
 

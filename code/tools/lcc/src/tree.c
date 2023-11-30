@@ -86,8 +86,7 @@ static Tree root1(Tree p) {
 			warning("reference to `%t' elided\n", p->type);
 		if (isptr(p->kids[0]->type) && isvolatile(p->kids[0]->type->type))
 			warning("reference to `volatile %t' elided\n", p->type);
-		/* fall through */
-	case CVI: case CVF: case CVU: case CVP:
+		/* fall thru */
 	case NEG: case BCOM: case FIELD:
 		if (warn++ == 0)
 			warning("expression with no effect elided\n");
@@ -98,6 +97,25 @@ static Tree root1(Tree p) {
 		if (warn++ == 0)
 			warning("expression with no effect elided\n");
 		return NULL;
+	case CVF:
+		if (optype(p->op) == I
+		|| p->type->size < p->kids[0]->type->size)
+			if (warn++ == 0)
+				warning("expression with no effect elided\n");
+		return root1(p->kids[0]);
+	case CVI:
+		if ((optype(p->op) == U || optype(p->op) == I)
+		&& p->type->size < p->kids[0]->type->size
+		&& specific(p->kids[0]->op) != CALL+I)
+			if (warn++ == 0)
+				warning("expression with no effect elided\n");
+		return root1(p->kids[0]);
+	case CVU: case CVP:
+		if (optype(p->op) == U && p->type->size <  p->kids[0]->type->size
+		||  optype(p->op) == I && p->type->size <= p->kids[0]->type->size)
+			if (warn++ == 0)
+				warning("expression with no effect elided\n");
+		return root1(p->kids[0]);
 	case ARG: case ASGN: case CALL: case JUMP: case LABEL:
 		break;
 	default: assert(0);

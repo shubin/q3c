@@ -29,10 +29,15 @@ int level = GLOBAL;
 static int tempid;
 List loci, symbols;
 
-Table table(Table tp, int level) {
+Table newtable(int arena) {
 	Table new;
 
-	NEW0(new, FUNC);
+	NEW0(new, arena);
+	return new;
+}
+
+Table table(Table tp, int level) {
+	Table new = newtable(FUNC);
 	new->previous = tp;
 	new->level = level;
 	if (tp)
@@ -164,6 +169,7 @@ Symbol findlabel(int lab) {
 Symbol constant(Type ty, Value v) {
 	struct entry *p;
 	unsigned h = v.u&(HASHSIZE-1);
+	static union { int x; char endian; } little = { 1 };
 
 	ty = unqual(ty);
 	for (p = constants->buckets[h]; p; p = p->link)
@@ -171,7 +177,17 @@ Symbol constant(Type ty, Value v) {
 			switch (ty->op) {
 			case INT:      if (equalp(i)) return &p->sym; break;
 			case UNSIGNED: if (equalp(u)) return &p->sym; break;
-			case FLOAT:    if (equalp(d)) return &p->sym; break;
+			case FLOAT:
+				if (v.d == 0.0) {
+					float z1 = v.d, z2 = p->sym.u.c.v.d;
+					char *b1 = (char *)&z1, *b2 = (char *)&z2;
+					if (z1 == z2
+					&& (!little.endian && b1[0] == b2[0]
+					||   little.endian && b1[sizeof (z1)-1] == b2[sizeof (z2)-1]))
+						return &p->sym;
+				} else if (equalp(d))
+					return &p->sym;
+				break;
 			case FUNCTION: if (equalp(g)) return &p->sym; break;
 			case ARRAY:
 			case POINTER:  if (equalp(p)) return &p->sym; break;
@@ -296,7 +312,6 @@ Symbol mksymbol(int sclass, const char *name, Type ty) {
 
 /* vtoa - return string for the constant v of type ty */
 char *vtoa(Type ty, Value v) {
-
 	ty = unqual(ty);
 	switch (ty->op) {
 	case INT:      return stringd(v.i);

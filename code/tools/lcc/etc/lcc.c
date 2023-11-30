@@ -2,7 +2,7 @@
  * lcc [ option ]... [ file | -llib ]...
  * front end for the ANSI C compiler
  */
-static char rcsid[] = "Id: dummy rcsid";
+static char rcsid[] = "$Id$";
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -11,11 +11,149 @@ static char rcsid[] = "Id: dummy rcsid";
 #include <assert.h>
 #include <ctype.h>
 #include <signal.h>
-#ifdef WIN32
-#include <process.h> /* getpid() */
-#include <io.h> /* access() */
-#else
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
+#include <fcntl.h>
+
+#ifdef _WIN32 
+#ifdef _UNICODE
+#undef _UNICODE
+#endif
+
+#include <Windows.h>
+#include <tchar.h>
+
+#undef WIN32
+
+static size_t quotedlen(LPCTSTR arg) {
+	const TCHAR* p;
+	size_t  bCount;
+	size_t len = _tcslen(arg);
+
+	if (len == _tcscspn(arg, TEXT(" \t\"")))
+		return len;
+
+	len += 2; /* start and closing quote */
+	for (p = arg, bCount = 0; *p; p++) {
+		if (TEXT('"') == *p) {
+			if (bCount) {
+				len += bCount; /* double the number of backslashes */
+			}
+			len += 1;  /* escape the quotation mark */
+		}
+
+		if (TEXT('\\') == *p) {
+			bCount++;
+		}
+		else {
+			bCount = 0;
+		}
+	}
+	if (bCount) {
+		len += bCount; /* double the number of trailing backslashes */
+	}
+	return len;
+}
+
+static void quotedcat(LPTSTR dest, LPCTSTR arg) {
+	const TCHAR* p;
+	size_t  bCount;
+
+	if (_tcslen(arg) == _tcscspn(arg, TEXT(" \t\""))) {
+		_tcscat(dest, arg);
+		return;
+	}
+	dest += _tcslen(dest);
+	*dest++ = TEXT('"');
+
+	for (p = arg, bCount = 0; *p; p++) {
+		if (TEXT('"') == *p) {
+			if (bCount) {
+				/* double the number of backslashes */
+				size_t i;
+				for (i = 0; i < bCount; i++) {
+					*dest++ = TEXT('\\');
+				}
+			}
+			/* escape the quotation mark */
+			*dest++ = TEXT('\\');
+		}
+
+		*dest++ = *p;
+
+		if (TEXT('\\') == *p) {
+			bCount++;
+		}
+		else {
+			bCount = 0;
+		}
+	}
+	if (bCount) {
+		/* double the number of trailing backslashes */
+		size_t i;
+		for (i = 0; i < bCount; i++) {
+			*dest++ = TEXT('\\');
+		}
+	}
+	*dest++ = TEXT('"');
+	*dest++ = TEXT('\0');
+}
+
+static LPTSTR ArgvToCommandLine(LPCTSTR arg0, int argc, const TCHAR* argv[]) {
+	size_t len;
+	int i;
+	LPTSTR cmdLine;
+	int arg0NeedsQuotes = 0;
+
+	len = 0;
+	if (arg0) {
+		size_t l = _tcslen(arg0);
+		len += l;
+		arg0NeedsQuotes = l != _tcscspn(arg0, TEXT(" \t\""));
+		if (arg0NeedsQuotes)
+			len += 2;
+	}
+	if (argv) {
+		if (len)
+			len++;
+		for (i = 0; i < argc; i++) {
+			len += quotedlen(argv[i]);
+			if (i + 1 < argc)
+				len += 1;
+		}
+	}
+	len++; /* trailing 0 */
+
+	cmdLine = LocalAlloc(LMEM_FIXED, len * sizeof(TCHAR));
+	if (!cmdLine)
+		return NULL;
+	*cmdLine = TEXT('\0');
+
+
+	if (arg0) {
+		if (arg0NeedsQuotes)
+			_tcscat(cmdLine, TEXT("\""));
+		_tcscat(cmdLine, arg0);
+		if (arg0NeedsQuotes)
+			_tcscat(cmdLine, TEXT("\""));
+	}
+
+	if (argv) {
+		if (_tcslen(cmdLine))
+			_tcscat(cmdLine, TEXT(" "));
+
+		for (i = 0; i < argc; i++) {
+			quotedcat(cmdLine, argv[i]);
+			if (i + 1 < argc)
+				_tcscat(cmdLine, TEXT(" "));
+		}
+	}
+
+	return cmdLine;
+}
 #endif
 
 #ifndef TEMPDIR
@@ -30,7 +168,7 @@ struct list {		/* circular list nodes: */
 
 static void *alloc(int);
 static List append(char *,List);
-extern char *basename(char *);
+extern char *basepath(char *);
 static int callsys(char *[]);
 extern char *concat(char *, char *);
 static int compile(char *, char *);
@@ -53,16 +191,15 @@ extern char *stringf(const char *, ...);
 extern int suffix(char *, char *[], int);
 extern char *tempname(char *);
 
-#ifndef __sun
+extern int access(const char *, int);
 extern int getpid(void);
-#endif
 
-extern char *cpp[], *include[], *com[], *as[],*ld[], inputs[], *suffixes[];
+extern char *cpp[], *include[], *com[], inputs[], *suffixes[];
 extern int option(char *);
 
 static int errcnt;		/* number of errors */
 static int Eflag;		/* -E specified */
-static int Sflag = 1;		/* -S specified */ //for Q3 we always generate asm
+static int Sflag = 1;   /* -S specified */ // for Q3 - we always generate asm
 static int cflag;		/* -c specified */
 static int verbose;		/* incremented for each -v */
 static List llist[2];		/* loader files, flags */
@@ -78,14 +215,14 @@ char *tempdir = TEMPDIR;	/* directory for temporary files */
 static char *progname;
 static List lccinputs;		/* list of input directories */
 
-extern void UpdatePaths( const char *lccBinary );
+extern void updatePaths( const char *lccBinary );
 
 int main(int argc, char *argv[]) {
 	int i, j, nf;
-
+	
 	progname = argv[0];
 
-	UpdatePaths( progname );
+	updatePaths( progname );
 
 	ac = argc + 50;
 	av = alloc(ac*sizeof(char *));
@@ -105,7 +242,7 @@ int main(int argc, char *argv[]) {
 		tempdir = getenv("TMPDIR");
 	assert(tempdir);
 	i = strlen(tempdir);
-	for (; (i > 0 && tempdir[i-1] == '/') || tempdir[i-1] == '\\'; i--)
+	for (; i > 0 && tempdir[i-1] == '/' || tempdir[i-1] == '\\'; i--)
 		tempdir[i-1] = '\0';
 	if (argc <= 1) {
 		help();
@@ -155,24 +292,21 @@ int main(int argc, char *argv[]) {
 	}
 	ilist = 0;
 	for (i = 1; argv[i]; i++)
-		if (*argv[i] == '-')
+		if (strcmp(argv[i], "-l") == 0 && argv[i+1] && *argv[i+1] != '-') {	/* -l file */
+			llist[1] = append(argv[i++], llist[1]);
+			llist[1] = append(argv[i],   llist[1]);
+		} else if (*argv[i] == '-')
 			opt(argv[i]);
 		else {
 			char *name = exists(argv[i]);
 			if (name) {
 				if (strcmp(name, argv[i]) != 0
-				|| (nf > 1 && suffix(name, suffixes, 3) >= 0))
+				|| nf > 1 && suffix(name, suffixes, 3) >= 0)
 					fprintf(stderr, "%s:\n", name);
 				filename(name, 0);
 			} else
 				error("can't find `%s'", argv[i]);
 		}
-	if (errcnt == 0 && !Eflag && !Sflag && !cflag && llist[1]) {
-		compose(ld, llist[0], llist[1],
-			append(outfile ? outfile : concat("a", first(suffixes[4])), 0));
-		if (callsys(av))
-			errcnt++;
-	}
 	rm(rmlist);	
 	return errcnt ? EXIT_FAILURE : EXIT_SUCCESS;
 }
@@ -204,8 +338,8 @@ static List append(char *str, List list) {
 	return p;
 }
 
-/* basename - return base name for name, e.g. /usr/drh/foo.c => foo */
-char *basename(char *name) {
+/* basepath - return base name for name, e.g. /usr/drh/foo.c => foo */
+char *basepath(char *name) {
 	char *s, *b, *t = 0;
 
 	for (b = s = name; *s; s++)
@@ -220,76 +354,49 @@ char *basename(char *name) {
 	return s;
 }
 
-#ifdef WIN32
-#include <process.h>
+#ifdef _WIN32
 
-static char *escapeDoubleQuotes(const char *string) {
-	int stringLength = strlen(string);
-	int bufferSize = stringLength + 1;
-	int i, j;
-	char *newString;
+//#include <process.h>
 
-	if (string == NULL)
-		return NULL;
+//static LPTSTR ArgvToCommandLine(LPCTSTR arg0, int argc, const TCHAR * argv[]) {
 
-	for (i = 0; i < stringLength; i++) {
-		if (string[i] == '"')
-			bufferSize++;
+#define _P_WAIT 0
+
+static int _spawnvp(int mode, const char* cmdname, const char* const argv[]) {
+	int argc;
+	LPTSTR commandline;
+	BOOL ret;
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	DWORD dwExitCode;
+	int exitCode;
+
+	for (argc = 0; argv[argc]; argc++);
+	commandline = ArgvToCommandLine(NULL, argc - 1, (const char **)&argv[1]);
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	ret = CreateProcess(cmdname, commandline, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	if (GetExitCodeProcess(pi.hProcess, &dwExitCode)) {
+		exitCode = dwExitCode;
 	}
-
-	newString = (char*)malloc(bufferSize);
-
-	if (newString == NULL)
-		return NULL;
-
-	for (i = 0, j = 0; i < stringLength; i++) {
-		if (string[i] == '"')
-			newString[j++] = '\\';
-
-		newString[j++] = string[i];
+	else {
+		exitCode = -1;
 	}
-
-	newString[j] = '\0';
-
-	return newString;
-}
-
-static int spawn(const char *cmdname, char **argv) {
-	int argc = 0;
-	char **newArgv = argv;
-	int i;
-	intptr_t exitStatus;
-
-	// _spawnvp removes double quotes from arguments, so we
-	// have to escape them manually
-	while (*newArgv++ != NULL)
-		argc++;
-
-	newArgv = (char **)malloc(sizeof(char*) * (argc + 1));
-
-	for (i = 0; i < argc; i++)
-		newArgv[i] = escapeDoubleQuotes(argv[i]);
-
-	newArgv[argc] = NULL;
-
-	exitStatus = _spawnvp(_P_WAIT, cmdname, (const char *const *)newArgv);
-
-	for (i = 0; i < argc; i++)
-		free(newArgv[i]);
-
-	free(newArgv);
-	return exitStatus;
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	return exitCode;
 }
 
 #else
-
 #define _P_WAIT 0
-#ifndef __sun
 extern int fork(void);
-#endif
 extern int wait(int *);
+/*extern void execv(const char *, char *[]);*/
 
-static int spawn(const char *cmdname, char **argv) {
+static int _spawnvp(int mode, const char *cmdname, const char *const argv[]) {
 	int pid, n, status;
 
 	switch (pid = fork()) {
@@ -297,8 +404,7 @@ static int spawn(const char *cmdname, char **argv) {
 		fprintf(stderr, "%s: no more processes\n", progname);
 		return 100;
 	case 0:
-		// TTimo removing hardcoded paths, searching in $PATH
-		execvp(cmdname, argv);
+		execvp(cmdname, (char **)argv);
 		fprintf(stderr, "%s: ", progname);
 		perror(cmdname);
 		fflush(stdout);
@@ -321,7 +427,6 @@ static int callsys(char **av) {
 	int i, status = 0;
 	static char **argv;
 	static int argc;
-	char *executable;
 
 	for (i = 0; av[i] != NULL; i++)
 		;
@@ -347,8 +452,6 @@ static int callsys(char **av) {
 				i++;
 		}
 		argv[j] = NULL;
-		executable = strsave( argv[0] );
-		argv[0] = stringf( "\"%s\"", argv[0] );
 		if (verbose > 0) {
 			int k;
 			fprintf(stderr, "%s", argv[0]);
@@ -357,7 +460,7 @@ static int callsys(char **av) {
 			fprintf(stderr, "\n");
 		}
 		if (verbose < 2)
-			status = spawn(executable, argv);
+			status = _spawnvp(_P_WAIT, argv[0], (const char * const *)argv);
 		if (status == -1) {
 			fprintf(stderr, "%s: ", progname);
 			perror(argv[0]);
@@ -395,7 +498,7 @@ static void compose(char *cmd[], List a, List b, List c) {
 		if (s && isdigit(s[1])) {
 			int k = s[1] - '0';
 			assert(k >=1 && k <= 3);
-			if ((b = lists[k-1])) {
+			if (b = lists[k-1]) {
 				b = b->link;
 				av[j] = alloc(strlen(cmd[i]) + strlen(b->str) - 1);
 				strncpy(av[j], cmd[i], s - cmd[i]);
@@ -427,7 +530,9 @@ static void error(char *fmt, char *msg) {
 /* exists - if `name' readable return its path name or return null */
 static char *exists(char *name) {
 	List b;
-
+#ifdef _MSC_VER // fix ms compiler warnings
+#define access _access
+#endif
 	if ( (name[0] == '/' || name[0] == '\\' || name[2] == ':')
 	&& access(name, 4) == 0)
 		return name;
@@ -446,6 +551,9 @@ static char *exists(char *name) {
 	if (verbose > 1)
 		return name;
 	return 0;
+#ifdef _MSC_VER
+#undef access
+#endif
 }
 
 /* first - return first component in semicolon separated list */
@@ -467,7 +575,7 @@ static int filename(char *name, char *base) {
 	static char *stemp, *itemp;
 
 	if (base == 0)
-		base = basename(name);
+		base = basepath(name);
 	switch (suffix(name, suffixes, 4)) {
 	case 0:	/* C source files */
 		compose(cpp, plist, append(name, 0), 0);
@@ -491,21 +599,6 @@ static int filename(char *name, char *base) {
 			return filename(stemp, base);
 		break;
 	case 2:	/* assembly language files */
-		if (Eflag)
-			break;
-		if (!Sflag) {
-			char *ofile;
-			if (cflag && outfile)
-				ofile = outfile;
-			else if (cflag)
-				ofile = concat(base, first(suffixes[3]));
-			else
-				ofile = tempname(first(suffixes[3]));
-			compose(as, alist, append(name, 0), append(ofile, 0));
-			status = callsys(av);
-			if (!find(ofile, llist[1]))
-				llist[1] = append(ofile, llist[1]);
-		}
 		break;
 	case 3:	/* object files */
 		if (!find(name, llist[1]))
@@ -528,7 +621,7 @@ static int filename(char *name, char *base) {
 static List find(char *str, List list) {
 	List b;
 	
-	if ((b = list))
+	if (b = list)
 		do {
 			if (strcmp(str, b->str) == 0)
 				return b;
@@ -553,19 +646,19 @@ static void help(void) {
 "-Dname -Dname=def	define the preprocessor symbol `name'\n",
 "-E	run only the preprocessor on the named C programs and unsuffixed files\n",
 "-g	produce symbol table information for debuggers\n",
-"-help or -?	print this message\n",
+"-help or -?	print this message on standard error\n",
 "-Idir	add `dir' to the beginning of the list of #include directories\n",	
 "-lx	search library `x'\n",
+"-M	emit makefile dependencies; implies -E\n",
 "-N	do not search the standard directories for #include files\n",
 "-n	emit code to check for dereferencing zero pointers\n",
 "-O	is ignored\n",
 "-o file	leave the output in `file'\n",
-"-P	print ANSI-style declarations for globals\n",
+"-P	print ANSI-style declarations for globals on standard error\n",
 "-p -pg	emit profiling code; see prof(1) and gprof(1)\n",
 "-S	compile to assembly language\n",
-#ifdef linux
 "-static	specify static libraries (default is dynamic)\n",
-#endif
+"-dynamic	specify dynamically linked libraries\n",
 "-t -tname	emit function tracing calls to printf or to `name'\n",
 "-target name	is ignored\n",
 "-tempdir=dir	place temporary files in `dir/'", "\n"
@@ -584,9 +677,13 @@ static void help(void) {
 		if (strncmp("-tempdir", msgs[i], 8) == 0 && tempdir)
 			fprintf(stderr, "; default=%s", tempdir);
 	}
-#define xx(v) if ((s = getenv(#v))) fprintf(stderr, #v "=%s\n", s)
+#define xx(v) if (s = getenv(#v)) fprintf(stderr, #v "=%s\n", s)
 	xx(LCCINPUTS);
 	xx(LCCDIR);
+#ifdef WIN32
+	xx(include);
+	xx(lib);
+#endif
 #undef xx
 }
 
@@ -595,11 +692,11 @@ static void initinputs(void) {
 	char *s = getenv("LCCINPUTS");
 	List b;
 
-	if (s == 0 || (s = inputs)[0] == 0)
+	if (s == 0 && (s = inputs)[0] == 0)
 		s = ".";
 	if (s) {
 		lccinputs = path2list(s);
-		if ((b = lccinputs))
+		if (b = lccinputs)
 			do {
 				b = b->link;
 				if (strcmp(b->str, ".") != 0) {
@@ -610,6 +707,17 @@ static void initinputs(void) {
 					b->str = "";
 			} while (b != lccinputs);
 	}
+#ifdef WIN32
+	if (list = b = path2list(getenv("include")))
+		do {
+			int n;
+			b = b->link;
+			n = strlen(b->str);
+			if (b->str[n-1] == '\\')
+				b->str[n-1] = '/';
+			ilist = append(stringf("-I\"%s\"", b->str), ilist);
+		} while (b != list);
+#endif
 }
 
 /* interrupt - catch interrupt signals */
@@ -632,11 +740,21 @@ static void opt(char *arg) {
 				plist = append(&arg[3], plist);
 				return;
 			case 'f':
-				if (strcmp(&arg[3], "-C") || option("-b")) {
-					clist = append(&arg[3], clist);
-					return;
+				if (strcmp(&arg[3], "-C") == 0 && !option("-b"))
+					break;	/* -C requires that -b is supported */
+				clist = append(&arg[3], clist);
+				if (strcmp(&arg[3], "-unsigned_char=1") == 0) {
+					plist = append("-D__CHAR_UNSIGNED__", plist);
+					plist = append("-U_CHAR_IS_SIGNED", plist);
 				}
-				break; /* and fall through */
+#define xx(name,k) \
+				if (strcmp(&arg[3], "-wchar_t=" #name) == 0) \
+					plist = append("-D_WCHAR_T_SIZE=" #k, plist);
+xx(unsigned_char,1)
+xx(unsigned_short,2)
+xx(unsigned_int,4)
+#undef xx
+				return;
 			case 'a':
 				alist = append(&arg[3], alist);
 				return;
@@ -646,9 +764,14 @@ static void opt(char *arg) {
 			}
 		fprintf(stderr, "%s: %s ignored\n", progname, arg);
 		return;
-	case 'd':	/* -dn */
-		arg[1] = 's';
-		clist = append(arg, clist);
+	case 'd':	/* -dn -dynamic */
+		if (strcmp(arg, "-dynamic") == 0) {
+			if (!option(arg))
+				fprintf(stderr, "%s: %s ignored\n", progname, arg);
+		} else {
+			arg[1] = 's';
+			clist = append(arg, clist);
+		}
 		return;
 	case 't':	/* -t -tname -tempdir=dir */
 		if (strncmp(arg, "-tempdir=", 9) == 0)
@@ -695,14 +818,14 @@ static void opt(char *arg) {
 			printed = 1;
 			return;
 		}
-#ifdef linux
+		break;
 	case 's':
-		if (strcmp(arg,"-static") == 0) {
+		if (strcmp(arg, "-static") == 0) {
 			if (!option(arg))
 				fprintf(stderr, "%s: %s ignored\n", progname, arg);
 			return;
 		}
-#endif         
+		break;
 	}
 	if (arg[2] == 0)
 		switch (arg[1]) {	/* single-character options */
@@ -734,15 +857,19 @@ static void opt(char *arg) {
 		case 'c':
 			cflag++;
 			return;
+		case 'M':
+			Eflag++;	/* -M implies -E */
+			plist = append(arg, plist);
+			return;
 		case 'N':
-			if (strcmp(basename(cpp[0]), "gcc-cpp") == 0)
+			if (strcmp(basepath(cpp[0]), "gcc-cpp") == 0)
 				plist = append("-nostdinc", plist);
 			include[0] = 0;
 			ilist = 0;
 			return;
 		case 'v':
 			if (verbose++ == 0) {
-				if (strcmp(basename(cpp[0]), "gcc-cpp") == 0)
+				if (strcmp(basepath(cpp[0]), "gcc-cpp") == 0)
 					plist = append(arg, plist);
 				clist = append(arg, clist);
 				fprintf(stderr, "%s %s\n", progname, rcsid);
@@ -766,7 +893,7 @@ static List path2list(const char *path) {
 		sep = ';';
 	while (*path) {
 		char *p, buf[512];
-		if ((p = strchr(path, sep))) {
+		if (p = strchr(path, sep)) {
 			assert(p - path < sizeof buf);
 			strncpy(buf, path, p - path);
 			buf[p-path] = '\0';
@@ -820,7 +947,7 @@ char *stringf(const char *fmt, ...) {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsprintf(buf, fmt, ap);
+	(void)vsprintf(buf, fmt, ap);
 	va_end(ap);
 	return strsave(buf);
 }
@@ -831,7 +958,7 @@ int suffix(char *name, char *tails[], int n) {
 
 	for (i = 0; i < n; i++) {
 		char *s = tails[i], *t;
-		for ( ; (t = strchr(s, ';')); s = t + 1) {
+		for ( ; t = strchr(s, ';'); s = t + 1) {
 			int m = t - s;
 			if (len > m && strncmp(&name[len-m], s, m) == 0)
 				return i;
@@ -848,7 +975,11 @@ int suffix(char *name, char *tails[], int n) {
 /* tempname - generate a temporary file name in tempdir with given suffix */
 char *tempname(char *suffix) {
 	static int n;
+#ifdef _WIN32
+	char *name = stringf("%s/lcc%d%d%s", tempdir, _getpid(), n++, suffix);
+#else
 	char *name = stringf("%s/lcc%d%d%s", tempdir, getpid(), n++, suffix);
+#endif
 
 	if (strstr(com[1], "win32") != NULL)
 		name = replace(name, '/', '\\');

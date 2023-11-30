@@ -91,7 +91,7 @@ static Tree expr2(void) {
 		l = pointer(expr(':'));
 		pts[1] = src;
 		r = pointer(expr2());
-		if (events.points)
+		if (generic(p->op) != CNST && events.points)
 			{
 				apply(events.points, &pts[0], &l);
 				apply(events.points, &pts[1], &r);
@@ -230,13 +230,13 @@ static Tree unary(void) {
 			pty = p->type;
 			if (isenum(pty))
 				pty = pty->type;
-			if ((isarith(pty) && isarith(ty))
-			||  (isptr(pty)   && isptr(ty))) {
+			if (isarith(pty) && isarith(ty)
+			||  isptr(pty)   && isptr(ty)) {
 				explicitCast++;
 				p = cast(p, ty);
 				explicitCast--;
-			} else if ((isptr(pty) && isint(ty))
-			||       (isint(pty) && isptr(ty))) {
+			} else if (isptr(pty) && isint(ty)
+			||       isint(pty) && isptr(ty)) {
 				if (Aflag >= 1 && ty->size < pty->size)
 					warning("conversion from `%t' to `%t' is compiler dependent\n", p->type, ty);
 
@@ -278,12 +278,11 @@ static Tree postfix(Tree p) {
 			    	Tree q;
 			    	t = gettok();
 			    	q = expr(']');
-			    	if (YYnull) {
+			    	if (YYnull)
 			    		if (isptr(p->type))
 			    			p = nullcheck(p);
 			    		else if (isptr(q->type))
 			    			q = nullcheck(q);
-			    	}
 			    	p = (*optree['+'])(ADD, pointer(p), pointer(q));
 			    	if (isptr(p->type) && isarray(p->type->type))
 			    		p = retype(p, p->type->type);
@@ -348,14 +347,15 @@ static Tree primary(void) {
 	case SCON: if (ischar(tsym->type->type))
 		   	tsym->u.c.v.p = stringn(tsym->u.c.v.p, tsym->type->size);
 		   else
-		   	tsym->u.c.v.p = memcpy(allocate(tsym->type->size, PERM), tsym->u.c.v.p, tsym->type->size);
+		   	tsym->u.c.v.p = memcpy(allocate((tsym->type->size/widechar->size)*sizeof (int), PERM),
+		   		tsym->u.c.v.p, (tsym->type->size/widechar->size)*sizeof (int));
 		   tsym = constant(tsym->type, tsym->u.c.v); 
 		   if (tsym->u.c.loc == NULL)
 		   	tsym->u.c.loc = genident(STATIC, tsym->type, GLOBAL);
 		   p = idtree(tsym->u.c.loc); break;
 	case ID:   if (tsym == NULL)
 		   	{
-				Symbol p = install(token, &identifiers, level, FUNC);
+				Symbol p = install(token, &identifiers, level, PERM);
 				p->src = src;
 				if (getchr() == '(') {
 					Symbol q = lookup(token, externals);
@@ -498,13 +498,12 @@ Type binary(Type xty, Type yty) {
 	xx(unsignedlonglong);
 	xx(longlong);
 	xx(unsignedlong);
-	if ((xty == longtype     && yty == unsignedtype)
-	||  (xty == unsignedtype && yty == longtype)) {
+	if (xty == longtype     && yty == unsignedtype
+	||  xty == unsignedtype && yty == longtype)
 		if (longtype->size > unsignedtype->size)
 			return longtype;
 		else
 			return unsignedlong;
-	}
 	xx(longtype);
 	xx(unsignedtype);
 	return inttype;
@@ -621,7 +620,7 @@ Tree cast(Tree p, Type type) {
 			p = simplify(CVP, dst, p, NULL);
 		else {
 			if ((isfunc(src->type) && !isfunc(dst->type))
-			|| (!isnullptr(p) && !isfunc(src->type) && isfunc(dst->type)))
+			|| (!isnullptr(p) && !isfunc(src->type) &&  isfunc(dst->type)))
 				warning("conversion from `%t' to `%t' is compiler dependent\n", p->type, type);
 
 			if (src->size != dst->size)
@@ -659,7 +658,7 @@ Tree field(Tree p, const char *name) {
 		if (YYcheck && !isaddrop(p->op) && q->offset > 0)	/* omit */
 			p = nullcall(ty, YYcheck, p, consttree(q->offset, inttype));	/* omit */
 		else					/* omit */
-		p = simplify(ADD+P, ty, p, consttree(q->offset, inttype));
+		p = simplify(ADD+P, ty, p, consttree(q->offset, signedptr));
 
 		if (q->lsb) {
 			p = tree(FIELD, ty->type, rvalue(p), NULL);

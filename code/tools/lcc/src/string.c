@@ -78,7 +78,7 @@ char *stringd(long n) {
 	else
 		m = n;
 	do
-		*--s = m%10 + '0';
+		*--s = (char)(m%10 + '0');
 	while ((m /= 10) != 0);
 	if (n < 0)
 		*--s = '-';

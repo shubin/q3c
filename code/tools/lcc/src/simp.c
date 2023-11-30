@@ -53,10 +53,10 @@ int needconst;
 int explicitCast;
 static int addi(long x, long y, long min, long max, int needconst) {
 	int cond = x == 0 || y == 0
-	|| (x < 0 && y < 0 && x >= min - y)
-	|| (x < 0 && y > 0)
-	|| (x > 0 && y < 0)
-	|| (x > 0 && y > 0 && x <= max - y);
+	|| x < 0 && y < 0 && x >= min - y
+	|| x < 0 && y > 0
+	|| x > 0 && y < 0
+	|| x > 0 && y > 0 && x <= max - y;
 	if (!cond && needconst) {
 		warning("overflow in constant expression\n");
 		cond = 1;
@@ -68,10 +68,10 @@ static int addi(long x, long y, long min, long max, int needconst) {
 
 static int addd(double x, double y, double min, double max, int needconst) {
 	int cond = x == 0 || y == 0
-	|| (x < 0 && y < 0 && x >= min - y)
-	|| (x < 0 && y > 0)
-	|| (x > 0 && y < 0)
-	|| (x > 0 && y > 0 && x <= max - y);
+	|| x < 0 && y < 0 && x >= min - y
+	|| x < 0 && y > 0
+	|| x > 0 && y < 0
+	|| x > 0 && y > 0 && x <= max - y;
 	if (!cond && needconst) {
 		warning("overflow in constant expression\n");
 		cond = 1;
@@ -100,6 +100,7 @@ static Tree addrtree(Tree e, long n, Type ty) {
 	q->computed = 1;
 	q->defined = 1;
 	q->ref = 1;
+	assert(IR->address);
 	if (p->scope  == GLOBAL
 	||  p->sclass == STATIC || p->sclass == EXTERN) {
 		if (p->sclass == AUTO)
@@ -146,11 +147,11 @@ static int divd(double x, double y, double min, double max, int needconst) {
 
 /* mul[id] - return 1 if min <= x*y <= max, 0 otherwise */
 static int muli(long x, long y, long min, long max, int needconst) {
-	int cond = (x > -1 && x <= 1) || (y > -1 && y <= 1)
-	|| (x < 0 && y < 0 && -x <= max/-y)
-	|| (x < 0 && y > 0 &&  x >= min/y)
-	|| (x > 0 && y < 0 &&  y >= min/x)
-	|| (x > 0 && y > 0 &&  x <= max/y);
+	int cond = x > -1 && x <= 1 || y > -1 && y <= 1
+	|| x < 0 && y < 0 && -x <= max/-y
+	|| x < 0 && y > 0 &&  x >= min/y
+	|| x > 0 && y < 0 &&  y >= min/x
+	|| x > 0 && y > 0 &&  x <= max/y;
 	if (!cond && needconst) {
 		warning("overflow in constant expression\n");
 		cond = 1;
@@ -161,11 +162,11 @@ static int muli(long x, long y, long min, long max, int needconst) {
 }
 
 static int muld(double x, double y, double min, double max, int needconst) {
-	int cond = (x >= -1 && x <= 1) || (y >= -1 && y <= 1)
-	|| (x < 0 && y < 0 && -x <= max/-y)
-	|| (x < 0 && y > 0 &&  x >= min/y)
-	|| (x > 0 && y < 0 &&  y >= min/x)
-	|| (x > 0 && y > 0 &&  x <= max/y);
+	int cond = x >= -1 && x <= 1 || y >= -1 && y <= 1
+	|| x < 0 && y < 0 && -x <= max/-y
+	|| x < 0 && y > 0 &&  x >= min/y
+	|| x > 0 && y < 0 &&  y >= min/x
+	|| x > 0 && y > 0 &&  x <= max/y;
 	if (!cond && needconst) {
 		warning("overflow in constant expression\n");
 		cond = 1;
@@ -254,22 +255,23 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			xcvtcnst(F,l->u.v.d,ty,i,(long)l->u.v.d);
 			break;
 		case CVF+F: {
-			float d = 0.0f;
-			if (l->op == CNST+F) {
+			float d = 0.0;
+			if (l->op == CNST+F)
 				if (l->u.v.d < ty->u.sym->u.limits.min.d)
 					d = ty->u.sym->u.limits.min.d;
 				else if (l->u.v.d > ty->u.sym->u.limits.max.d)
 					d = ty->u.sym->u.limits.max.d;
 				else
 					d = l->u.v.d;
-			}
-			xcvtcnst(F,l->u.v.d,ty,d,(double)d);
+			xcvtcnst(F,l->u.v.d,ty,d,(long double)d);
 			break;
 			}
 		case BAND+U:
 			foldcnst(U,u,&);
 			commute(r,l);
 			identity(r,l,U,u,ones(8*ty->size));
+			if ( l->op == COND )
+				warning("The '&' operator is applied to bool type value\n");
 			if (r->op == CNST+U && r->u.v.u == 0)
 				return tree(RIGHT, ty, root(l), cnsttree(ty, 0UL));
 			break;
@@ -277,6 +279,8 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			foldcnst(I,i,&);
 			commute(r,l);
 			identity(r,l,I,i,ones(8*ty->size));
+			if ( l->op == COND )
+				warning("The '&' operator is applied to bool type value\n");
 			if (r->op == CNST+I && r->u.v.u == 0)
 				return tree(RIGHT, ty, root(l), cnsttree(ty, 0L));
 			break;
@@ -307,15 +311,26 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			commute(r,l);
 			identity(r,retype(l,ty),I,i,0);
 			identity(r,retype(l,ty),U,u,0);
-			if (isaddrop(l->op)
-			&& ((r->op == CNST+I && r->u.v.i <= longtype->u.sym->u.limits.max.i
-			    && r->u.v.i >= longtype->u.sym->u.limits.min.i)
-			|| (r->op == CNST+U && r->u.v.u <= longtype->u.sym->u.limits.max.i)))
+			/*
+			Some assemblers, e.g., the MIPS, can't handle offsets
+			larger than 16 bits. A better solution would be to change
+			the interface so that address() could fail.
+			*/
+			if (l->op == ADDRG+P && l->u.sym->generated
+			&& (r->op == CNST+I && (r->u.v.i > 32767 || r->u.v.i < -32768)
+			||  r->op == CNST+U && r->u.v.u > 65536))
+				break;
+			if (IR->address
+			&&  isaddrop(l->op)
+			&& (r->op == CNST+I && r->u.v.i <= longtype->u.sym->u.limits.max.i
+			    && r->u.v.i >= longtype->u.sym->u.limits.min.i
+			||  r->op == CNST+U && r->u.v.u <= longtype->u.sym->u.limits.max.i))
 				return addrtree(l, cast(r, longtype)->u.v.i, ty);
-			if (l->op == ADD+P && isaddrop(l->kids[1]->op)
-			&& ((r->op == CNST+I && r->u.v.i <= longtype->u.sym->u.limits.max.i
-			    && r->u.v.i >= longtype->u.sym->u.limits.min.i)
-			||  (r->op == CNST+U && r->u.v.u <= longtype->u.sym->u.limits.max.i)))
+			if (IR->address
+			&&  l->op == ADD+P && isaddrop(l->kids[1]->op)
+			&& (r->op == CNST+I && r->u.v.i <= longtype->u.sym->u.limits.max.i
+			    && r->u.v.i >= longtype->u.sym->u.limits.min.i
+			||  r->op == CNST+U && r->u.v.u <= longtype->u.sym->u.limits.max.i))
 				return simplify(ADD+P, ty, l->kids[0],
 					addrtree(l->kids[1], cast(r, longtype)->u.v.i, ty));
 			if ((l->op == ADD+I || l->op == SUB+I)
@@ -364,11 +379,15 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			foldcnst(U,u,|);
 			commute(r,l);
 			identity(r,l,U,u,0);
+			if ( l->op == COND )
+				warning("The '|' operator is applied to bool type value\n");
 			break;
 		case BOR+I:
 			foldcnst(I,i,|);
 			commute(r,l);
 			identity(r,l,I,i,0);
+			if ( l->op == COND )
+				warning("The '|' operator is applied to bool type value\n");
 			break;
 		case BXOR+U:
 			foldcnst(U,u,^);
@@ -382,12 +401,15 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			break;
 		case DIV+F:
 			xfoldcnst(F,d,/,divd);
+			identity(r,l,F,d,1.0); /* x/1.0 => x */
+			if ( r->op == CNST+F && r->u.v.d != 0.0 ) /* x/c => x * 1/c */
+				return simplify(MUL,ty,l,cnsttree(floattype,1.0/r->u.v.d));
 			break;
 		case DIV+I:
 			identity(r,l,I,i,1);
-			if ((r->op == CNST+I && r->u.v.i == 0)
-			||  (l->op == CNST+I && l->u.v.i == ty->u.sym->u.limits.min.i
-			&&  r->op == CNST+I && r->u.v.i == -1))
+			if (r->op == CNST+I && r->u.v.i == 0
+			||  l->op == CNST+I && l->u.v.i == ty->u.sym->u.limits.min.i
+			&&  r->op == CNST+I && r->u.v.i == -1)
 				break;
 			xfoldcnst(I,i,/,divi);
 			break;
@@ -463,13 +485,13 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 				return eqtree(NE, r, l);
 			break;
 		case MOD+I:
-			if (r->op == CNST+I && r->u.v.i == 1)	/* l%1 => (l,0) */
-				return tree(RIGHT, ty, root(l), cnsttree(ty, 0L));
-			if ((r->op == CNST+I && r->u.v.i == 0)
-			||  (l->op == CNST+I && l->u.v.i == ty->u.sym->u.limits.min.i
-			&&  r->op == CNST+I && r->u.v.i == -1))
+			if (r->op == CNST+I && r->u.v.i == 0
+			||  l->op == CNST+I && l->u.v.i == ty->u.sym->u.limits.min.i
+			&&  r->op == CNST+I && r->u.v.i == -1)
 				break;
 			xfoldcnst(I,i,%,divi);
+			if (r->op == CNST+I && r->u.v.i == 1)	/* l%1 => (l,0) */
+				return tree(RIGHT, ty, root(l), cnsttree(ty, 0L));
 			break;
 		case MOD+U:		
 			if (r->op == CNST+U && ispow2(r->u.v.u)) /* l%2^n => l&(2^n-1) */
@@ -480,6 +502,18 @@ Tree simplify(int op, Type ty, Tree l, Tree r) {
 			break;
 		case MUL+F:
 			xfoldcnst(F,d,*,muld);
+			identity(r,l,F,d,1.0); /* x * 1.0 => x */
+			/* x * c1 * c2 => x * (c1*c2) */
+			if ( r->op == CNST+F && l->op == MUL+F && l->kids[0]->op == CNST+F ) {
+				/* print overflow warning if any */
+				muld( l->kids[0]->u.v.d, r->u.v.d, 
+						ty->u.sym->u.limits.min.d,
+						ty->u.sym->u.limits.max.d, 1 );
+				l->kids[0]->u.v.d *= r->u.v.d;
+				if ( l->kids[0]->u.v.d == 1.0 && l->kids[1] ) /* x * 1.0 => x */
+					return l->kids[1];
+				return l;
+			}
 			commute(l,r);
 			break;
 		case MUL+I:

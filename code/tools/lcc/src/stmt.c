@@ -37,7 +37,6 @@ Code code(int kind) {
 	return cp;
 }
 int reachable(int kind) {
-
 	if (kind > Start) {
 		Code cp;
 		for (cp = codelist; cp->kind < Label; )
@@ -159,9 +158,11 @@ void statement(int loop, Swtch swp, int lev) {
 		       		} else
 		       			retcode(expr(0));
 		       	else {
-		       		if (rty != voidtype)
+		       		if (rty != voidtype) {
 		       			warning("missing return value\n");
-		       		retcode(NULL);
+		       			retcode(cnsttree(inttype, 0L));
+		       		} else
+		       			retcode(NULL);
 		       	}
 		       	branch(cfunc->u.f.label);
 		       } expect(';');
@@ -440,12 +441,11 @@ void swcode(Swtch swp, int b[], int lb, int ub) {
 		Symbol table = genident(STATIC,
 			array(voidptype, u - l + 1, 0), GLOBAL);
 		(*IR->defsymbol)(table);
-		if (!isunsigned(swp->sym->type) || v[l] != 0)
-			cmp(LT, swp->sym, v[l], lolab);
+		cmp(LT, swp->sym, v[l], lolab);
 		cmp(GT, swp->sym, v[u], hilab);
 		e = (*optree['-'])(SUB, cast(idtree(swp->sym), ty), cnsttree(ty, v[l]));
-		if (e->type->size < unsignedptr->size)
-			e = cast(e, unsignedlong);
+		if (e->type->size < signedptr->size)
+			e = cast(e, longtype);
 		walk(tree(JUMP, voidtype,
 			rvalue((*optree['+'])(ADD, pointer(idtree(table)), e)), NULL),
 			0, 0);
@@ -501,8 +501,16 @@ void retcode(Tree p) {
 					tree(CALL+B, p->type,
 						p->kids[0]->kids[0], idtree(retv)),
 					rvalue(idtree(retv)));
-			else
-				p = asgntree(ASGN, rvalue(idtree(retv)), p);
+			else {
+				Type ty = retv->type->type;
+				assert(isstruct(ty));
+				if (ty->u.sym->u.s.cfields) {
+					ty->u.sym->u.s.cfields = 0;
+					p = asgntree(ASGN, rvalue(idtree(retv)), p);
+					ty->u.sym->u.s.cfields = 1;
+				} else
+					p = asgntree(ASGN, rvalue(idtree(retv)), p);
+			}
 			walk(p, 0, 0);
 			if (events.returns)
 				apply(events.returns, cfunc, rvalue(idtree(retv)));
@@ -591,7 +599,7 @@ void branch(int lab) {
 		if (cp->kind == Label
 		&&  cp->u.forest->op == LABEL+V
 		&&  equal(cp->u.forest->syms[0], p))
-			warning("source code specifies an infinite loop");
+			warning("source code specifies an infinite loop\n");
 	}
 }
 void equatelab(Symbol old, Symbol new) {

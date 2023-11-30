@@ -2,12 +2,18 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #include "cpp.h"
 
-extern	int lcc_getopt(int, char *const *, const char *);
+#ifdef _WIN32
+#include <io.h>
+#include <sys/stat.h>
+#include <share.h>
+#endif
+
+extern int lcc_getopt(int, char *const *, const char *);
 extern	char	*optarg, rcsid[];
 extern	int	optind;
+
 int	verbose;
 int	Mflag;	/* only print active include files */
 char	*objname; /* "src.$O: " */
@@ -16,10 +22,10 @@ int	Cplusplus = 1;
 void
 setup(int argc, char **argv)
 {
-	int c, fd, i;
+	int c, i;
+	FILE *fd;
 	char *fp, *dp;
 	Tokenrow tr;
-	extern void setup_kwtab(void);
 	uchar *includeDirs[ NINCLUDE ] = { 0 };
 	int   numIncludeDirs = 0;
 
@@ -36,7 +42,7 @@ setup(int argc, char **argv)
 			break;
 		case 'D':
 		case 'U':
-			setsource("<cmdarg>", -1, optarg);
+			setsource("<cmdarg>", NULL, optarg);
 			maketokenrow(3, &tr);
 			gettokens(&tr, 1);
 			doadefine(&tr, c);
@@ -59,23 +65,17 @@ setup(int argc, char **argv)
 		}
 	dp = ".";
 	fp = "<stdin>";
-	fd = 0;
+	fd = stdin;
 	if (optind<argc) {
 		dp = basepath( argv[optind] );
 		fp = (char*)newstring((uchar*)argv[optind], strlen(argv[optind]), 0);
-		if ((fd = open(fp, 0)) <= 0)
+		if ((fd = fopen(fp, "r")) == NULL)
 			error(FATAL, "Can't open input file %s", fp);
 	}
 	if (optind+1<argc) {
-		int fdo;
-#ifdef WIN32
-		fdo = creat(argv[optind+1], _S_IREAD | _S_IWRITE);
-#else
-		fdo = creat(argv[optind+1], 0666);
-#endif
-		if (fdo<0)
+		FILE *fdo = freopen(argv[optind+1], "w", stdout);
+		if (fdo == NULL)
 			error(FATAL, "Can't open output file %s", argv[optind+1]);
-		dup2(fdo, 1);
 	}
 	if(Mflag)
 		setobjname(fp);
@@ -87,7 +87,6 @@ setup(int argc, char **argv)
 
 	setsource(fp, fd, NULL);
 }
-
 
 char *basepath( char *fname )
 {
@@ -102,20 +101,15 @@ char *basepath( char *fname )
 	return dp;
 }
 
+#if !defined( _WIN32 )
 /* memmove is defined here because some vendors don't provide it at
    all and others do a terrible job (like calling malloc) */
-// -- ouch, that hurts -- ln
-/* always use the system memmove() on Mac OS X. --ryan. */
-#if !defined(__APPLE__) && !defined(_MSC_VER)
-#ifdef memmove
-#undef memmove
-#endif
 void *
 memmove(void *dp, const void *sp, size_t n)
 {
 	unsigned char *cdp, *csp;
 
-	if (n<=0)
+	if (n==0)
 		return dp;
 	cdp = dp;
 	csp = (unsigned char *)sp;
@@ -132,4 +126,4 @@ memmove(void *dp, const void *sp, size_t n)
 	}
 	return dp;
 }
-#endif
+#endif // _WIN32

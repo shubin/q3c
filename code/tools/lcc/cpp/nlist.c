@@ -3,12 +3,12 @@
 #include <string.h>
 #include "cpp.h"
 
+extern	int lcc_getopt(int, char *const *, const char *);
 extern	char	*optarg;
 extern	int	optind;
 extern	int	verbose;
 extern	int	Cplusplus;
 Nlist	*kwdefined;
-char	wd[128];
 
 #define	NLSIZE	128
 
@@ -19,27 +19,27 @@ struct	kwtab {
 	int	val;
 	int	flag;
 } kwtab[] = {
-	{"if",		KIF,		ISKW},
-	{"ifdef",	KIFDEF,		ISKW},
-	{"ifndef",	KIFNDEF,	ISKW},
-	{"elif",		KELIF,		ISKW},
-	{"else",		KELSE,		ISKW},
-	{"endif",	KENDIF,		ISKW},
-	{"include",	KINCLUDE,	ISKW},
-	{"define",	KDEFINE,	ISKW},
-	{"undef",	KUNDEF,		ISKW},
-	{"line",		KLINE,		ISKW},
-	{"warning",	KWARNING,	ISKW},
-	{"error",	KERROR,		ISKW},
-	{"pragma",	KPRAGMA,	ISKW},
-	{"eval",		KEVAL,		ISKW},
-	{"defined",	KDEFINED,	ISDEFINED+ISUNCHANGE},
-	{"__LINE__",	KLINENO,	ISMAC+ISUNCHANGE},
-	{"__FILE__",	KFILE,		ISMAC+ISUNCHANGE},
-	{"__DATE__",	KDATE,		ISMAC+ISUNCHANGE},
-	{"__TIME__",	KTIME,		ISMAC+ISUNCHANGE},
-	{"__STDC__",	KSTDC,		ISUNCHANGE},
-	{NULL}
+	"if",		KIF,		ISKW,
+	"ifdef",	KIFDEF,		ISKW,
+	"ifndef",	KIFNDEF,	ISKW,
+	"elif",		KELIF,		ISKW,
+	"else",		KELSE,		ISKW,
+	"endif",	KENDIF,		ISKW,
+	"include",	KINCLUDE,	ISKW,
+	"define",	KDEFINE,	ISKW,
+	"undef",	KUNDEF,		ISKW,
+	"line",		KLINE,		ISKW,
+	"error",	KERROR,		ISKW,
+	"pragma",	KPRAGMA,	ISKW,
+	"eval",		KEVAL,		ISKW,
+	"defined",	KDEFINED,	ISDEFINED+ISUNCHANGE,
+	"ident",	KPRAGMA,	ISKW,	/* treat like pragma (ignored) */
+	"__LINE__",	KLINENO,	ISMAC+ISUNCHANGE,
+	"__FILE__",	KFILE,		ISMAC+ISUNCHANGE,
+	"__DATE__",	KDATE,		ISMAC+ISUNCHANGE,
+	"__TIME__",	KTIME,		ISMAC+ISUNCHANGE,
+	"__STDC__",	KSTDC,		ISUNCHANGE,
+	NULL
 };
 
 unsigned long	namebit[077+1];
@@ -78,7 +78,7 @@ lookup(Token *tp, int install)
 
 	h = 0;
 	for (cp=tp->t, cpe=cp+tp->len; cp<cpe; )
-		h += *cp++;
+		h = h * 101 + *cp++;
 	h %= NLSIZE;
 	np = nlist[h];
 	while (np) {

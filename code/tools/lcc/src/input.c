@@ -75,6 +75,12 @@ void input_init(int argc, char *argv[]) {
 	nextline();
 }
 
+/* ident - handle #ident "string" */
+static void ident(void) {
+	while (*cp != '\n' && *cp != '\0')
+		cp++;
+}
+
 /* pragma - handle #pragma ref id... */
 static void pragma(void) {
 	if ((t = gettok()) == ID && strcmp(token, "ref") == 0)
@@ -90,7 +96,7 @@ static void pragma(void) {
 		}
 }
 
-/* resynch - set line number/file name in # n [ "file" ] and #pragma ... */
+/* resynch - set line number/file name in # n [ "file" ], #pragma, etc. */
 static void resynch(void) {
 	for (cp++; *cp == ' ' || *cp == '\t'; )
 		cp++;
@@ -99,6 +105,9 @@ static void resynch(void) {
 	if (strncmp((char *)cp, "pragma", 6) == 0) {
 		cp += 6;
 		pragma();
+	} else if (strncmp((char *)cp, "ident", 5) == 0) {
+		cp += 5;
+		ident();
 	} else if (*cp >= '0' && *cp <= '9') {
 	line:	for (lineno = 0; *cp >= '0' && *cp <= '9'; )
 			lineno = 10*lineno + *cp++ - '0';
@@ -125,11 +134,12 @@ static void resynch(void) {
 	} else if (Aflag >= 2 && *cp != '\n')
 		warning("unrecognized control line\n");
 	while (*cp)
-		if (*cp++ == '\n') {
-			if (cp == limit + 1)
+		if (*cp++ == '\n')
+			if (cp == limit + 1) {
 				nextline();
-			else
+				if (cp == limit)
+					break;
+			} else
 				break;
-		}
 }
 

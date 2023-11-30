@@ -8,7 +8,7 @@ static Symbol frameno;		/* local holding frame number */
 /* appendstr - append str to the evolving format string, expanding it if necessary */
 static void appendstr(char *str) {
 	do
-		if (fp == fmtend) {
+		if (fp == fmtend)
 			if (fp) {
 				char *s = allocate(2*(fmtend - fmt), FUNC);
 				strncpy(s, fmt, fmtend - fmt);
@@ -19,7 +19,6 @@ static void appendstr(char *str) {
 				fp = fmt = allocate(80, FUNC);
 				fmtend = fmt + 80;
 			}
-		}
 	while ((*fp++ = *str++) != 0);
 	fp--;
 }
@@ -122,7 +121,7 @@ static void tracefinis(Symbol printer) {
 }
 
 /* tracecall - generate code to trace entry to f */
-static void tracecall(Symbol printer, Symbol f) {
+static void tracecall(Symbol printer, Symbol f, void *ignore) {
 	int i;
 	Symbol counter = genident(STATIC, inttype, GLOBAL);
 
@@ -158,24 +157,13 @@ static void tracereturn(Symbol printer, Symbol f, Tree e) {
 	tracefinis(printer);
 }
 
-/* trace_init - initialize for tracing */
-void trace_init(int argc, char *argv[]) {
-	int i;
-	static int inited;
-
-	if (inited)
-		return;
-	inited = 1;
-	type_init(argc, argv);
-	if (IR)
-		for (i = 1; i < argc; i++)
-			if (strncmp(argv[i], "-t", 2) == 0 &&  strchr(argv[i], '=') == NULL) {
-				Symbol printer = mksymbol(EXTERN,
-					argv[i][2] ? &argv[i][2] : "printf",
-				ftype(inttype, ptr(qual(CONST, chartype))));
-				printer->defined = 0;
-				attach((Apply)tracecall,   printer, &events.entry);
-				attach((Apply)tracereturn, printer, &events.returns);
-				break;
-			}
+/* traceInit - initialize for tracing */
+void traceInit(char *arg) {
+	if (strncmp(arg, "-t", 2) == 0 && strchr(arg, '=') == NULL) {
+		Symbol printer = mksymbol(EXTERN, arg[2] ? &arg[2] : "printf",
+			ftype(inttype, ptr(qual(CONST, chartype)), voidtype, NULL));
+		printer->defined = 0;
+		attach((Apply)tracecall,   printer, &events.entry);
+		attach((Apply)tracereturn, printer, &events.returns);
+	}
 }

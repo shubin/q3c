@@ -59,7 +59,7 @@ static void acaller(char *caller, char *file, int x, int y, int count, struct fu
 		q->y = y;
 		q->count = 0;
 		for (r = &callee->callers; *r && (strcmp(q->name, (*r)->name) > 0
-			|| strcmp(q->file, (*r)->file) > 0 || q->y > (*r)->y || q->y > (*r)->y); r = &(*r)->link)
+			|| strcmp(q->file, (*r)->file) > 0 || q->y > (*r)->y); r = &(*r)->link)
 			;
 		q->link = *r;
 		*r = q;
@@ -68,7 +68,9 @@ static void acaller(char *caller, char *file, int x, int y, int count, struct fu
 }
 
 /* compare - return <0, 0, >0 if a<b, a==b, a>b, resp. */
-static int compare(struct count *a, struct count *b) {
+static int compare(const void *x, const void *y) {
+	struct count *a = (struct count *)x, *b = (struct count *)y;
+
 	if (a->y == b->y)
 		return a->x - b->x;
 	return a->y - b->y;
@@ -132,11 +134,21 @@ static void apoint(int i, char *file, int x, int y, int count) {
 			p->counts[j] = z;
 		}
 	}
-	p->counts[i].x = x;
-	p->counts[i].y = y;
-	p->counts[i].count += count;
+	if (p->counts[i].x != x || p->counts[i].y != y)
+		for (i = 0; i < p->count; i++)
+			if (p->counts[i].x == x && p->counts[i].y == y)
+				break;
 	if (i >= p->count)
-		p->count = i + 1;
+		if (i >= p->size)
+			apoint(i, file, x, y, count);
+		else {
+			p->count = i + 1;
+			p->counts[i].x = x;
+			p->counts[i].y = y;
+			p->counts[i].count = count;
+		}
+	else
+		p->counts[i].count += count;
 }
 
 /* findcount - return count associated with (file,x,y) or -1 */
@@ -150,9 +162,9 @@ int findcount(char *file, int x, int y) {
 		struct count *c = cursor->counts;
 		for (l = 0, u = cursor->count - 1; l <= u; ) {
 			int k = (l + u)/2;
-			if (c[k].y > y || (c[k].y == y && c[k].x > x))
+			if (c[k].y > y || c[k].y == y && c[k].x > x)
 				u = k - 1;
-			else if (c[k].y < y || (c[k].y == y && c[k].x < x))
+			else if (c[k].y < y || c[k].y == y && c[k].x < x)
 				l = k + 1;
 			else
 				return c[k].count;
@@ -266,10 +278,7 @@ int process(char *file) {
 		if (more < 0)
 			return more;
 		for (p = filelist; p; p = p->link)
-			qsort(p->counts, p->count, sizeof *p->counts,
-				(int (*)(const void *, const void *))
-				compare);
-		
+			qsort(p->counts, p->count, sizeof *p->counts, compare);
 		return 1;
 	}
 	return 0;

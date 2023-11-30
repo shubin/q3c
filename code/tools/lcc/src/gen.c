@@ -17,7 +17,6 @@ static void     dumpcover(Node, int, int);
 static void     dumpregs(char *, char *, char *);
 static void     dumprule(int);
 static void     dumptree(Node);
-static unsigned	emitasm(Node, int);
 static void     genreload(Node, Symbol, int);
 static void     genspill(Symbol, Node, Symbol);
 static Symbol   getreg(Symbol, unsigned*, Node);
@@ -292,7 +291,7 @@ static void dumptree(Node p) {
 			dumptree(p->kids[0]);
 			break;
 		}
-		/* else fall through */
+		/* else fall thru */
 	case EQ: case NE: case GT: case GE: case LE: case LT:
 	case ASGN: case BOR: case BAND: case BXOR: case RSH: case LSH:
 	case ADD: case SUB:  case DIV: case MUL: case MOD:
@@ -328,7 +327,7 @@ static void dumprule(int rulenum) {
 	if (!IR->x._isinstruction[rulenum])
 		fprint(stderr, "\n");
 }
-static unsigned emitasm(Node p, int nt) {
+unsigned emitasm(Node p, int nt) {
 	int rulenum;
 	short *nts;
 	char *fmt;
@@ -368,7 +367,7 @@ static unsigned emitasm(Node p, int nt) {
 void emit(Node p) {
 	for (; p; p = p->x.next) {
 		assert(p->x.registered);
-		if ((p->x.equatable && requate(p)) || moveself(p))
+		if (p->x.equatable && requate(p) || moveself(p))
 			;
 		else
 			(*emitter)(p, p->x.inst);
@@ -824,7 +823,7 @@ int getregnum(Node p) {
 
 
 unsigned regloc(Symbol p) {
-	assert(p && p->sclass == REGISTER && p->sclass == REGISTER && p->x.regnode);
+	assert(p && p->sclass == REGISTER && p->x.regnode);
 	return p->x.regnode->set<<8 | p->x.regnode->number;
 }
 

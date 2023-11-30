@@ -154,14 +154,14 @@ makespace(Tokenrow *trp)
 		return;
 	if (tp->wslen) {
 		if (tp->flag&XPWS
-		 && (wstab[tp->type] || (trp->tp>trp->bp && wstab[(tp-1)->type]))) {
+		 && (wstab[tp->type] || trp->tp>trp->bp && wstab[(tp-1)->type])) {
 			tp->wslen = 0;
 			return;
 		}
 		tp->t[-1] = ' ';
 		return;
 	}
-	if (wstab[tp->type] || (trp->tp>trp->bp && wstab[(tp-1)->type]))
+	if (wstab[tp->type] || trp->tp>trp->bp && wstab[(tp-1)->type])
 		return;
 	tt = newstring(tp->t, tp->len, 1);
 	*tt++ = ' ';
@@ -267,7 +267,7 @@ peektokens(Tokenrow *trp, char *str)
 	if (str)
 		fprintf(stderr, "%s ", str);
 	if (tp<trp->bp || tp>trp->lp)
-		fprintf(stderr, "(tp offset %ld) ", (long int) (tp - trp->bp));
+		fprintf(stderr, "(tp offset %d) ", tp-trp->bp);
 	for (tp=trp->bp; tp<trp->lp && tp<trp->bp+32; tp++) {
 		if (tp->type!=NL) {
 			int c = tp->t[tp->len];
@@ -305,22 +305,22 @@ puttokens(Tokenrow *trp)
 		}
 		if (len>OBS/2) {		/* handle giant token */
 			if (wbp > wbuf)
-				write(1, wbuf, wbp-wbuf);
-			write(1, (char *)p, len);
+				fwrite(wbuf, 1, wbp-wbuf, stdout);
+			fwrite((char *)p, 1, len, stdout);
 			wbp = wbuf;
 		} else {	
 			memcpy(wbp, p, len);
 			wbp += len;
 		}
 		if (wbp >= &wbuf[OBS]) {
-			write(1, wbuf, OBS);
+			fwrite(wbuf, 1, OBS, stdout);
 			if (wbp > &wbuf[OBS])
-				memmove(wbuf, wbuf+OBS, wbp - &wbuf[OBS]);
+				memcpy(wbuf, wbuf+OBS, wbp - &wbuf[OBS]);
 			wbp -= OBS;
 		}
 	}
 	trp->tp = tp;
-	if (cursource->fd==0)
+	if (cursource->fd==stdin)
 		flushout();
 }
 
@@ -328,7 +328,8 @@ void
 flushout(void)
 {
 	if (wbp>wbuf) {
-		write(1, wbuf, wbp-wbuf);
+		fwrite(wbuf, 1, wbp-wbuf, stdout);
+		fflush(stdout);
 		wbp = wbuf;
 	}
 }

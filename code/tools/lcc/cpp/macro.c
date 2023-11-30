@@ -71,7 +71,7 @@ dodefine(Tokenrow *trp)
 	if (np->flag&ISDEFINED) {
 		if (comparetokens(def, np->vp)
 		 || (np->ap==NULL) != (args==NULL)
-		 || (np->ap && comparetokens(args, np->ap)))
+		 || np->ap && comparetokens(args, np->ap))
 			error(ERROR, "Macro redefinition of %t", trp->bp+2);
 	}
 	if (args) {
@@ -92,7 +92,8 @@ void
 doadefine(Tokenrow *trp, int type)
 {
 	Nlist *np;
-	static Token onetoken[1] = {{ NUMBER, 0, 0, 0, 1, (uchar*)"1" }};
+	static unsigned char one[] = "1";
+	static Token onetoken[1] = {{ NUMBER, 0, 0, 0, 1, one }};
 	static Tokenrow onetr = { onetoken, onetoken, onetoken+1, 1 };
 
 	trp->tp = trp->bp;
@@ -135,13 +136,13 @@ expandrow(Tokenrow *trp, char *flag)
 	Nlist *np;
 
 	if (flag)
-		setsource(flag, -1, "");
+		setsource(flag, NULL, "");
 	for (tp = trp->tp; tp<trp->lp; ) {
 		if (tp->type!=NAME
 		 || quicklook(tp->t[0], tp->len>1?tp->t[1]:0)==0
 		 || (np = lookup(tp, 0))==NULL
 		 || (np->flag&(ISDEFINED|ISMAC))==0
-		 || (tp->hideset && checkhideset(tp->hideset, np))) {
+		 || tp->hideset && checkhideset(tp->hideset, np)) {
 			tp++;
 			continue;
 		}
@@ -189,7 +190,9 @@ expand(Tokenrow *trp, Nlist *np)
 	else {
 		ntokc = gatherargs(trp, atr, &narg);
 		if (narg<0) {			/* not actually a call (no '(') */
-			trp->tp++;
+			if (ntokc<0)		/* fixup */
+				trp->tp++;
+			/* gatherargs has already pushed trp->tr to the next token */
 			return;
 		}
 		if (narg != rowlen(np->ap)) {
@@ -218,6 +221,7 @@ expand(Tokenrow *trp, Nlist *np)
 	insertrow(trp, ntokc, &ntr);
 	trp->tp -= rowlen(&ntr);
 	dofree(ntr.bp);
+	return;
 }	
 
 /*
@@ -245,7 +249,7 @@ gatherargs(Tokenrow *trp, Tokenrow **atr, int *narg)
 			if ((trp->lp-1)->type==END) {
 				trp->lp -= 1;
 				trp->tp -= ntok;
-				return ntok;
+				return -1; /* trigger fixup in expand() */
 			}
 		}
 		if (trp->tp->type==LP)
@@ -299,7 +303,7 @@ gatherargs(Tokenrow *trp, Tokenrow **atr, int *narg)
 			parens--;
 		if (lp->type==DSHARP)
 			lp->type = DSHARP1;	/* ## not special in arg */
-		if ((lp->type==COMMA && parens==0) || (parens<0 && (lp-1)->type!=LP)) {
+		if (lp->type==COMMA && parens==0 || parens<0 && (lp-1)->type!=LP) {
 			if (*narg>=NARG-1)
 				error(FATAL, "Sorry, too many macro arguments");
 			ttr.bp = ttr.tp = bp;
@@ -337,8 +341,8 @@ substargs(Nlist *np, Tokenrow *rtr, Tokenrow **atr)
 		}
 		if (rtr->tp->type==NAME
 		 && (argno = lookuparg(np, rtr->tp)) >= 0) {
-			if ((rtr->tp+1)->type==DSHARP
-			 || (rtr->tp!=rtr->bp && (rtr->tp-1)->type==DSHARP))
+			if ((rtr->tp+1)<rtr->lp && (rtr->tp+1)->type==DSHARP /* don't look beyond end */
+			 || rtr->tp!=rtr->bp && (rtr->tp-1)->type==DSHARP) /* don't look before beginning */
 				insertrow(rtr, 1, atr[argno]);
 			else {
 				copytokenrow(&tatr, atr[argno]);
@@ -377,7 +381,7 @@ doconcat(Tokenrow *trp)
 			strncpy((char*)tt, (char*)ltp->t, ltp->len);
 			strncpy((char*)tt+ltp->len, (char*)ntp->t, ntp->len);
 			tt[len] = '\0';
-			setsource("<##>", -1, tt);
+			setsource("<##>", NULL, tt);
 			maketokenrow(3, &ntr);
 			gettokens(&ntr, 1);
 			unsetsource();
@@ -424,7 +428,8 @@ stringify(Tokenrow *vp)
 	Token *tp;
 	uchar s[STRLEN];
 	uchar *sp = s, *cp;
-	int i, instring;
+	int	instring;
+	unsigned int i; 
 
 	*sp++ = '"';
 	for (tp = vp->bp; tp < vp->lp; tp++) {
@@ -463,17 +468,17 @@ builtin(Tokenrow *trp, int biname)
 	trp->tp++;
 	/* need to find the real source */
 	s = cursource;
-	while (s && s->fd==-1)
+	while (s && s->fd==NULL)
 		s = s->next;
 	if (s==NULL)
 		s = cursource;
 	/* most are strings */
 	tp->type = STRING;
 	if (tp->wslen) {
-		*outbufp++ = ' ';
+		*out_p++ = ' ';
 		tp->wslen = 1;
 	}
-	op = outbufp;
+	op = out_p;
 	*op++ = '"';
 	switch (biname) {
 
@@ -508,7 +513,7 @@ builtin(Tokenrow *trp, int biname)
 	}
 	if (tp->type==STRING)
 		*op++ = '"';
-	tp->t = (uchar*)outbufp;
-	tp->len = op - outbufp;
-	outbufp = op;
+	tp->t = (uchar*)out_p;
+	tp->len = op - out_p;
+	out_p = op;
 }

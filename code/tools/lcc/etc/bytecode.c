@@ -2,46 +2,40 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "../../../qcommon/q_platform.h"
 
 #ifdef _WIN32
 #define BINEXT ".exe"
+#define PATH_SEP '\\'
 #else
 #define BINEXT ""
+#define PATH_SEP '/'
 #endif
 
-char *suffixes[] = { ".c", ".i", ".asm", ".o", ".out", 0 };
+char *suffixes[] = { ".c", ".i", ".asm", ".o", ".out", NULL };
 char inputs[256] = "";
 char *cpp[] = { "q3cpp" BINEXT,
 	"-D__STDC__=1", "-D__STRICT_ANSI__", "-D__signed__=signed", "-DQ3_VM",
-	"$1", "$2", "$3", 0 };
-char *include[] = { 0 };
-char *com[] = { "q3rcc" BINEXT, "-target=bytecode", "$1", "$2", "$3", 0 };
-char *ld[] = { 0 };
-char *as[] = { 0 };
+	"$1", "$2", "$3", NULL };
+char *include[] = { NULL };
+char *com[] = { "q3rcc" BINEXT, "-target=bytecode", "$1", "$2", "$3", NULL };
 
-extern char *concat(char *, char *);
+extern char *concat( char *, char * );
 
 /*
 ===============
-UpdatePaths
+updatePaths
 
 Updates the paths to q3cpp and q3rcc based on
 the directory that contains q3lcc
 ===============
 */
-void UpdatePaths( const char *lccBinary )
+void updatePaths( const char *lccBinary )
 {
 	char basepath[ 1024 ];
 	char *p;
-	size_t basepathsz = sizeof( basepath ) - 1;
 
-	strncpy( basepath, lccBinary, basepathsz );
-	basepath[basepathsz] = 0;
-	p = strrchr( basepath, '/' );
-
-	if( !p )
-		p = strrchr( basepath, '\\' );
+	strncpy( basepath, lccBinary, sizeof( basepath ) );
+	p = strrchr( basepath, PATH_SEP );
 
 	if( p )
 	{
@@ -50,13 +44,14 @@ void UpdatePaths( const char *lccBinary )
 		cpp[ 0 ] = concat( basepath, "q3cpp" BINEXT );
 		com[ 0 ] = concat( basepath, "q3rcc" BINEXT );
 	}
+	//printf( "%s\n%s\n%s\n", lccBinary, cpp[0], com[0] );
 }
 
-int option(char *arg) {
+int option( char *arg ) {
 	if (strncmp(arg, "-lccdir=", 8) == 0) {
-		cpp[0] = concat(&arg[8], "/q3cpp" BINEXT);
+		cpp[0] = concat( &arg[8], "/q3cpp" BINEXT );
 		include[0] = concat("-I", concat(&arg[8], "/include"));
-		com[0] = concat(&arg[8], "/q3rcc" BINEXT);
+		com[0] = concat( &arg[8], "/q3rcc" BINEXT );
 	} else if (strncmp(arg, "-lcppdir=", 9) == 0) {
 		cpp[0] = concat(&arg[9], "/q3cpp" BINEXT);
 	} else if (strncmp(arg, "-lrccdir=", 9) == 0) {

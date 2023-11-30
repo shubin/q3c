@@ -20,7 +20,7 @@ static void yyEND(const char *tag) {
 		print("\n");
 }
 
-#define BEGIN(tag) do { const char *yytag=yyBEGIN(#tag);
+#define BEGIN(tag) do { const char *yytag=yyBEGIN(#tag)
 #define END yyEND(yytag); } while (0)
 #define ITEM BEGIN(li)
 #define START BEGIN(LI)
@@ -77,6 +77,21 @@ static void emitSymbol(Symbol p) {
 		else
 			xx(scope,print("%d", p->scope));
 	}
+	ITEM;
+	int n = 0;
+	if (!html)
+		print(" ");
+	print("flags=");
+#define yy(f) if (p->f) { if (n++) print("|"); print(#f); }
+	yy(structarg)
+	yy(addressed)
+	yy(computed)
+	yy(temporary)
+	yy(generated)
+#undef yy
+	if (n == 0)
+		print("0");
+	END;
 	if (p->scope >= PARAM && p->sclass != STATIC)
 		xx(offset,print("%d", p->x.offset));
 	xx(ref,print("%f", p->ref));
@@ -136,7 +151,22 @@ static void I(defconst)(int suffix, int size, Value v) {
 		END;
 		break;
 	case P: print("void*.%d ", size); BEGIN(code); print("%p", v.p); END; break;
-	case F: print("float.%d ", size); BEGIN(code); print("%g", (double)v.d); END; break;
+	case F:
+		print("float.%d ", size);
+		BEGIN(code);
+			double d = v.d;
+			if (d == 0.0) {
+				static union { int x; char endian; } little = { 1 };
+				signed char *b = (signed char *)&d;
+				if (!little.endian && b[0] < 0
+				||   little.endian && b[sizeof (d)-1] < 0)
+					print("-0.0");
+				else
+					print("0.0");
+			} else
+				print("%g", d);
+		END;
+		break;
 	default: assert(0);
 	}
 	END;
@@ -404,16 +434,16 @@ static void I(stabsym)(Symbol p) {}
 static void I(stabtype)(Symbol p) {}
 
 Interface symbolicIR = {
-	{1, 1, 0},	/* char */
-	{2, 2, 0},	/* short */
-	{4, 4, 0},	/* int */
-	{4, 4, 0},	/* long */
-	{4, 4, 0},	/* long long */
-	{4, 4, 1},	/* float */
-	{8, 8, 1},	/* double */
-	{8, 8, 1},	/* long double */
-	{4, 4, 0},	/* T* */
-	{0, 4, 0},	/* struct */
+	1, 1, 0,	/* char */
+	2, 2, 0,	/* short */
+	4, 4, 0,	/* int */
+	4, 4, 0,	/* long */
+	4, 4, 0,	/* long long */
+	4, 4, 1,	/* float */
+	8, 8, 1,	/* double */
+	8, 8, 1,	/* long double */
+	4, 4, 0,	/* T* */
+	0, 4, 0,	/* struct */
 	0,		/* little_endian */
 	0,		/* mulops_calls */
 	0,		/* wants_callb */
@@ -449,16 +479,16 @@ Interface symbolicIR = {
 };
 
 Interface symbolic64IR = {
-	{1, 1, 0},	/* char */
-	{2, 2, 0},	/* short */
-	{4, 4, 0},	/* int */
-	{8, 8, 0},	/* long */
-	{8, 8, 0},	/* long long */
-	{4, 4, 1},	/* float */
-	{8, 8, 1},	/* double */
-	{8, 8, 1},	/* long double */
-	{8, 8, 0},	/* T* */
-	{0, 1, 0},	/* struct */
+	1, 1, 0,	/* char */
+	2, 2, 0,	/* short */
+	4, 4, 0,	/* int */
+	8, 8, 0,	/* long */
+	8, 8, 0,	/* long long */
+	4, 4, 1,	/* float */
+	8, 8, 1,	/* double */
+	8, 8, 1,	/* long double */
+	8, 8, 0,	/* T* */
+	0, 1, 0,	/* struct */
 	1,		/* little_endian */
 	0,		/* mulops_calls */
 	0,		/* wants_callb */
