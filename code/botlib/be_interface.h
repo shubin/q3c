@@ -35,12 +35,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //FIXME: get rid of this global structure
 typedef struct botlib_globals_s
 {
-	int botlibsetup;						//true when the bot library has been setup
+	int botlibsetup;						//qtrue when the bot library has been setup
 	int maxentities;						//maximum number of entities
 	int maxclients;							//maximum number of clients
 	float time;								//the global time
 #ifdef DEBUG
-	qboolean debug;							//true if debug is on
+	qbool debug;							//qtrue if debug is on
 	int goalareanum;
 	vec3_t goalorigin;
 	int runai;
@@ -50,8 +50,5 @@ typedef struct botlib_globals_s
 
 extern botlib_globals_t botlibglobals;
 extern botlib_import_t botimport;
-extern int botDeveloper;					//true if developer is on
-
-//
-int Sys_MilliSeconds(void);
+extern int bot_developer;					//qtrue if developer is on
 

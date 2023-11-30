@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "l_log.h"
 #include "l_memory.h"
-#include "l_utils.h"
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
@@ -106,8 +105,8 @@ void BotDumpCharacter(bot_character_t *ch)
 {
 	int i;
 
-	Log_Write("%s\n", ch->filename);
-	Log_Write("skill %.1f\n", ch->skill);
+	Log_Write("%s", ch->filename);
+	Log_Write("skill %f\n", ch->skill);
 	Log_Write("{\n");
 	for (i = 0; i < MAX_CHARACTERISTICS; i++)
 	{
@@ -227,7 +226,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 	} //end if
 	ch = (bot_character_t *) GetClearedMemory(sizeof(bot_character_t) +
 					MAX_CHARACTERISTICS * sizeof(bot_characteristic_t));
-	strcpy(ch->filename, charfile);
+	Q_strncpyz(ch->filename, charfile, sizeof(ch->filename));
 	while(PC_ReadToken(source, &token))
 	{
 		if (!strcmp(token.string, "skill"))
@@ -247,7 +246,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 				return NULL;
 			} //end if
 			//if it's the correct skill
-			if (skill < 0 || token.intvalue == skill)
+			if (skill < 0 || token.intvalue == (unsigned)skill)
 			{
 				foundcharacter = qtrue;
 				ch->skill = token.intvalue;
@@ -256,7 +255,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 					if (!strcmp(token.string, "}")) break;
 					if (token.type != TT_NUMBER || !(token.subtype & TT_INTEGER))
 					{
-						SourceError(source, "expected integer index, found %s", token.string);
+						SourceError(source, "expected integer index, found %s\n", token.string);
 						FreeSource(source);
 						BotFreeCharacterStrings(ch);
 						FreeMemory(ch);
@@ -265,7 +264,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 					index = token.intvalue;
 					if (index < 0 || index > MAX_CHARACTERISTICS)
 					{
-						SourceError(source, "characteristic index out of range [0, %d]", MAX_CHARACTERISTICS);
+						SourceError(source, "characteristic index out of range [0, %d]\n", MAX_CHARACTERISTICS);
 						FreeSource(source);
 						BotFreeCharacterStrings(ch);
 						FreeMemory(ch);
@@ -273,7 +272,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 					} //end if
 					if (ch->c[index].type)
 					{
-						SourceError(source, "characteristic %d already initialized", index);
+						SourceError(source, "characteristic %d already initialized\n", index);
 						FreeSource(source);
 						BotFreeCharacterStrings(ch);
 						FreeMemory(ch);
@@ -302,13 +301,13 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 					else if (token.type == TT_STRING)
 					{
 						StripDoubleQuotes(token.string);
-						ch->c[index].value.string = GetMemory(strlen(token.string)+1);
+						ch->c[index].value.string = (char*)GetMemory(strlen(token.string)+1);
 						strcpy(ch->c[index].value.string, token.string);
 						ch->c[index].type = CT_STRING;
 					} //end else if
 					else
 					{
-						SourceError(source, "expected integer, float or string, found %s", token.string);
+						SourceError(source, "expected integer, float or string, found %s\n", token.string);
 						FreeSource(source);
 						BotFreeCharacterStrings(ch);
 						FreeMemory(ch);
@@ -336,7 +335,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill)
 		} //end if
 		else
 		{
-			SourceError(source, "unknown definition %s", token.string);
+			SourceError(source, "unknown definition %s\n", token.string);
 			FreeSource(source);
 			BotFreeCharacterStrings(ch);
 			FreeMemory(ch);
@@ -387,7 +386,7 @@ int BotLoadCachedCharacter(char *charfile, float skill, int reload)
 #ifdef DEBUG
 	int starttime;
 
-	starttime = Sys_MilliSeconds();
+	starttime = BL_MilliSeconds();
 #endif //DEBUG
 
 	//find a free spot for a character
@@ -416,9 +415,9 @@ int BotLoadCachedCharacter(char *charfile, float skill, int reload)
 		//
 		botimport.Print(PRT_MESSAGE, "loaded skill %d from %s\n", intskill, charfile);
 #ifdef DEBUG
-		if (botDeveloper)
+		if (bot_developer)
 		{
-			botimport.Print(PRT_MESSAGE, "skill %d loaded in %d msec from %s\n", intskill, Sys_MilliSeconds() - starttime, charfile);
+			botimport.Print(PRT_MESSAGE, "skill %d loaded in %d msec from %s\n", intskill, BL_MilliSeconds() - starttime, charfile);
 		} //end if
 #endif //DEBUG
 		return handle;
@@ -532,7 +531,7 @@ int BotInterpolateCharacters(int handle1, int handle2, float desiredskill)
 	out = (bot_character_t *) GetClearedMemory(sizeof(bot_character_t) +
 					MAX_CHARACTERISTICS * sizeof(bot_characteristic_t));
 	out->skill = desiredskill;
-	strcpy(out->filename, ch1->filename);
+	Q_strncpyz(out->filename, ch1->filename, sizeof(out->filename));
 	botcharacters[handle] = out;
 
 	scale = (float) (desiredskill - ch1->skill) / (ch2->skill - ch1->skill);
@@ -713,7 +712,7 @@ int Characteristic_Integer(int character, int index)
 	} //end else if
 	else
 	{
-		botimport.Print(PRT_ERROR, "characteristic %d is not an integer\n", index);
+		botimport.Print(PRT_ERROR, "characteristic %d is not a integer\n", index);
 		return 0;
 	} //end else if
 //	return 0;
@@ -760,11 +759,14 @@ void Characteristic_String(int character, int index, char *buf, int size)
 	{
 		strncpy(buf, ch->c[index].value.string, size-1);
 		buf[size-1] = '\0';
+		return;
 	} //end if
 	else
 	{
 		botimport.Print(PRT_ERROR, "characteristic %d is not a string\n", index);
+		return;
 	} //end else if
+	return;
 } //end of the function Characteristic_String
 //===========================================================================
 //

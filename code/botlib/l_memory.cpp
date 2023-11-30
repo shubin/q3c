@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "botlib.h"
 #include "l_log.h"
-#include "l_memory.h"
 #include "be_interface.h"
 
 //#define MEMDEBUG
@@ -101,7 +100,7 @@ void *GetMemory(unsigned long size)
 {
 	void *ptr;
 	memoryblock_t *block;
-	assert(botimport.GetMemory);
+  assert(botimport.GetMemory); // bk001129 - was NULL'ed
 	ptr = botimport.GetMemory(size + sizeof(memoryblock_t));
 	block = (memoryblock_t *) ptr;
 	block->id = MEM_ID;

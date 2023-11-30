@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
 #include "l_log.h"
-#include "l_utils.h"
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
@@ -51,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //===========================================================================
 int GeneticSelection(int numranks, float *rankings)
 {
-	float sum;
+	float sum, select;
 	int i, index;
 
 	sum = 0;
@@ -62,9 +61,9 @@ int GeneticSelection(int numranks, float *rankings)
 	} //end for
 	if (sum > 0)
 	{
-		//select a bot where the ones with the highest rankings have
+		//select a bot where the ones with the higest rankings have
 		//the highest chance of being selected
-		//sum *= random();
+		select = random() * sum;
 		for (i = 0; i < numranks; i++)
 		{
 			if (rankings[i] < 0) continue;

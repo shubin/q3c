@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_libvar.h"
 #include "l_log.h"
 #include "l_memory.h"
-#include "l_utils.h"
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
@@ -48,10 +47,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //#define DEBUG_AI_WEAP
 
 //structure field offsets
-#define WEAPON_OFS(x) (size_t)&(((weaponinfo_t *)0)->x)
-#define PROJECTILE_OFS(x) (size_t)&(((projectileinfo_t *)0)->x)
+#define WEAPON_OFS(x) (intptr_t)&(((weaponinfo_t *)0)->x)
+#define PROJECTILE_OFS(x) (intptr_t)&(((projectileinfo_t *)0)->x)
 
-//weapon definition
+//weapon definition // bk001212 - static
 static fielddef_t weaponinfo_fields[] =
 {
 {"number", WEAPON_OFS(number), FT_INT},						//weapon number
@@ -83,7 +82,7 @@ static fielddef_t weaponinfo_fields[] =
 static fielddef_t projectileinfo_fields[] =
 {
 {"name", PROJECTILE_OFS(name), FT_STRING},					//name of the projectile
-{"model", PROJECTILE_OFS(model), FT_STRING},					//model of the projectile
+{"model", WEAPON_OFS(model), FT_STRING},						//model of the projectile
 {"flags", PROJECTILE_OFS(flags), FT_INT},						//special flags
 {"gravity", PROJECTILE_OFS(gravity), FT_FLOAT},				//amount of gravity applied to the projectile [0,1]
 {"damage", PROJECTILE_OFS(damage), FT_INT},					//damage of the projectile
@@ -134,7 +133,7 @@ static weaponconfig_t *weaponconfig;
 // Returns:					-
 // Changes Globals:		-
 //========================================================================
-int BotValidWeaponNumber(int weaponnum)
+static qbool BotValidWeaponNumber(int weaponnum)
 {
 	if (weaponnum <= 0 || weaponnum > weaponconfig->numweapons)
 	{
@@ -153,12 +152,12 @@ bot_weaponstate_t *BotWeaponStateFromHandle(int handle)
 {
 	if (handle <= 0 || handle > MAX_CLIENTS)
 	{
-		botimport.Print(PRT_FATAL, "weapon state handle %d out of range\n", handle);
+		botimport.Print(PRT_FATAL, "move state handle %d out of range\n", handle);
 		return NULL;
 	} //end if
 	if (!botweaponstates[handle])
 	{
-		botimport.Print(PRT_FATAL, "invalid weapon state %d\n", handle);
+		botimport.Print(PRT_FATAL, "invalid move state %d\n", handle);
 		return NULL;
 	} //end if
 	return botweaponstates[handle];
@@ -199,7 +198,7 @@ weaponconfig_t *LoadWeaponConfig(char *filename)
 {
 	int max_weaponinfo, max_projectileinfo;
 	token_t token;
-	char path[MAX_QPATH];
+	char path[MAX_PATH];
 	int i, j;
 	source_t *source;
 	weaponconfig_t *wc;
@@ -219,7 +218,7 @@ weaponconfig_t *LoadWeaponConfig(char *filename)
 		max_projectileinfo = 32;
 		LibVarSet("max_projectileinfo", "32");
 	} //end if
-	Q_strncpyz(path, filename, sizeof(path));
+	strncpy(path, filename, MAX_PATH);
 	PC_SetBaseFolder(BOTFILESBASEFOLDER);
 	source = LoadSourceFile(path);
 	if (!source)
@@ -440,6 +439,18 @@ int BotChooseBestFightWeapon(int weaponstate, int *inventory)
 //===========================================================================
 void BotResetWeaponState(int weaponstate)
 {
+	struct weightconfig_s *weaponweightconfig;
+	int *weaponweightindex;
+	bot_weaponstate_t *ws;
+
+	ws = BotWeaponStateFromHandle(weaponstate);
+	if (!ws) return;
+	weaponweightconfig = ws->weaponweightconfig;
+	weaponweightindex = ws->weaponweightindex;
+
+	//Com_Memset(ws, 0, sizeof(bot_weaponstate_t));
+	ws->weaponweightconfig = weaponweightconfig;
+	ws->weaponweightindex = weaponweightindex;
 } //end of the function BotResetWeaponState
 //========================================================================
 //
@@ -455,7 +466,7 @@ int BotAllocWeaponState(void)
 	{
 		if (!botweaponstates[i])
 		{
-			botweaponstates[i] = GetClearedMemory(sizeof(bot_weaponstate_t));
+			botweaponstates[i] = (bot_weaponstate_t*)GetClearedMemory(sizeof(bot_weaponstate_t));
 			return i;
 		} //end if
 	} //end for
@@ -471,12 +482,12 @@ void BotFreeWeaponState(int handle)
 {
 	if (handle <= 0 || handle > MAX_CLIENTS)
 	{
-		botimport.Print(PRT_FATAL, "weapon state handle %d out of range\n", handle);
+		botimport.Print(PRT_FATAL, "move state handle %d out of range\n", handle);
 		return;
 	} //end if
 	if (!botweaponstates[handle])
 	{
-		botimport.Print(PRT_FATAL, "invalid weapon state %d\n", handle);
+		botimport.Print(PRT_FATAL, "invalid move state %d\n", handle);
 		return;
 	} //end if
 	BotFreeWeaponWeights(handle);

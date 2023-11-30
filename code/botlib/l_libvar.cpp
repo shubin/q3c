@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_libvar.h"
 
 //list with library variables
-libvar_t *libvarlist = NULL;
+libvar_t *libvarlist;
 
 //===========================================================================
 //
@@ -42,7 +42,7 @@ libvar_t *libvarlist = NULL;
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-float LibVarStringValue(const char *string)
+float LibVarStringValue(char *string)
 {
 	int dotfound = 0;
 	float value = 0;
@@ -80,13 +80,13 @@ float LibVarStringValue(const char *string)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-libvar_t *LibVarAlloc(const char *var_name)
+libvar_t *LibVarAlloc(char *var_name)
 {
 	libvar_t *v;
 
-	v = (libvar_t *) GetMemory(sizeof(libvar_t));
+	v = (libvar_t *) GetMemory(sizeof(libvar_t) + strlen(var_name) + 1);
 	Com_Memset(v, 0, sizeof(libvar_t));
-	v->name = (char *) GetMemory(strlen(var_name)+1);
+	v->name = (char *) v + sizeof(libvar_t);
 	strcpy(v->name, var_name);
 	//add the variable in the list
 	v->next = libvarlist;
@@ -102,7 +102,6 @@ libvar_t *LibVarAlloc(const char *var_name)
 void LibVarDeAlloc(libvar_t *v)
 {
 	if (v->string) FreeMemory(v->string);
-	FreeMemory(v->name);
 	FreeMemory(v);
 } //end of the function LibVarDeAlloc
 //===========================================================================
@@ -128,7 +127,7 @@ void LibVarDeAllocAll(void)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-libvar_t *LibVarGet(const char *var_name)
+libvar_t *LibVarGet(char *var_name)
 {
 	libvar_t *v;
 
@@ -147,7 +146,7 @@ libvar_t *LibVarGet(const char *var_name)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-char *LibVarGetString(const char *var_name)
+char *LibVarGetString(char *var_name)
 {
 	libvar_t *v;
 
@@ -167,7 +166,7 @@ char *LibVarGetString(const char *var_name)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-float LibVarGetValue(const char *var_name)
+float LibVarGetValue(char *var_name)
 {
 	libvar_t *v;
 
@@ -187,7 +186,7 @@ float LibVarGetValue(const char *var_name)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-libvar_t *LibVar(const char *var_name, const char *value)
+libvar_t *LibVar(char *var_name, char *value)
 {
 	libvar_t *v;
 	v = LibVarGet(var_name);
@@ -210,7 +209,7 @@ libvar_t *LibVar(const char *var_name, const char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-char *LibVarString(const char *var_name, const char *value)
+char *LibVarString(char *var_name, char *value)
 {
 	libvar_t *v;
 
@@ -223,7 +222,7 @@ char *LibVarString(const char *var_name, const char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-float LibVarValue(const char *var_name, const char *value)
+float LibVarValue(char *var_name, char *value)
 {
 	libvar_t *v;
 
@@ -236,7 +235,7 @@ float LibVarValue(const char *var_name, const char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void LibVarSet(const char *var_name, const char *value)
+void LibVarSet(char *var_name, char *value)
 {
 	libvar_t *v;
 
@@ -263,7 +262,7 @@ void LibVarSet(const char *var_name, const char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean LibVarChanged(const char *var_name)
+qbool LibVarChanged(char *var_name)
 {
 	libvar_t *v;
 
@@ -283,7 +282,7 @@ qboolean LibVarChanged(const char *var_name)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void LibVarSetNotModified(const char *var_name)
+void LibVarSetNotModified(char *var_name)
 {
 	libvar_t *v;
 

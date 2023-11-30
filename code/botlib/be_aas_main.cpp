@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
 #include "l_libvar.h"
-#include "l_utils.h"
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
@@ -54,16 +53,106 @@ libvar_t *saveroutingcache;
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void QDECL AAS_Error(char *fmt, ...)
+void QDECL AAS_Error(PRINTF_FORMAT_STRING char *fmt, ...)
 {
 	char str[1024];
 	va_list arglist;
 
 	va_start(arglist, fmt);
-	Q_vsnprintf(str, sizeof(str), fmt, arglist);
+	vsprintf(str, fmt, arglist);
 	va_end(arglist);
-	botimport.Print(PRT_FATAL, "%s", str);
+	botimport.Print(PRT_FATAL, str);
 } //end of the function AAS_Error
+//===========================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//===========================================================================
+char *AAS_StringFromIndex(char *indexname, char *stringindex[], int numindexes, int index)
+{
+	if (!aasworld.indexessetup)
+	{
+		botimport.Print(PRT_ERROR, "%s: index %d not setup\n", indexname, index);
+		return "";
+	} //end if
+	if (index < 0 || index >= numindexes)
+	{
+		botimport.Print(PRT_ERROR, "%s: index %d out of range\n", indexname, index);
+		return "";
+	} //end if
+	if (!stringindex[index])
+	{
+		if (index)
+		{
+			botimport.Print(PRT_ERROR, "%s: reference to unused index %d\n", indexname, index);
+		} //end if
+		return "";
+	} //end if
+	return stringindex[index];
+} //end of the function AAS_StringFromIndex
+//===========================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//===========================================================================
+int AAS_IndexFromString(char *indexname, char *stringindex[], int numindexes, char *string)
+{
+	int i;
+	if (!aasworld.indexessetup)
+	{
+		botimport.Print(PRT_ERROR, "%s: index not setup \"%s\"\n", indexname, string);
+		return 0;
+	} //end if
+	for (i = 0; i < numindexes; i++)
+	{
+		if (!stringindex[i]) continue;
+		if (!Q_stricmp(stringindex[i], string)) return i;
+	} //end for
+	return 0;
+} //end of the function AAS_IndexFromString
+//===========================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//===========================================================================
+char *AAS_ModelFromIndex(int index)
+{
+	return AAS_StringFromIndex("ModelFromIndex", &aasworld.configstrings[CS_MODELS], MAX_MODELS, index);
+} //end of the function AAS_ModelFromIndex
+//===========================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//===========================================================================
+int AAS_IndexFromModel(char *modelname)
+{
+	return AAS_IndexFromString("IndexFromModel", &aasworld.configstrings[CS_MODELS], MAX_MODELS, modelname);
+} //end of the function AAS_IndexFromModel
+//===========================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//===========================================================================
+void AAS_UpdateStringIndexes(int numconfigstrings, char *configstrings[])
+{
+	int i;
+	//set string pointers and copy the strings
+	for (i = 0; i < numconfigstrings; i++)
+	{
+		if (configstrings[i])
+		{
+			//if (aasworld.configstrings[i]) FreeMemory(aasworld.configstrings[i]);
+			aasworld.configstrings[i] = (char *) GetMemory(strlen(configstrings[i]) + 1);
+			strcpy(aasworld.configstrings[i], configstrings[i]);
+		} //end if
+	} //end for
+	aasworld.indexessetup = qtrue;
+} //end of the function AAS_UpdateStringIndexes
 //===========================================================================
 //
 // Parameter:				-
@@ -126,7 +215,7 @@ void AAS_ContinueInit(float time)
 		//save the AAS file
 		if (AAS_WriteAASFile(aasworld.filename))
 		{
-			botimport.Print(PRT_MESSAGE, "%s written successfully\n", aasworld.filename);
+			botimport.Print(PRT_MESSAGE, "%s written succesfully\n", aasworld.filename);
 		} //end if
 		else
 		{
@@ -157,7 +246,7 @@ int AAS_StartFrame(float time)
 	//
 	aasworld.frameroutingupdates = 0;
 	//
-	if (botDeveloper)
+	if (bot_developer)
 	{
 		if (LibVarGetValue("showcacheupdates"))
 		{
@@ -201,7 +290,7 @@ float AAS_Time(void)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-void AAS_ProjectPointOntoVector( vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj )
+void AAS_ProjectPointOntoVector( const vec3_t point, const vec3_t vStart, const vec3_t vEnd, vec3_t vProj )
 {
 	vec3_t pVec, vec;
 
@@ -220,7 +309,8 @@ void AAS_ProjectPointOntoVector( vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_
 int AAS_LoadFiles(const char *mapname)
 {
 	int errnum;
-	char aasfile[MAX_QPATH];
+	char aasfile[MAX_PATH];
+//	char bspfile[MAX_PATH];
 
 	Q_strncpyz(aasworld.mapname, mapname, sizeof(aasworld.mapname));
 	//NOTE: first reset the entity links into the AAS areas and BSP leaves
@@ -231,17 +321,17 @@ int AAS_LoadFiles(const char *mapname)
 	AAS_LoadBSPFile();
 
 	//load the aas file
-	Com_sprintf(aasfile, sizeof(aasfile), "maps/%s.aas", mapname);
+	Com_sprintf(aasfile, MAX_PATH, "maps/%s.aas", mapname);
 	errnum = AAS_LoadAASFile(aasfile);
 	if (errnum != BLERR_NOERROR)
 		return errnum;
 
 	botimport.Print(PRT_MESSAGE, "loaded %s\n", aasfile);
-	Q_strncpyz(aasworld.filename, aasfile, sizeof(aasworld.filename));
+	strncpy(aasworld.filename, aasfile, MAX_PATH);
 	return BLERR_NOERROR;
 } //end of the function AAS_LoadFiles
 //===========================================================================
-// called every time a map changes
+// called everytime a map changes
 //
 // Parameter:				-
 // Returns:					-
@@ -332,7 +422,7 @@ void AAS_Shutdown(void)
 	//aas has not been initialized
 	aasworld.initialized = qfalse;
 	//NOTE: as soon as a new .bsp file is loaded the .bsp file memory is
-	// freed and reallocated, so there's no need to free that memory here
+	// freed an reallocated, so there's no need to free that memory here
 	//print shutdown
 	botimport.Print(PRT_MESSAGE, "AAS shutdown.\n");
 } //end of the function AAS_Shutdown

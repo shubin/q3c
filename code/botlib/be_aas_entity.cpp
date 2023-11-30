@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-#include "l_utils.h"
 #include "l_log.h"
 #include "aasfile.h"
 #include "botlib.h"
@@ -64,7 +63,7 @@ int AAS_UpdateEntity(int entnum, bot_entitystate_t *state)
 {
 	int relink;
 	aas_entity_t *ent;
-	vec3_t absmins, absmaxs;
+	vec3_t absmins;
 
 	if (!aasworld.loaded)
 	{
@@ -147,6 +146,7 @@ int AAS_UpdateEntity(int entnum, bot_entitystate_t *state)
 		//don't link the world model
 		if (entnum != ENTITYNUM_WORLD)
 		{
+		    vec3_t absmaxs;
 			//absolute mins and maxs
 			VectorAdd(ent->i.mins, ent->i.origin, absmins);
 			VectorAdd(ent->i.maxs, ent->i.origin, absmaxs);

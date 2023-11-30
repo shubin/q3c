@@ -29,16 +29,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *****************************************************************************/
 
+#include "../qcommon/q_shared.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
 #include "botlib.h"
 #include "be_interface.h"			//for botimport.Print
 #include "l_libvar.h"
-#include "l_log.h"
 
 #define MAX_LOGFILENAMESIZE		1024
 
@@ -59,9 +58,10 @@ static logfile_t logfile;
 //===========================================================================
 void Log_Open(char *filename)
 {
-	char *ospath;
-	if (!LibVarValue("log", "0")) return;
-	if (!filename || !strlen(filename))
+	if (!LibVarValue("log", "0")) 
+		return;
+
+	if (!filename || !filename[0])
 	{
 		botimport.Print(PRT_MESSAGE, "openlog <filename>\n");
 		return;
@@ -71,14 +71,13 @@ void Log_Open(char *filename)
 		botimport.Print(PRT_ERROR, "log file %s is already opened\n", logfile.filename);
 		return;
 	} //end if
-	ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), filename);
-	logfile.fp = fopen(ospath, "wb");
+	logfile.fp = fopen(filename, "wb");
 	if (!logfile.fp)
 	{
 		botimport.Print(PRT_ERROR, "can't open the log file %s\n", filename);
 		return;
 	} //end if
-	Q_strncpyz(logfile.filename, filename, MAX_LOGFILENAMESIZE);
+	strncpy(logfile.filename, filename, MAX_LOGFILENAMESIZE);
 	botimport.Print(PRT_MESSAGE, "Opened log %s\n", logfile.filename);
 } //end of the function Log_Create
 //===========================================================================
@@ -114,7 +113,7 @@ void Log_Shutdown(void)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void QDECL Log_Write(char *fmt, ...)
+void QDECL Log_Write(PRINTF_FORMAT_STRING char *fmt, ...)
 {
 	va_list ap;
 
@@ -131,7 +130,7 @@ void QDECL Log_Write(char *fmt, ...)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void QDECL Log_WriteTimeStamped(char *fmt, ...)
+void QDECL Log_WriteTimeStamped(PRINTF_FORMAT_STRING char *fmt, ...)
 {
 	va_list ap;
 

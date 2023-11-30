@@ -45,16 +45,8 @@ extern botlib_import_t botimport;
 //#define TRACE_DEBUG
 
 #define ON_EPSILON		0.005
-//#define DEG2RAD( a ) (( a * M_PI ) / 180.0F)
 
 #define MAX_BSPENTITIES		2048
-
-typedef struct rgb_s
-{
-	int red;
-	int green;
-	int blue;
-} rgb_t;
 
 //bsp entity epair
 typedef struct bsp_epair_s
@@ -70,10 +62,10 @@ typedef struct bsp_entity_s
 	bsp_epair_t *epairs;
 } bsp_entity_t;
 
-//id Software BSP data
+//id Sofware BSP data
 typedef struct bsp_s
 {
-	//true when bsp file is loaded
+	//qtrue when bsp file is loaded
 	int loaded;
 	//entity data
 	int entdatasize;
@@ -167,7 +159,7 @@ int AAS_PointContents(vec3_t point)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean AAS_EntityCollision(int entnum,
+qbool AAS_EntityCollision(int entnum,
 					vec3_t start, vec3_t boxmins, vec3_t boxmaxs, vec3_t end,
 								int contentmask, bsp_trace_t *trace)
 {
@@ -182,24 +174,24 @@ qboolean AAS_EntityCollision(int entnum,
 	return qfalse;
 } //end of the function AAS_EntityCollision
 //===========================================================================
-// returns true if in Potentially Hearable Set
+// returns qtrue if in Potentially Hearable Set
 //
 // Parameter:				-
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean AAS_inPVS(vec3_t p1, vec3_t p2)
+qbool AAS_inPVS(vec3_t p1, vec3_t p2)
 {
 	return botimport.inPVS(p1, p2);
 } //end of the function AAS_InPVS
 //===========================================================================
-// returns true if in Potentially Visible Set
+// returns qtrue if in Potentially Visible Set
 //
 // Parameter:				-
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean AAS_inPHS(vec3_t p1, vec3_t p2)
+qbool AAS_inPHS(vec3_t p1, vec3_t p2)
 {
 	return qtrue;
 } //end of the function AAS_inPHS
@@ -239,10 +231,12 @@ bsp_link_t *AAS_BSPLinkEntity(vec3_t absmins, vec3_t absmaxs, int entnum, int mo
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
+/*
 int AAS_BoxEntities(vec3_t absmins, vec3_t absmaxs, int *list, int maxcount)
 {
 	return 0;
 } //end of the function AAS_BoxEntities
+*/
 //===========================================================================
 //
 // Parameter:			-
@@ -276,7 +270,7 @@ int AAS_BSPEntityInRange(int ent)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-int AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size)
+int AAS_ValueForBSPEpairKey(int ent, char* const key, char* const value, int size)
 {
 	bsp_epair_t *epair;
 
@@ -299,7 +293,7 @@ int AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int AAS_VectorForBSPEpairKey(int ent, char *key, vec3_t v)
+int AAS_VectorForBSPEpairKey(int ent, char* const key, vec3_t v)
 {
 	char buf[MAX_EPAIRKEY];
 	double v1, v2, v3;
@@ -320,7 +314,7 @@ int AAS_VectorForBSPEpairKey(int ent, char *key, vec3_t v)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int AAS_FloatForBSPEpairKey(int ent, char *key, float *value)
+int AAS_FloatForBSPEpairKey(int ent, char* key, float *value)
 {
 	char buf[MAX_EPAIRKEY];
 	
@@ -392,7 +386,7 @@ void AAS_ParseBSPEntities(void)
 	{
 		if (strcmp(token.string, "{"))
 		{
-			ScriptError(script, "invalid %s", token.string);
+			ScriptError(script, "invalid %s\n", token.string);
 			AAS_FreeBSPEntities();
 			FreeScript(script);
 			return;
@@ -413,7 +407,7 @@ void AAS_ParseBSPEntities(void)
 			ent->epairs = epair;
 			if (token.type != TT_STRING)
 			{
-				ScriptError(script, "invalid %s", token.string);
+				ScriptError(script, "invalid %s\n", token.string);
 				AAS_FreeBSPEntities();
 				FreeScript(script);
 				return;
@@ -433,7 +427,7 @@ void AAS_ParseBSPEntities(void)
 		} //end while
 		if (strcmp(token.string, "}"))
 		{
-			ScriptError(script, "missing }");
+			ScriptError(script, "missing }\n");
 			AAS_FreeBSPEntities();
 			FreeScript(script);
 			return;
@@ -469,7 +463,7 @@ void AAS_DumpBSPData(void)
 	Com_Memset( &bspworld, 0, sizeof(bspworld) );
 } //end of the function AAS_DumpBSPData
 //===========================================================================
-// load a .bsp file
+// load an bsp file
 //
 // Parameter:				-
 // Returns:					-

@@ -253,18 +253,18 @@ void AAS_SetMovedir(vec3_t angles, vec3_t movedir)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void AAS_JumpReachRunStart(aas_reachability_t *reach, vec3_t runstart)
+void AAS_JumpReachRunStart(const aas_reachability_t& reach, vec3_t runstart)
 {
 	vec3_t hordir, start, cmdmove;
 	aas_clientmove_t move;
 
 	//
-	hordir[0] = reach->start[0] - reach->end[0];
-	hordir[1] = reach->start[1] - reach->end[1];
+	hordir[0] = reach.start[0] - reach.end[0];
+	hordir[1] = reach.start[1] - reach.end[1];
 	hordir[2] = 0;
 	VectorNormalize(hordir);
 	//start point
-	VectorCopy(reach->start, start);
+	VectorCopy(reach.start, start);
 	start[2] += 1;
 	//get command movement
 	VectorScale(hordir, 400, cmdmove);
@@ -287,7 +287,7 @@ void AAS_JumpReachRunStart(aas_reachability_t *reach, vec3_t runstart)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-float AAS_WeaponJumpZVelocity(vec3_t origin, float radiusdamage)
+static float AAS_WeaponJumpZVelocity(const vec3_t origin, float radiusdamage)
 {
 	vec3_t kvel, v, start, end, forward, right, viewangles, dir;
 	float	mass, knockback, points;
@@ -338,7 +338,7 @@ float AAS_WeaponJumpZVelocity(vec3_t origin, float radiusdamage)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-float AAS_RocketJumpZVelocity(vec3_t origin)
+float AAS_RocketJumpZVelocity(const vec3_t origin)
 {
 	//rocket radius damage is 120 (p_weapon.c: Weapon_RocketLauncher_Fire)
 	return AAS_WeaponJumpZVelocity(origin, 120);
@@ -382,6 +382,18 @@ void AAS_Accelerate(vec3_t velocity, float frametime, vec3_t wishdir, float wish
 	}
 } //end of the function AAS_Accelerate
 //===========================================================================
+//
+// Parameter:			-
+// Returns:				-
+// Changes Globals:		-
+//===========================================================================
+void AAS_AirControl(vec3_t start, vec3_t end, vec3_t velocity, vec3_t cmdmove)
+{
+	vec3_t dir;
+
+	VectorSubtract(end, start, dir);
+} //end of the function AAS_AirControl
+//===========================================================================
 // applies ground friction to the given velocity
 //
 // Parameter:			-
@@ -391,14 +403,14 @@ void AAS_Accelerate(vec3_t velocity, float frametime, vec3_t wishdir, float wish
 void AAS_ApplyFriction(vec3_t vel, float friction, float stopspeed,
 													float frametime)
 {
-	float speed, control, newspeed;
+	float speed;
 
 	//horizontal speed
 	speed = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
 	if (speed)
 	{
-		control = speed < stopspeed ? stopspeed : speed;
-		newspeed = speed - frametime * control * friction;
+		float control = speed < stopspeed ? stopspeed : speed;
+		float newspeed = speed - frametime * control * friction;
 		if (newspeed < 0) newspeed = 0;
 		newspeed /= speed;
 		vel[0] *= newspeed;
@@ -493,7 +505,7 @@ int AAS_ClipToBBox(aas_trace_t *trace, vec3_t start, vec3_t end, int presencetyp
 int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 								int entnum, vec3_t origin,
 								int presencetype, int onground,
-								vec3_t velocity, vec3_t cmdmove,
+								const vec3_t velocity, vec3_t cmdmove,
 								int cmdframes,
 								int maxframes, float frametime,
 								int stopevent, int stopareanum,
@@ -506,8 +518,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 	float phys_maxstep, phys_maxsteepness, phys_jumpvel, friction;
 	float gravity, delta, maxvel, wishspeed, accelerate;
 	//float velchange, newvel;
-	//int ax;
-	int n, i, j, pc, step, swimming, crouch, event, jump_frame, areanum;
+	int n, i, j, pc, step, swimming, ax, crouch, event, jump_frame, areanum;
 	int areas[20], numareas;
 	vec3_t points[20];
 	vec3_t org, end, feet, start, stepend, lastorg, wishdir;
@@ -553,7 +564,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 		//if on the ground or swimming
 		if (onground || swimming)
 		{
-			friction = swimming ? phys_waterfriction : phys_friction;
+			friction = swimming ? phys_friction : phys_waterfriction;
 			//apply friction
 			VectorScale(frame_test_vel, 1/frametime, frame_test_vel);
 			AAS_ApplyFriction(frame_test_vel, friction, phys_stopspeed, frametime);
@@ -563,7 +574,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 		//apply command movement
 		if (n < cmdframes)
 		{
-			//ax = 0;
+			ax = 0;
 			maxvel = phys_maxwalkvelocity;
 			accelerate = phys_airaccelerate;
 			VectorCopy(cmdmove, wishdir);
@@ -587,13 +598,13 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 				{
 					accelerate = phys_walkaccelerate;
 				} //end else
-				//ax = 2;
+				ax = 2;
 			} //end if
 			if (swimming)
 			{
 				maxvel = phys_maxswimvelocity;
 				accelerate = phys_swimaccelerate;
-				//ax = 3;
+				ax = 3;
 			} //end if
 			else
 			{
@@ -983,7 +994,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move,
 int AAS_PredictClientMovement(struct aas_clientmove_s *move,
 								int entnum, vec3_t origin,
 								int presencetype, int onground,
-								vec3_t velocity, vec3_t cmdmove,
+								const vec3_t velocity, vec3_t cmdmove,
 								int cmdframes,
 								int maxframes, float frametime,
 								int stopevent, int stopareanum, int visualize)
@@ -1048,11 +1059,10 @@ void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir)
 // Returns:				qfalse if too high or too far from start to end
 // Changes Globals:		-
 //===========================================================================
-int AAS_HorizontalVelocityForJump(float zvel, vec3_t start, vec3_t end, float *velocity)
+int AAS_HorizontalVelocityForJump(float zvel, const vec3_t start, const vec3_t end, float& velocity)
 {
 	float phys_gravity, phys_maxvelocity;
 	float maxjump, height2fall, t, top;
-	vec3_t dir;
 
 	phys_gravity = aassettings.phys_gravity;
 	phys_maxvelocity = aassettings.phys_maxvelocity;
@@ -1066,24 +1076,25 @@ int AAS_HorizontalVelocityForJump(float zvel, vec3_t start, vec3_t end, float *v
 	//if the goal is to high to jump to
 	if (height2fall < 0)
 	{
-		*velocity = phys_maxvelocity;
+		velocity = phys_maxvelocity;
 		return 0;
 	} //end if
 	//time a player takes to fall the height
 	t = sqrt(height2fall / (0.5 * phys_gravity));
   	//direction from start to end
+	vec3_t dir;
 	VectorSubtract(end, start, dir);
 	//
 	if ( (t + zvel / phys_gravity) == 0.0f ) {
-		*velocity = phys_maxvelocity;
+		velocity = phys_maxvelocity;
 		return 0;
 	}
 	//calculate horizontal speed
-	*velocity = sqrt(dir[0]*dir[0] + dir[1]*dir[1]) / (t + zvel / phys_gravity);
+	velocity = sqrt(dir[0]*dir[0] + dir[1]*dir[1]) / (t + zvel / phys_gravity);
 	//the horizontal speed must be lower than the max speed
-	if (*velocity > phys_maxvelocity)
+	if (velocity > phys_maxvelocity)
 	{
-		*velocity = phys_maxvelocity;
+		velocity = phys_maxvelocity;
 		return 0;
 	} //end if
 	return 1;

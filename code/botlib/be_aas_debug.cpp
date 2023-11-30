@@ -45,9 +45,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_DEBUGLINES				1024
 #define MAX_DEBUGPOLYGONS			8192
 
-int debuglines[MAX_DEBUGLINES];
-int debuglinevisible[MAX_DEBUGLINES];
-int numdebuglines;
+static int debuglines[MAX_DEBUGLINES];
+static int debuglinevisible[MAX_DEBUGLINES];
+static int numdebuglines;
 
 static int debugpolygons[MAX_DEBUGPOLYGONS];
 
@@ -122,11 +122,9 @@ void AAS_ClearShownDebugLines(void)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void AAS_DebugLine(vec3_t start, vec3_t end, int color)
+void AAS_DebugLine(const vec3_t start, const vec3_t end, int color)
 {
-	int line;
-
-	for (line = 0; line < MAX_DEBUGLINES; line++)
+	for (int line = 0; line < MAX_DEBUGLINES; line++)
 	{
 		if (!debuglines[line])
 		{
@@ -576,7 +574,7 @@ void AAS_PrintTravelType(int traveltype)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void AAS_DrawArrow(vec3_t start, vec3_t end, int linecolor, int arrowcolor)
+void AAS_DrawArrow(const vec3_t start, const vec3_t end, int linecolor, int arrowcolor)
 {
 	vec3_t dir, cross, p1, p2, up = {0, 0, 1};
 	float dot;
@@ -602,22 +600,22 @@ void AAS_DrawArrow(vec3_t start, vec3_t end, int linecolor, int arrowcolor)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void AAS_ShowReachability(aas_reachability_t *reach)
+void AAS_ShowReachability(const aas_reachability_t& reach)
 {
 	vec3_t dir, cmdmove, velocity;
-	float speed, zvel;
+	float speed;
 	aas_clientmove_t move;
 
-	AAS_ShowAreaPolygons(reach->areanum, 5, qtrue);
+	AAS_ShowAreaPolygons(reach.areanum, 5, qtrue);
 	//AAS_ShowArea(reach->areanum, qtrue);
-	AAS_DrawArrow(reach->start, reach->end, LINECOLOR_BLUE, LINECOLOR_YELLOW);
+	AAS_DrawArrow(reach.start, reach.end, LINECOLOR_BLUE, LINECOLOR_YELLOW);
 	//
-	if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMP ||
-		(reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_WALKOFFLEDGE)
+	if ((reach.traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMP ||
+		(reach.traveltype & TRAVELTYPE_MASK) == TRAVEL_WALKOFFLEDGE)
 	{
-		AAS_HorizontalVelocityForJump(aassettings.phys_jumpvel, reach->start, reach->end, &speed);
+		AAS_HorizontalVelocityForJump(aassettings.phys_jumpvel, reach.start, reach.end, speed);
 		//
-		VectorSubtract(reach->end, reach->start, dir);
+		VectorSubtract(reach.end, reach.start, dir);
 		dir[2] = 0;
 		VectorNormalize(dir);
 		//set the velocity
@@ -626,53 +624,56 @@ void AAS_ShowReachability(aas_reachability_t *reach)
 		VectorClear(cmdmove);
 		cmdmove[2] = aassettings.phys_jumpvel;
 		//
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue,
+		VectorCopy( reach.start, dir ); //support old SDK 8-(
+		AAS_PredictClientMovement(&move, -1, dir, PRESENCE_NORMAL, qtrue,
 									velocity, cmdmove, 3, 30, 0.1f,
 									SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|
 									SE_ENTERLAVA|SE_HITGROUNDDAMAGE, 0, qtrue);
 		//
-		if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMP)
+		if ((reach.traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMP)
 		{
 			AAS_JumpReachRunStart(reach, dir);
 			AAS_DrawCross(dir, 4, LINECOLOR_BLUE);
 		} //end if
 	} //end if
-	else if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_ROCKETJUMP)
+	else if ((reach.traveltype & TRAVELTYPE_MASK) == TRAVEL_ROCKETJUMP)
 	{
-		zvel = AAS_RocketJumpZVelocity(reach->start);
-		AAS_HorizontalVelocityForJump(zvel, reach->start, reach->end, &speed);
+		float zvel = AAS_RocketJumpZVelocity(reach.start);
+		AAS_HorizontalVelocityForJump(zvel, reach.start, reach.end, speed);
 		//
-		VectorSubtract(reach->end, reach->start, dir);
+		VectorSubtract(reach.end, reach.start, dir);
 		dir[2] = 0;
 		VectorNormalize(dir);
 		//get command movement
 		VectorScale(dir, speed, cmdmove);
 		VectorSet(velocity, 0, 0, zvel);
 		//
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue,
+		VectorCopy( reach.start, dir ); //support old SDK 8-(
+		AAS_PredictClientMovement(&move, -1, dir, PRESENCE_NORMAL, qtrue,
 									velocity, cmdmove, 30, 30, 0.1f,
 									SE_ENTERWATER|SE_ENTERSLIME|
 									SE_ENTERLAVA|SE_HITGROUNDDAMAGE|
-									SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue);
+									SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach.areanum, qtrue);
 	} //end else if
-	else if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMPPAD)
+	else if ((reach.traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMPPAD)
 	{
 		VectorSet(cmdmove, 0, 0, 0);
 		//
-		VectorSubtract(reach->end, reach->start, dir);
+		VectorSubtract(reach.end, reach.start, dir);
 		dir[2] = 0;
 		VectorNormalize(dir);
 		//set the velocity
 		//NOTE: the edgenum is the horizontal velocity
-		VectorScale(dir, reach->edgenum, velocity);
+		VectorScale(dir, reach.edgenum, velocity);
 		//NOTE: the facenum is the Z velocity
-		velocity[2] = reach->facenum;
+		velocity[2] = reach.facenum;
 		//
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue,
+		VectorCopy( reach.start, dir ); //support old SDK 8-(
+		AAS_PredictClientMovement(&move, -1, dir, PRESENCE_NORMAL, qtrue,
 									velocity, cmdmove, 30, 30, 0.1f,
 									SE_ENTERWATER|SE_ENTERSLIME|
 									SE_ENTERLAVA|SE_HITGROUNDDAMAGE|
-									SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue);
+									SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach.areanum, qtrue);
 	} //end else if
 } //end of the function AAS_ShowReachability
 //===========================================================================
@@ -684,9 +685,7 @@ void AAS_ShowReachability(aas_reachability_t *reach)
 void AAS_ShowReachableAreas(int areanum)
 {
 	aas_areasettings_t *settings;
-	static aas_reachability_t reach;
 	static int index, lastareanum;
-	static float lasttime;
 
 	if (areanum != lastareanum)
 	{
@@ -699,6 +698,8 @@ void AAS_ShowReachableAreas(int areanum)
 	//
 	if (index >= settings->numreachableareas) index = 0;
 	//
+	static aas_reachability_t reach;
+	static float lasttime;
 	if (AAS_Time() - lasttime > 1.5)
 	{
 		Com_Memcpy(&reach, &aasworld.reachability[settings->firstreachablearea + index], sizeof(aas_reachability_t));
@@ -707,7 +708,7 @@ void AAS_ShowReachableAreas(int areanum)
 		AAS_PrintTravelType(reach.traveltype & TRAVELTYPE_MASK);
 		botimport.Print(PRT_MESSAGE, "\n");
 	} //end if
-	AAS_ShowReachability(&reach);
+	AAS_ShowReachability(reach);
 } //end of the function ShowReachableAreas
 
 void AAS_FloodAreas_r(int areanum, int cluster, int *done)
@@ -774,5 +775,4 @@ void AAS_FloodAreas(vec3_t origin)
 	areanum = AAS_PointAreaNum(origin);
 	cluster = AAS_AreaCluster(areanum);
 	AAS_FloodAreas_r(areanum, cluster, done);
-	FreeMemory(done);
 }

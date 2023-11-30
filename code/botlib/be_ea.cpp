@@ -36,9 +36,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_struct.h"
 #include "botlib.h"
 #include "be_interface.h"
-#include "be_ea.h"
 
 #define MAX_USERMOVE				400
+#define MAX_COMMANDARGUMENTS		10
+#define ACTION_JUMPEDLASTFRAME		128
 
 bot_input_t *botinputs;
 
@@ -48,9 +49,9 @@ bot_input_t *botinputs;
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void EA_Say(int client, char *str)
+void EA_Say( int client, const char* s )
 {
-	botimport.BotClientCommand(client, va("say %s", str) );
+	botimport.BotClientCommand(client, va("say %s", s) );
 } //end of the function EA_Say
 //===========================================================================
 //
@@ -58,19 +59,9 @@ void EA_Say(int client, char *str)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void EA_SayTeam(int client, char *str)
+void EA_SayTeam( int client, const char* s )
 {
-	botimport.BotClientCommand(client, va("say_team %s", str));
-} //end of the function EA_SayTeam
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-void EA_Tell(int client, int clientto, char *str)
-{
-	botimport.BotClientCommand(client, va("tell %d, %s", clientto, str));
+	botimport.BotClientCommand(client, va("say_team %s", s));
 } //end of the function EA_SayTeam
 //===========================================================================
 //
@@ -125,23 +116,15 @@ void EA_Gesture(int client)
 	bi = &botinputs[client];
 
 	bi->actionflags |= ACTION_GESTURE;
-} //end of the function EA_Gesture
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-void EA_Command(int client, char *command)
+}
+
+
+void EA_Command(int client, const char* command)
 {
 	botimport.BotClientCommand(client, command);
-} //end of the function EA_Command
-//===========================================================================
-//
-// Parameter:			-
-// Returns:				-
-// Changes Globals:		-
-//===========================================================================
+}
+
+
 void EA_SelectWeapon(int client, int weapon)
 {
 	bot_input_t *bi;
@@ -414,6 +397,24 @@ void EA_View(int client, vec3_t viewangles)
 //===========================================================================
 void EA_EndRegular(int client, float thinktime)
 {
+/*
+	bot_input_t *bi;
+	int jumped = qfalse;
+
+	bi = &botinputs[client];
+
+	bi->actionflags &= ~ACTION_JUMPEDLASTFRAME;
+
+	bi->thinktime = thinktime;
+	botimport.BotInput(client, bi);
+
+	bi->thinktime = 0;
+	VectorClear(bi->dir);
+	bi->speed = 0;
+	jumped = bi->actionflags & ACTION_JUMP;
+	bi->actionflags = 0;
+	if (jumped) bi->actionflags |= ACTION_JUMPEDLASTFRAME;
+*/
 } //end of the function EA_EndRegular
 //===========================================================================
 //
@@ -424,10 +425,23 @@ void EA_EndRegular(int client, float thinktime)
 void EA_GetInput(int client, float thinktime, bot_input_t *input)
 {
 	bot_input_t *bi;
+//	int jumped = qfalse;
 
 	bi = &botinputs[client];
+
+//	bi->actionflags &= ~ACTION_JUMPEDLASTFRAME;
+
 	bi->thinktime = thinktime;
 	Com_Memcpy(input, bi, sizeof(bot_input_t));
+
+	/*
+	bi->thinktime = 0;
+	VectorClear(bi->dir);
+	bi->speed = 0;
+	jumped = bi->actionflags & ACTION_JUMP;
+	bi->actionflags = 0;
+	if (jumped) bi->actionflags |= ACTION_JUMPEDLASTFRAME;
+	*/
 } //end of the function EA_GetInput
 //===========================================================================
 //
@@ -441,6 +455,7 @@ void EA_ResetInput(int client)
 	int jumped = qfalse;
 
 	bi = &botinputs[client];
+	bi->actionflags &= ~ACTION_JUMPEDLASTFRAME;
 
 	bi->thinktime = 0;
 	VectorClear(bi->dir);

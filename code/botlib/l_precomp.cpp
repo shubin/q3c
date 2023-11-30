@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_script.h"
 #include "l_precomp.h"
 
-typedef enum {qfalse, qtrue}	qboolean;
+typedef enum {qfalse, qtrue}	qbool;
 #endif //SCREWUP
 
 #ifdef BOTLIB
@@ -70,9 +70,6 @@ typedef enum {qfalse, qtrue}	qboolean;
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_log.h"
-
-#define qtrue	true
-#define qfalse	false
 #endif //MEQCC
 
 #ifdef BSPC
@@ -82,8 +79,6 @@ typedef enum {qfalse, qtrue}	qboolean;
 #include "../bspc/l_mem.h"
 #include "l_precomp.h"
 
-#define qtrue	true
-#define qfalse	false
 #define Q_stricmp	stricmp
 
 #endif //BSPC
@@ -111,7 +106,7 @@ typedef struct directive_s
 
 int numtokens;
 /*
-int tokenheapinitialized;				//true when the token heap is initialized
+int tokenheapinitialized;				//qtrue when the token heap is initialized
 token_t token_heap[TOKEN_HEAP_SIZE];	//heap with tokens
 token_t *freetokens;					//free tokens from the heap
 */
@@ -119,19 +114,13 @@ token_t *freetokens;					//free tokens from the heap
 //list with global defines added to every source loaded
 define_t *globaldefines;
 
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
-void QDECL SourceError(source_t *source, char *str, ...)
+void QDECL SourceError(source_t *source, PRINTF_FORMAT_STRING char *str, ...)
 {
 	char text[1024];
 	va_list ap;
 
 	va_start(ap, str);
-	Q_vsnprintf(text, sizeof(text), str, ap);
+	vsprintf(text, str, ap);
 	va_end(ap);
 #ifdef BOTLIB
 	botimport.Print(PRT_ERROR, "file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
@@ -142,20 +131,16 @@ void QDECL SourceError(source_t *source, char *str, ...)
 #ifdef BSPC
 	Log_Print("error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
 #endif //BSPC
-} //end of the function SourceError
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-void QDECL SourceWarning(source_t *source, char *str, ...)
+} 
+
+
+void QDECL SourceWarning(source_t *source, PRINTF_FORMAT_STRING char *str, ...)
 {
 	char text[1024];
 	va_list ap;
 
 	va_start(ap, str);
-	Q_vsnprintf(text, sizeof(text), str, ap);
+	vsprintf(text, str, ap);
 	va_end(ap);
 #ifdef BOTLIB
 	botimport.Print(PRT_WARNING, "file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
@@ -166,39 +151,26 @@ void QDECL SourceWarning(source_t *source, char *str, ...)
 #ifdef BSPC
 	Log_Print("warning: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
 #endif //BSPC
-} //end of the function ScriptWarning
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
+} 
+
+
 void PC_PushIndent(source_t *source, int type, int skip)
 {
-	indent_t *indent;
-
-	indent = (indent_t *) GetMemory(sizeof(indent_t));
+	indent_t *indent = (indent_t *) GetMemory(sizeof(indent_t));
 	indent->type = type;
 	indent->script = source->scriptstack;
 	indent->skip = (skip != 0);
 	source->skip += indent->skip;
 	indent->next = source->indentstack;
 	source->indentstack = indent;
-} //end of the function PC_PushIndent
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
+} 
+
 void PC_PopIndent(source_t *source, int *type, int *skip)
 {
-	indent_t *indent;
-
 	*type = 0;
 	*skip = 0;
 
-	indent = source->indentstack;
+	indent_t *indent = source->indentstack;
 	if (!indent) return;
 
 	//must be an indent from the current script
@@ -209,18 +181,11 @@ void PC_PopIndent(source_t *source, int *type, int *skip)
 	source->indentstack = source->indentstack->next;
 	source->skip -= indent->skip;
 	FreeMemory(indent);
-} //end of the function PC_PopIndent
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
+} 
+
 void PC_PushScript(source_t *source, script_t *script)
 {
-	script_t *s;
-
-	for (s = source->scriptstack; s; s = s->next)
+	for (script_t *s = source->scriptstack; s; s = s->next)
 	{
 		if (!Q_stricmp(s->filename, script->filename))
 		{
@@ -231,13 +196,8 @@ void PC_PushScript(source_t *source, script_t *script)
 	//push the script on the script stack
 	script->next = source->scriptstack;
 	source->scriptstack = script;
-} //end of the function PC_PushScript
-//============================================================================
-//
-// Parameter:			-
-// Returns:				-
-// Changes Globals:		-
-//============================================================================
+} 
+
 void PC_InitTokenHeap(void)
 {
 	/*
@@ -261,19 +221,17 @@ void PC_InitTokenHeap(void)
 //============================================================================
 token_t *PC_CopyToken(token_t *token)
 {
-	token_t *t;
-
 //	t = (token_t *) malloc(sizeof(token_t));
-	t = (token_t *) GetMemory(sizeof(token_t));
+	token_t *t = (token_t *) GetMemory(sizeof(token_t));
 //	t = freetokens;
 	if (!t)
 	{
 #ifdef BSPC
-		Error("out of token space");
+		Error("out of token space\n");
+        return NULL;
 #else
-		Com_Error(ERR_FATAL, "out of token space");
+		Com_Error(ERR_FATAL, "out of token space\n");
 #endif
-		return NULL;
 	} //end if
 //	freetokens = freetokens->next;
 	Com_Memcpy(t, token, sizeof(token_t));
@@ -303,10 +261,6 @@ void PC_FreeToken(token_t *token)
 //============================================================================
 int PC_ReadSourceToken(source_t *source, token_t *token)
 {
-	token_t *t;
-	script_t *script;
-	int type, skip;
-
 	//if there's no token already available
 	while(!source->tokens)
 	{
@@ -319,6 +273,7 @@ int PC_ReadSourceToken(source_t *source, token_t *token)
 			while(source->indentstack &&
 					source->indentstack->script == source->scriptstack)
 			{
+                int type, skip;
 				SourceWarning(source, "missing #endif");
 				PC_PopIndent(source, &type, &skip);
 			} //end if
@@ -326,14 +281,14 @@ int PC_ReadSourceToken(source_t *source, token_t *token)
 		//if this was the initial script
 		if (!source->scriptstack->next) return qfalse;
 		//remove the script and return to the last one
-		script = source->scriptstack;
+		script_t *script = source->scriptstack;
 		source->scriptstack = source->scriptstack->next;
 		FreeScript(script);
 	} //end while
 	//copy the already available token
 	Com_Memcpy(token, source->tokens, sizeof(token_t));
 	//free the read token
-	t = source->tokens;
+	token_t *t = source->tokens;
 	source->tokens = source->tokens->next;
 	PC_FreeToken(t);
 	return qtrue;
@@ -346,9 +301,7 @@ int PC_ReadSourceToken(source_t *source, token_t *token)
 //============================================================================
 int PC_UnreadSourceToken(source_t *source, token_t *token)
 {
-	token_t *t;
-
-	t = PC_CopyToken(token);
+	token_t *t = PC_CopyToken(token);
 	t->next = source->tokens;
 	source->tokens = t;
 	return qtrue;
@@ -361,14 +314,14 @@ int PC_UnreadSourceToken(source_t *source, token_t *token)
 //============================================================================
 int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int maxparms)
 {
-	token_t token, *t, *last;
-	int i, done, lastcomma, numparms, indent;
+	token_t token;
 
 	if (!PC_ReadSourceToken(source, &token))
 	{
 		SourceError(source, "define %s missing parms", define->name);
 		return qfalse;
 	} //end if
+	
 	//
 	if (define->numparms > maxparms)
 	{
@@ -376,7 +329,8 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 		return qfalse;
 	} //end if
 	//
-	for (i = 0; i < define->numparms; i++) parms[i] = NULL;
+	for (int i = 0; i < define->numparms; i++) parms[i] = NULL;
+    
 	//if no leading "("
 	if (strcmp(token.string, "("))
 	{
@@ -385,7 +339,7 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 		return qfalse;
 	} //end if
 	//read the define parameters
-	for (done = 0, numparms = 0, indent = 0; !done;)
+	for (int done = 0, numparms = 0, indent = 0; !done;)
 	{
 		if (numparms >= maxparms)
 		{
@@ -398,8 +352,8 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 			return qfalse;
 		} //end if
 		parms[numparms] = NULL;
-		lastcomma = 1;
-		last = NULL;
+		int lastcomma = 1;
+		token_t *last = NULL;
 		while(!done)
 		{
 			//
@@ -414,6 +368,7 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 				if (indent <= 0)
 				{
 					if (lastcomma) SourceWarning(source, "too many comma's");
+					lastcomma = 1;
 					break;
 				} //end if
 			} //end if
@@ -439,8 +394,7 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 			//
 			if (numparms < define->numparms)
 			{
-				//
-				t = PC_CopyToken(&token);
+				token_t *t = PC_CopyToken(&token);
 				t->next = NULL;
 				if (last) last->next = t;
 				else parms[numparms] = t;
@@ -459,18 +413,16 @@ int PC_ReadDefineParms(source_t *source, define_t *define, token_t **parms, int 
 //============================================================================
 int PC_StringizeTokens(token_t *tokens, token_t *token)
 {
-	token_t *t;
-
 	token->type = TT_STRING;
 	token->whitespace_p = NULL;
 	token->endwhitespace_p = NULL;
 	token->string[0] = '\0';
 	strcat(token->string, "\"");
-	for (t = tokens; t; t = t->next)
+	for (token_t *t = tokens; t; t = t->next)
 	{
-		strncat(token->string, t->string, MAX_TOKEN - strlen(token->string) - 1);
+		strncat(token->string, t->string, MAX_TOKEN - strlen(token->string));
 	} //end for
-	strncat(token->string, "\"", MAX_TOKEN - strlen(token->string) - 1);
+	strncat(token->string, "\"", MAX_TOKEN - strlen(token->string));
 	return qtrue;
 } //end of the function PC_StringizeTokens
 //============================================================================
@@ -484,7 +436,7 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 	//merging of a name with a name or number
 	if (t1->type == TT_NAME && (t2->type == TT_NAME || t2->type == TT_NUMBER))
 	{
-		strcat(t1->string, t2->string);
+		Q_strcat(t1->string, sizeof(t1->string), t2->string);
 		return qtrue;
 	} //end if
 	//merging of two strings
@@ -493,29 +445,13 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 		//remove trailing double quote
 		t1->string[strlen(t1->string)-1] = '\0';
 		//concat without leading double quote
-		strcat(t1->string, &t2->string[1]);
+		Q_strcat(t1->string, sizeof(t1->string), &t2->string[1]);
 		return qtrue;
 	} //end if
 	//FIXME: merging of two number of the same sub type
 	return qfalse;
-} //end of the function PC_MergeTokens
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
-/*
-void PC_PrintDefine(define_t *define)
-{
-	printf("define->name = %s\n", define->name);
-	printf("define->flags = %d\n", define->flags);
-	printf("define->builtin = %d\n", define->builtin);
-	printf("define->numparms = %d\n", define->numparms);
-//	token_t *parms;					//define parameters
-//	token_t *tokens;					//macro tokens (possibly containing parm tokens)
-//	struct define_s *next;			//next defined macro in a list
-} //end of the function PC_PrintDefine*/
+} 
+
 #if DEFINEHASHING
 //============================================================================
 //
@@ -525,13 +461,10 @@ void PC_PrintDefine(define_t *define)
 //============================================================================
 void PC_PrintDefineHashTable(define_t **definehash)
 {
-	int i;
-	define_t *d;
-
-	for (i = 0; i < DEFINEHASHSIZE; i++)
+	for (int i = 0; i < DEFINEHASHSIZE; i++)
 	{
 		Log_Write("%4d:", i);
-		for (d = definehash[i]; d; d = d->hashnext)
+		for (define_t *d = definehash[i]; d; d = d->hashnext)
 		{
 			Log_Write(" %s", d->name);
 		} //end for
@@ -548,10 +481,8 @@ void PC_PrintDefineHashTable(define_t **definehash)
 
 int PC_NameHash(char *name)
 {
-	int hash, i;
-
-	hash = 0;
-	for (i = 0; name[i] != '\0'; i++)
+	int register hash = 0;
+	for (int i = 0; name[i] != '\0'; i++)
 	{
 		hash += name[i] * (119 + i);
 		//hash += (name[i] << 7) + i;
@@ -568,9 +499,7 @@ int PC_NameHash(char *name)
 //============================================================================
 void PC_AddDefineToHash(define_t *define, define_t **definehash)
 {
-	int hash;
-
-	hash = PC_NameHash(define->name);
+	int hash = PC_NameHash(define->name);
 	define->hashnext = definehash[hash];
 	definehash[hash] = define;
 } //end of the function PC_AddDefineToHash
@@ -582,11 +511,8 @@ void PC_AddDefineToHash(define_t *define, define_t **definehash)
 //============================================================================
 define_t *PC_FindHashedDefine(define_t **definehash, char *name)
 {
-	define_t *d;
-	int hash;
-
-	hash = PC_NameHash(name);
-	for (d = definehash[hash]; d; d = d->hashnext)
+	int hash = PC_NameHash(name);
+	for (define_t *d = definehash[hash]; d; d = d->hashnext)
 	{
 		if (!strcmp(d->name, name)) return d;
 	} //end for
@@ -601,9 +527,7 @@ define_t *PC_FindHashedDefine(define_t **definehash, char *name)
 //============================================================================
 define_t *PC_FindDefine(define_t *defines, char *name)
 {
-	define_t *d;
-
-	for (d = defines; d; d = d->next)
+	for (define_t *d = defines; d; d = d->next)
 	{
 		if (!strcmp(d->name, name)) return d;
 	} //end for
@@ -618,11 +542,8 @@ define_t *PC_FindDefine(define_t *defines, char *name)
 //============================================================================
 int PC_FindDefineParm(define_t *define, char *name)
 {
-	token_t *p;
-	int i;
-
-	i = 0;
-	for (p = define->parms; p; p = p->next)
+	int i = 0;
+	for (token_t *p = define->parms; p; p = p->next)
 	{
 		if (!strcmp(p->string, name)) return i;
 		i++;
@@ -637,22 +558,21 @@ int PC_FindDefineParm(define_t *define, char *name)
 //============================================================================
 void PC_FreeDefine(define_t *define)
 {
-	token_t *t, *next;
+	token_t *next = NULL;
 
 	//free the define parameters
-	for (t = define->parms; t; t = next)
+	for (token_t *t = define->parms; t; t = next)
 	{
 		next = t->next;
 		PC_FreeToken(t);
 	} //end for
 	//free the define tokens
-	for (t = define->tokens; t; t = next)
+	for (token_t *t = define->tokens; t; t = next)
 	{
 		next = t->next;
 		PC_FreeToken(t);
 	} //end for
 	//free the define
-	FreeMemory(define->name);
 	FreeMemory(define);
 } //end of the function PC_FreeDefine
 //============================================================================
@@ -663,13 +583,11 @@ void PC_FreeDefine(define_t *define)
 //============================================================================
 void PC_AddBuiltinDefines(source_t *source)
 {
-	int i;
-	define_t *define;
 	struct builtin
 	{
 		char *string;
-		int builtin;
-	} builtin[] = {
+		int type;
+	} builtin[] = { // bk001204 - brackets
 		{ "__LINE__",	BUILTIN_LINE },
 		{ "__FILE__",	BUILTIN_FILE },
 		{ "__DATE__",	BUILTIN_DATE },
@@ -678,14 +596,14 @@ void PC_AddBuiltinDefines(source_t *source)
 		{ NULL, 0 }
 	};
 
-	for (i = 0; builtin[i].string; i++)
+	for (int i = 0; builtin[i].string; i++)
 	{
-		define = (define_t *) GetMemory(sizeof(define_t));
+		define_t *define = (define_t *) GetMemory(sizeof(define_t) + strlen(builtin[i].string) + 1);
 		Com_Memset(define, 0, sizeof(define_t));
-		define->name = (char *) GetMemory(strlen(builtin[i].string) + 1);
+		define->name = (char *) define + sizeof(define_t);
 		strcpy(define->name, builtin[i].string);
 		define->flags |= DEFINE_FIXED;
-		define->builtin = builtin[i].builtin;
+		define->type = builtin[i].type;
 		//add the define to the source
 #if DEFINEHASHING
 		PC_AddDefineToHash(define, source->definehash);
@@ -704,13 +622,11 @@ void PC_AddBuiltinDefines(source_t *source)
 int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define,
 										token_t **firsttoken, token_t **lasttoken)
 {
-	token_t *token;
 	time_t t;
-	
 	char *curtime;
 
-	token = PC_CopyToken(deftoken);
-	switch(define->builtin)
+	token_t *token = PC_CopyToken(deftoken);
+	switch(define->type)
 	{
 		case BUILTIN_LINE:
 		{
@@ -727,7 +643,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 		} //end case
 		case BUILTIN_FILE:
 		{
-			strcpy(token->string, source->scriptstack->filename);
+			Q_strncpyz(token->string, source->scriptstack->filename, sizeof(token->string));
 			token->type = TT_NAME;
 			token->subtype = strlen(token->string);
 			*firsttoken = token;
@@ -782,12 +698,12 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 int PC_ExpandDefine(source_t *source, token_t *deftoken, define_t *define,
 										token_t **firsttoken, token_t **lasttoken)
 {
-	token_t *parms[MAX_DEFINEPARMS] = { NULL }, *dt, *pt, *t;
+	token_t *parms[MAX_DEFINEPARMS], *dt, *pt, *t;
 	token_t *t1, *t2, *first, *last, *nextpt, token;
 	int parmnum, i;
 
 	//if it is a builtin define
-	if (define->builtin)
+	if (define->type)
 	{
 		return PC_ExpandBuiltinDefine(source, deftoken, define, firsttoken, lasttoken);
 	} //end if
@@ -971,7 +887,7 @@ int PC_Directive_include(source_t *source)
 {
 	script_t *script;
 	token_t token;
-	char path[MAX_QPATH];
+	char path[MAX_PATH];
 #ifdef QUAKE
 	foundfile_t file;
 #endif //QUAKE
@@ -1011,13 +927,13 @@ int PC_Directive_include(source_t *source)
 				break;
 			} //end if
 			if (token.type == TT_PUNCTUATION && *token.string == '>') break;
-			Q_strcat(path, sizeof(path), token.string);
+			strncat(path, token.string, MAX_PATH);
 		} //end while
 		if (*token.string != '>')
 		{
 			SourceWarning(source, "#include missing trailing >");
 		} //end if
-		if (!strlen(path))
+		if (!path[0])
 		{
 			SourceError(source, "#include without file name between < >");
 			return qfalse;
@@ -1035,7 +951,7 @@ int PC_Directive_include(source_t *source)
 	{
 		Com_Memset(&file, 0, sizeof(foundfile_t));
 		script = LoadScriptFile(path);
-		if (script) Q_strncpyz(script->filename, path, sizeof(script->filename));
+		if (script) strncpy(script->filename, path, MAX_PATH);
 	} //end if
 #endif //QUAKE
 	if (!script)
@@ -1208,11 +1124,17 @@ int PC_Directive_define(source_t *source)
 		//unread the define name before executing the #undef directive
 		PC_UnreadSourceToken(source, &token);
 		if (!PC_Directive_undef(source)) return qfalse;
+		//if the define was not removed (define->flags & DEFINE_FIXED)
+#if DEFINEHASHING
+		define = PC_FindHashedDefine(source->definehash, token.string);
+#else
+		define = PC_FindDefine(source->defines, token.string);
+#endif //DEFINEHASHING
 	} //end if
 	//allocate define
-	define = (define_t *) GetMemory(sizeof(define_t));
+	define = (define_t *) GetMemory(sizeof(define_t) + strlen(token.string) + 1);
 	Com_Memset(define, 0, sizeof(define_t));
-	define->name = (char *) GetMemory(strlen(token.string) + 1);
+	define->name = (char *) define + sizeof(define_t);
 	strcpy(define->name, token.string);
 	//add the define to the source
 #if DEFINEHASHING
@@ -1323,10 +1245,10 @@ define_t *PC_DefineFromString(char *string)
 	script = LoadScriptMemory(string, strlen(string), "*extern");
 	//create a new source
 	Com_Memset(&src, 0, sizeof(source_t));
-	Q_strncpyz(src.filename, "*extern", sizeof(src.filename));
+	strncpy(src.filename, "*extern", MAX_PATH);
 	src.scriptstack = script;
 #if DEFINEHASHING
-	src.definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
+	src.definehash = (define_t**)GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
 #endif //DEFINEHASHING
 	//create a define from the source
 	res = PC_Directive_define(&src);
@@ -1355,7 +1277,7 @@ define_t *PC_DefineFromString(char *string)
 #endif //DEFINEHASHING
 	//
 	FreeScript(script);
-	//if the define was created successfully
+	//if the define was created succesfully
 	if (res > 0) return def;
 	//free the define is created
 	if (src.defines) PC_FreeDefine(def);
@@ -1446,12 +1368,12 @@ define_t *PC_CopyDefine(source_t *source, define_t *define)
 	define_t *newdefine;
 	token_t *token, *newtoken, *lasttoken;
 
-	newdefine = (define_t *) GetMemory(sizeof(define_t));
+	newdefine = (define_t *) GetMemory(sizeof(define_t) + strlen(define->name) + 1);
 	//copy the define name
-	newdefine->name = (char *) GetMemory(strlen(define->name) + 1);
+	newdefine->name = (char *) newdefine + sizeof(define_t);
 	strcpy(newdefine->name, define->name);
 	newdefine->flags = define->flags;
-	newdefine->builtin = define->builtin;
+	newdefine->type = define->type;
 	newdefine->numparms = define->numparms;
 	//the define is not linked
 	newdefine->next = NULL;
@@ -1601,7 +1523,7 @@ int PC_Directive_endif(source_t *source)
 //============================================================================
 typedef struct operator_s
 {
-	int operator;
+	int op;
 	int priority;
 	int parentheses;
 	struct operator_s *prev, *next;
@@ -1610,7 +1532,7 @@ typedef struct operator_s
 typedef struct value_s
 {
 	signed long int intvalue;
-	float floatvalue;
+	double floatvalue;
 	int parentheses;
 	struct value_s *prev, *next;
 } value_t;
@@ -1650,16 +1572,11 @@ int PC_OperatorPriority(int op)
 	return qfalse;
 } //end of the function PC_OperatorPriority
 
-//#define AllocValue()			GetClearedMemory(sizeof(value_t));
-//#define FreeValue(val)		FreeMemory(val)
-//#define AllocOperator(op)		op = (operator_t *) GetClearedMemory(sizeof(operator_t));
-//#define FreeOperator(op)		FreeMemory(op);
-
 #define MAX_VALUES		64
 #define MAX_OPERATORS	64
 #define AllocValue(val)									\
 	if (numvalues >= MAX_VALUES) {						\
-		SourceError(source, "out of value space");		\
+		SourceError(source, "out of value space\n");		\
 		error = 1;										\
 		break;											\
 	}													\
@@ -1669,7 +1586,7 @@ int PC_OperatorPriority(int op)
 //
 #define AllocOperator(op)								\
 	if (numoperators >= MAX_OPERATORS) {				\
-		SourceError(source, "out of operator space");	\
+		SourceError(source, "out of operator space\n");	\
 		error = 1;										\
 		break;											\
 	}													\
@@ -1678,7 +1595,7 @@ int PC_OperatorPriority(int op)
 #define FreeOperator(op)
 
 int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intvalue,
-																	float *floatvalue, int integer)
+																	double *floatvalue, int integer)
 {
 	operator_t *o, *firstoperator, *lastoperator;
 	value_t *v, *firstvalue, *lastvalue, *v1, *v2;
@@ -1689,8 +1606,9 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 	int lastwasvalue = 0;
 	int negativevalue = 0;
 	int questmarkintvalue = 0;
-	float questmarkfloatvalue = 0;
+	double questmarkfloatvalue = 0;
 	int gotquestmarkvalue = qfalse;
+	int lastoperatortype = 0;
 	//
 	operator_t operator_heap[MAX_OPERATORS];
 	int numoperators = 0;
@@ -1831,7 +1749,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 						t->subtype == P_BIN_AND || t->subtype == P_BIN_OR ||
 						t->subtype == P_BIN_XOR)
 					{
-						SourceError(source, "illigal operator %s on floating point operands", t->string);
+						SourceError(source, "illigal operator %s on floating point operands\n", t->string);
 						error = 1;
 						break;
 					} //end if
@@ -1908,7 +1826,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 				{
 					//o = (operator_t *) GetClearedMemory(sizeof(operator_t));
 					AllocOperator(o);
-					o->operator = t->subtype;
+					o->op = t->subtype;
 					o->priority = PC_OperatorPriority(t->subtype);
 					o->parentheses = parentheses;
 					o->next = NULL;
@@ -1963,8 +1881,8 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 				if (o->priority >= o->next->priority) break;
 			} //end if
 			//if the arity of the operator isn't equal to 1
-			if (o->operator != P_LOGIC_NOT
-					&& o->operator != P_BIN_NOT) v = v->next;
+			if (o->op != P_LOGIC_NOT
+					&& o->op != P_BIN_NOT) v = v->next;
 			//if there's no value or no next value
 			if (!v)
 			{
@@ -1988,7 +1906,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 			if (v2) Log_Write("value2 = %f", v2->floatvalue);
 		} //end else
 #endif //DEBUG_EVAL
-		switch(o->operator)
+		switch(o->op)
 		{
 			case P_LOGIC_NOT:		v1->intvalue = !v1->intvalue;
 									v1->floatvalue = !v1->floatvalue; break;
@@ -1998,7 +1916,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 									v1->floatvalue *= v2->floatvalue; break;
 			case P_DIV:				if (!v2->intvalue || !v2->floatvalue)
 									{
-										SourceError(source, "divide by zero in #if/#elif");
+										SourceError(source, "divide by zero in #if/#elif\n");
 										error = 1;
 										break;
 									}
@@ -2006,7 +1924,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 									v1->floatvalue /= v2->floatvalue; break;
 			case P_MOD:				if (!v2->intvalue)
 									{
-										SourceError(source, "divide by zero in #if/#elif");
+										SourceError(source, "divide by zero in #if/#elif\n");
 										error = 1;
 										break;
 									}
@@ -2079,19 +1997,18 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 		else Log_Write("result value = %f", v1->floatvalue);
 #endif //DEBUG_EVAL
 		if (error) break;
+		lastoperatortype = o->op;
 		//if not an operator with arity 1
-		if (o->operator != P_LOGIC_NOT
-				&& o->operator != P_BIN_NOT)
+		if (o->op != P_LOGIC_NOT
+				&& o->op != P_BIN_NOT)
 		{
 			//remove the second value if not question mark operator
-			if (o->operator != P_QUESTIONMARK) v = v->next;
+			if (o->op != P_QUESTIONMARK) v = v->next;
 			//
-			if (v)
-			{
-				if (v->prev) v->prev->next = v->next;
-				else firstvalue = v->next;
-				if (v->next) v->next->prev = v->prev;
-			}
+			if (v->prev) v->prev->next = v->next;
+			else firstvalue = v->next;
+			if (v->next) v->next->prev = v->prev;
+			else lastvalue = v->prev;
 			//FreeMemory(v);
 			FreeValue(v);
 		} //end if
@@ -2099,6 +2016,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 		if (o->prev) o->prev->next = o->next;
 		else firstoperator = o->next;
 		if (o->next) o->next->prev = o->prev;
+		else lastoperator = o->prev;
 		//FreeMemory(o);
 		FreeOperator(o);
 	} //end while
@@ -2131,7 +2049,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 // Changes Globals:		-
 //============================================================================
 int PC_Evaluate(source_t *source, signed long int *intvalue,
-												float *floatvalue, int integer)
+												double *floatvalue, int integer)
 {
 	token_t token, *firsttoken, *lasttoken;
 	token_t *t, *nexttoken;
@@ -2230,7 +2148,7 @@ int PC_Evaluate(source_t *source, signed long int *intvalue,
 // Changes Globals:		-
 //============================================================================
 int PC_DollarEvaluate(source_t *source, signed long int *intvalue,
-												float *floatvalue, int integer)
+												double *floatvalue, int integer)
 {
 	int indent, defined = qfalse;
 	token_t token, *firsttoken, *lasttoken;
@@ -2445,7 +2363,7 @@ int PC_Directive_eval(source_t *source)
 	token.whitespace_p = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed = 0;
-	sprintf(token.string, "%ld", labs(value));
+	sprintf(token.string, "%d", (int)abs((int)value));
 	token.type = TT_NUMBER;
 	token.subtype = TT_INTEGER|TT_LONG|TT_DECIMAL;
 	PC_UnreadSourceToken(source, &token);
@@ -2460,7 +2378,7 @@ int PC_Directive_eval(source_t *source)
 //============================================================================
 int PC_Directive_evalfloat(source_t *source)
 {
-	float value;
+	double value;
 	token_t token;
 
 	if (!PC_Evaluate(source, NULL, &value, qfalse)) return qfalse;
@@ -2550,19 +2468,15 @@ int PC_DollarDirective_evalint(source_t *source)
 	token.whitespace_p = source->scriptstack->script_p;
 	token.endwhitespace_p = source->scriptstack->script_p;
 	token.linescrossed = 0;
-	sprintf(token.string, "%ld", labs(value));
+	sprintf(token.string, "%d", (int)abs((int)value));
 	token.type = TT_NUMBER;
 	token.subtype = TT_INTEGER|TT_LONG|TT_DECIMAL;
-
 #ifdef NUMBERVALUE
-	token.intvalue = labs(value);
-	token.floatvalue = token.intvalue;
+	token.intvalue = value;
+	token.floatvalue = value;
 #endif //NUMBERVALUE
-
 	PC_UnreadSourceToken(source, &token);
-	if (value < 0)
-		UnreadSignToken(source);
-
+	if (value < 0) UnreadSignToken(source);
 	return qtrue;
 } //end of the function PC_DollarDirective_evalint
 //============================================================================
@@ -2573,7 +2487,7 @@ int PC_DollarDirective_evalint(source_t *source)
 //============================================================================
 int PC_DollarDirective_evalfloat(source_t *source)
 {
-	float value;
+	double value;
 	token_t token;
 
 	if (!PC_DollarEvaluate(source, NULL, &value, qfalse)) return qfalse;
@@ -2584,16 +2498,12 @@ int PC_DollarDirective_evalfloat(source_t *source)
 	sprintf(token.string, "%1.2f", fabs(value));
 	token.type = TT_NUMBER;
 	token.subtype = TT_FLOAT|TT_LONG|TT_DECIMAL;
-
 #ifdef NUMBERVALUE
-	token.floatvalue = fabs(value);
-	token.intvalue = (unsigned long) token.floatvalue;
+	token.intvalue = (unsigned long) value;
+	token.floatvalue = value;
 #endif //NUMBERVALUE
-
 	PC_UnreadSourceToken(source, &token);
-	if (value < 0)
-		UnreadSignToken(source);
-
+	if (value < 0) UnreadSignToken(source);
 	return qtrue;
 } //end of the function PC_DollarDirective_evalfloat
 //============================================================================
@@ -2744,7 +2654,7 @@ int PC_ReadToken(source_t *source, token_t *token)
 					token->string[strlen(token->string)-1] = '\0';
 					if (strlen(token->string) + strlen(newtoken.string+1) + 1 >= MAX_TOKEN)
 					{
-						SourceError(source, "string longer than MAX_TOKEN %d", MAX_TOKEN);
+						SourceError(source, "string longer than MAX_TOKEN %d\n", MAX_TOKEN);
 						return qfalse;
 					}
 					strcat(token->string, newtoken.string+1);
@@ -2834,7 +2744,6 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 	{
 		if ((token->subtype & subtype) != subtype)
 		{
-			strcpy(str, "");
 			if (subtype & TT_DECIMAL) strcpy(str, "decimal");
 			if (subtype & TT_HEX) strcpy(str, "hex");
 			if (subtype & TT_OCTAL) strcpy(str, "octal");
@@ -2958,16 +2867,12 @@ void PC_UnreadToken(source_t *source, token_t *token)
 //============================================================================
 void PC_SetIncludePath(source_t *source, char *path)
 {
-	size_t len;
-
-	Q_strncpyz(source->includepath, path, sizeof(source->includepath)-1);
-
-	len = strlen(source->includepath);
+	strncpy(source->includepath, path, MAX_PATH);
 	//add trailing path seperator
-	if (len > 0 && source->includepath[len-1] != '\\' &&
-		source->includepath[len-1] != '/')
+	if (source->includepath[strlen(source->includepath)-1] != '\\' &&
+		source->includepath[strlen(source->includepath)-1] != '/')
 	{
-		strcat(source->includepath, PATHSEPERATOR_STR);
+		Q_strcat(source->includepath, sizeof(source->includepath), PATHSEPERATOR_STR);
 	} //end if
 } //end of the function PC_SetIncludePath
 //============================================================================
@@ -3001,7 +2906,7 @@ source_t *LoadSourceFile(const char *filename)
 	source = (source_t *) GetMemory(sizeof(source_t));
 	Com_Memset(source, 0, sizeof(source_t));
 
-	Q_strncpyz(source->filename, filename, sizeof(source->filename));
+	strncpy(source->filename, filename, MAX_PATH);
 	source->scriptstack = script;
 	source->tokens = NULL;
 	source->defines = NULL;
@@ -3009,7 +2914,7 @@ source_t *LoadSourceFile(const char *filename)
 	source->skip = 0;
 
 #if DEFINEHASHING
-	source->definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
+	source->definehash = (define_t**)GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
 #endif //DEFINEHASHING
 	PC_AddGlobalDefinesToSource(source);
 	return source;
@@ -3034,7 +2939,7 @@ source_t *LoadSourceMemory(char *ptr, int length, char *name)
 	source = (source_t *) GetMemory(sizeof(source_t));
 	Com_Memset(source, 0, sizeof(source_t));
 
-	Q_strncpyz(source->filename, name, sizeof(source->filename));
+	strncpy(source->filename, name, MAX_PATH);
 	source->scriptstack = script;
 	source->tokens = NULL;
 	source->defines = NULL;
@@ -3042,7 +2947,7 @@ source_t *LoadSourceMemory(char *ptr, int length, char *name)
 	source->skip = 0;
 
 #if DEFINEHASHING
-	source->definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
+	source->definehash = (define_t**)GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));
 #endif //DEFINEHASHING
 	PC_AddGlobalDefinesToSource(source);
 	return source;

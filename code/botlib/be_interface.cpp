@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /*****************************************************************************
- * name:		be_interface.c
+ * name:		be_interface.c // bk010221 - FIXME - DEAD code elimination
  *
  * desc:		bot library interface
  *
@@ -52,14 +52,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "be_ai_char.h"
 #include "be_ai_gen.h"
 
-//library globals in a structure
 botlib_globals_t botlibglobals;
 
 botlib_export_t be_botlib_export;
 botlib_import_t botimport;
-//
-int botDeveloper;
-//qtrue if the library is setup
+
+int bot_developer;
 int botlibsetup = qfalse;
 
 //===========================================================================
@@ -68,64 +66,35 @@ int botlibsetup = qfalse;
 //
 //===========================================================================
 
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-int Sys_MilliSeconds(void)
+
+// the botlib SHOULD use Com/Sys_MilliSeconds, but hey, it's the botlib...  :/
+
+int BL_MilliSeconds()
 {
 	return clock() * 1000 / CLOCKS_PER_SEC;
-} //end of the function Sys_MilliSeconds
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-qboolean ValidClientNumber(int num, char *str)
-{
-	if (num < 0 || num > botlibglobals.maxclients)
-	{
-		//weird: the disabled stuff results in a crash
-		botimport.Print(PRT_ERROR, "%s: invalid client number %d, [0, %d]\n",
-										str, num, botlibglobals.maxclients);
-		return qfalse;
-	} //end if
-	return qtrue;
-} //end of the function BotValidateClientNumber
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-qboolean ValidEntityNumber(int num, char *str)
+}
+
+
+static qbool BL_ValidEntityNumber(int num, char *str)
 {
 	if (num < 0 || num > botlibglobals.maxentities)
 	{
-		botimport.Print(PRT_ERROR, "%s: invalid entity number %d, [0, %d]\n",
-										str, num, botlibglobals.maxentities);
+		botimport.Print( PRT_ERROR, "%s: invalid entity number %d, [0, %d]\n", str, num, botlibglobals.maxentities );
 		return qfalse;
-	} //end if
+	}
 	return qtrue;
-} //end of the function BotValidateClientNumber
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-qboolean BotLibSetup(char *str)
+}
+
+
+static qbool BotLibSetup( const char* s )
 {
 	if (!botlibglobals.botlibsetup)
 	{
-		botimport.Print(PRT_ERROR, "%s: bot library used before being setup\n", str);
+		botimport.Print( PRT_ERROR, "%s: bot library used before being setup\n", s );
 		return qfalse;
-	} //end if
+	}
 	return qtrue;
-} //end of the function BotLibSetup
+}
 
 //===========================================================================
 //
@@ -136,19 +105,29 @@ qboolean BotLibSetup(char *str)
 int Export_BotLibSetup(void)
 {
 	int		errnum;
+	char		logfilename[MAX_QPATH];
+	char		*homedir, *gamedir;
 	
-	botDeveloper = LibVarGetValue("bot_developer");
- 	memset( &botlibglobals, 0, sizeof(botlibglobals) );
+	bot_developer = LibVarGetValue("bot_developer");
+  memset( &botlibglobals, 0, sizeof(botlibglobals) ); // bk001207 - init
 	//initialize byte swapping (litte endian etc.)
 //	Swap_Init();
-
-	if(botDeveloper)
-	{
-		Log_Open("botlib.log");
+	homedir = LibVarGetString("homedir");
+	gamedir = LibVarGetString("gamedir");
+	if (homedir[0]) {
+		if (gamedir[0]) {
+			Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
+		}
+		else {
+			Com_sprintf(logfilename, sizeof(logfilename), "%s%c" BASEGAME "%cbotlib.log", homedir, PATH_SEP, PATH_SEP);
+		}
+	} else {
+		Com_sprintf(logfilename, sizeof(logfilename), "botlib.log");
 	}
-
+	Log_Open(logfilename);
+	//
 	botimport.Print(PRT_MESSAGE, "------- BotLib Initialization -------\n");
-
+	//
 	botlibglobals.maxclients = (int) LibVarValue("maxclients", "128");
 	botlibglobals.maxentities = (int) LibVarValue("maxentities", "1024");
 
@@ -219,7 +198,7 @@ int Export_BotLibShutdown(void)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int Export_BotLibVarSet(const char *var_name, const char *value)
+int Export_BotLibVarSet(char *var_name, char *value)
 {
 	LibVarSet(var_name, value);
 	return BLERR_NOERROR;
@@ -230,7 +209,7 @@ int Export_BotLibVarSet(const char *var_name, const char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int Export_BotLibVarGet(const char *var_name, char *value, int size)
+int Export_BotLibVarGet(char *var_name, char *value, int size)
 {
 	char *varvalue;
 
@@ -259,7 +238,7 @@ int Export_BotLibStartFrame(float time)
 int Export_BotLibLoadMap(const char *mapname)
 {
 #ifdef DEBUG
-	int starttime = Sys_MilliSeconds();
+	int starttime = BL_MilliSeconds();
 #endif
 	int errnum;
 
@@ -275,7 +254,7 @@ int Export_BotLibLoadMap(const char *mapname)
 	//
 	botimport.Print(PRT_MESSAGE, "-------------------------------------\n");
 #ifdef DEBUG
-	botimport.Print(PRT_MESSAGE, "map loaded in %d msec\n", Sys_MilliSeconds() - starttime);
+	botimport.Print(PRT_MESSAGE, "map loaded in %d msec\n", BL_MilliSeconds() - starttime);
 #endif
 	//
 	return BLERR_NOERROR;
@@ -289,7 +268,7 @@ int Export_BotLibLoadMap(const char *mapname)
 int Export_BotLibUpdateEntity(int ent, bot_entitystate_t *state)
 {
 	if (!BotLibSetup("BotUpdateEntity")) return BLERR_LIBRARYNOTSETUP;
-	if (!ValidEntityNumber(ent, "BotUpdateEntity")) return BLERR_INVALIDENTITYNUMBER;
+	if (!BL_ValidEntityNumber(ent, "BotUpdateEntity")) return BLERR_INVALIDENTITYNUMBER;
 
 	return AAS_UpdateEntity(ent, state);
 } //end of the function Export_BotLibUpdateEntity
@@ -304,7 +283,7 @@ void ElevatorBottomCenter(aas_reachability_t *reach, vec3_t bottomcenter);
 int BotGetReachabilityToGoal(vec3_t origin, int areanum,
 									  int lastgoalareanum, int lastareanum,
 									  int *avoidreach, float *avoidreachtimes, int *avoidreachtries,
-									  bot_goal_t *goal, int travelflags,
+									  bot_goal_t *goal, int travelflags, int movetravelflags,
 									  struct bot_avoidspot_s *avoidspots, int numavoidspots, int *flags);
 
 int AAS_PointLight(vec3_t origin, int *red, int *green, int *blue);
@@ -339,8 +318,8 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3)
 //	bot_goal_t goal;
 
 	// clock_t start_time, end_time;
-	vec3_t mins = {-16, -16, -24};
-	vec3_t maxs = {16, 16, 32};
+//	vec3_t mins = {-16, -16, -24};
+//	vec3_t maxs = {16, 16, 32};
 
 //	int areas[10], numareas;
 
@@ -527,7 +506,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3)
 		reachnum = BotGetReachabilityToGoal(origin, newarea,
 									  lastgoalareanum, lastareanum,
 									  avoidreach, avoidreachtimes, avoidreachtries,
-									  &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP,
+									  &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP,
 									  NULL, 0, &resultFlags);
 		AAS_ReachabilityFromNum(reachnum, &reach);
 		AAS_ShowReachability(&reach);
@@ -546,10 +525,10 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3)
 			reachnum = BotGetReachabilityToGoal(curorigin, curarea,
 										  lastgoalareanum, lastareanum,
 										  avoidreach, avoidreachtimes, avoidreachtries,
-										  &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP,
+										  &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP,
 										  NULL, 0, &resultFlags);
-			AAS_ReachabilityFromNum(reachnum, &reach);
-			AAS_ShowReachability(&reach);
+			AAS_ReachabilityFromNum(reachnum, reach);
+			AAS_ShowReachability(reach);
 			VectorCopy(reach.end, origin);
 			lastareanum = curarea;
 			curarea = reach.areanum;
@@ -705,7 +684,7 @@ static void Init_AAS_Export( aas_export_t *aas ) {
 	aas->AAS_PredictClientMovement = AAS_PredictClientMovement;
 }
 
-  
+
 /*
 ============
 Init_EA_Export
@@ -850,9 +829,9 @@ GetBotLibAPI
 ============
 */
 botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import) {
-	assert(import);
-	botimport = *import;
-	assert(botimport.Print);
+	assert(import);   // bk001129 - this wasn't set for baseq3/
+  botimport = *import;
+  assert(botimport.Print);   // bk001129 - pars pro toto
 
 	Com_Memset( &be_botlib_export, 0, sizeof( be_botlib_export ) );
 

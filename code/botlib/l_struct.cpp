@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-#include "l_utils.h"
 #include "be_interface.h"
 #endif //BOTLIB
 
@@ -46,9 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../bspc/l_mem.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-
-#define qtrue	true
-#define qfalse	false
 #endif //BSPC
 
 //===========================================================================
@@ -73,14 +69,14 @@ fielddef_t *FindField(fielddef_t *defs, char *name)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
+qbool ReadNumber(source_t *source, fielddef_t *fd, void *p)
 {
 	token_t token;
 	int negative = qfalse;
 	long int intval, intmin = 0, intmax = 0;
 	double floatval;
 
-	if (!PC_ExpectAnyToken(source, &token)) return 0;
+	if (!PC_ExpectAnyToken(source, &token)) return qfalse;
 
 	//check for minus sign
 	if (token.type == TT_PUNCTUATION)
@@ -88,23 +84,23 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 		if (fd->type & FT_UNSIGNED)
 		{
 			SourceError(source, "expected unsigned value, found %s", token.string);
-			return 0;
+			return qfalse;
 		} //end if
 		//if not a minus sign
 		if (strcmp(token.string, "-"))
 		{
 			SourceError(source, "unexpected punctuation %s", token.string);
-			return 0;
+			return qfalse;
 		} //end if
 		negative = qtrue;
 		//read the number
-		if (!PC_ExpectAnyToken(source, &token)) return 0;
+		if (!PC_ExpectAnyToken(source, &token)) return qfalse;
 	} //end if
 	//check if it is a number
 	if (token.type != TT_NUMBER)
 	{
 		SourceError(source, "expected number, found %s", token.string);
-		return 0;
+		return qfalse;
 	} //end if
 	//check for a float value
 	if (token.subtype & TT_FLOAT)
@@ -112,7 +108,7 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 		if ((fd->type & FT_TYPE) != FT_FLOAT)
 		{
 			SourceError(source, "unexpected float");
-			return 0;
+			return qfalse;
 		} //end if
 		floatval = token.floatvalue;
 		if (negative) floatval = -floatval;
@@ -121,11 +117,11 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 			if (floatval < fd->floatmin || floatval > fd->floatmax)
 			{
 				SourceError(source, "float out of range [%f, %f]", fd->floatmin, fd->floatmax);
-				return 0;
+				return qfalse;
 			} //end if
 		} //end if
 		*(float *) p = (float) floatval;
-		return 1;
+		return qtrue;
 	} //end if
 	//
 	intval = token.intvalue;
@@ -145,13 +141,13 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	{
 		if (fd->type & FT_BOUNDED)
 		{
-			intmin = Maximum(intmin, fd->floatmin);
-			intmax = Minimum(intmax, fd->floatmax);
+			intmin = max<int>(intmin, fd->floatmin);
+			intmax = min<int>(intmax, fd->floatmax);
 		} //end if
 		if (intval < intmin || intval > intmax)
 		{
-			SourceError(source, "value %ld out of range [%ld, %ld]", intval, intmin, intmax);
-			return 0;
+			SourceError(source, "value %d out of range [%d, %d]", intval, intmin, intmax);
+			return qfalse;
 		} //end if
 	} //end if
 	else if ((fd->type & FT_TYPE) == FT_FLOAT)
@@ -160,8 +156,8 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 		{
 			if (intval < fd->floatmin || intval > fd->floatmax)
 			{
-				SourceError(source, "value %ld out of range [%f, %f]", intval, fd->floatmin, fd->floatmax);
-				return 0;
+				SourceError(source, "value %d out of range [%f, %f]", intval, fd->floatmin, fd->floatmax);
+				return qfalse;
 			} //end if
 		} //end if
 	} //end else if
@@ -180,7 +176,7 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	{
 		*(float *) p = (float) intval;
 	} //end else
-	return 1;
+	return qtrue;
 } //end of the function ReadNumber
 //===========================================================================
 //
@@ -188,11 +184,11 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean ReadChar(source_t *source, fielddef_t *fd, void *p)
+qbool ReadChar(source_t *source, fielddef_t *fd, void *p)
 {
 	token_t token;
 
-	if (!PC_ExpectAnyToken(source, &token)) return 0;
+	if (!PC_ExpectAnyToken(source, &token)) return qfalse;
 
 	//take literals into account
 	if (token.type == TT_LITERAL)
@@ -203,9 +199,9 @@ qboolean ReadChar(source_t *source, fielddef_t *fd, void *p)
 	else
 	{
 		PC_UnreadLastToken(source);
-		if (!ReadNumber(source, fd, p)) return 0;
+		if (!ReadNumber(source, fd, p)) return qfalse;
 	} //end if
-	return 1;
+	return qtrue;
 } //end of the function ReadChar
 //===========================================================================
 //
@@ -217,15 +213,15 @@ int ReadString(source_t *source, fielddef_t *fd, void *p)
 {
 	token_t token;
 
-	if (!PC_ExpectTokenType(source, TT_STRING, 0, &token)) return 0;
+	if (!PC_ExpectTokenType(source, TT_STRING, 0, &token)) return qfalse;
 	//remove the double quotes
 	StripDoubleQuotes(token.string);
 	//copy the string
-	strncpy((char *) p, token.string, MAX_STRINGFIELD-1);
+	strncpy((char *) p, token.string, MAX_STRINGFIELD);
 	//make sure the string is closed with a zero
 	((char *)p)[MAX_STRINGFIELD-1] = '\0';
 	//
-	return 1;
+	return qtrue;
 } //end of the function ReadString
 //===========================================================================
 //
@@ -346,7 +342,7 @@ int WriteFloat(FILE *fp, float value)
 	char buf[128];
 	int l;
 
-	Com_sprintf(buf, sizeof(buf), "%f", value);
+	sprintf(buf, "%f", value);
 	l = strlen(buf);
 	//strip any trailing zeros
 	while(l-- > 1)
