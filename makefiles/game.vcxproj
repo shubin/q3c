@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{0F8F6670-E22A-4BFB-9455-6D733B62D3C9}</ProjectGuid>
+    <RootNamespace>cgame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="game.qc.vcxproj">
+      <Project>{77344696-7093-4b68-9ece-4ea2e32c1a4a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\game\ai_chat.c" />
+    <ClCompile Include="..\code\game\ai_cmd.c" />
+    <ClCompile Include="..\code\game\ai_dmnet.c" />
+    <ClCompile Include="..\code\game\ai_dmq3.c" />
+    <ClCompile Include="..\code\game\ai_main.c" />
+    <ClCompile Include="..\code\game\ai_team.c" />
+    <ClCompile Include="..\code\game\ai_vcmd.c" />
+    <ClCompile Include="..\code\game\bg_lib.c" />
+    <ClCompile Include="..\code\game\bg_misc.c" />
+    <ClCompile Include="..\code\game\bg_pmove.c" />
+    <ClCompile Include="..\code\game\bg_slidemove.c" />
+    <ClCompile Include="..\code\game\g_active.c" />
+    <ClCompile Include="..\code\game\g_arenas.c" />
+    <ClCompile Include="..\code\game\g_bot.c" />
+    <ClCompile Include="..\code\game\g_client.c" />
+    <ClCompile Include="..\code\game\g_cmds.c" />
+    <ClCompile Include="..\code\game\g_combat.c" />
+    <ClCompile Include="..\code\game\g_items.c" />
+    <ClCompile Include="..\code\game\g_main.c" />
+    <ClCompile Include="..\code\game\g_mem.c" />
+    <ClCompile Include="..\code\game\g_misc.c" />
+    <ClCompile Include="..\code\game\g_missile.c" />
+    <ClCompile Include="..\code\game\g_mover.c" />
+    <ClCompile Include="..\code\game\g_session.c" />
+    <ClCompile Include="..\code\game\g_spawn.c" />
+    <ClCompile Include="..\code\game\g_svcmds.c" />
+    <ClCompile Include="..\code\game\g_syscalls.c" />
+    <ClCompile Include="..\code\game\g_target.c" />
+    <ClCompile Include="..\code\game\g_team.c" />
+    <ClCompile Include="..\code\game\g_trigger.c" />
+    <ClCompile Include="..\code\game\g_utils.c" />
+    <ClCompile Include="..\code\game\g_weapon.c" />
+    <ClCompile Include="..\code\qcommon\q_math.c" />
+    <ClCompile Include="..\code\qcommon\q_shared.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\code\game\ai_chat.h" />
+    <ClInclude Include="..\code\game\ai_cmd.h" />
+    <ClInclude Include="..\code\game\ai_dmnet.h" />
+    <ClInclude Include="..\code\game\ai_dmq3.h" />
+    <ClInclude Include="..\code\game\ai_main.h" />
+    <ClInclude Include="..\code\game\ai_team.h" />
+    <ClInclude Include="..\code\game\ai_vcmd.h" />
+    <ClInclude Include="..\code\game\bg_lib.h" />
+    <ClInclude Include="..\code\game\bg_local.h" />
+    <ClInclude Include="..\code\game\bg_public.h" />
+    <ClInclude Include="..\code\game\g_local.h" />
+    <ClInclude Include="..\code\game\g_public.h" />
+    <ClInclude Include="..\code\game\g_team.h" />
+    <ClInclude Include="..\code\game\inv.h" />
+    <ClInclude Include="..\code\game\match.h" />
+    <ClInclude Include="..\code\game\syn.h" />
+    <ClInclude Include="..\code\qcommon\q_shared.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\code\game\g_syscalls.asm" />
+  </ItemGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_game.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

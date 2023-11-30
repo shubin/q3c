@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<WarningLevel>Level4</WarningLevel>
+			<InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+			<Optimization>Disabled</Optimization>
+			<BrowseInformation>true</BrowseInformation>
+			<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+			<PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<GenerateDebugInformation>true</GenerateDebugInformation>
+		</ClCompile>
+	</ItemDefinitionGroup>
+</Project>

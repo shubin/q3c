@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup Label="UserMacros">	
+		<ProjectRoot>$([System.IO.Path]::GetFullPath('$(SolutionDir)..'))\</ProjectRoot>
+		<ProjectOutputDir Condition="'$(ProjectOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\output\</ProjectOutputDir>
+		<ProjectIntermediateDir Condition="'$(ProjectIntermediateDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\intermediate\</ProjectIntermediateDir>
+	    <LibraryOutputDir Condition="'$(LibratyOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\lib\</LibraryOutputDir>
+		<SrcDir>$(ProjectRoot)code\</SrcDir>
+		<BuildConfig Condition="('$(Configuration)'=='Debug')OR('$(Configuration)'=='Debug QC')OR('$(Configuration)'=='Debug TA')">Debug</BuildConfig>
+		<BuildConfig Condition="('$(Configuration)'=='Release')OR('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Release QC')">Release</BuildConfig>
+		<BuildGame Condition="('$(Configuration)'=='Debug')OR('$(Configuration)'=='Release')">VQ3</BuildGame>
+		<BuildGame Condition="('$(Configuration)'=='Debug QC')OR('$(Configuration)'=='Release QC')">QC</BuildGame>
+		<BuildGame Condition="('$(Configuration)'=='Debug TA')OR('$(Configuration)'=='Release TA')">TA</BuildGame>
+		<Compiler Condition="('$(Platform)'=='Win32')OR('$(Platform)'=='x64')">MSVC</Compiler>
+	</PropertyGroup>
+</Project>
