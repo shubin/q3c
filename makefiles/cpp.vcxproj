@@ -6,10 +6,16 @@
     <ProjectGuid>{5CBFE6D3-1142-4E88-B628-BF162D3C9061}</ProjectGuid>
     <RootNamespace>cgame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>q3cpp</ProjectName>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <OutputFile>$(OutDir)q3cpp.exe</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\code\tools\lcc\cpp\cpp.c" />
     <ClCompile Include="..\code\tools\lcc\cpp\eval.c" />
