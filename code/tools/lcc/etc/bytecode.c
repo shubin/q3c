@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #ifdef _WIN32
+#include <Windows.h>
 #define BINEXT ".exe"
 #define PATH_SEP '\\'
 #else
@@ -34,7 +35,11 @@ void updatePaths( const char *lccBinary )
 	char basepath[ 1024 ];
 	char *p;
 
+#if defined( _WIN32 )
+	GetModuleFileNameA( NULL, basepath, sizeof( basepath ) );
+#else // _WIN32
 	strncpy( basepath, lccBinary, sizeof( basepath ) );
+#endif // _WIN32
 	p = strrchr( basepath, PATH_SEP );
 
 	if( p )
