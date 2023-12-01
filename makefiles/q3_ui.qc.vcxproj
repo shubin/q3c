@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{44EBDDDF-E852-4E26-978B-D768FCCD3C7C}</ProjectGuid>
+    <RootNamespace>cgame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\game\bg_champions.c" />
+    <ClCompile Include="..\code\q3_ui\ui_champions.c" />
+    <ClCompile Include="..\code\q3_ui\ui_death.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\code\game\bg_champions.h" />
+  </ItemGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_q3_ui.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{191A1D33-ADF9-4B92-8DE5-963392300D9F}</ProjectGuid>
+    <RootNamespace>cgame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\game\bg_misc.c" />
+    <ClCompile Include="..\code\q3_ui\ui_addbots.c" />
+    <ClCompile Include="..\code\q3_ui\ui_atoms.c" />
+    <ClCompile Include="..\code\q3_ui\ui_cdkey.c" />
+    <ClCompile Include="..\code\q3_ui\ui_cinematics.c" />
+    <ClCompile Include="..\code\q3_ui\ui_confirm.c" />
+    <ClCompile Include="..\code\q3_ui\ui_connect.c" />
+    <ClCompile Include="..\code\q3_ui\ui_controls2.c" />
+    <ClCompile Include="..\code\q3_ui\ui_credits.c" />
+    <ClCompile Include="..\code\q3_ui\ui_demo2.c" />
+    <ClCompile Include="..\code\q3_ui\ui_display.c" />
+    <ClCompile Include="..\code\q3_ui\ui_gameinfo.c" />
+    <ClCompile Include="..\code\q3_ui\ui_ingame.c" />
+    <ClCompile Include="..\code\q3_ui\ui_main.c" />
+    <ClCompile Include="..\code\q3_ui\ui_menu.c" />
+    <ClCompile Include="..\code\q3_ui\ui_mfield.c" />
+    <ClCompile Include="..\code\q3_ui\ui_mods.c" />
+    <ClCompile Include="..\code\q3_ui\ui_network.c" />
+    <ClCompile Include="..\code\q3_ui\ui_options.c" />
+    <ClCompile Include="..\code\q3_ui\ui_playermodel.c" />
+    <ClCompile Include="..\code\q3_ui\ui_players.c" />
+    <ClCompile Include="..\code\q3_ui\ui_playersettings.c" />
+    <ClCompile Include="..\code\q3_ui\ui_preferences.c" />
+    <ClCompile Include="..\code\q3_ui\ui_qmenu.c" />
+    <ClCompile Include="..\code\q3_ui\ui_removebots.c" />
+    <ClCompile Include="..\code\q3_ui\ui_serverinfo.c" />
+    <ClCompile Include="..\code\q3_ui\ui_servers2.c" />
+    <ClCompile Include="..\code\q3_ui\ui_setup.c" />
+    <ClCompile Include="..\code\q3_ui\ui_sound.c" />
+    <ClCompile Include="..\code\q3_ui\ui_sparena.c" />
+    <ClCompile Include="..\code\q3_ui\ui_specifyserver.c" />
+    <ClCompile Include="..\code\q3_ui\ui_splevel.c" />
+    <ClCompile Include="..\code\q3_ui\ui_sppostgame.c" />
+    <ClCompile Include="..\code\q3_ui\ui_spreset.c" />
+    <ClCompile Include="..\code\q3_ui\ui_spskill.c" />
+    <ClCompile Include="..\code\q3_ui\ui_startserver.c" />
+    <ClCompile Include="..\code\q3_ui\ui_team.c" />
+    <ClCompile Include="..\code\q3_ui\ui_teamorders.c" />
+    <ClCompile Include="..\code\q3_ui\ui_video.c" />
+    <ClCompile Include="..\code\qcommon\q_math.c" />
+    <ClCompile Include="..\code\qcommon\q_shared.c" />
+    <ClCompile Include="..\code\ui\ui_syscalls.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\code\qcommon\q_shared.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="q3_ui.qc.vcxproj">
+      <Project>{44ebdddf-e852-4e26-978b-d768fccd3c7c}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_q3_ui.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
