@@ -17,19 +17,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\tools\lcc\cpp\cpp.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\eval.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\getopt.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\hideset.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\include.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\lex.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\macro.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\nlist.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\tokens.c" />
-    <ClCompile Include="..\code\tools\lcc\cpp\unix.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\cpp.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\eval.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\getopt.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\hideset.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\include.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\lex.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\macro.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\nlist.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\tokens.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\unix.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\tools\lcc\cpp\cpp.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\cpp\cpp.h" />
   </ItemGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />

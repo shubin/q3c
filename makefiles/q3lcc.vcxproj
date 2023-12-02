@@ -16,8 +16,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\tools\lcc\etc\bytecode.c" />
-    <ClCompile Include="..\code\tools\lcc\etc\lcc.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\etc\bytecode.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\etc\lcc.c" />
   </ItemGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />

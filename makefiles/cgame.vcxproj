@@ -16,43 +16,43 @@
     <Import Project="Props\Project_cgame.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\cgame\cg_consolecmds.c" />
-    <ClCompile Include="..\code\cgame\cg_draw.c" />
-    <ClCompile Include="..\code\cgame\cg_drawtools.c" />
-    <ClCompile Include="..\code\cgame\cg_effects.c" />
-    <ClCompile Include="..\code\cgame\cg_ents.c" />
-    <ClCompile Include="..\code\cgame\cg_event.c" />
-    <ClCompile Include="..\code\cgame\cg_info.c" />
-    <ClCompile Include="..\code\cgame\cg_localents.c" />
-    <ClCompile Include="..\code\cgame\cg_main.c" />
-    <ClCompile Include="..\code\cgame\cg_marks.c" />
-    <ClCompile Include="..\code\cgame\cg_particles.c" />
-    <ClCompile Include="..\code\cgame\cg_players.c" />
-    <ClCompile Include="..\code\cgame\cg_playerstate.c" />
-    <ClCompile Include="..\code\cgame\cg_predict.c" />
-    <ClCompile Include="..\code\cgame\cg_scoreboard.c" />
-    <ClCompile Include="..\code\cgame\cg_servercmds.c" />
-    <ClCompile Include="..\code\cgame\cg_snapshot.c" />
-    <ClCompile Include="..\code\cgame\cg_syscalls.c" />
-    <ClCompile Include="..\code\cgame\cg_view.c" />
-    <ClCompile Include="..\code\cgame\cg_weapons.c" />
-    <ClCompile Include="..\code\game\bg_lib.c" />
-    <ClCompile Include="..\code\game\bg_misc.c" />
-    <ClCompile Include="..\code\game\bg_pmove.c" />
-    <ClCompile Include="..\code\game\bg_slidemove.c" />
-    <ClCompile Include="..\code\qcommon\q_math.c" />
-    <ClCompile Include="..\code\qcommon\q_shared.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_consolecmds.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_draw.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_drawtools.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_effects.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_ents.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_event.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_info.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_localents.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_main.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_marks.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_particles.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_players.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_playerstate.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_predict.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_scoreboard.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_servercmds.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_snapshot.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_syscalls.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_view.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_weapons.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_lib.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_misc.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_pmove.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_slidemove.c" />
+    <ClCompile Include="$(ModSrcDir)code\qcommon\q_math.c" />
+    <ClCompile Include="$(ModSrcDir)code\qcommon\q_shared.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\cgame\cg_local.h" />
-    <ClInclude Include="..\code\cgame\cg_public.h" />
-    <ClInclude Include="..\code\game\bg_lib.h" />
-    <ClInclude Include="..\code\game\bg_local.h" />
-    <ClInclude Include="..\code\game\bg_public.h" />
-    <ClInclude Include="..\code\qcommon\q_shared.h" />
+    <ClInclude Include="$(ModSrcDir)code\cgame\cg_local.h" />
+    <ClInclude Include="$(ModSrcDir)code\cgame\cg_public.h" />
+    <ClInclude Include="$(ModSrcDir)code\game\bg_lib.h" />
+    <ClInclude Include="$(ModSrcDir)code\game\bg_local.h" />
+    <ClInclude Include="$(ModSrcDir)code\game\bg_public.h" />
+    <ClInclude Include="$(ModSrcDir)code\qcommon\q_shared.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\code\cgame\cg_syscalls.asm" />
+    <None Include="$(ModSrcDir)code\cgame\cg_syscalls.asm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="cgame.qc.vcxproj">

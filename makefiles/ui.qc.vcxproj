@@ -16,12 +16,12 @@
     <Import Project="Props\Project_q3_ui.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\game\bg_champions.c" />
-    <ClCompile Include="..\code\q3_ui\ui_champions.c" />
-    <ClCompile Include="..\code\q3_ui\ui_death.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_champions.c" />
+    <ClCompile Include="$(ModSrcDir)code\q3_ui\ui_champions.c" />
+    <ClCompile Include="$(ModSrcDir)code\q3_ui\ui_death.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\game\bg_champions.h" />
+    <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

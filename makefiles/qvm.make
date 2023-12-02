@@ -1,4 +1,4 @@
-SourceDir=$(ProjectRoot)/code
+SourceDir=$(ProjectRoot)/mod/code
 ToolDir=$(ProjectRoot)/tools
 IntDir=$(ProjectRoot)/build/qvm
 

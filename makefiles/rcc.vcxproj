@@ -11,49 +11,49 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
   <ItemDefinitionGroup>
     <Link>
       <OutputFile>$(OutDir)q3rcc.exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\tools\lcc\src\alloc.c" />
-    <ClCompile Include="..\code\tools\lcc\src\bind.c" />
-    <ClCompile Include="..\code\tools\lcc\src\bytecode.c" />
-    <ClCompile Include="..\code\tools\lcc\src\dag.c" />
-    <ClCompile Include="..\code\tools\lcc\src\dagcheck.c" />
-    <ClCompile Include="..\code\tools\lcc\src\decl.c" />
-    <ClCompile Include="..\code\tools\lcc\src\enode.c" />
-    <ClCompile Include="..\code\tools\lcc\src\error.c" />
-    <ClCompile Include="..\code\tools\lcc\src\event.c" />
-    <ClCompile Include="..\code\tools\lcc\src\expr.c" />
-    <ClCompile Include="..\code\tools\lcc\src\gen.c" />
-    <ClCompile Include="..\code\tools\lcc\src\init.c" />
-    <ClCompile Include="..\code\tools\lcc\src\inits.c" />
-    <ClCompile Include="..\code\tools\lcc\src\input.c" />
-    <ClCompile Include="..\code\tools\lcc\src\lex.c" />
-    <ClCompile Include="..\code\tools\lcc\src\list.c" />
-    <ClCompile Include="..\code\tools\lcc\src\main.c" />
-    <ClCompile Include="..\code\tools\lcc\src\null.c" />
-    <ClCompile Include="..\code\tools\lcc\src\output.c" />
-    <ClCompile Include="..\code\tools\lcc\src\prof.c" />
-    <ClCompile Include="..\code\tools\lcc\src\profio.c" />
-    <ClCompile Include="..\code\tools\lcc\src\simp.c" />
-    <ClCompile Include="..\code\tools\lcc\src\stmt.c" />
-    <ClCompile Include="..\code\tools\lcc\src\string.c" />
-    <ClCompile Include="..\code\tools\lcc\src\sym.c" />
-    <ClCompile Include="..\code\tools\lcc\src\symbolic.c" />
-    <ClCompile Include="..\code\tools\lcc\src\trace.c" />
-    <ClCompile Include="..\code\tools\lcc\src\tree.c" />
-    <ClCompile Include="..\code\tools\lcc\src\types.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\alloc.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\bind.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\bytecode.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\dag.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\dagcheck.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\decl.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\enode.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\error.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\event.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\expr.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\gen.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\init.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\inits.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\input.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\lex.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\list.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\main.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\null.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\output.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\prof.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\profio.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\simp.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\stmt.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\string.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\sym.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\symbolic.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\trace.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\tree.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\src\types.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\tools\lcc\src\c.h" />
-    <ClInclude Include="..\code\tools\lcc\src\config.h" />
-    <ClInclude Include="..\code\tools\lcc\src\ops.h" />
-    <ClInclude Include="..\code\tools\lcc\src\token.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\src\c.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\src\config.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\src\ops.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\src\token.h" />
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -16,14 +16,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\tools\asm\cmdlib.c" />
-    <ClCompile Include="..\code\tools\asm\q3asm.c" />
-    <ClCompile Include="..\code\tools\asm\q3vm.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\asm\cmdlib.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\asm\q3asm.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\asm\q3vm.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\tools\asm\cmdlib.h" />
-    <ClInclude Include="..\code\tools\asm\opstrings.h" />
-    <ClInclude Include="..\code\tools\asm\qvm.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\asm\cmdlib.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\asm\opstrings.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\asm\qvm.h" />
   </ItemGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />

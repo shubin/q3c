@@ -16,11 +16,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\tools\lcc\lburg\gram.c" />
-    <ClCompile Include="..\code\tools\lcc\lburg\lburg.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\lburg\gram.c" />
+    <ClCompile Include="$(ModSrcDir)code\tools\lcc\lburg\lburg.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\tools\lcc\lburg\lburg.h" />
+    <ClInclude Include="$(ModSrcDir)code\tools\lcc\lburg\lburg.h" />
   </ItemGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
