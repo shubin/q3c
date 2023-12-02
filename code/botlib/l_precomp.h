@@ -29,10 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *****************************************************************************/
 
-#ifndef MAX_PATH
-	#define MAX_PATH			MAX_QPATH
-#endif
-
 #ifndef PATH_SEPERATORSTR
 	#if defined(WIN32)|defined(_WIN32)|defined(__NT__)|defined(__WINDOWS__)|defined(__WINDOWS_386__)
 		#define PATHSEPERATOR_STR		"\\"
@@ -72,7 +68,7 @@ typedef struct define_s
 {
 	char *name;							//define name
 	int flags;							//define flags
-	int type;						// > 0 if builtin define
+	int builtin;						// > 0 if builtin define
 	int numparms;						//number of define parameters
 	token_t *parms;						//define parameters
 	token_t *tokens;					//macro tokens (possibly containing parm tokens)
@@ -86,7 +82,7 @@ typedef struct define_s
 typedef struct indent_s
 {
 	int type;								//indent type
-	int skip;								//qtrue if skipping current indent
+	int skip;								//true if skipping current indent
 	script_t *script;						//script the indent was in
 	struct indent_s *next;					//next indent on the indent stack
 } indent_t;
@@ -115,9 +111,9 @@ int PC_ExpectTokenString(source_t *source, char *string);
 int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token);
 //expect a token
 int PC_ExpectAnyToken(source_t *source, token_t *token);
-//returns qtrue when the token is available
+//returns true when the token is available
 int PC_CheckTokenString(source_t *source, char *string);
-//returns qtrue an reads the token when a token with the given type is available
+//returns true and reads the token when a token with the given type is available
 int PC_CheckTokenType(source_t *source, int type, int subtype, token_t *token);
 //skip tokens until the given token string is read
 int PC_SkipUntilString(source_t *source, char *string);
@@ -127,7 +123,7 @@ void PC_UnreadLastToken(source_t *source);
 void PC_UnreadToken(source_t *source, token_t *token);
 //read a token only if on the same line, lines are concatenated with a slash
 int PC_ReadLine(source_t *source, token_t *token);
-//returns qtrue if there was a white space in front of the token
+//returns true if there was a white space in front of the token
 int PC_WhiteSpaceBeforeToken(token_t *token);
 //add a define to the source
 int PC_AddDefine(source_t *source, char *string);
@@ -152,9 +148,9 @@ source_t *LoadSourceMemory(char *ptr, int length, char *name);
 //free the given source
 void FreeSource(source_t *source);
 //print a source error
-void QDECL SourceError(source_t *source, PRINTF_FORMAT_STRING char *str, ...);
+void QDECL SourceError(source_t *source, char *str, ...) __attribute__ ((format (printf, 2, 3)));
 //print a source warning
-void QDECL SourceWarning(source_t *source, PRINTF_FORMAT_STRING char *str, ...);
+void QDECL SourceWarning(source_t *source, char *str, ...)  __attribute__ ((format (printf, 2, 3)));
 
 #ifdef BSPC
 // some of BSPC source does include game/q_shared.h and some does not

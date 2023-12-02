@@ -164,17 +164,10 @@ typedef int aas_portalindex_t;
 //cluster
 typedef struct aas_cluster_s
 {
-#if defined( QC )
-	unsigned int numareas;						//number of areas in the cluster
-	unsigned int numreachabilityareas;			//number of areas with reachabilities
-	unsigned int numportals;					//number of cluster portals
-	unsigned int firstportal;					//first cluster portal in the index
-#else // QC
 	int numareas;						//number of areas in the cluster
 	int numreachabilityareas;			//number of areas with reachabilities
 	int numportals;						//number of cluster portals
 	int firstportal;					//first cluster portal in the index
-#endif // QC
 } aas_cluster_t;
 
 //============ 3d definition ============

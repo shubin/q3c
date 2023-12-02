@@ -85,7 +85,7 @@ int BotTouchingGoal(vec3_t origin, bot_goal_t *goal);
 int BotItemGoalInVisButNotVisible(int viewer, vec3_t eye, vec3_t viewangles, bot_goal_t *goal);
 //search for a goal for the given classname, the index can be used
 //as a start point for the search when multiple goals are available with that same classname
-int BotGetLevelItemGoal( int index, const char* classname, bot_goal_t* goal );
+int BotGetLevelItemGoal(int index, char *classname, bot_goal_t *goal);
 //get the next camp spot in the map
 int BotGetNextCampSpotGoal(int num, bot_goal_t *goal);
 //get the map location with the given name

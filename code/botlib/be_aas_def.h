@@ -29,33 +29,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *****************************************************************************/
 
+#include "../qcommon/q_shared.h"
+
 //debugging on
 #define AAS_DEBUG
-
-#define MAX_CLIENTS			64
-#define	MAX_MODELS			256		// these are sent over the net as 8 bits
-#define	MAX_SOUNDS			256		// so they cannot be blindly increased
-#define	MAX_CONFIGSTRINGS	1024
-
-#define	CS_SCORES			32
-#define	CS_MODELS			(CS_SCORES+MAX_CLIENTS)
-#define	CS_SOUNDS			(CS_MODELS+MAX_MODELS)
 
 #define DF_AASENTNUMBER(x)		(x - aasworld.entities)
 #define DF_NUMBERAASENT(x)		(&aasworld.entities[x])
 #define DF_AASENTCLIENT(x)		(x - aasworld.entities - 1)
 #define DF_CLIENTAASENT(x)		(&aasworld.entities[x + 1])
-
-#ifndef MAX_PATH
-	#define MAX_PATH				MAX_QPATH
-#endif
-
-//string index (for model, sound and image index)
-typedef struct aas_stringindex_s
-{
-	int numindexes;
-	char **index;
-} aas_stringindex_t;
 
 //structure to link entities to areas and areas to entities
 typedef struct aas_link_s
@@ -165,7 +147,7 @@ typedef struct aas_routingupdate_s
 	vec3_t start;								//start point the area was entered
 	unsigned short int tmptraveltime;			//temporary travel time
 	unsigned short int *areatraveltimes;		//travel times within the area
-	qbool inlist;							//qtrue if the update is in the list
+	qboolean inlist;							//true if the update is in the list
 	struct aas_routingupdate_s *next;
 	struct aas_routingupdate_s *prev;
 } aas_routingupdate_t;
@@ -193,16 +175,16 @@ typedef struct aas_reachabilityareas_s
 
 typedef struct aas_s
 {
-	int loaded;									//qtrue when an AAS file is loaded
-	int initialized;							//qtrue when AAS has been initialized
-	int savefile;								//set qtrue when file should be saved
+	int loaded;									//true when an AAS file is loaded
+	int initialized;							//true when AAS has been initialized
+	int savefile;								//set true when file should be saved
 	int bspchecksum;
 	//current time
 	float time;
 	int numframes;
 	//name of the aas file
-	char filename[MAX_PATH];
-	char mapname[MAX_PATH];
+	char filename[MAX_QPATH];
+	char mapname[MAX_QPATH];
 	//bounding boxes
 	int numbboxes;
 	aas_bbox_t *bboxes;
@@ -225,7 +207,7 @@ typedef struct aas_s
 	int faceindexsize;
 	aas_faceindex_t *faceindex;
 	//convex areas
-	unsigned int numareas;
+	int numareas;
 	aas_area_t *areas;
 	//convex area settings
 	int numareasettings;
@@ -243,7 +225,7 @@ typedef struct aas_s
 	int portalindexsize;
 	aas_portalindex_t *portalindex;
 	//clusters
-	unsigned int numclusters;
+	int numclusters;
 	aas_cluster_t *clusters;
 	//
 	int numreachabilityareas;
@@ -257,9 +239,6 @@ typedef struct aas_s
 	int maxentities;
 	int maxclients;
 	aas_entity_t *entities;
-	//string indexes
-	char *configstrings[MAX_CONFIGSTRINGS];
-	int indexessetup;
 	//index to retrieve travel flag for a travel type
 	int travelflagfortype[MAX_TRAVELTYPES];
 	//travel flags for each area based on contents

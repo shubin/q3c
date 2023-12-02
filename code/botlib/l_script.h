@@ -161,7 +161,7 @@ typedef struct token_s
 	int subtype;					//last read token sub type
 #ifdef NUMBERVALUE
 	unsigned long int intvalue;	//integer value
-	double floatvalue;			//floating point value
+	float floatvalue;			//floating point value
 #endif //NUMBERVALUE
 	char *whitespace_p;				//start of white space before token
 	char *endwhitespace_p;			//start of white space before token
@@ -199,9 +199,9 @@ int PS_ExpectTokenString(script_t *script, char *string);
 int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token);
 //expect a token
 int PS_ExpectAnyToken(script_t *script, token_t *token);
-//returns qtrue when the token is available
+//returns true when the token is available
 int PS_CheckTokenString(script_t *script, char *string);
-//returns qtrue an reads the token when a token with the given type is available
+//returns true and reads the token when a token with the given type is available
 int PS_CheckTokenType(script_t *script, int type, int subtype, token_t *token);
 //skip tokens until the given token string is read
 int PS_SkipUntilString(script_t *script, char *string);
@@ -218,7 +218,7 @@ void StripSingleQuotes(char *string);
 //read a possible signed integer
 signed long int ReadSignedInt(script_t *script);
 //read a possible signed floating point number
-double ReadSignedFloat(script_t *script);
+float ReadSignedFloat(script_t *script);
 //set an array with punctuations, NULL restores default C/C++ set
 void SetScriptPunctuations(script_t *script, punctuation_t *p);
 //set script flags
@@ -227,7 +227,7 @@ void SetScriptFlags(script_t *script, int flags);
 int GetScriptFlags(script_t *script);
 //reset a script
 void ResetScript(script_t *script);
-//returns qtrue if at the end of the script
+//returns true if at the end of the script
 int EndOfScript(script_t *script);
 //returns a pointer to the punctuation with the given number
 char *PunctuationFromNum(script_t *script, int num);
@@ -240,8 +240,8 @@ void FreeScript(script_t *script);
 //set the base folder to load files from
 void PS_SetBaseFolder(char *path);
 //print a script error with filename and line number
-void QDECL ScriptError(script_t *script, PRINTF_FORMAT_STRING char *str, ...);
+void QDECL ScriptError(script_t *script, char *str, ...) __attribute__ ((format (printf, 2, 3)));
 //print a script warning with filename and line number
-void QDECL ScriptWarning(script_t *script, PRINTF_FORMAT_STRING char *str, ...);
+void QDECL ScriptWarning(script_t *script, char *str, ...) __attribute__ ((format (printf, 2, 3)));
 
 
