@@ -1,0 +1,26 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3asm", "q3asm.vcproj", "{E0D6B319-6F95-4ABA-9BE0-5454CAA5C8CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0D6B319-6F95-4ABA-9BE0-5454CAA5C8CD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E0D6B319-6F95-4ABA-9BE0-5454CAA5C8CD}.Debug|Win32.Build.0 = Debug|Win32
+		{E0D6B319-6F95-4ABA-9BE0-5454CAA5C8CD}.Release|Win32.ActiveCfg = Release|Win32
+		{E0D6B319-6F95-4ABA-9BE0-5454CAA5C8CD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = q3asm.vcproj
+		SccProjectName0 = \u0022$/source/q3asm\u0022,\u0020YUCAAAAA
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+	EndGlobalSection
+EndGlobal

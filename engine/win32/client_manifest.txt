@@ -1,0 +1,17 @@
+We embed a manifest in the client executables to disable DPI scaling.
+
+There are 2 settings to do so:
+a) <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">True/PM</dpiAware>
+b) <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitor</dpiAwareness>
+Note that the 2 XML namespaces are actually slightly different.
+
+"dpiAwareness" is only used for Windows 10 v1607 or later and overrides "dpiAware".
+Since "dpiAware" is currently enough for every OS CNQ3 currently ships on, we don't use "dpiAwareness" (for now).
+
+"dpiAware" "True/PM" means:
+- system DPI aware on Vista, 7 and 8.0
+- per-monitor DPI aware on 8.1 and 10
+
+Why only system DPI aware on Vista, 7 and 8.0?
+Because they don't support changing DPI scaling on the fly.
+You have to log off and log in for the changes to take effect.
