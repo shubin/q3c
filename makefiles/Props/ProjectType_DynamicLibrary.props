@@ -9,4 +9,7 @@
 			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		</ClCompile>
 	</ItemDefinitionGroup>
+	<PropertyGroup>
+		<TargetName>$(ProjectName)$(BinSuffix)</TargetName>
+	</PropertyGroup>
 </Project>

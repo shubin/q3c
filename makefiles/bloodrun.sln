@@ -7,9 +7,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cgame", "cgame.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cgame.qc", "cgame.qc.vcxproj", "{2CFFB539-8BE8-4C54-B32A-8E0CC9A57C0B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "game.vcxproj", "{0F8F6670-E22A-4BFB-9455-6D733B62D3C9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qagame", "qagame.vcxproj", "{0F8F6670-E22A-4BFB-9455-6D733B62D3C9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game.qc", "game.qc.vcxproj", "{77344696-7093-4B68-9ECE-4EA2E32C1A4A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qagame.qc", "qagame.qc.vcxproj", "{77344696-7093-4B68-9ECE-4EA2E32C1A4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "game", "game", "{085F085A-F36E-4EE9-9416-A0B019C06AFF}"
 EndProject
@@ -27,13 +27,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lburg", "lburg.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3cpp", "cpp.vcxproj", "{5CBFE6D3-1142-4E88-B628-BF162D3C9061}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3_ui", "q3_ui.vcxproj", "{191A1D33-ADF9-4B92-8DE5-963392300D9F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui", "ui.vcxproj", "{191A1D33-ADF9-4B92-8DE5-963392300D9F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3_ui.qc", "q3_ui.qc.vcxproj", "{44EBDDDF-E852-4E26-978B-D768FCCD3C7C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui.qc", "ui.qc.vcxproj", "{44EBDDDF-E852-4E26-978B-D768FCCD3C7C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cgame", "cgame", "{E408AAFA-5357-45CF-9D3D-4BB42A56F63E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "q3_ui", "q3_ui", "{6243E0F1-9B62-4E6E-9FE8-50383526AAD5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ui", "ui", "{6243E0F1-9B62-4E6E-9FE8-50383526AAD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

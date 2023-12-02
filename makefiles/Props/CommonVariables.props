@@ -12,6 +12,7 @@
 		<BuildGame Condition="('$(Configuration)'=='Debug QC')OR('$(Configuration)'=='Release QC')">QC</BuildGame>
 		<BuildGame Condition="('$(Configuration)'=='Debug TA')OR('$(Configuration)'=='Release TA')">TA</BuildGame>
 		<Compiler Condition="('$(Platform)'=='Win32')OR('$(Platform)'=='x64')">MSVC</Compiler>
+		<BinSuffix>zz</BinSuffix>
 		<BinSuffix Condition="'$(Platform)'=='x64'">x86_64</BinSuffix>
 		<BinSuffix Condition="'$(Platform)'=='Win32'">x86</BinSuffix>
 	</PropertyGroup>

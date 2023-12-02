@@ -10,8 +10,14 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_qagame.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release QC|x64'" />
   <ItemGroup>
-    <ProjectReference Include="game.qc.vcxproj">
+    <ProjectReference Include="qagame.qc.vcxproj">
       <Project>{77344696-7093-4b68-9ece-4ea2e32c1a4a}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -73,10 +79,5 @@
   <ItemGroup>
     <None Include="..\code\game\g_syscalls.asm" />
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="Props\Project_game.props" />
-  </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

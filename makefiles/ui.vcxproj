@@ -10,6 +10,11 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_q3_ui.props" />
+  </ImportGroup>
   <ItemGroup>
     <ClCompile Include="..\code\game\bg_misc.c" />
     <ClCompile Include="..\code\q3_ui\ui_addbots.c" />
@@ -58,14 +63,9 @@
     <ClInclude Include="..\code\qcommon\q_shared.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="q3_ui.qc.vcxproj">
+    <ProjectReference Include="ui.qc.vcxproj">
       <Project>{44ebdddf-e852-4e26-978b-d768fccd3c7c}</Project>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="Props\Project_q3_ui.props" />
-  </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
