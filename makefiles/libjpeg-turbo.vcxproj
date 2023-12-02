@@ -70,9 +70,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\game\ai_chat.h" />
-  </ItemGroup>
-  <ItemGroup>
     <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jccolor-sse2-64.asm" />
     <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jcgray-sse2-64.asm" />
     <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jchuff-sse2-64.asm" />
