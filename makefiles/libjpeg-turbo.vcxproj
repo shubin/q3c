@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{96A3F3D4-AF5A-4C5D-9CD4-093691D35B1C}</ProjectGuid>
+    <RootNamespace>cgame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_libjpeg-turbo.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release QC|x64'" />
+  <ItemGroup>
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcapimin.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcapistd.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jccoefct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jccolor.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcdctmgr.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jchuff.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcinit.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcmainct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcmarker.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcmaster.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcomapi.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcparam.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcphuff.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcprepct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcsample.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jctrans.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdapimin.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdapistd.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdatadst.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdatasrc.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdcoefct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdcolor.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jddctmgr.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdhuff.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdinput.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdmainct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdmarker.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdmaster.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdmerge.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdphuff.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdpostct.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdsample.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jdtrans.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jerror.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jfdctflt.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jfdctfst.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jfdctint.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jidctflt.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jidctfst.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jidctint.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jidctred.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jmemmgr.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jquant1.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jquant2.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jutils.c" />
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\simd\jsimd_i386.c">
+      <ExcludedFromBuild Condition="'$(Platform)'!='Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\simd\jsimd_x86_64.c">
+      <ExcludedFromBuild Condition="'$(Platform)'!='x64'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ModSrcDir)code\game\ai_chat.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jccolor-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jcgray-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jchuff-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jcsample-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jdcolor-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jdmerge-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jdsample-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jfdctflt-sse-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jfdctfst-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jfdctint-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jidctflt-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jidctfst-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jidctint-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jidctred-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jquantf-sse2-64.asm" />
+    <NASM Include="$(EngineSrcDir)libjpeg-turbo\simd\jquanti-sse2-64.asm" />
+  </ItemGroup>
+  <Import Project="Props\nasm.targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

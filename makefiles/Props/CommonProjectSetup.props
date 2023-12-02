@@ -31,6 +31,7 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 
+	<Import Project="nasm.props" />
 	<Import Project="Platform_Windows.props"			Condition="'$(Platform)'=='x64'" />
 	<Import Project="ProjectType_StaticLibrary.props"	Condition="'$(ConfigurationType)'=='StaticLibrary'" />
 	<Import Project="ProjectType_DynamicLibrary.props"	Condition="'$(ConfigurationType)'=='DynamicLibrary'" />

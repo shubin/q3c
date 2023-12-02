@@ -13,7 +13,7 @@
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="Props\Project_q3_ui.props" />
+    <Import Project="Props\Project_ui.props" />
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="$(ModSrcDir)code\game\bg_champions.c" />
