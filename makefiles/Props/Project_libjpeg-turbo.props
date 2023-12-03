@@ -3,17 +3,15 @@
 	<ItemDefinitionGroup>
 		<ClCompile>      
 			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-			<PreprocessorDefinitions Condition="'$(BuildConfig)'=='Debug'">WITH_SIMD;SIZEOF_SIZE_T=8;DEBUG;_DEBUG;_CRT_SECURE_NO_WARNINGS;WIN32;_WIN32;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-			<PreprocessorDefinitions Condition="'$(BuildConfig)'=='Release'">WITH_SIMD;SIZEOF_SIZE_T=8;NDEBUG;_CRT_SECURE_NO_WARNINGS;WIN32;_WIN32;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>			
+			<PreprocessorDefinitions>WITH_SIMD;SIZEOF_SIZE_T=8;_CRT_SECURE_NO_WARNINGS;WIN32;_WIN32;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<DisableSpecificWarnings>4127;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 		</ClCompile>
 		<Link>
 			<AdditionalLibraryDirectories>$(LibraryOutputDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>			
 		</Link>
       <NASM>
-        <DeploymentContent>false</DeploymentContent>
         <IncludePaths>$(EngineSrcDir)libjpeg-turbo\;$(EngineSrcDir)libjpeg-turbo\win;$(EngineSrcDir)libjpeg-turbo\simd;%(IncludePaths)</IncludePaths>
         <PreprocessorDefinitions>WIN64;__x86_64__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        <AdditionalOptions>-fwin64 %(AdditionalOptions)</AdditionalOptions>
       </NASM>
 	</ItemDefinitionGroup>
 </Project>

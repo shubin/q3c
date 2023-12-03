@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>17.0</VCProjectVersion>
-    <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{7E03B592-2400-4436-B343-2A1F88FF8327}</ProjectGuid>
-    <RootNamespace>cgame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
-  <ItemDefinitionGroup>
-    <Link>
-      <OutputFile>$(OutDir)q3asm.exe</OutputFile>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(ModSrcDir)code\tools\asm\cmdlib.c" />
     <ClCompile Include="$(ModSrcDir)code\tools\asm\q3asm.c" />

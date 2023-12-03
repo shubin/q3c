@@ -3,19 +3,21 @@
 	<PropertyGroup Label="UserMacros">	
 		<ProjectRoot>$([System.IO.Path]::GetFullPath('$(SolutionDir)..'))\</ProjectRoot>
 		<NASMPATH>$(ProjectRoot)\tools\</NASMPATH>
+
 		<ProjectOutputDir Condition="'$(ProjectOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\output\</ProjectOutputDir>
 		<ProjectIntermediateDir Condition="'$(ProjectIntermediateDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\intermediate\</ProjectIntermediateDir>
 	    <LibraryOutputDir Condition="'$(LibratyOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\lib\</LibraryOutputDir>
+
 		<ModSrcDir>$(ProjectRoot)mod\</ModSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>
-		<BuildConfig Condition="('$(Configuration)'=='Debug')OR('$(Configuration)'=='Debug QC')OR('$(Configuration)'=='Debug TA')">Debug</BuildConfig>
-		<BuildConfig Condition="('$(Configuration)'=='Release')OR('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Release QC')">Release</BuildConfig>
-		<BuildGame Condition="('$(Configuration)'=='Debug')OR('$(Configuration)'=='Release')">VQ3</BuildGame>
-		<BuildGame Condition="('$(Configuration)'=='Debug QC')OR('$(Configuration)'=='Release QC')">QC</BuildGame>
-		<BuildGame Condition="('$(Configuration)'=='Debug TA')OR('$(Configuration)'=='Release TA')">TA</BuildGame>
-		<Compiler Condition="('$(Platform)'=='Win32')OR('$(Platform)'=='x64')">MSVC</Compiler>
-		<BinSuffix>zz</BinSuffix>
-		<BinSuffix Condition="'$(Platform)'=='x64'">x86_64</BinSuffix>
-		<BinSuffix Condition="'$(Platform)'=='Win32'">x86</BinSuffix>
+
+		<BuildType Condition="('$(Configuration)'=='Debug VQ3')OR('$(Configuration)'=='Debug TA')OR('$(Configuration)'=='Debug QC')">Debug</BuildType>
+		<BuildType Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Release TA')OR('$(Configuration)'=='Release QC')">Release</BuildType>
+
+		<Game Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">VQ3</Game>
+		<Game Condition="('$(Configuration)'=='Release TA')OR('$(Configuration)'=='Debug TA')">TA</Game>
+		<Game Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">QC</Game>
+
+		<Compiler Condition="'$(Platform)'=='x64'">MSVC</Compiler>
 	</PropertyGroup>
 </Project>

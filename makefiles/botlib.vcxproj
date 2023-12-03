@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F6DF9617-1655-4F97-BD2A-DB7D16707905}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_botlib.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_bspq3.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_cluster.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_debug.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_entity.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_file.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_move.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_optimize.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_reach.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_route.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_routealt.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_aas_sample.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_char.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_chat.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_gen.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_goal.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_move.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_weap.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ai_weight.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_ea.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\be_interface.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_crc.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_libvar.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_log.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_memory.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_precomp.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_script.cpp" />
+    <ClCompile Include="$(EngineSrcDir)botlib\l_struct.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(EngineSrcDir)botlib\aasfile.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_bsp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_cluster.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_debug.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_def.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_entity.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_file.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_funcs.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_main.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_optimize.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_reach.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_route.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_routealt.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_sample.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_char.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_chat.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_gen.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_goal.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weap.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weight.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ea.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_interface.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\botlib.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_crc.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_libvar.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_log.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_memory.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_precomp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_script.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_struct.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -7,7 +7,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalLibraryDirectories>$(LibraryOutputDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-			<AdditionalDependencies Condition="'$(BuildGame)'=='QC'">q3_ui.qc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<AdditionalDependencies Condition="'$(Game)'=='QC'">q3_ui.qc.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 </Project>

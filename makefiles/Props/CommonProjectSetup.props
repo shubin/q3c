@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="CommonVariables.props" />
 
-	<PropertyGroup Condition="('$(Configuration)'=='Debug')OR('$(Configuration)'=='Debug QC')" Label="Configuration">
+	<PropertyGroup Condition="'$(BuildType)'=='Debug'" Label="Configuration">
 		<UseDebugLibraries>true</UseDebugLibraries>
 	</PropertyGroup>
-	<PropertyGroup Condition="('$(Platform)'=='x64')OR('$(Platform)'=='Win32')" Label="Configuration">
+	<PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
 		<PlatformToolset>v143</PlatformToolset>
 	</PropertyGroup>
 
@@ -17,27 +17,18 @@
 		<ProjectReference>
 			<LinkLibraryDependencies>false</LinkLibraryDependencies>
 		</ProjectReference>
-	</ItemDefinitionGroup>
-
-	<ItemDefinitionGroup Condition="'$(BuildGame)'=='QC'">
 		<ClCompile>
-			<PreprocessorDefinitions>QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		</ClCompile>
 	</ItemDefinitionGroup>
 
-	<ItemDefinitionGroup Condition="'$(BuildGame)'=='TA'">
-		<ClCompile>
-			<PreprocessorDefinitions>MISSIONPACK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemDefinitionGroup>
+	<PropertyGroup>
+		<OutDir Condition="'$(ConfigurationType)'=='StaticLibrary'">$(LibraryOutputDir)</OutDir>
+		<OutDir Condition="'$(ConfigurationType)'!='StaticLibrary'">$(ProjectOutputDir)</OutDir>
+		<IntDir>$(ProjectIntermediateDir)$(ProjectName)\</IntDir>
+	</PropertyGroup>
 
-	<Import Project="nasm.props" />
-	<Import Project="Platform_Windows.props"			Condition="'$(Platform)'=='x64'" />
-	<Import Project="ProjectType_StaticLibrary.props"	Condition="'$(ConfigurationType)'=='StaticLibrary'" />
-	<Import Project="ProjectType_DynamicLibrary.props"	Condition="'$(ConfigurationType)'=='DynamicLibrary'" />
-	<Import Project="ProjectType_Application.props"		Condition="'$(ConfigurationType)'=='Application'" />
-	<Import Project="Compiler_MSVC.props"				Condition="'$(Compiler)'=='MSVC'" />
-	<Import Project="Compiler_GCC.props"				Condition="'$(Compiler)'=='GCC'" />
-	<Import Project="Configuration_Debug.props"			Condition="'$(Configuration)'=='Debug'" />
-	<Import Project="Configuration_Release.props"		Condition="'$(Configuration)'=='Release'" />
+	<Import Project="Configuration_$(BuildType).props" />
+	<Import Project="Compiler_$(Compiler).props" />
+	<Import Project="Game_$(Game).props" />
 </Project>
