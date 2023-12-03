@@ -6,6 +6,8 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
   <ItemGroup>
     <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\cpp.c" />
     <ClCompile Include="$(ModSrcDir)code\tools\lcc\cpp\eval.c" />
@@ -21,7 +23,5 @@
   <ItemGroup>
     <ClInclude Include="$(ModSrcDir)code\tools\lcc\cpp\cpp.h" />
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

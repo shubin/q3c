@@ -6,11 +6,11 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
   <ItemGroup>
     <ClCompile Include="$(ModSrcDir)code\tools\lcc\etc\bytecode.c" />
     <ClCompile Include="$(ModSrcDir)code\tools\lcc\etc\lcc.c" />
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

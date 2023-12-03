@@ -6,6 +6,8 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
   <ItemGroup>
     <ClCompile Include="$(ModSrcDir)code\tools\asm\cmdlib.c" />
     <ClCompile Include="$(ModSrcDir)code\tools\asm\q3asm.c" />
@@ -16,7 +18,5 @@
     <ClInclude Include="$(ModSrcDir)code\tools\asm\opstrings.h" />
     <ClInclude Include="$(ModSrcDir)code\tools\asm\qvm.h" />
   </ItemGroup>
-  <Import Project="Props\ProjectConfigurations.props" />
-  <Import Project="Props\CommonProjectSetup.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
