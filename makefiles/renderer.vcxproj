@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F6DF9617-1655-4F97-BD2A-DB7D16707905}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_renderer.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(EngineSrcDir)renderer\D3D12MemAlloc.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_imgui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_mip_gen.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_post.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_smaa.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_ui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_world.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\rhi_d3d12.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\stb_image.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_backend.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_bsp.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_cmds.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_curve.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_decals.cpp">
+      <ExcludedFromBuild Condition="'$(Game)'!='QC'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_gui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_image.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_image_scale.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_init.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_light.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_marks.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_mesh.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_model.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_noise.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_renderdoc.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_scene.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_shade_calc.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_shader.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_sky.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_surface.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_world.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(EngineSrcDir)renderer\D3D12MemAlloc.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\grp_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\rhi_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\rhi_public.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\smaa_area_texture.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\smaa_search_texture.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\stb_image.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_help.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_public.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\uber_shaders.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(EngineSrcDir)renderer\hlsl\depth_pre_pass.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\dynamic_light.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\fog_inside.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\fog_outside.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\imgui.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\mip_1.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\mip_2.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\mip_3.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\post_gamma.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\post_inverse_gamma.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\smaa_1.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\smaa_2.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\smaa_3.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\uber_shader.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\ui.hlsl" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\fog.hlsli" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\shared.hlsli" />
+    <None Include="$(EngineSrcDir)renderer\hlsl\smaa.hlsli" />
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

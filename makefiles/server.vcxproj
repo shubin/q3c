@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B19D02DC-13DE-405C-A30A-3035DA280233}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_server.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_load.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_patch.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_polylib.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_test.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_trace.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cmd.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\common.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\crash.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cvar.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\files.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\huffman.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\huffman_static.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\json.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\md4.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\md5.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\msg.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\net_chan.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\net_ip.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\q_math.c" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\q_shared.c" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\unzip.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm_interpreted.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm_x86.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_bot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_ccmds.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_client.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_game.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_init.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_net_chan.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_snapshot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_world.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_exception.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_files.cpp">
+      <ExcludedFromBuild Condition="'$(Game)'!='QC'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)win32\win_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_shared.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_syscon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(EngineSrcDir)botlib\aasfile.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_bsp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_cluster.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_debug.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_def.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_entity.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_file.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_funcs.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_main.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_optimize.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_reach.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_route.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_routealt.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_sample.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_char.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_chat.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_gen.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_goal.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weap.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weight.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ea.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_interface.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\botlib.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_crc.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_libvar.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_log.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_memory.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_precomp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_script.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_struct.h" />
+    <ClInclude Include="$(EngineSrcDir)client\cl_imgui.h" />
+    <ClInclude Include="$(EngineSrcDir)client\client.h" />
+    <ClInclude Include="$(EngineSrcDir)client\client_help.h" />
+    <ClInclude Include="$(EngineSrcDir)client\keycodes.h" />
+    <ClInclude Include="$(EngineSrcDir)client\keys.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_codec.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_local.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cg_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_local.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_patch.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_polylib.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\common_help.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\crash.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\g_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\git.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\q_platform.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\q_shared.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\qcommon.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\qfiles.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\surfaceflags.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\syscall_ext.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\tr_types.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\ui_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\unzip.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\vm_local.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\vm_shim.h" />
+    <ClInclude Include="$(EngineSrcDir)server\server.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\resource.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\win_help.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\win_local.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="botlib.vcxproj">
+      <Project>{F6DF9617-1655-4F97-BD2A-DB7D16707905}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

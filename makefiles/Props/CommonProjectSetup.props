@@ -20,6 +20,9 @@
 		<ClCompile>
 			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(LibraryOutputDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+		</Link>
 	</ItemDefinitionGroup>
 
 	<PropertyGroup>

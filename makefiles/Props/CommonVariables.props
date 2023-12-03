@@ -11,11 +11,10 @@
 		<ModSrcDir>$(ProjectRoot)mod\</ModSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>
 
-		<BuildType Condition="('$(Configuration)'=='Debug VQ3')OR('$(Configuration)'=='Debug TA')OR('$(Configuration)'=='Debug QC')">Debug</BuildType>
-		<BuildType Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Release TA')OR('$(Configuration)'=='Release QC')">Release</BuildType>
+		<BuildType Condition="('$(Configuration)'=='Debug VQ3')OR('$(Configuration)'=='Debug QC')">Debug</BuildType>
+		<BuildType Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Release QC')">Release</BuildType>
 
 		<Game Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">VQ3</Game>
-		<Game Condition="('$(Configuration)'=='Release TA')OR('$(Configuration)'=='Debug TA')">TA</Game>
 		<Game Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">QC</Game>
 
 		<Compiler Condition="'$(Platform)'=='x64'">MSVC</Compiler>
