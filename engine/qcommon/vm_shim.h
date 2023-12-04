@@ -1,13 +1,24 @@
 
 #pragma once
 
+// arQon:
 // rather than have to cast the hell out of every single arg in every single trap
 // (the "no implict conversion from void*" rule is so fkn annoying on PODs)  >:(
-// we provide an explicit converstion to a VM_Arg, which then implicitly converts
+// we provide an explicit conversion to a VM_Arg, which then implicitly converts
 // via operators to all the types we share with the VMs. CUNNING LIKE FOX  :P
+
+// myT:
+// Yeah... except for one rather important issue.
+// When the type can't be deduced, no conversion operator is invoked at all.
+// In a case like `va("Say hello to %s", VMA(1))`, `VMA(1)` doesn't return a pointer
+// but a VM_Arg struct by value, which could be larger than just the intptr_t member.
+// The simplest fix I could think of was to use #pragma pack for this.
+// However, calling code should force an implicit conversion with a cast like so:
+// `va("Say hello to %s", (const char*)VMA(1))`
 
 #define VMA_CONVOP(T) operator T*() const { return (T*)p; }
 
+#pragma pack(push, 1)
 struct VM_Arg {
 	VM_Arg( intptr_t x ) : p(x) {}
 	intptr_t p;
@@ -68,18 +79,26 @@ struct VM_Arg {
 	VMA_CONVOP( bot_entitystate_t );
 	VMA_CONVOP( bot_input_t );
 	VMA_CONVOP( pc_token_t );
-/*
-	VMA_CONVOP(  );
-	VMA_CONVOP(  );
-	VMA_CONVOP(  );
-	VMA_CONVOP(  );
-	VMA_CONVOP(  );
-*/
 #endif
 
+	// this is not strictly necessary as it will fail otherwise,
+	// but it improves the error message
+#if __cplusplus >= 201103L
+	template<typename T>
+	operator T*() const
+	{
+		static_assert( false, "VMA_CONVOP missing for this type" );
+		return (T*)p;
+	}
+#endif
 };
+#pragma pack(pop)
 
 #undef VMA_CONVOP
+
+#if __cplusplus >= 201103L
+static_assert( sizeof(VM_Arg) == sizeof(intptr_t), "Invalid VM_Arg struct packing" );
+#endif
 
 #define VMA(x) VM_Arg(VM_ArgPtr(args[x]))
 

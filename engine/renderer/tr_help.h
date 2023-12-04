@@ -1,35 +1,3 @@
-#define help_r_backend \
-"renderer back-end to use\n" \
-S_COLOR_VAL "    GL2   " S_COLOR_HELP "= OpenGL 2.0\n" \
-S_COLOR_VAL "    GL3   " S_COLOR_HELP "= OpenGL 3.2\n" \
-S_COLOR_VAL "    D3D11 " S_COLOR_HELP "= Direct3D 11"
-
-#define help_r_gl3_geoStream \
-"geometry streaming strategy\n" \
-"This only applies to the GL3 back-end. See " S_COLOR_CVAR "r_backend" S_COLOR_HELP " for details.\n" \
-S_COLOR_VAL "    0 " S_COLOR_HELP "= Decide automatically\n" \
-S_COLOR_VAL "    1 " S_COLOR_HELP "= BufferSubData\n" \
-S_COLOR_VAL "    2 " S_COLOR_HELP "= Map Unsychronized\n" \
-S_COLOR_VAL "    3 " S_COLOR_HELP "= Map Persistent when possible, else automatic\n" \
-S_COLOR_VAL "    4 " S_COLOR_HELP "= AMD pinned memory when available, else automatic"
-
-#define help_r_d3d11_syncOffsets \
-"synchronizes vertex buffer offsets\n" \
-"This only applies to the D3D11 back-end. See " S_COLOR_CVAR "r_backend" S_COLOR_HELP " for details.\n" \
-S_COLOR_VAL "    0 " S_COLOR_HELP "= Split  buffer offsets (more API calls)\n" \
-S_COLOR_VAL "    1 " S_COLOR_HELP "= Sync'd buffer offsets (more data transferred)\n" \
-S_COLOR_VAL "    2 " S_COLOR_HELP "= Decide automatically"
-
-#define help_r_d3d11_presentMode \
-"presentation mode\n" \
-S_COLOR_VAL "    0 " S_COLOR_HELP "= Blit + Discard\n" \
-S_COLOR_VAL "    1 " S_COLOR_HELP "= Flip + Discard when available, else Blit + Discard\n" \
-"About the 'Flip + Discard' presentation mode:\n" \
-"- Windows 10 is required and tearing must be supported.\n" \
-"- It should help performance by sharing buffer data (less copying).\n" \
-"- It allows for V-Sync to be disabled with variable refresh rate displays.\n" \
-"- Performance issues were observed on some machines, so it's off by default."
-
 #define help_r_ext_max_anisotropy \
 "max. allowed anisotropy ratio\n" \
 "For anisotropic filtering to be enabled, this needs to be 2 or higher.\n" \
@@ -85,29 +53,6 @@ S_COLOR_HELP "   >" S_COLOR_VAL "1 " S_COLOR_HELP "= Brighter"
 "disables rendering of portals\n" \
 "Portal example: the bottom teleporter on q3dm7."
 
-#define help_r_textureMode \
-"texture filtering mode\n" \
-S_COLOR_VAL "    GL_NEAREST    " S_COLOR_HELP "= LEGO(R) mode\n" \
-            "    anything else "              "= Normal  mode\n" \
-"For anisotropic filtering, refer to " S_COLOR_CVAR "r_ext_max_anisotropy" S_COLOR_HELP "."
-
-#define help_r_swapInterval \
-"Screen refresh periods to wait for before swapping buffers\n" \
-S_COLOR_VAL "    N < 0 " S_COLOR_HELP "= Adaptive V-Sync: tears when too late\n" \
-S_COLOR_VAL "    N = 0 " S_COLOR_HELP "= No V-Sync\n" \
-S_COLOR_VAL "    N > 0 " S_COLOR_HELP "= Standard V-Sync: never tears\n" \
-"Adaptive V-Sync is not available when " S_COLOR_CVAR "r_backend " S_COLOR_HELP "is " S_COLOR_VAL "D3D11" S_COLOR_HELP ".\n" \
-"When adaptive V-Sync is not available, standard V-Sync is requested instead.\n" \
-"Please note that with OpenGL, your driver settings can override any of this."
-
-#define help_r_frameSleep \
-"whether the client should sleep to maintain the FPS cap\n" \
-S_COLOR_VAL "    0 " S_COLOR_HELP "= Forced OFF (when V-Sync is enabled)\n" \
-S_COLOR_VAL "    1 " S_COLOR_HELP "= Forced ON  (when V-Sync is disabled)\n" \
-S_COLOR_VAL "    2 " S_COLOR_HELP "= Automatic  (detects V-Sync status)\n" \
-"This only applies to OpenGL rendering back-ends:\n" \
-"For Direct3D 11, the mode is always 'automatic'."
-
 #define help_r_lightmap \
 "renders the lightmaps only\n" \
 "Shaders with a lightmap stage will only draw the lightmap stage.\n" \
@@ -144,16 +89,6 @@ S_COLOR_VAL "    T2  " S_COLOR_HELP "= Tent 2 (1/3 2/3, same as the CPU version)
 "enables depth fade rendering\n" \
 "With it, surfaces like blood, smoke, etc don't 'cut' through geometry sharply."
 
-#define help_r_gpuMipGen \
-"enables GPU mip-map generation\n" \
-"This will both improve map load times and image quality.\n" \
-"Only disable if the feature isn't working for whatever reason."
-
-#define help_r_alphaToCoverage \
-"enables alpha to coverage\n" \
-"This enables anti-aliasing of alpha-tested surfaces when MSAA is enabled.\n" \
-"Therefore, this requires " S_COLOR_CVAR "r_msaa " S_COLOR_HELP "to be greater than 1."
-
 #define help_r_dither \
 "enables dithering\n" \
 "Introduces noise to fight color banding artifacts.\n" \
@@ -187,13 +122,49 @@ S_COLOR_VAL "    2 " S_COLOR_HELP "= R16G16B16A16"
 "preventing solid objects too close to the camera from being see-through.\n" \
 "Because depth values are clamped, improper depth ordering can occur."
 
+#define help_r_gpuPreference \
+"sets the GPU selection preference\n" \
+S_COLOR_VAL "    0 " S_COLOR_HELP "= High performance\n" \
+S_COLOR_VAL "    1 " S_COLOR_HELP "= Low power\n" \
+S_COLOR_VAL "    2 " S_COLOR_HELP "= None"
+
 #define help_r_colorMipLevels \
-"colorizes textures based on their mip level\n" \
-"This disables MSAA on back-ends that use centroid sampling."
+"colorizes textures based on their mip level"
 
 #define help_r_mapGreyscaleCTF \
 "how desaturated CTF map surfaces look\n" \
 "It applies to the red/blue color-coded surfaces of popular CTF/NTF maps."
+
+#define help_r_sleepThreshold \
+"time cushion (in us) for frame sleep\n" \
+"This is a trade-off between frame time consistency and CPU usage.\n" \
+"Set to " S_COLOR_VAL "2000 " S_COLOR_HELP "if you have a struggling old/low-power CPU.\n" \
+S_COLOR_VAL "2500 " S_COLOR_HELP "should be enough to deal with delayed thread wake-ups.\n" \
+"Use the frame graph to confirm that higher values help on your system."
+
+#define help_r_shadingRate \
+"variable-rate shading (VRS) mode\n" \
+S_COLOR_VAL "    0 " S_COLOR_HELP "= 1x1 (VRS off)\n" \
+S_COLOR_VAL "    1 " S_COLOR_HELP "= 2x1 (base mode)\n" \
+S_COLOR_VAL "    2 " S_COLOR_HELP "= 1x2 (base mode)\n" \
+S_COLOR_VAL "    3 " S_COLOR_HELP "= 2x2 (base mode)\n" \
+S_COLOR_VAL "    4 " S_COLOR_HELP "= 4x2 (extended mode)\n" \
+S_COLOR_VAL "    5 " S_COLOR_HELP "= 2x4 (extended mode)\n" \
+S_COLOR_VAL "    6 " S_COLOR_HELP "= 4x4 (extended mode)\n" \
+"The numbers are the horizontal and vertical subsampling factors.\n" \
+"1x1 is forced for the sky, nopicmipped sprites (e.g. simple items)\n" \
+"and nopicmipped alpha tested surfaces (e.g. grates).\n" \
+"If extended modes are not supported, 2x2 is used instead.\n" \
+"Prefer horizontal subsampling as many maps have textures\n" \
+"with thin horizontal lines, which become an aliased mess when\n" \
+"vertically subsampled."
+
+#define help_r_guiFont \
+"font for CNQ3's GUI\n" \
+S_COLOR_VAL "    0 " S_COLOR_HELP "= Proggy Clean (13px)\n" \
+S_COLOR_VAL "    1 " S_COLOR_HELP "= Sweet16 Mono (16px)\n" \
+S_COLOR_VAL "    2 " S_COLOR_HELP "= Custom Font\n" \
+"Custom: " S_COLOR_CVAR "r_guiFontFile" S_COLOR_HELP ", " S_COLOR_CVAR "r_guiFontHeight"
 
 #define help_r_ignoreShaderSortKey \
 "ignores the shader sort key of transparent surfaces\n" \
@@ -214,3 +185,12 @@ help_r_showtris_bitmask
 #define help_r_shownormals \
 "draws vertex normals\n" \
 help_r_showtris_bitmask
+
+#define help_r_smaa \
+"enables SMAA\n" \
+"SMAA is Enhanced Subpixel Morphological Antialiasing\n" \
+S_COLOR_VAL "    0 " S_COLOR_HELP "= No SMAA\n" \
+S_COLOR_VAL "    1 " S_COLOR_HELP "= Low quality\n" \
+S_COLOR_VAL "    2 " S_COLOR_HELP "= Medium quality\n" \
+S_COLOR_VAL "    3 " S_COLOR_HELP "= High quality\n" \
+S_COLOR_VAL "    4 " S_COLOR_HELP "= Ultra quality"

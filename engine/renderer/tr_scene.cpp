@@ -83,7 +83,7 @@ void R_AddPolygonSurfaces()
 
 	const srfPoly_t* poly = tr.refdef.polys;
 	for (int i = 0; i < tr.refdef.numPolys; ++i, ++poly) {
-		R_AddDrawSurf( (const surfaceType_t*)poly, R_GetShaderByHandle( poly->hShader ), poly->fogIndex );
+		R_AddDrawSurf( (const surfaceType_t*)poly, R_GetShaderByHandle( poly->hShader ) );
 	}
 }
 
@@ -287,13 +287,12 @@ void RE_RenderScene( const refdef_t* fd, int us )
 	// setup view parms for the initial view
 	//
 	// set up viewport
-	// The refdef takes 0-at-the-top y coordinates, so
-	// convert to GL's 0-at-the-bottom space
+	// The refdef takes 0-at-the-top y coordinates
 	//
 	viewParms_t parms;
 	Com_Memset( &parms, 0, sizeof( parms ) );
 	parms.viewportX = tr.refdef.x;
-	parms.viewportY = glConfig.vidHeight - ( tr.refdef.y + tr.refdef.height );
+	parms.viewportY = tr.refdef.y;
 	parms.viewportWidth = tr.refdef.width;
 	parms.viewportHeight = tr.refdef.height;
 	parms.isPortal = qfalse;
@@ -316,7 +315,7 @@ void RE_RenderScene( const refdef_t* fd, int us )
 
 	VectorCopy( fd->vieworg, parms.pvsOrigin );
 
-	R_RenderView( &parms );
+	R_RenderScene( &parms );
 
 	// the next scene rendered in this frame will tack on after this one
 	r_firstSceneDrawSurf = tr.refdef.numDrawSurfs;

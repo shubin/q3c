@@ -1,6 +1,6 @@
 /*
 ===========================================================================
-Copyright (C) 2022 Gian 'myT' Schellenbaum
+Copyright (C) 2022-2023 Gian 'myT' Schellenbaum
 
 This file is part of Challenge Quake 3 (CNQ3).
 
@@ -415,8 +415,8 @@ static void IMG_CreateContribs( imageContribs_t* contribs, int srcSize, int dstS
 {
 	const float scale = (float)srcSize / (float)dstSize;
 	const float recScale = 1.0f / (float)scale;
-	const float filterHalfWidth = filter->support * (float)scale / 2.0f;
-	const int maxContribsPerPixel = 2 + (int)ceilf(filterHalfWidth * 2.0f);
+	const int filterHalfWidthI = (int)ceilf(filter->support * (float)scale / 2.0f);
+	const int maxContribsPerPixel = filterHalfWidthI * 2;
 
 	contribs->contribLists = (contribList_t*)MEM_Alloc(2 * dstSize * sizeof(contribList_t));
 	contribs->contribs = (contrib_t*)MEM_Alloc(2 * dstSize * maxContribsPerPixel * sizeof(contrib_t));
@@ -426,23 +426,23 @@ static void IMG_CreateContribs( imageContribs_t* contribs, int srcSize, int dstS
 	contrib_t* contrib = contribs->contribs;
 
 	for (int dstPos = 0; dstPos < dstSize; ++dstPos) {
-		const int center = (int)(dstPos * scale);
-		const int start = (int)floorf(center - filterHalfWidth);
-		const int end = (int)ceilf(center + filterHalfWidth);
+		const int centerI = (int)(dstPos * scale); // the "real" center is 0.5 higher
+		const float centerF = (float)centerI + 0.5f;
+		const int start = centerI - filterHalfWidthI + 1;
+		const int end = centerI + filterHalfWidthI;
 		const int firstIndex = (int)(contrib - contribs->contribs);
 
 		float totalWeight = 0.0f;
 		for (int k = start; k <= end; ++k) {
-			const float delta = (float)(k - center) * recScale;
+			const float delta = ((float)k - centerF) * recScale;
 			totalWeight += filter->function(delta) * recScale;
 		}
 		const float recWeight = 1.0f / totalWeight;
 
 		int contribCount = 0;
-
 		for (int k = start; k <= end; ++k) {
 			const int srcPos = IMG_WrapPixel(k, srcSize, wrapMode);
-			const float delta = (float)(k - center) * recScale;
+			const float delta = ((float)k - centerF) * recScale;
 			const float weight = filter->function(delta) * recScale * recWeight;
 
 			if (weight == 0.0f) {

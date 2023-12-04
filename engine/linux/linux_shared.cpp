@@ -757,3 +757,12 @@ qbool Sys_IsDebuggerAttached()
 {
 	return qfalse;
 }
+
+
+qbool Sys_IsAbsolutePath( const char* path )
+{
+	// when the mod feeds us a relative demo file path with a leading slash,
+	// we then think it's an absolute file path and fail to open the file...
+	// bad: return path[0] == '/';
+	return qfalse;
+}

@@ -672,9 +672,9 @@ FIXME: make this buffer size safe someday
 */
 const char* QDECL va( PRINTF_FORMAT_STRING const char* format, ... )
 {
-	static char string[4][32000];	// in case va is called by nested functions
+	static char string[64][32000];	// in case va is called by nested functions
 	static int index = 0;
-	char* buf = string[index++ & 3];
+	char* buf = string[index++ & 63];
 	va_list argptr;
 
 	va_start( argptr, format );
@@ -682,6 +682,18 @@ const char* QDECL va( PRINTF_FORMAT_STRING const char* format, ... )
 	va_end( argptr );
 
 	return buf;
+}
+
+
+const char* v3tos( const vec3_t v )
+{
+	return va( "%g, %g, %g", v[0], v[1], v[2] );
+}
+
+
+const char* v4tos( const vec4_t v )
+{
+	return va( "%g, %g, %g, %g", v[0], v[1], v[2], v[3] );
 }
 
 

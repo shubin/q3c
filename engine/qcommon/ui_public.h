@@ -139,7 +139,7 @@ typedef enum {
 	UI_FLOOR,
 	UI_CEIL,
 
-#if defined(QC)
+#if defined( QC )
 	UI_R_DRAWTRIANGLE = 500,
 #endif
 

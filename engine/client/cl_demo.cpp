@@ -102,13 +102,9 @@ There's no need to make the player more complex for such an edge case.
 #endif
 
 
-#if defined(_DEBUG)
-#define FULL_SNAPSHOT_INTERVAL_MS (1 * 1000)
-#else
 #define FULL_SNAPSHOT_INTERVAL_MS (8 * 1000)
-#endif
 
-#define MAX_COMMANDS ARRAY_LEN(demo.commands)
+#define MAX_COMMANDS 256
 
 #define VERBOSE_DEBUGGING 0
 
@@ -159,6 +155,7 @@ struct ndpSnapshot_t {
 	int snapFlags;
 	int ping;
 	qbool isFullSnap;
+	qbool isServerPaused;
 };
 
 struct parser_t {
@@ -202,7 +199,7 @@ struct command_t {
 struct demo_t {
 	ndpSnapshot_t snapshots[2]; // current one and next one for CGame requests
 	demoIndex_t indices[4096];
-	command_t commands[256];
+	command_t commands[MAX_COMMANDS];
 	memoryBuffer_t buffer;
 	ndpSnapshot_t* currSnap;
 	ndpSnapshot_t* nextSnap;
@@ -217,6 +214,9 @@ struct demo_t {
 
 struct newDemoPlayer_t {
 	jmp_buf abortLoad;
+	qbool trackServerPause;
+	qbool isServerPaused;
+	int serverPauseDelay; // total duration in server pause since the full snapshot
 };
 
 
@@ -311,13 +311,14 @@ static void MB_Seek( memoryBuffer_t* mb, int position )
 }
 
 
-static void WriteNDPSnapshot( msg_t* outMsg, const ndpSnapshot_t* prevSnap, ndpSnapshot_t* currSnap )
+static void WriteNDPSnapshot( msg_t* outMsg, const ndpSnapshot_t* prevSnap, ndpSnapshot_t* currSnap, qbool isServerPaused )
 {
 	const qbool isFullSnap = prevSnap == NULL;
 
 	// header
 	MSG_WriteBits(outMsg, isFullSnap, 1);
 	MSG_WriteLong(outMsg, currSnap->serverTime);
+	MSG_WriteBits(outMsg, !!isServerPaused, 1);
 
 	// player state
 	const playerState_t* const oldPS = !prevSnap ? &nullPlayerState : &prevSnap->ps;
@@ -664,7 +665,7 @@ static void ParseSnapshot()
 	// let CGame analyze the snapshot so it can do cool stuff
 	// e.g. store events of interest for the timeline overlay
 	demo.currSnap = currNDPSnap;
-	CL_CGNDP_AnalyzeSnapshot(parser.progress);
+	const qbool isServerPaused = CL_CGNDP_AnalyzeSnapshot(parser.progress);
 
 	// draw the current progress once in a while...
 	static int lastRefreshTime = Sys_Milliseconds();
@@ -680,7 +681,7 @@ static void ParseSnapshot()
 	MSG_Clear(&writeMsg);
 	MSG_Bitstream(&writeMsg);
 	ndpSnapshot_t* const prevNDPSnap = parser.prevSnap;
-	WriteNDPSnapshot(&writeMsg, isFullSnap ? NULL : prevNDPSnap, currNDPSnap);
+	WriteNDPSnapshot(&writeMsg, isFullSnap ? NULL : prevNDPSnap, currNDPSnap, isServerPaused);
 	MB_Write(&demo.buffer, &writeMsg.cursize, 4);
 	MB_Write(&demo.buffer, writeMsg.data, writeMsg.cursize);
 
@@ -839,6 +840,7 @@ static void ReadNextSnapshot()
 	}
 	currSnap->isFullSnap = isFullSnap;
 	currSnap->serverTime = MSG_ReadLong(&inMsg);
+	currSnap->isServerPaused = MSG_ReadBits(&inMsg, 1);
 
 	// player state
 	MSG_ReadDeltaPlayerstate(&inMsg, prevSnap ? &prevSnap->ps : &nullPlayerState, &currSnap->ps);
@@ -929,7 +931,23 @@ static void ReadNextSnapshot()
 		}
 	}
 
+	if (ndp.trackServerPause) {
+		if (currSnap->isServerPaused && ndp.isServerPaused && prevSnap != NULL) {
+			const int delta = currSnap->serverTime - prevSnap->serverTime;
+			ndp.serverPauseDelay += delta;
+		}
+		ndp.isServerPaused = currSnap->isServerPaused;
+	}
+
 	demo.snapshotIndex++;
+}
+
+
+static int PeekNextSnapshotTime()
+{
+	const int serverTime = demo.nextSnap != NULL ? demo.nextSnap->serverTime : INT_MIN;
+
+	return serverTime;
 }
 
 
@@ -1051,6 +1069,11 @@ after_parse:
 	// CGame will also restore previous state when videoRestart is qtrue
 	CL_CGNDP_EndAnalysis(clc.demoName, demo.firstServerTime, demo.lastServerTime, videoRestart);
 
+	// make sure we don't execute commands from the end of the demo when starting up
+	demo.commands[0].command[0] = '\0';
+	demo.commands[1].command[0] = '\0';
+	demo.numCommands = 1;
+
 	const int duration = Sys_Milliseconds() - startTime;
 	Com_Printf("New Demo Player: loaded demo in %d.%03d seconds\n", duration / 1000, duration % 1000);
 	Com_DPrintf("New Demo Player: I-frame delay %d ms, %s -> %s (%.2fx)\n",
@@ -1170,12 +1193,7 @@ qbool CL_NDP_GetServerCommand( int serverCommandNumber )
 
 int CL_NDP_Seek( int serverTime )
 {
-	// rate-limit the command to avoid lags etc.
-	static int prevSeekTime = 0;
-	const int currSeekTime = Sys_Milliseconds();
-	if (currSeekTime <= prevSeekTime + 100) {
-		return INT_MIN;
-	}
+	const int seekStartTime = Sys_Milliseconds();
 
 	// figure out which full snapshot we want to jump to
 	int index = 0;
@@ -1198,11 +1216,20 @@ int CL_NDP_Seek( int serverTime )
 		demo.commands[i].command[0] = '\0';
 	}
 
+	ndp.trackServerPause = qtrue;
+	ndp.isServerPaused = qfalse;
+	ndp.serverPauseDelay = 0;
+
 	SeekToIndex(index);
 
 	// read more snapshots until we're close to the target time for more precise jumps
+	// we want the the closest snapshot whose time is less or equal to the target time
 	int numSnapshotsRead = 2;
-	while (!demo.isLastSnapshot && demo.currSnap->serverTime < serverTime) {
+	while (!demo.isLastSnapshot) {
+		const int nextServerTime = PeekNextSnapshotTime();
+		if (nextServerTime == INT_MIN || nextServerTime > serverTime) {
+			break;
+		}
 		// add all commands from the snapshot we're about to evict
 		PrintCmdListBegin("evicted snap commands");
 		AddAllCommands(&demo.currSnap->serverCommands);
@@ -1211,10 +1238,13 @@ int CL_NDP_Seek( int serverTime )
 		numSnapshotsRead++;
 	}
 
-	Com_DPrintf("New Demo Player: sought and read %d snaps in %d ms\n",
-	            numSnapshotsRead, Sys_Milliseconds() - currSeekTime);
+	if (ndp.serverPauseDelay > 0) {
+		AddCommand(va("server_pause_delay %d", ndp.serverPauseDelay));
+	}
+	ndp.trackServerPause = qfalse;
 
-	prevSeekTime = currSeekTime;
+	Com_DPrintf("New Demo Player: sought and read %d snaps in %d ms\n",
+	            numSnapshotsRead, Sys_Milliseconds() - seekStartTime);
 
 	return demo.currSnap->serverTime;
 }

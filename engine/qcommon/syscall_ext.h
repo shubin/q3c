@@ -17,12 +17,12 @@ extern dllSyscall_t syscall;
 #define DEF_TRAP_6(ret, R, Name, A1, A2, A3, A4, A5, A6) typedef R (*Name##_t)(A1, A2, A3, A4, A5, A6); Name##_t Name
 #else
 #define DEF_TRAP_0(ret, R, Name) R Name(void) { ret syscall(cpma_ext.Name); }
-#define DEF_TRAP_1(ret, R, Name, A1) R Name(A1 a1) { ret syscall(cpma_ext.Name, (int)a1); }
-#define DEF_TRAP_2(ret, R, Name, A1, A2) R Name(A1 a1, A2 a2) { ret syscall(cpma_ext.Name, (int)a1, (int)a2); }
-#define DEF_TRAP_3(ret, R, Name, A1, A2, A3) R Name(A1 a1, A2 a2, A3 a3) { ret syscall(cpma_ext.Name, (int)a1, (int)a2, (int)a3); }
-#define DEF_TRAP_4(ret, R, Name, A1, A2, A3, A4) R Name(A1 a1, A2 a2, A3 a3, A4 a4) { ret syscall(cpma_ext.Name, (int)a1, (int)a2, (int)a3, (int)a4); }
-#define DEF_TRAP_5(ret, R, Name, A1, A2, A3, A4, A5) R Name(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5) { ret syscall(cpma_ext.Name, (int)a1, (int)a2, (int)a3, (int)a4, (int)a5); }
-#define DEF_TRAP_6(ret, R, Name, A1, A2, A3, A4, A5, A6) R Name(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6) { ret syscall(cpma_ext.Name, (int)a1, (int)a2, (int)a3, (int)a4, (int)a5, (int)a6); }
+#define DEF_TRAP_1(ret, R, Name, A1) R Name(A1 a1) { ret syscall(cpma_ext.Name, (intptr_t)a1); }
+#define DEF_TRAP_2(ret, R, Name, A1, A2) R Name(A1 a1, A2 a2) { ret syscall(cpma_ext.Name, (intptr_t)a1, (intptr_t)a2); }
+#define DEF_TRAP_3(ret, R, Name, A1, A2, A3) R Name(A1 a1, A2 a2, A3 a3) { ret syscall(cpma_ext.Name, (intptr_t)a1, (intptr_t)a2, (intptr_t)a3); }
+#define DEF_TRAP_4(ret, R, Name, A1, A2, A3, A4) R Name(A1 a1, A2 a2, A3 a3, A4 a4) { ret syscall(cpma_ext.Name, (intptr_t)a1, (intptr_t)a2, (intptr_t)a3, (intptr_t)a4); }
+#define DEF_TRAP_5(ret, R, Name, A1, A2, A3, A4, A5) R Name(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5) { ret syscall(cpma_ext.Name, (intptr_t)a1, (intptr_t)a2, (intptr_t)a3, (intptr_t)a4, (intptr_t)a5); }
+#define DEF_TRAP_6(ret, R, Name, A1, A2, A3, A4, A5, A6) R Name(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6) { ret syscall(cpma_ext.Name, (intptr_t)a1, (intptr_t)a2, (intptr_t)a3, (intptr_t)a4, (intptr_t)a5, (intptr_t)a6); }
 #endif
 
 #ifdef Q3_VM

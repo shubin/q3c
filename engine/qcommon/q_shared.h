@@ -27,11 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // A user mod should never modify this file
 
 #if defined( QC )
-#define Q3_VERSION				"Blood Run PB3 (CNQ3 1.52)"
+#define Q3_VERSION				"Blood Run PB3 (CNQ3 1.54)"
 #define CLIENT_WINDOW_TITLE		"Blood Run"
 #define CONSOLE_WINDOW_TITLE	"Blood Run"
 #else
-#define Q3_VERSION				"CNQ3 1.52"
+#define Q3_VERSION				"CNQ3 1.54"
 #define CLIENT_WINDOW_TITLE		"CNQ3"
 #define CONSOLE_WINDOW_TITLE	"CNQ3 Console"
 #endif
@@ -156,17 +156,6 @@ ID_INLINE int PASSFLOAT( float x ) { return (*(const int*)&x); }
 
 #if defined(Q3_VM)
 	typedef int intptr_t;
-#elif defined(_MSC_VER)
-	#include <stddef.h>
-	typedef __int64 int64_t;
-	typedef __int32 int32_t;
-	typedef __int16 int16_t;
-	typedef __int8 int8_t;
-	typedef unsigned __int64 uint64_t;
-	typedef unsigned __int32 uint32_t;
-	typedef unsigned __int16 uint16_t;
-	typedef unsigned __int8 uint8_t;
-	typedef ptrdiff_t intptr_t;
 #else
 	#include <stdint.h>
 #endif
@@ -280,6 +269,7 @@ typedef vec_t vec2_t[2];
 typedef vec_t vec3_t[3];
 typedef vec_t vec4_t[4];
 extern const vec3_t vec3_origin;
+extern const vec4_t vec4_zero;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f // matches value in gcc v2 math.h
@@ -398,10 +388,12 @@ typedef struct {
 #define VectorCopy(a,b) (*(vec3struct_t *)b=*(vec3struct_t *)a)
 #endif
 
-#define VectorClear(a)			((a)[0]=(a)[1]=(a)[2]=0)
-#define VectorNegate(a,b)		((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
-#define VectorSet(v, x, y, z)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z))
-#define Vector4Copy(a,b)		((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
+#define VectorClear(a)				((a)[0]=(a)[1]=(a)[2]=0)
+#define VectorNegate(a,b)			((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
+#define VectorSet(v, x, y, z)		((v)[0]=(x), (v)[1]=(y), (v)[2]=(z))
+#define Vector4Copy(a,b)			((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
+#define Vector4Clear(a)				((a)[0]=(a)[1]=(a)[2]=(a)[3]=0)
+#define Vector4Set(v, x, y, z, w)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z), (v)[3]=(w))
 
 float RadiusFromBounds( const vec3_t mins, const vec3_t maxs );
 void ClearBounds( vec3_t mins, vec3_t maxs );
@@ -547,6 +539,8 @@ typedef enum {
 } extErrorLevel_t;
 
 const char* QDECL va( PRINTF_FORMAT_STRING const char* format, ... );
+const char* v3tos( const vec3_t v );
+const char* v4tos( const vec4_t v );
 
 void QDECL Com_Error( int level, PRINTF_FORMAT_STRING const char* error, ... );
 void QDECL Com_ErrorExt( int level, int module, qbool realError, PRINTF_FORMAT_STRING const char* error, ... );
@@ -688,13 +682,36 @@ default values.
 
 #define	MAX_CVAR_VALUE_STRING	256
 
+#define CVAR_GUI_VALUE( Value, Title, Desc )	Value "\0" Title "\0" Desc "\0"
+
+// CVar categories
+#define CVARCAT_GENERAL			1
+#define CVARCAT_GAMEPLAY		2
+#define CVARCAT_NETWORK			4
+#define CVARCAT_DISPLAY			8
+#define CVARCAT_GRAPHICS		16
+#define CVARCAT_SOUND			32
+#define CVARCAT_CONSOLE			64
+#define CVARCAT_HUD				128
+#define CVARCAT_GUI				256
+#define CVARCAT_PERFORMANCE		512
+#define CVARCAT_DEBUGGING		1024
+#define CVARCAT_INPUT			2048
+#define CVARCAT_DEMO			4096
+
 typedef enum {
-	CVART_STRING,	// no validation
-	CVART_FLOAT,	// uses floating-point min/max bounds
-	CVART_INTEGER,	// uses integer min/max bounds
-	CVART_BITMASK,	// uses integer min/max bounds
-	CVART_BOOL,		// uses integer min/max bounds, min=0 and max=1
-	CVART_COUNT		// always last in the enum
+	CVART_STRING,		// no validation
+	CVART_FLOAT,		// uses floating-point min/max bounds
+	CVART_INTEGER,		// uses integer min/max bounds
+	CVART_BITMASK,		// uses integer min/max bounds
+	CVART_BOOL,			// uses integer min/max bounds, min=0 and max=1
+	// extended data types (not currently used by the CPMA QVMs)
+	CVART_COLOR_CPMA,	// CPMA color code (0-9 A-Z a-z)
+	CVART_COLOR_CPMA_E,	// CPMA color code or empty
+	CVART_COLOR_CHBLS,	// CPMA color codes: rail Core, Head, Body, Legs, rail Spiral
+	CVART_COLOR_RGB,	// as hex, e.g. FF00FF
+	CVART_COLOR_RGBA,	// as hex, e.g. FF00FF00
+	CVART_COUNT			// always last in the enum
 } cvarType_t;
 
 typedef int	cvarHandle_t;

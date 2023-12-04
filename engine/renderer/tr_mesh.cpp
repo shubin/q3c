@@ -208,40 +208,10 @@ static int R_ComputeLOD( const trRefEntity_t* ent )
 }
 
 
-static int R_ComputeFogNum( const md3Header_t* header, const trRefEntity_t *ent )
-{
-	int i, j;
-
-	if ( tr.refdef.rdflags & RDF_NOWORLDMODEL )
-		return 0;
-
-	// FIXME: non-normalized axis issues
-	vec3_t localOrigin;
-	const md3Frame_t* md3Frame = (const md3Frame_t*)((byte *)header + header->ofsFrames) + ent->e.frame;
-	VectorAdd( ent->e.origin, md3Frame->localOrigin, localOrigin );
-	for ( i = 1 ; i < tr.world->numfogs ; i++ ) {
-		const fog_t* fog = &tr.world->fogs[i];
-		for ( j = 0 ; j < 3 ; j++ ) {
-			if ( localOrigin[j] - md3Frame->radius >= fog->bounds[1][j] ) {
-				break;
-			}
-			if ( localOrigin[j] + md3Frame->radius <= fog->bounds[0][j] ) {
-				break;
-			}
-		}
-		if ( j == 3 ) {
-			return i;
-		}
-	}
-
-	return 0;
-}
-
-
 void R_AddMD3Surfaces( trRefEntity_t* ent )
 {
 	// don't add third_person objects if not in a portal
-	qbool personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+	qbool personalModel = (ent->e.renderfx & RF_THIRD_PERSON) != 0 && !tr.viewParms.isPortal;
 
 	if ( ent->e.renderfx & RF_WRAP_FRAMES ) {
 		ent->e.frame %= tr.currentModel->md3[0]->numFrames;
@@ -276,12 +246,9 @@ void R_AddMD3Surfaces( trRefEntity_t* ent )
 	if (!personalModel)
 		R_SetupEntityLighting( &tr.refdef, ent );
 
-	// see if we are in a fog volume
-	int fogNum = R_ComputeFogNum( header, ent );
-
 	// draw all surfaces
 	const shader_t* shader;
-	const md3Surface_t* surface = surface = (const md3Surface_t*)((byte *)header + header->ofsSurfaces);
+	const md3Surface_t* surface = (const md3Surface_t*)((byte *)header + header->ofsSurfaces);
 
 	for (int i = 0; i < header->numSurfaces; ++i) {
 		if ( ent->e.customShader ) {
@@ -314,7 +281,7 @@ void R_AddMD3Surfaces( trRefEntity_t* ent )
 
 		// don't add third_person objects if not viewing through a portal
 		if ( !personalModel ) {
-			R_AddDrawSurf( (const surfaceType_t*)surface, shader, fogNum );
+			R_AddDrawSurf( (const surfaceType_t*)surface, shader );
 		}
 
 		surface = (const md3Surface_t*)( (byte *)surface + surface->ofsEnd );

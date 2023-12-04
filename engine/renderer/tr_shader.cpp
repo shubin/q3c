@@ -23,24 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // tr_shader.c -- this file deals with the parsing and definition of shaders
 
-const float r_depthFadeScale[DFT_COUNT][4] =
-{
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_NONE
-	{ 1.0f, 1.0f, 1.0f, 0.0f }, // DFT_BLEND
-	{ 0.0f, 0.0f, 0.0f, 1.0f }, // DFT_ADD
-	{ 0.0f, 0.0f, 0.0f, 1.0f }, // DFT_MULT
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_PMA
-	{ 0.0f, 0.0f, 0.0f, 0.0f }  // DFT_TBD
-};
 
-const float r_depthFadeBias[DFT_COUNT][4] =
+const uint8_t r_depthFadeScaleAndBias[DFT_COUNT] =
 {
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_NONE
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_BLEND
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_ADD
-	{ 1.0f, 1.0f, 1.0f, 0.0f }, // DFT_MULT
-	{ 0.0f, 0.0f, 0.0f, 0.0f }, // DFT_PMA
-	{ 0.0f, 0.0f, 0.0f, 0.0f }  // DFT_TBD
+	0x00, // DFT_NONE             R  G  B  A            R  G  B  A
+	0x07, // DFT_BLEND - scale = (1, 1, 1, 0) - bias = (0, 0, 0, 0)
+	0x08, // DFT_ADD   - scale = (0, 0, 0, 1) - bias = (0, 0, 0, 0)
+	0x78, // DFT_MULT  - scale = (0, 0, 0, 1) - bias = (1, 1, 1, 0)
+	0x00, // DFT_PMA   - scale = (0, 0, 0, 0) - bias = (0, 0, 0, 0)
+	0x00  // DFT_TBD
 };
 
 static char* s_shaderText = 0;
@@ -62,6 +53,39 @@ static shader_t* hashTable[FILE_HASH_SIZE];
 #define MAX_SHADERTEXT_HASH 2048
 static char** shaderTextHashTable[MAX_SHADERTEXT_HASH];
 
+static char parseMessage[1024];
+
+
+static void ParserWarning( PRINTF_FORMAT_STRING const char* format, ... )
+{
+	va_list ap;
+	va_start( ap, format );
+	Q_vsnprintf( parseMessage, sizeof( parseMessage ) - 1, format, ap );
+	va_end( ap );
+
+	ri.Printf( PRINT_WARNING, "WARNING: %s in shader '%s'\n", parseMessage, shader.name );
+
+	if ( tr.shaderParseSaveState ) {
+		if ( tr.shaderParseNumWarnings < ARRAY_LEN( tr.shaderParseWarnings ) ) {
+			Q_strncpyz( tr.shaderParseWarnings[tr.shaderParseNumWarnings++].message, parseMessage, sizeof( tr.shaderParseWarnings[0] ) );
+		}
+	}
+}
+
+static void ParserError( PRINTF_FORMAT_STRING const char* format, ... )
+{
+	va_list ap;
+	va_start( ap, format );
+	Q_vsnprintf( parseMessage, sizeof( parseMessage ) - 1, format, ap );
+	va_end( ap );
+
+	ri.Printf( PRINT_WARNING, "ERROR: %s in shader '%s'\n", parseMessage, shader.name );
+
+	if ( tr.shaderParseSaveState ) {
+		Q_strncpyz( tr.shaderParseError.message, parseMessage, sizeof( tr.shaderParseError.message ) );
+	}
+}
+
 
 static qbool ParseVector( const char** text, int count, float *v )
 {
@@ -70,14 +94,14 @@ static qbool ParseVector( const char** text, int count, float *v )
 	// FIXME: spaces are currently required after parens, should change parseext...
 	const char* token = COM_ParseExt( text, qfalse );
 	if ( strcmp( token, "(" ) ) {
-		ri.Printf( PRINT_WARNING, "WARNING: missing parenthesis in shader '%s'\n", shader.name );
+		ParserWarning( "missing parenthesis" );
 		return qfalse;
 	}
 
 	for ( i = 0 ; i < count ; i++ ) {
 		token = COM_ParseExt( text, qfalse );
 		if ( !token[0] ) {
-			ri.Printf( PRINT_WARNING, "WARNING: missing vector element in shader '%s'\n", shader.name );
+			ParserWarning( "missing vector element" );
 			return qfalse;
 		}
 		v[i] = atof( token );
@@ -85,7 +109,7 @@ static qbool ParseVector( const char** text, int count, float *v )
 
 	token = COM_ParseExt( text, qfalse );
 	if ( strcmp( token, ")" ) ) {
-		ri.Printf( PRINT_WARNING, "WARNING: missing parenthesis in shader '%s'\n", shader.name );
+		ParserWarning( "missing parenthesis" );
 		return qfalse;
 	}
 
@@ -113,7 +137,7 @@ static unsigned NameToAFunc( const char *funcname )
 		return GLS_ATEST_GE_80;
 	}
 
-	ri.Printf( PRINT_WARNING, "WARNING: invalid alphaFunc name '%s' in shader '%s'\n", funcname, shader.name );
+	ParserWarning( "invalid alphaFunc name '%s'", funcname );
 	return 0;
 }
 
@@ -162,7 +186,7 @@ static int NameToSrcBlendMode( const char *name )
 		return GLS_SRCBLEND_ALPHA_SATURATE;
 	}
 
-	ri.Printf( PRINT_WARNING, "WARNING: unknown blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name );
+	ParserWarning( "unknown blend mode '%s', using GL_ONE instead", name );
 	return GLS_SRCBLEND_ONE;
 }
 
@@ -206,7 +230,7 @@ static int NameToDstBlendMode( const char *name )
 		return GLS_DSTBLEND_ONE_MINUS_SRC_COLOR;
 	}
 
-	ri.Printf( PRINT_WARNING, "WARNING: unknown blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name );
+	ParserWarning( "unknown blend mode '%s', using GL_ONE instead", name );
 	return GLS_DSTBLEND_ONE;
 }
 
@@ -242,7 +266,7 @@ static genFunc_t NameToGenFunc( const char *funcname )
 		return GF_NOISE;
 	}
 
-	ri.Printf( PRINT_WARNING, "WARNING: invalid genfunc name '%s' in shader '%s'\n", funcname, shader.name );
+	ParserWarning( "invalid genfunc name '%s'", funcname );
 	return GF_SIN;
 }
 
@@ -252,7 +276,7 @@ static void ParseWaveForm( const char** text, waveForm_t* wave )
 	const char* token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing waveform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing waveform parm" );
 		return;
 	}
 	wave->func = NameToGenFunc( token );
@@ -261,7 +285,7 @@ static void ParseWaveForm( const char** text, waveForm_t* wave )
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing waveform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing waveform parm" );
 		return;
 	}
 	wave->base = atof( token );
@@ -269,7 +293,7 @@ static void ParseWaveForm( const char** text, waveForm_t* wave )
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing waveform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing waveform parm" );
 		return;
 	}
 	wave->amplitude = atof( token );
@@ -277,7 +301,7 @@ static void ParseWaveForm( const char** text, waveForm_t* wave )
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing waveform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing waveform parm" );
 		return;
 	}
 	wave->phase = atof( token );
@@ -285,7 +309,7 @@ static void ParseWaveForm( const char** text, waveForm_t* wave )
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing waveform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing waveform parm" );
 		return;
 	}
 	wave->frequency = atof( token );
@@ -298,7 +322,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 	texModInfo_t *tmi;
 
 	if ( stage->numTexMods == TR_MAX_TEXMODS ) {
-		ri.Error( ERR_DROP, "ERROR: too many tcMod stages in shader '%s'\n", shader.name );
+		ParserError( "too many tcMod stages" );
 		return;
 	}
 
@@ -315,28 +339,28 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing tcMod turb parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing tcMod turb parms" );
 			return;
 		}
 		tmi->wave.base = atof( token );
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing tcMod turb in shader '%s'\n", shader.name );
+			ParserWarning( "missing tcMod turb parms" );
 			return;
 		}
 		tmi->wave.amplitude = atof( token );
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing tcMod turb in shader '%s'\n", shader.name );
+			ParserWarning( "missing tcMod turb parms" );
 			return;
 		}
 		tmi->wave.phase = atof( token );
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing tcMod turb in shader '%s'\n", shader.name );
+			ParserWarning( "missing tcMod turb parms" );
 			return;
 		}
 		tmi->wave.frequency = atof( token );
@@ -351,7 +375,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing scale parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing scale parms" );
 			return;
 		}
 		tmi->scale[0] = atof( token );
@@ -359,7 +383,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing scale parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing scale parms" );
 			return;
 		}
 		tmi->scale[1] = atof( token );
@@ -373,14 +397,14 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing scale scroll parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing scale scroll parms" );
 			return;
 		}
 		tmi->scroll[0] = atof( token );
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing scale scroll parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing scale scroll parms" );
 			return;
 		}
 		tmi->scroll[1] = atof( token );
@@ -394,7 +418,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing stretch parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing stretch parms" );
 			return;
 		}
 		tmi->wave.func = NameToGenFunc( token );
@@ -402,7 +426,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing stretch parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing stretch parms" );
 			return;
 		}
 		tmi->wave.base = atof( token );
@@ -410,7 +434,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing stretch parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing stretch parms" );
 			return;
 		}
 		tmi->wave.amplitude = atof( token );
@@ -418,7 +442,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing stretch parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing stretch parms" );
 			return;
 		}
 		tmi->wave.phase = atof( token );
@@ -426,7 +450,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing stretch parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing stretch parms" );
 			return;
 		}
 		tmi->wave.frequency = atof( token );
@@ -441,7 +465,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->matrix[0][0] = atof( token );
@@ -449,7 +473,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->matrix[0][1] = atof( token );
@@ -457,7 +481,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->matrix[1][0] = atof( token );
@@ -465,7 +489,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->matrix[1][1] = atof( token );
@@ -473,7 +497,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->translate[0] = atof( token );
@@ -481,7 +505,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing transform parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing transform parms" );
 			return;
 		}
 		tmi->translate[1] = atof( token );
@@ -496,7 +520,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing tcMod rotate parms in shader '%s'\n", shader.name );
+			ParserWarning( "missing tcMod rotate parms" );
 			return;
 		}
 		tmi->rotateSpeed = atof( token );
@@ -511,7 +535,7 @@ static void ParseTexMod( const char** text, shaderStage_t *stage )
 	}
 	else
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: unknown tcMod '%s' in shader '%s'\n", token, shader.name );
+		ParserWarning( "unknown tcMod '%s'", token );
 	}
 }
 
@@ -532,7 +556,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 		token = COM_ParseExt( text, qtrue );
 		if ( !token[0] )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: no matching '}' found\n" );
+			ParserError( "no matching '}' found" );
 			return qfalse;
 		}
 
@@ -548,7 +572,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'map' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'map' keyword" );
 				return qfalse;
 			}
 
@@ -581,7 +605,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 				stage->bundle.image[0] = R_FindImageFile( token, shader.imgflags, TW_REPEAT );
 				if ( !stage->bundle.image[0] )
 				{
-					ri.Printf( PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name );
+					ParserError( "R_FindImageFile could not find '%s'", token );
 					return qfalse;
 				}
 			}
@@ -594,14 +618,14 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'clampmap' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'clampmap' keyword" );
 				return qfalse;
 			}
 
 			stage->bundle.image[0] = R_FindImageFile( token, shader.imgflags, TW_CLAMP_TO_EDGE );
 			if ( !stage->bundle.image[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name );
+				ParserError( "R_FindImageFile could not find '%s'", token );
 				return qfalse;
 			}
 		}
@@ -613,7 +637,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'animMmap' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'animMmap' keyword" );
 				return qfalse;
 			}
 			stage->bundle.imageAnimationSpeed = atof( token );
@@ -629,7 +653,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 					stage->bundle.image[num] = R_FindImageFile( token, shader.imgflags, TW_REPEAT );
 					if ( !stage->bundle.image[num] )
 					{
-						ri.Printf( PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name );
+						ParserError( "R_FindImageFile could not find '%s'", token );
 						return qfalse;
 					}
 					stage->bundle.numImageAnimations++;
@@ -641,7 +665,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'videoMap' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'videoMap' keyword" );
 				return qfalse;
 			}
 			stage->bundle.videoMapHandle = ri.CIN_PlayCinematic( token, 0, 0, 256, 256, (CIN_loop | CIN_silent | CIN_shader));
@@ -658,7 +682,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'alphaFunc' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'alphaFunc' keyword" );
 				return qfalse;
 			}
 
@@ -673,7 +697,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameter for 'depthfunc' keyword in shader '%s'\n", shader.name );
+				ParserError( "missing parameter for 'depthFunc' keyword" );
 				return qfalse;
 			}
 
@@ -687,7 +711,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			}
 			else
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: unknown depthfunc '%s' in shader '%s'\n", token, shader.name );
+				ParserWarning( "unknown depthFunc '%s'", token );
 				continue;
 			}
 		}
@@ -707,7 +731,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parm for blendFunc in shader '%s'\n", shader.name );
+				ParserWarning( "missing parm for blendFunc" );
 				continue;
 			}
 			// check for "simple" blends first
@@ -727,7 +751,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 				token = COM_ParseExt( text, qfalse );
 				if ( token[0] == 0 )
 				{
-					ri.Printf( PRINT_WARNING, "WARNING: missing parm for blendFunc in shader '%s'\n", shader.name );
+					ParserWarning( "missing parm for blendFunc" );
 					continue;
 				}
 				blendDstBits = NameToDstBlendMode( token );
@@ -747,7 +771,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameters for rgbGen in shader '%s'\n", shader.name );
+				ParserWarning( "missing parameters for rgbGen" );
 				continue;
 			}
 
@@ -802,7 +826,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			}
 			else
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: unknown rgbGen parameter '%s' in shader '%s'\n", token, shader.name );
+				ParserWarning( "unknown rgbGen parameter '%s'", token );
 				continue;
 			}
 		}
@@ -814,7 +838,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parameters for alphaGen in shader '%s'\n", shader.name );
+				ParserWarning( "missing parameters for alphaGen" );
 				continue;
 			}
 
@@ -860,7 +884,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 				if ( token[0] == 0 )
 				{
 					shader.portalRange = 256;
-					ri.Printf( PRINT_WARNING, "WARNING: missing range parameter for alphaGen portal in shader '%s', defaulting to 256\n", shader.name );
+					ParserWarning( "missing range parameter for alphaGen portal, defaulting to 256" );
 				}
 				else
 				{
@@ -869,7 +893,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			}
 			else
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: unknown alphaGen parameter '%s' in shader '%s'\n", token, shader.name );
+				ParserWarning( "unknown alphaGen parameter '%s'", token );
 				continue;
 			}
 		}
@@ -881,7 +905,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing texgen parm in shader '%s'\n", shader.name );
+				ParserWarning( "missing tcGen parm" );
 				continue;
 			}
 
@@ -905,7 +929,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 			}
 			else
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: unknown texgen parm in shader '%s'\n", shader.name );
+				ParserWarning( "unknown tcGen parm '%s'", token );
 			}
 		}
 		//
@@ -946,7 +970,7 @@ static qbool ParseStage( const char** text, shaderStage_t* stage )
 #endif // QC
 		else
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: unknown parameter '%s' in shader '%s'\n", token, shader.name );
+			ParserError( "unknown parameter '%s'", token );
 			return qfalse;
 		}
 	}
@@ -1016,12 +1040,12 @@ static void ParseDeform( const char** text )
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: missing deform parm in shader '%s'\n", shader.name );
+		ParserWarning( "missing deform parm" );
 		return;
 	}
 
 	if ( shader.numDeforms == MAX_SHADER_DEFORMS ) {
-		ri.Printf( PRINT_WARNING, "WARNING: MAX_SHADER_DEFORMS in '%s'\n", shader.name );
+		ParserWarning( "too many deforms" );
 		return;
 	}
 
@@ -1053,7 +1077,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes bulge parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes bulge parm" );
 			return;
 		}
 		ds->bulgeWidth = atof( token );
@@ -1061,7 +1085,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes bulge parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes bulge parm" );
 			return;
 		}
 		ds->bulgeHeight = atof( token );
@@ -1069,7 +1093,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes bulge parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes bulge parm" );
 			return;
 		}
 		ds->bulgeSpeed = atof( token );
@@ -1083,7 +1107,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes parm" );
 			return;
 		}
 
@@ -1094,7 +1118,7 @@ static void ParseDeform( const char** text )
 		else
 		{
 			ds->deformationSpread = 100.0f;
-			ri.Printf( PRINT_WARNING, "WARNING: illegal div value of 0 in deformVertexes command for shader '%s'\n", shader.name );
+			ParserWarning( "illegal div value of 0 in deformVertexes" );
 		}
 
 		ParseWaveForm( text, &ds->deformationWave );
@@ -1107,7 +1131,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes parm" );
 			return;
 		}
 		ds->deformationWave.amplitude = atof( token );
@@ -1115,7 +1139,7 @@ static void ParseDeform( const char** text )
 		token = COM_ParseExt( text, qfalse );
 		if ( token[0] == 0 )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes parm in shader '%s'\n", shader.name );
+			ParserWarning( "missing deformVertexes parm" );
 			return;
 		}
 		ds->deformationWave.frequency = atof( token );
@@ -1130,7 +1154,7 @@ static void ParseDeform( const char** text )
 		for ( i = 0 ; i < 3 ; i++ ) {
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 ) {
-				ri.Printf( PRINT_WARNING, "WARNING: missing deformVertexes parm in shader '%s'\n", shader.name );
+				ParserWarning( "missing deformVertexes parm" );
 				return;
 			}
 			ds->moveVector[i] = atof( token );
@@ -1141,8 +1165,8 @@ static void ParseDeform( const char** text )
 		return;
 	}
 
-	//ri.Printf( PRINT_WARNING, "WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name );
-	ri.Error( ERR_FATAL, "unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name );
+	ParserWarning( "unknown deformVertexes subtype '%s'", token );
+	shader.numDeforms--;
 }
 
 
@@ -1158,13 +1182,13 @@ static void ParseSkyParms( const char** text )
 	// outerbox
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 ) {
-		ri.Printf( PRINT_WARNING, "WARNING: 'skyParms' missing parameter in shader '%s'\n", shader.name );
+		ParserWarning( "'skyParms' missing parameter" );
 		return;
 	}
 	if ( strcmp( token, "-" ) ) {
 		for (i = 0; i < 6; ++i) {
 			Com_sprintf( pathname, sizeof(pathname), "%s_%s.tga", token, suf[i] );
-			shader.sky.outerbox[i] = R_FindImageFile( pathname, IMG_NOMIPMAP | IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
+			shader.sky.outerbox[i] = R_FindImageFile( pathname, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
 			if ( !shader.sky.outerbox[i] ) {
 				shader.sky.outerbox[i] = tr.defaultImage;
 			}
@@ -1174,7 +1198,7 @@ static void ParseSkyParms( const char** text )
 	// cloudheight
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 ) {
-		ri.Printf( PRINT_WARNING, "WARNING: 'skyParms' missing parameter in shader '%s'\n", shader.name );
+		ParserWarning( "'skyParms' missing parameter" );
 		return;
 	}
 	shader.sky.cloudHeight = atof( token );
@@ -1186,13 +1210,13 @@ static void ParseSkyParms( const char** text )
 	// innerbox
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 ) {
-		ri.Printf( PRINT_WARNING, "WARNING: 'skyParms' missing parameter in shader '%s'\n", shader.name );
+		ParserWarning( "'skyParms' missing parameter" );
 		return;
 	}
 	if ( strcmp( token, "-" ) ) {
 		for (i = 0; i < 6; ++i) {
 			Com_sprintf( pathname, sizeof(pathname), "%s_%s.tga", token, suf[i] );
-			shader.sky.innerbox[i] = R_FindImageFile( pathname, IMG_NOMIPMAP | IMG_NOPICMIP, TW_REPEAT );
+			shader.sky.innerbox[i] = R_FindImageFile( pathname, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
 			if ( !shader.sky.innerbox[i] ) {
 				shader.sky.innerbox[i] = tr.defaultImage;
 			}
@@ -1210,7 +1234,7 @@ static void ParseSort( const char** text )
 
 	token = COM_ParseExt( text, qfalse );
 	if ( token[0] == 0 ) {
-		ri.Printf( PRINT_WARNING, "WARNING: missing sort parameter in shader '%s'\n", shader.name );
+		ParserWarning( "missing sort parameter" );
 		return;
 	}
 
@@ -1324,20 +1348,14 @@ static void ParseDepthFade( const char** text )
 	const char* token = COM_ParseExt( text, qfalse );
 	float scale;
 	if ( token[0] == '\0' || sscanf( token, "%f", &scale ) != 1 || scale <= 0.0f ) {
-		ri.Printf( PRINT_WARNING,
-				  "WARNING: invalid/missing depth fade scale argument '%s' in shader '%s'! "
-				  "Ignoring the directive completely.\n",
-				  token, shader.name );
+		ParserWarning( "invalid/missing depth fade scale argument '%s'", token );
 		return;
 	}
 
 	token = COM_ParseExt( text, qfalse );
 	float bias;
 	if ( token[0] == '\0' || sscanf( token, "%f", &bias ) != 1 ) {
-		ri.Printf( PRINT_WARNING,
-				  "WARNING: invalid/missing depth fade bias argument '%s' in shader '%s'! "
-				  "Ignoring the directive completely.\n",
-				  token, shader.name );
+		ParserWarning( "invalid/missing depth fade bias argument '%s'", token );
 		return;
 	}
 
@@ -1358,7 +1376,7 @@ static qbool ParseShader( const char** text )
 	token = COM_ParseExt( text, qtrue );
 	if ( token[0] != '{' )
 	{
-		ri.Printf( PRINT_WARNING, "WARNING: expecting '{', found '%s' instead in shader '%s'\n", token, shader.name );
+		ParserError( "expecting '{', found '%s' instead", token );
 		return qfalse;
 	}
 
@@ -1367,7 +1385,7 @@ static qbool ParseShader( const char** text )
 		token = COM_ParseExt( text, qtrue );
 		if ( !token[0] )
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: no concluding '}' in shader %s\n", shader.name );
+			ParserError( "no concluding '}'" );
 			return qfalse;
 		}
 
@@ -1380,7 +1398,7 @@ static qbool ParseShader( const char** text )
 		else if ( token[0] == '{' )
 		{
 			if ( s >= MAX_SHADER_STAGES ) {
-				ri.Error( ERR_DROP, "too many stages in shader %s\n", shader.name );
+				ParserError( "too many stages" );
 				return qfalse;
 			}
 
@@ -1464,13 +1482,14 @@ static qbool ParseShader( const char** text )
 		else if ( !Q_stricmp( token, "fogParms" ) )
 		{
 			if ( !ParseVector( text, 3, shader.fogParms.color ) ) {
+				ParserError( "invalid fogParms vector" );
 				return qfalse;
 			}
 
 			token = COM_ParseExt( text, qfalse );
 			if ( !token[0] )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing parm for 'fogParms' keyword in shader '%s'\n", shader.name );
+				ParserWarning( "missing parm for 'fogParms' keyword" );
 				continue;
 			}
 			shader.fogParms.depthForOpaque = atof( token );
@@ -1503,7 +1522,7 @@ static qbool ParseShader( const char** text )
 			token = COM_ParseExt( text, qfalse );
 			if ( token[0] == 0 )
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: missing cull parms in shader '%s'\n", shader.name );
+				ParserWarning( "missing cull parms" );
 				continue;
 			}
 
@@ -1517,7 +1536,7 @@ static qbool ParseShader( const char** text )
 			}
 			else
 			{
-				ri.Printf( PRINT_WARNING, "WARNING: invalid cull parm '%s' in shader '%s'\n", token, shader.name );
+				ParserWarning( "invalid cull parm '%s'", token );
 			}
 			continue;
 		}
@@ -1529,7 +1548,7 @@ static qbool ParseShader( const char** text )
 		}
 		else
 		{
-			ri.Printf( PRINT_WARNING, "WARNING: unknown general shader parameter '%s' in '%s'\n", token, shader.name );
+			ParserError( "unknown general shader parameter '%s'", token );
 			return qfalse;
 		}
 	}
@@ -1538,6 +1557,7 @@ static qbool ParseShader( const char** text )
 	// ignore shaders that don't have any stages, unless it is a sky or fog
 	//
 	if ( s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG ) ) {
+		ParserError( "non-sky/fog shaders must have at least 1 stage" );
 		return qfalse;
 	}
 
@@ -1547,7 +1567,7 @@ static qbool ParseShader( const char** text )
 }
 
 
-static int R_CompareShaders( const void* aPtr, const void* bPtr )
+static int CompareShaders( const void* aPtr, const void* bPtr )
 {
 	const shader_t* const a = *(const shader_t**)aPtr;
 	const shader_t* const b = *(const shader_t**)bPtr;
@@ -1560,6 +1580,206 @@ static int R_CompareShaders( const void* aPtr, const void* bPtr )
 		return a->polygonOffset - b->polygonOffset;
 
 	return a->cullType - b->cullType;
+}
+
+
+static void SortShaders()
+{
+	qsort( tr.sortedShaders, tr.numShaders, sizeof(shader_t*), &CompareShaders );
+	for ( int i = 0; i < tr.numShaders; ++i ) {
+		tr.sortedShaders[i]->sortedIndex = i;
+	}
+}
+
+
+static qbool IsColorGenDynamic(colorGen_t cGen)
+{
+	switch(cGen)
+	{
+		case CGEN_BAD:
+		case CGEN_IDENTITY:
+		case CGEN_IDENTITY_LIGHTING:
+		case CGEN_LIGHTING_DIFFUSE:
+		case CGEN_CONST:
+		case CGEN_VERTEX:
+		case CGEN_EXACT_VERTEX:
+		case CGEN_ONE_MINUS_VERTEX:
+			return qfalse;
+
+		case CGEN_WAVEFORM: // time-based
+		case CGEN_ENTITY: // mod can change it frame to frame
+		case CGEN_ONE_MINUS_ENTITY: // mod can change it frame to frame
+			return qtrue;
+
+		default:
+			Q_assert(!"Unsupported colorGen_t");
+			return qtrue;
+	}
+}
+
+
+static qbool IsAlphaGenDynamic(alphaGen_t aGen)
+{
+	switch(aGen)
+	{
+		case AGEN_SKIP:
+		case AGEN_IDENTITY:
+		case AGEN_CONST:
+		case AGEN_VERTEX:
+		case AGEN_ONE_MINUS_VERTEX:
+			return qfalse;
+
+		case AGEN_WAVEFORM: // time-based
+		case AGEN_LIGHTING_SPECULAR: // changes with camera position
+		case AGEN_ENTITY: // mod can change it frame to frame
+		case AGEN_ONE_MINUS_ENTITY: // mod can change it frame to frame
+		case AGEN_PORTAL: // changes with camera position
+			return qtrue;
+
+		default:
+			Q_assert(!"Unsupported alphaGen_t");
+			return qtrue;
+	}
+}
+
+
+static qbool IsTexCoordGenDynamic(texCoordGen_t tcGen)
+{
+	switch(tcGen)
+	{
+		case TCGEN_IDENTITY:
+		case TCGEN_BAD:
+		case TCGEN_TEXTURE:
+		case TCGEN_LIGHTMAP:
+		case TCGEN_VECTOR:
+			return qfalse;
+
+		case TCGEN_ENVIRONMENT_MAPPED: // changes with camera position
+			return qtrue;
+
+		default:
+			Q_assert(!"Unsupported texCoordGen_t");
+			return qtrue;
+	}
+}
+
+
+static qbool IsTexModDynamic(texMod_t texMod)
+{
+	switch(texMod)
+	{
+		case TMOD_NONE:
+		case TMOD_SCALE:
+		case TMOD_TRANSFORM:
+			return qfalse;
+
+		case TMOD_TURBULENT: // time
+		case TMOD_ENTITY_TRANSLATE: // time
+		case TMOD_SCROLL: // time
+		case TMOD_STRETCH: // time
+		case TMOD_ROTATE: // time
+			return qtrue;
+
+		default:
+			Q_assert(!"Unsupported texMod_t");
+			return qtrue;
+	}
+}
+
+
+static qbool IsDeformDynamic(deform_t deform)
+{
+	switch(deform)
+	{
+		case DEFORM_NONE:
+		case DEFORM_PROJECTION_SHADOW: // unsupported
+		case DEFORM_TEXT0:
+		case DEFORM_TEXT1:
+		case DEFORM_TEXT2:
+		case DEFORM_TEXT3:
+		case DEFORM_TEXT4:
+		case DEFORM_TEXT5:
+		case DEFORM_TEXT6:
+		case DEFORM_TEXT7:
+			return qfalse;
+
+		case DEFORM_WAVE: // time
+		case DEFORM_NORMALS: // time
+		case DEFORM_BULGE: // time
+		case DEFORM_MOVE: // time
+		case DEFORM_AUTOSPRITE: // changes with camera orientation
+		case DEFORM_AUTOSPRITE2: // changes with camera orientation
+			return qtrue;
+
+		default:
+			Q_assert(!"Unsupported deform_t");
+			return qtrue;
+	}
+}
+
+
+static void ClassifyShaderOpacity(shader_t* sh)
+{
+	// @TODO: is this always correct?
+	const qbool isOpaque = sh->sort <= SS_OPAQUE;
+	qbool startsWithAlphaTest = qfalse;
+	if(sh->numStages > 0)
+	{
+		startsWithAlphaTest = (sh->stages[0]->stateBits & GLS_ATEST_BITS) != 0;
+	}
+
+	sh->isOpaque = isOpaque;
+	sh->isAlphaTestedOpaque = isOpaque && startsWithAlphaTest;
+}
+
+
+static void ClassifyShaderDynamism(shader_t* sh)
+{
+	sh->isDynamic = qtrue;
+	
+	for(int d = 0; d < sh->numDeforms; ++d)
+	{
+		if(IsDeformDynamic(sh->deforms[d].deformation))
+		{
+			return;
+		}
+	}
+
+	for(int s = 0; s < sh->numStages; ++s)
+	{
+		shaderStage_t* const stage = sh->stages[s];
+		for(int t = 0; t < stage->numTexMods; ++t)
+		{
+			if(IsTexModDynamic(stage->texMods[t].type))
+			{
+				return;
+			}
+		}
+
+		if(IsColorGenDynamic(stage->rgbGen))
+		{
+			return;
+		}
+
+		if(IsAlphaGenDynamic(stage->alphaGen))
+		{
+			return;
+		}
+
+		if(IsTexCoordGenDynamic(stage->tcGen))
+		{
+			return;
+		}
+	}
+
+	sh->isDynamic = qfalse;
+}
+
+
+static void ClassifyShader(shader_t* sh)
+{
+	ClassifyShaderOpacity(sh);
+	ClassifyShaderDynamism(sh);
 }
 
 
@@ -1587,10 +1807,7 @@ static void SortNewShader()
 	tr.sortedShaders[i+1] = newShader;
 
 	// sort it more aggressively for better performance
-	qsort( tr.sortedShaders, tr.numShaders, sizeof(shader_t*), &R_CompareShaders );
-	for ( i = 0; i < tr.numShaders; ++i ) {
-		tr.sortedShaders[i]->sortedIndex = i;
-	}
+	SortShaders();
 
 	//
 	// If we register a new shader when surfaces are already added,
@@ -1602,48 +1819,52 @@ static void SortNewShader()
 	// The extra CPU cost for the fix-up is nothing compared to loading new textures mid-frame.
 	//
 
-	int entityNum, fogNum;
+	int entityNum;
 	const shader_t* wrongShader;
 
 	const int numDrawSurfs = tr.refdef.numDrawSurfs;
 	drawSurf_t* drawSurfs = tr.refdef.drawSurfs;
 	for( i = 0; i < numDrawSurfs; ++i, ++drawSurfs ) {
-		R_DecomposeSort( drawSurfs->sort, &entityNum, &wrongShader, &fogNum );
-		drawSurfs->sort = R_ComposeSort( entityNum, tr.shaders[drawSurfs->shaderNum], fogNum );
+		R_DecomposeSort( drawSurfs->sort, &entityNum, &wrongShader );
+		drawSurfs->sort = R_ComposeSort( entityNum, tr.shaders[drawSurfs->shaderNum], drawSurfs->staticGeoChunk );
 	}
 
 	const int numLitSurfs = tr.refdef.numLitSurfs;
 	litSurf_t* litSurfs = tr.refdef.litSurfs;
 	for ( i = 0; i < numLitSurfs; ++i, ++litSurfs ) {
-		R_DecomposeSort( litSurfs->sort, &entityNum, &wrongShader, &fogNum );
-		litSurfs->sort = R_ComposeSort( entityNum, tr.shaders[litSurfs->shaderNum], fogNum );
+		R_DecomposeLitSort( litSurfs->sort, &entityNum, &wrongShader );
+		litSurfs->sort = R_ComposeLitSort( entityNum, tr.shaders[litSurfs->shaderNum], drawSurfs->staticGeoChunk );
 	}
 }
 
 
-static shader_t* GeneratePermanentShader()
+static shader_t* GeneratePermanentShader( shader_t* sh )
 {
 	if ( tr.numShaders == MAX_SHADERS ) {
-		ri.Printf( PRINT_WARNING, "WARNING: GeneratePermanentShader - MAX_SHADERS hit\n");
+		ri.Printf( PRINT_WARNING, "WARNING: GeneratePermanentShader - MAX_SHADERS hit\n" );
 		return tr.defaultShader;
 	}
 
-	shader_t* newShader = RI_New<shader_t>();
-	*newShader = shader;
+	shader_t* newShader;
+	if ( sh != NULL ) {
+		newShader = sh;
+		*newShader = shader;
+	} else {
+		newShader = RI_New<shader_t>();
+		*newShader = shader;
 
-	if ( shader.sort <= SS_OPAQUE ) {
-		newShader->fogPass = FP_EQUAL;
-	} else if ( shader.contentFlags & CONTENTS_FOG ) {
-		newShader->fogPass = FP_LE;
+		tr.shaders[tr.numShaders] = newShader;
+		newShader->index = tr.numShaders;
+
+		tr.sortedShaders[tr.numShaders] = newShader;
+		newShader->sortedIndex = tr.numShaders;
+
+		tr.numShaders++;
+
+		const int hash = Q_FileHash( newShader->name, FILE_HASH_SIZE );
+		newShader->next = hashTable[hash];
+		hashTable[hash] = newShader;
 	}
-
-	tr.shaders[ tr.numShaders ] = newShader;
-	newShader->index = tr.numShaders;
-
-	tr.sortedShaders[ tr.numShaders ] = newShader;
-	newShader->sortedIndex = tr.numShaders;
-
-	tr.numShaders++;
 
 	for ( int i = 0; i < newShader->numStages; ++i ) {
 		if ( !stages[i].active ) {
@@ -1658,236 +1879,17 @@ static shader_t* GeneratePermanentShader()
 		Com_Memcpy( newShader->stages[i]->texMods, stages[i].texMods, n * sizeof( texModInfo_t ) );
 	}
 
-	SortNewShader();
+	ClassifyShader( newShader );
 
-	int hash = Q_FileHash(newShader->name, FILE_HASH_SIZE);
-	newShader->next = hashTable[hash];
-	hashTable[hash] = newShader;
+	if ( sh != NULL ) {
+		SortShaders();
+	} else {
+		SortNewShader();
+	}
+
+	renderPipeline->ProcessShader( *newShader );
 
 	return newShader;
-}
-
-
-/*
-========================================================================================
-
-SHADER OPTIMIZATION AND FOGGING
-
-========================================================================================
-*/
-
-
-typedef struct {
-	int			blendA;
-	int			blendB;
-	texEnv_t	multitextureEnv;
-	int			multitextureBlend;
-} collapse_t;
-
-static const collapse_t collapse[] = {
-	// the most common (and most worthwhile) collapse is for DxLM shaders
-	{ 0, GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO,
-		TE_MODULATE, 0 },
-
-	{ 0, GLS_DSTBLEND_SRC_COLOR | GLS_SRCBLEND_ZERO,
-		TE_MODULATE, 0 },
-
-	{ GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR,
-		TE_MODULATE, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR },
-
-	{ GLS_DSTBLEND_SRC_COLOR | GLS_SRCBLEND_ZERO, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR,
-		TE_MODULATE, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR },
-
-	{ GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR, GLS_DSTBLEND_SRC_COLOR | GLS_SRCBLEND_ZERO,
-		TE_MODULATE, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR },
-
-	{ GLS_DSTBLEND_SRC_COLOR | GLS_SRCBLEND_ZERO, GLS_DSTBLEND_SRC_COLOR | GLS_SRCBLEND_ZERO,
-		TE_MODULATE, GLS_DSTBLEND_ZERO | GLS_SRCBLEND_DST_COLOR },
-
-	{ 0, GLS_DSTBLEND_ONE | GLS_SRCBLEND_ONE,
-		TE_ADD, 0 },
-
-	{ GLS_DSTBLEND_ONE | GLS_SRCBLEND_ONE, GLS_DSTBLEND_ONE | GLS_SRCBLEND_ONE,
-		TE_ADD, GLS_DSTBLEND_ONE | GLS_SRCBLEND_ONE },
-#if 0
-	{ 0, GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_SRCBLEND_SRC_ALPHA,
-		TE_DECAL, 0 },
-#endif
-	{ -1 }
-};
-
-/*
-================
-CollapseMultitexture
-
-Attempt to combine two stages into a single multitexture stage
-FIXME: I think modulated add + modulated add collapses incorrectly
-=================
-*/
-static qbool CollapseMultitexture( void ) {
-	int abits, bbits;
-	int i;
-
-	// make sure both stages are active
-	if ( !stages[0].active || !stages[1].active ) {
-		return qfalse;
-	}
-
-	abits = stages[0].stateBits;
-	bbits = stages[1].stateBits;
-
-	// make sure that both stages have identical state other than blend modes
-	if ( ( abits & ~( GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS | GLS_DEPTHMASK_TRUE ) ) !=
-		( bbits & ~( GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS | GLS_DEPTHMASK_TRUE ) ) ) {
-		return qfalse;
-	}
-
-	abits &= ( GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS );
-	bbits &= ( GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS );
-
-	// search for a valid multitexture blend function
-	for ( i = 0; collapse[i].blendA != -1 ; i++ ) {
-		if ( abits == collapse[i].blendA
-			&& bbits == collapse[i].blendB ) {
-			break;
-		}
-	}
-
-	// nothing found
-	if ( collapse[i].blendA == -1 ) {
-		return qfalse;
-	}
-
-	// make sure waveforms have identical parameters
-	if ( ( stages[0].rgbGen != stages[1].rgbGen ) ||
-		( stages[0].alphaGen != stages[1].alphaGen ) )  {
-		return qfalse;
-	}
-
-	// an add collapse can only have identity colors
-	if ( collapse[i].multitextureEnv == TE_ADD && stages[0].rgbGen != CGEN_IDENTITY ) {
-		return qfalse;
-	}
-
-	if ( stages[0].rgbGen == CGEN_WAVEFORM )
-	{
-		if ( memcmp( &stages[0].rgbWave,
-					 &stages[1].rgbWave,
-					 sizeof( stages[0].rgbWave ) ) )
-		{
-			return qfalse;
-		}
-	}
-	if ( stages[0].alphaGen == AGEN_WAVEFORM )
-	{
-		if ( memcmp( &stages[0].alphaWave,
-					 &stages[1].alphaWave,
-					 sizeof( stages[0].alphaWave ) ) )
-		{
-			return qfalse;
-		}
-	}
-
-
-	return qfalse;
-/*
-	// set the new blend state bits
-	shader.multitextureEnv = collapse[i].multitextureEnv;
-	stages[0].stateBits &= ~( GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS );
-	stages[0].stateBits |= collapse[i].multitextureBlend;
-
-	//
-	// move down subsequent shaders
-	//
-	memmove( &stages[1], &stages[2], sizeof( stages[0] ) * ( MAX_SHADER_STAGES - 2 ) );
-	Com_Memset( &stages[MAX_SHADER_STAGES-1], 0, sizeof( stages[0] ) );
-
-	return qtrue;
-*/
-}
-
-
-/*
-collapses can be a bit tricky, so we set a few simplifying groundrules:
-first off, GL_REPLACE and GL_DECAL are almost completely pointless
-since they're just subsets of GL_MODULATE. the only time they can ever
-have value is in a multi-add collapse where one layer is modulated by
-an rgbgen but the other needs to maintain identity colors
-*/
-
-#define GLS_BLEND_BITS (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)
-
-static void CollapseStages()
-{
-	int i;
-	// NEVER reference the global stages[] etc in here, only these locals
-	int numStages = shader.numStages;
-	shaderStage_t* aStages = &stages[0];
-
-#define CollapseFailure { ++aStages; --numStages; continue; }
-
-	while (numStages >= 2) {
-		int abits = aStages[0].stateBits;
-		int bbits = aStages[1].stateBits;
-
-		if ( ( abits & ~(GLS_BLEND_BITS | GLS_DEPTHMASK_TRUE) ) !=
-			 ( bbits & ~(GLS_BLEND_BITS | GLS_DEPTHMASK_TRUE) ) )
-			CollapseFailure;
-
-		if ( ( aStages[0].rgbGen != aStages[1].rgbGen ) || ( aStages[0].alphaGen != aStages[1].alphaGen ) )
-			CollapseFailure;
-
-		abits &= GLS_BLEND_BITS;
-		bbits &= GLS_BLEND_BITS;
-
-		for ( i = 0; collapse[i].blendA != -1; ++i ) {
-			if ( (abits == collapse[i].blendA) && (bbits == collapse[i].blendB) ) {
-				break;
-			}
-		}
-
-		if ( collapse[i].blendA == -1 )
-			CollapseFailure;
-
-		// Check that all colors are opaque white on the second stage
-		// because the stage iterator can't currently specify
-		// another color array.
-		// Example shader broken without this extra test:
-		// "textures/sfx/diamond2cjumppad"
-		// The ring pulses in and out instead of only out.
-
-		// These cases must always be rejected because they depend
-		// on time elapsed, camera position, entity colors, etc.
-		if (	aStages[1].rgbGen == CGEN_LIGHTING_DIFFUSE ||
-				aStages[1].rgbGen == CGEN_WAVEFORM ||
-				aStages[1].rgbGen == CGEN_ENTITY ||
-				aStages[1].rgbGen == CGEN_ONE_MINUS_ENTITY ||
-				aStages[1].alphaGen == AGEN_WAVEFORM ||
-				aStages[1].alphaGen == AGEN_LIGHTING_SPECULAR ||
-				aStages[1].alphaGen == AGEN_ENTITY ||
-				aStages[1].alphaGen == AGEN_ONE_MINUS_ENTITY ||
-				aStages[1].alphaGen == AGEN_PORTAL )
-			CollapseFailure;
-
-		// For the remaining cases, we generate and test the colors.
-		R_ComputeColors( &aStages[1], tess.svars[0], 0, tess.numVertexes );
-		const int* colors = (const int*)tess.svars[0].colors;
-		const int colorCount = tess.numVertexes;
-		int allOnes = -1;
-		for ( int c = 0; c < colorCount; ++c )
-			allOnes &= colors[c];
-		if ( allOnes != -1 )
-			CollapseFailure;
-
-		aStages[0].stateBits &= ~GLS_BLEND_BITS;
-		aStages[0].stateBits |= collapse[i].multitextureBlend;
-		aStages[1].mtEnv = collapse[i].multitextureEnv;
-		aStages[0].mtStages = 1;
-		aStages += 2;
-		numStages -= 2;
-	}
-
-#undef CollapseFailure
 }
 
 
@@ -1928,9 +1930,9 @@ static qbool IsAdditiveBlendDepthFade()
 		const unsigned int src = bits & GLS_SRCBLEND_BITS;
 		const unsigned int dst = bits & GLS_DSTBLEND_BITS;
 		if ((src != GLS_SRCBLEND_ONE && src != GLS_SRCBLEND_SRC_ALPHA && src != GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA) ||
-		   dst != GLS_DSTBLEND_ONE ||
-		   (bits & GLS_DEPTHMASK_TRUE) != 0)
-		   return qfalse;
+			dst != GLS_DSTBLEND_ONE ||
+			(bits & GLS_DEPTHMASK_TRUE) != 0)
+			return qfalse;
 	}
 
 	return qtrue;
@@ -2034,7 +2036,7 @@ static void ProcessDepthFade()
 	shader.dfType = DFT_NONE;
 
 	if (!glInfo.depthFadeSupport)
-	   return;
+		return;
 
 	if (shader.sort <= SS_OPAQUE)
 		return;
@@ -2212,6 +2214,104 @@ static void ProcessGreyscale()
 }
 
 
+static alphaGen_t GetActualAlphaTest(const shaderStage_t* stage)
+{
+	if (stage->alphaGen != AGEN_SKIP) {
+		return stage->alphaGen;
+	}
+
+	switch (stage->rgbGen) {
+		case CGEN_IDENTITY: return AGEN_IDENTITY;
+		case CGEN_IDENTITY_LIGHTING: return (alphaGen_t)__LINE__; // alpha = tr.identityLightByte
+		case CGEN_LIGHTING_DIFFUSE: return AGEN_IDENTITY;
+		case CGEN_CONST: return AGEN_CONST;
+		case CGEN_VERTEX: return AGEN_VERTEX;
+		case CGEN_EXACT_VERTEX: return AGEN_VERTEX;
+		case CGEN_ONE_MINUS_VERTEX: return (alphaGen_t)__LINE__; // doesn't write to alpha currently...
+		case CGEN_WAVEFORM: return AGEN_IDENTITY;
+		case CGEN_ENTITY: return AGEN_ENTITY;
+		case CGEN_ONE_MINUS_ENTITY: return AGEN_ONE_MINUS_ENTITY;
+		case CGEN_DEBUG_ALPHA: return AGEN_IDENTITY;
+		default: return (alphaGen_t)__LINE__;
+	}
+}
+
+
+static void FixRedundantAlphaTesting()
+{
+	if (shader.numStages < 2 ||
+		!stages[0].active ||
+		!stages[1].active) {
+		return;
+	}
+
+	const unsigned int bits0 = stages[0].stateBits;
+	const unsigned int bits1 = stages[1].stateBits;
+
+	// both stages must be opaque
+	const unsigned int blendReplace = GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO;
+	const unsigned int blendNone = 0;
+	if ((bits0 & GLS_BLEND_BITS) != blendReplace && (bits0 & GLS_BLEND_BITS) != blendNone) {
+		return;
+	}
+	if ((bits1 & GLS_BLEND_BITS) != blendReplace && (bits1 & GLS_BLEND_BITS) != blendNone) {
+		return;
+	}
+
+	// both stages must have complementary alpha tests,
+	// meaning all fragment are written by the end of stage #2
+	// (provided texture, alphaGen and depth states match)
+	const unsigned int bitsOr = bits0 | bits1;
+	const unsigned int maskAT = GLS_ATEST_BITS;
+	const unsigned int expectAT = GLS_ATEST_GE_80 | GLS_ATEST_LT_80;
+	if ((bitsOr & maskAT) != expectAT) {
+		return;
+	}
+
+	// same texture
+	// @TODO: animMap support
+	if (stages[0].bundle.image[0] != stages[1].bundle.image[0]) {
+		return;
+	}
+
+	// same depth states and polygon fill
+	const unsigned int maskRest = GLS_DEPTHMASK_TRUE | GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE | GLS_DEPTHFUNC_EQUAL;
+	const unsigned int expectRest = GLS_DEPTHMASK_TRUE;
+	if ((bits0 & maskRest) != expectRest || (bits1 & maskRest) != expectRest) {
+		return;
+	}
+
+	// same alphaGen
+	const alphaGen_t ag0 = GetActualAlphaTest(&stages[0]);
+	const alphaGen_t ag1 = GetActualAlphaTest(&stages[1]);
+	if (ag0 != ag1) {
+		return;
+	}
+
+	stages[0].stateBits &= ~GLS_ATEST_BITS;
+}
+
+
+// we don't want to allow multiple strictly equivalent states that have different bit patterns
+// this leads to more pixel shaders, more PSOs, more PSO switches...
+static void FixUnusedBlendModes()
+{
+	for (int s = 0; s < MAX_SHADER_STAGES; ++s) {
+		const unsigned int oldBlendBits = stages[s].stateBits & GLS_BLEND_BITS;
+
+		int newBlendBits = oldBlendBits;
+		if (oldBlendBits == (GLS_SRCBLEND_ZERO | GLS_DSTBLEND_SRC_COLOR)) {
+			newBlendBits = GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
+		} else if (oldBlendBits == (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO)) {
+			newBlendBits = 0;
+		}
+
+		stages[s].stateBits &= ~GLS_BLEND_BITS;
+		stages[s].stateBits |= newBlendBits;
+	}
+}
+
+
 static qbool UsesInternalLightmap( const shaderStage_t* stage )
 {
 	return
@@ -2308,7 +2408,7 @@ static void BuildPerImageShaderList( shader_t* newShader )
 // returns a freshly allocated shader with info
 // copied from the current global working shader
 
-static shader_t* FinishShader()
+static shader_t* FinishShader( shader_t* sh = NULL )
 {
 	int stage;
 
@@ -2331,7 +2431,7 @@ static shader_t* FinishShader()
 
 		// check for a missing texture
 		if ( !pStage->bundle.image[0] ) {
-			ri.Printf( PRINT_WARNING, "Shader %s has a stage with no image\n", shader.name );
+			ParserWarning( "found a stage with no image" );
 			pStage->active = qfalse;
 			continue;
 		}
@@ -2361,37 +2461,10 @@ static shader_t* FinishShader()
 		}
 
 		//
-		// determine sort order and fog color adjustment
+		// determine sort order
 		//
 		if ( ( pStage->stateBits & ( GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS ) ) &&
 			 ( stages[0].stateBits & ( GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS ) ) ) {
-			int blendSrcBits = pStage->stateBits & GLS_SRCBLEND_BITS;
-			int blendDstBits = pStage->stateBits & GLS_DSTBLEND_BITS;
-
-			// fog color adjustment only works for blend modes that have a contribution
-			// that aproaches 0 as the modulate values aproach 0 --
-			// GL_ONE, GL_ONE
-			// GL_ZERO, GL_ONE_MINUS_SRC_COLOR
-			// GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
-
-			// modulate, additive
-			if ( ( ( blendSrcBits == GLS_SRCBLEND_ONE ) && ( blendDstBits == GLS_DSTBLEND_ONE ) ) ||
-				( ( blendSrcBits == GLS_SRCBLEND_ZERO ) && ( blendDstBits == GLS_DSTBLEND_ONE_MINUS_SRC_COLOR ) ) ) {
-				pStage->adjustColorsForFog = ACFF_MODULATE_RGB;
-			}
-			// strict blend
-			else if ( ( blendSrcBits == GLS_SRCBLEND_SRC_ALPHA ) && ( blendDstBits == GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA ) )
-			{
-				pStage->adjustColorsForFog = ACFF_MODULATE_ALPHA;
-			}
-			// premultiplied alpha
-			else if ( ( blendSrcBits == GLS_SRCBLEND_ONE ) && ( blendDstBits == GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA ) )
-			{
-				pStage->adjustColorsForFog = ACFF_MODULATE_RGBA;
-			} else {
-				// we can't adjust this one correctly, so it won't be exactly correct in fog
-			}
-
 			// don't screw with sort order if this is a portal or environment
 			if ( !shader.sort ) {
 				// see through item, like a grill or grate
@@ -2413,25 +2486,12 @@ static shader_t* FinishShader()
 	//
 	// if we are in r_vertexLight mode, never use a lightmap texture
 	//
-#if defined( QC )
-	if ( shader.vlWanted && !shader.noVLCollapse )
-#else // QC
 	if ( shader.vlWanted )
-#endif // QC
 		ApplyVertexLighting();
-
-	//
-	// look for multitexture potential
-	//
-	if ( stage > 1 && CollapseMultitexture() ) {
-		stage--;
-	}
 
 	shader.numStages = stage;
 
 	FindLightingStages();
-
-	CollapseStages();
 
 	if ( r_fullbright->integer ) {
 		// we replace the lightmap texture with the white texture
@@ -2465,7 +2525,6 @@ static shader_t* FinishShader()
 				stages[i].active = qfalse;
 			}
 			stages[0].stateBits = stateBits;
-			stages[0].mtStages = 0;
 			shader.lightingStages[ST_DIFFUSE] = 0; // for working dynamic lights
 			shader.lightingStages[ST_LIGHTMAP] = 0;
 		}
@@ -2511,7 +2570,11 @@ static shader_t* FinishShader()
 
 	ProcessGreyscale();
 
-	shader_t* const newShader = GeneratePermanentShader();
+	FixRedundantAlphaTesting();
+
+	FixUnusedBlendModes();
+
+	shader_t* const newShader = GeneratePermanentShader( sh );
 
 	BuildPerImageShaderList( newShader );
 
@@ -2541,6 +2604,46 @@ static const char* FindShaderInShaderText( const char* shadername )
 	}
 
 	return NULL;
+}
+
+
+qbool R_EditShader( shader_t* sh, const shader_t* original, const char* shaderText )
+{
+	Com_Memset( &shader, 0, sizeof( shader ) );
+	Q_strncpyz( shader.name, original->name, sizeof( shader.name ) ); // for console messages
+	Com_Memset( &stages, 0, sizeof( stages ) );
+	for ( int i = 0; i < MAX_SHADER_STAGES; i++ ) {
+		stages[i].texMods = texMods[i];
+	}
+
+	tr.shaderParseSaveState = qtrue;
+	tr.shaderParseNumWarnings = 0;
+	tr.shaderParseFailed = !ParseShader( &shaderText );
+	tr.shaderParseSaveState = qfalse;
+	if ( tr.shaderParseFailed ) {
+		*sh = *original;
+		SortShaders();
+
+		return qfalse;
+	}
+
+	FinishShader( sh );
+
+	Q_strncpyz( sh->name, original->name, sizeof( sh->name ) );
+	sh->index = original->index;
+	sh->lightmapIndex = original->lightmapIndex;
+	sh->text = original->text;
+	sh->next = original->next;
+	sh->isDynamic = true;
+
+	return qtrue;
+}
+
+
+void R_SetShaderData( shader_t* sh, const shader_t* original )
+{
+	*sh = *original;
+	SortShaders();
 }
 
 
@@ -2751,7 +2854,7 @@ qhandle_t RE_RegisterShaderFromImage( const char* name, image_t* image )
 static qhandle_t RE_RegisterShaderInternal( const char* name, int lightmapIndex, qbool mip )
 {
 	if ( strlen( name ) >= MAX_QPATH ) {
-		ri.Printf( PRINT_WARNING, "RE_RegisterShader: name exceeds MAX_QPATH\n" );
+		ri.Printf( PRINT_WARNING, "WARNING: shader name is too long: '%s'\n", name );
 		return 0;
 	}
 
@@ -2793,7 +2896,7 @@ qhandle_t RE_RegisterShaderNoMip( const char* name )
 const shader_t* R_GetShaderByHandle( qhandle_t hShader )
 {
 	if ((hShader < 0) || (hShader >= tr.numShaders)) {
-		ri.Printf( PRINT_WARNING, "R_GetShaderByHandle: out of range hShader '%d'\n", hShader );
+		ri.Printf( PRINT_WARNING, "R_GetShaderByHandle: shader handle out of range: %d\n", hShader );
 		return tr.defaultShader;
 	}
 	return tr.shaders[hShader];
@@ -2808,7 +2911,7 @@ void R_ShaderList_f( void )
 	const char* const match = Cmd_Argc() > 1 ? Cmd_Argv( 1 ) : NULL;
 
 	ri.Printf( PRINT_ALL, "S   : Stage count\n" );
-	ri.Printf( PRINT_ALL, "P   : Pass count (collapsed stages)\n" );
+	ri.Printf( PRINT_ALL, "P   : PSO count\n" );
 	ri.Printf( PRINT_ALL, "L   : Lightmap index\n" );
 	ri.Printf( PRINT_ALL, "E   : Explicitly defined (i.e. defined by code)\n" );
 	ri.Printf( PRINT_ALL, "func: 'sky' if it's a sky shader, empty otherwise\n" );
@@ -2823,11 +2926,7 @@ void R_ShaderList_f( void )
 		if ( match && !Com_Filter( match, sh->name ) )
 			continue;
 
-		int passes = sh->numStages;
-		for ( int s = 0; s < sh->numStages; ++s )
-			passes -= sh->stages[s]->mtStages;
-
-		ri.Printf( PRINT_ALL, "%i %i ", sh->numStages, passes );
+		ri.Printf( PRINT_ALL, "%i %i ", sh->numStages, sh->numPipelines );
 
 		if (sh->lightmapIndex >= 0 ) {
 			ri.Printf( PRINT_ALL, "L " );
@@ -2840,7 +2939,7 @@ void R_ShaderList_f( void )
 			ri.Printf( PRINT_ALL, "  " );
 		}
 
-		if ( sh->sort == SS_ENVIRONMENT ) {
+		if ( sh->isSky ) {
 			ri.Printf( PRINT_ALL, "sky " );
 		} else {
 			ri.Printf( PRINT_ALL, "    " );

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 const vec3_t vec3_origin = { 0, 0, 0 };
+const vec4_t vec4_zero = { 0, 0, 0, 0 };
 #if defined(Q3_VM) // lcc can't cope with "const vec3_t []"
 vec3_t axisDefault[3] = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
 #else

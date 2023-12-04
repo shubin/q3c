@@ -267,6 +267,10 @@ static char lastValidGame[MAX_OSPATH];
 static FILE* missingFiles = NULL;
 #endif
 
+#if defined( QC ) && defined( WIN32 )
+void Sys_FindQ3APath( void );
+qboolean Sys_LocateQ3APath( void );
+#endif // QC
 
 int Q_FileHash( const char* s, int tablesize )
 {
@@ -840,7 +844,7 @@ qbool FS_FilenameCompare( const char *s1, const char *s2 ) {
 
 static qbool FS_IsPureClientReadException( const char* filename )
 {
-	static const char* extensions[] =  { ".cfg", ".ttf", ".dat", ".jpg", ".jpeg", ".tga", ".png", ".shader" };
+	static const char* extensions[] =  { ".cfg", ".ttf", ".dat", ".jpg", ".jpeg", ".tga", ".png", ".shader", ".wav" };
 	const int shortestExtLength = 3;
 
 	const int nameLength = strlen(filename);
@@ -1097,6 +1101,28 @@ int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qbool uniqueFILE
 #endif
 	*file = 0;
 	return -1;
+}
+
+
+int FS_FOpenAbsoluteRead( const char* absPath, fileHandle_t* file )
+{
+	Q_assert( absPath );
+	Q_assert( file );
+
+	*file = FS_HandleForFile();
+
+	fileHandleData_t& fhd = fsh[*file];
+
+	Com_Memset( &fhd, 0, sizeof( fhd ) );
+	fhd.handleFiles.file.o = fopen( absPath, "rb" );
+	if ( fhd.handleFiles.file.o == NULL ) {
+		return -1;
+	}
+
+	fhd.fileSize = FS_filelength( *file );
+	Q_strncpyz( fhd.name, absPath, sizeof( fhd.name ) );
+
+	return fhd.fileSize;
 }
 
 

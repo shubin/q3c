@@ -242,10 +242,22 @@ static void S_Music_f( void )
 
 static const cvarTableItem_t cl_cvars[] =
 {
-	{ &s_volume, "s_volume", "0.2", CVAR_ARCHIVE, CVART_FLOAT, "0", "1", "global sound volume" },
-	{ &s_musicVolume, "s_musicvolume", "0", CVAR_ARCHIVE, CVART_FLOAT, "0", "16", "music volume" },
+	{
+		&s_volume, "s_volume", "0.2", CVAR_ARCHIVE, CVART_FLOAT, "0", "1", "global sound volume",
+		"Sound volume", CVARCAT_SOUND, "", ""
+	},
+	{
+		&s_musicVolume, "s_musicvolume", "0", CVAR_ARCHIVE, CVART_FLOAT, "0", "16", "music volume",
+		"Music volume", CVARCAT_SOUND, "", ""
+	},
 	{ &s_initsound, "s_initsound", "1", 0, CVART_BOOL, NULL, NULL, "enables the audio system" },
-	{ &s_autoMute, "s_autoMute", "1", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", help_s_autoMute }
+	{
+		&s_autoMute, "s_autoMute", "1", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", help_s_autoMute,
+		"Auto-mute", CVARCAT_SOUND, "Pick scenarios where audio output should be disabled", "",
+		CVAR_GUI_VALUE("0", "Never", "")
+		CVAR_GUI_VALUE("1", "Window is not focused", "")
+		CVAR_GUI_VALUE("2", "Window is minimized", "")
+	}
 };
 
 

@@ -51,8 +51,6 @@ cvar_t	*cl_escapeAbortsDemo;
 
 cvar_t	*net_proxy;
 
-cvar_t	*r_khr_debug;
-
 clientActive_t		cl;
 clientConnection_t	clc;
 clientStatic_t		cls;
@@ -356,6 +354,11 @@ static void CL_WalkDemoExt( const char* path, fileHandle_t* fh )
 
 	*fh = 0;
 
+	if (Sys_IsAbsolutePath( path )) {
+		FS_FOpenAbsoluteRead( path, fh );
+		return;
+	}
+
 	for (int i = 0; i < ARRAY_LEN(protocols); ++i) {
 		Com_sprintf( fullPath, sizeof( fullPath ), "demos/%s.dm_%d", path, protocols[i] );
 		FS_FOpenFileRead( fullPath, fh, qtrue );
@@ -474,6 +477,8 @@ CL_ShutdownAll
 */
 void CL_ShutdownAll(void)
 {
+	cls.fullClientShutDown = qtrue;
+
 	// clear sounds
 	S_DisableSounds();
 	// shutdown CGame
@@ -483,7 +488,7 @@ void CL_ShutdownAll(void)
 
 	// shutdown the renderer
 	if ( re.Shutdown ) {
-		re.Shutdown( qfalse );		// don't destroy window or context
+		re.Shutdown( qfalse );
 	}
 
 	cls.uiStarted = qfalse;
@@ -1622,6 +1627,9 @@ void CL_Frame( int msec )
 		SCR_DebugGraph ( cls.realFrametime * 0.25, 0 );
 	}
 
+	// update the client's own GUI
+	CL_IMGUI_Frame();
+
 	// advance the current map download, if any
 	CL_MapDownload_Continue();
 
@@ -1766,7 +1774,7 @@ static void CL_ShutdownRef()
 	if ( !re.Shutdown ) {
 		return;
 	}
-	re.Shutdown( qtrue );
+	re.Shutdown( cls.fullClientShutDown );
 	Com_Memset( &re, 0, sizeof( re ) );
 }
 
@@ -1847,6 +1855,8 @@ doesn't know what graphics to reload
 */
 static void CL_Vid_Restart_f()
 {
+	cls.fullClientShutDown = qfalse;
+
 	// Settings may have changed so stop recording now
 	CL_CloseAVI();
 
@@ -1893,7 +1903,7 @@ static void CL_Vid_Restart_f()
 	// we don't really technically need to run everything again,
 	// but trying to optimize parts out is very likely to lead to nasty bugs
 	if ( clc.demoplaying && clc.newDemoPlayer ) {
-		Cmd_TokenizeString( va("demo %s", clc.demoName) );
+		Cmd_TokenizeString( va("demo \"%s\"", clc.demoName) );
 		CL_PlayDemo( qtrue );
 	}
 	// start the cgame if connected
@@ -2149,28 +2159,60 @@ static const cvarTableItem_t cl_cvars[] =
 	{ &cl_showTimeDelta, "cl_showTimeDelta", "0", CVAR_TEMP, CVART_BOOL, NULL, NULL, "prints delta adjustment values and events" },
 	{ &rconPassword, "rconPassword", "", CVAR_TEMP, CVART_STRING, NULL, NULL, help_rconPassword },
 	{ &cl_timedemo, "timedemo", "0", 0, CVART_BOOL, NULL, NULL, "demo benchmarking mode" },
-	{ &cl_aviFrameRate, "cl_aviFrameRate", "50", CVAR_ARCHIVE, CVART_INTEGER, "24", "250", help_cl_aviFrameRate },
-	{ &cl_aviMotionJpeg, "cl_aviMotionJpeg", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_cl_aviMotionJpeg },
+	{
+		&cl_aviFrameRate, "cl_aviFrameRate", "50", CVAR_ARCHIVE, CVART_INTEGER, "24", "250", help_cl_aviFrameRate,
+		"AVI video framerate", CVARCAT_DEMO, "", ""
+	},
+	{
+		&cl_aviMotionJpeg, "cl_aviMotionJpeg", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_cl_aviMotionJpeg,
+		"AVI motion JPEG", CVARCAT_DEMO, "", ""
+	},
 	{ &rconAddress, "rconAddress", "", 0, CVART_STRING, NULL, NULL, help_rconAddress },
-	{ &cl_maxpackets, "cl_maxpackets", "125", CVAR_ARCHIVE, CVART_INTEGER, "15", "125", "max. packet upload rate" },
-	{ &cl_packetdup, "cl_packetdup", "1", CVAR_ARCHIVE, CVART_INTEGER, "0", "5", "number of extra transmissions per packet" },
-	{ &cl_allowDownload, "cl_allowDownload", "1", CVAR_ARCHIVE, CVART_INTEGER, "-1", "1", help_cl_allowDownload },
+	{
+		&cl_maxpackets, "cl_maxpackets", "125", CVAR_ARCHIVE, CVART_INTEGER, "15", "125", "max. packet upload rate",
+		"Max. packets", CVARCAT_NETWORK, "", ""
+	},
+	{
+		&cl_packetdup, "cl_packetdup", "1", CVAR_ARCHIVE, CVART_INTEGER, "0", "5", "number of extra transmissions per packet",
+		"Packet duplication", CVARCAT_NETWORK, "Sets the number of extra copies per packet", "Use if you experience packet loss"
+	},
+	{
+		&cl_allowDownload, "cl_allowDownload", "1", CVAR_ARCHIVE, CVART_INTEGER, "-1", "1", help_cl_allowDownload,
+		"PK3 download mode", CVARCAT_NETWORK, "", "",
+		CVAR_GUI_VALUE("-1", "Quake 3", "Can always find PK3 files\nServer must allow it\nVery slow")
+		CVAR_GUI_VALUE("0", "Disabled", "")
+		CVAR_GUI_VALUE("1", "CNQ3", "Map server may not have the file\nIndependent of server\nFast")
+	},
 	{ &cl_inGameVideo, "r_inGameVideo", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, "enables roq video playback" },
 	{ &cl_serverStatusResendTime, "cl_serverStatusResendTime", "750", 0, CVART_INTEGER, "500", "1000", "milli-seconds to wait before resending getstatus" },
 	{ NULL, "cl_maxPing", "999", CVAR_ARCHIVE, CVART_INTEGER, "80", "999", "max. ping for the server browser" },
-	{ NULL, "name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE, CVART_STRING, NULL, NULL, "your name" },
-	{ NULL, "rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE, CVART_INTEGER, "4000", "99999", "network transfer rate" },
+	{
+		NULL, "name", "UnnamedPlayer", CVAR_USERINFO | CVAR_ARCHIVE, CVART_STRING, NULL, NULL, "your name",
+		"Player name", CVARCAT_GENERAL, "", ""
+	},
+	{
+		NULL, "rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE, CVART_INTEGER, "4000", "99999", "network transfer rate",
+		"Transfer rate", CVARCAT_NETWORK, "You'll generally want 25K to 30K", ""
+	},
 	{ NULL, "snaps", "30", CVAR_USERINFO | CVAR_ARCHIVE, CVART_INTEGER }, // documented by the mod
 	{ NULL, "password", "", CVAR_USERINFO, CVART_STRING, NULL, NULL, "used by /" S_COLOR_CMD "connect" },
-	{ &cl_matchAlerts, "cl_matchAlerts", "7", CVAR_ARCHIVE, CVART_BITMASK, "0", XSTRING(MAF_MAX), help_cl_matchAlerts },
+	{
+		&cl_matchAlerts, "cl_matchAlerts", "7", CVAR_ARCHIVE, CVART_BITMASK, "0", XSTRING(MAF_MAX), help_cl_matchAlerts,
+		"Match alerts", CVARCAT_GENERAL, "Lets you know when a match is starting", "",
+		CVAR_GUI_VALUE("0", "When unfocused", "Otherwise only when minimized")
+		CVAR_GUI_VALUE("1", "Flash the task bar", "")
+		CVAR_GUI_VALUE("2", "Beep once", "")
+		CVAR_GUI_VALUE("3", "Unmute", "")
+	},
 	{ &net_proxy, "net_proxy", "", CVAR_TEMP, CVART_STRING, NULL, NULL, help_net_proxy },
-	{ &r_khr_debug, "r_khr_debug", "2", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", help_r_khr_debug },
-	{ &cl_demoPlayer, "cl_demoPlayer", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_cl_demoPlayer },
-	{ &cl_escapeAbortsDemo, "cl_escapeAbortsDemo", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, "pressing escape aborts demo playback" },
-#if defined( QC )
-	{ NULL, "champion", "ranger", CVAR_USERINFO | CVAR_ARCHIVE, CVART_STRING },
-	{ NULL, "starting_weapon", "mg", CVAR_USERINFO | CVAR_ARCHIVE, CVART_STRING },
-#endif
+	{
+		&cl_demoPlayer, "cl_demoPlayer", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_cl_demoPlayer,
+		"New demo player", CVARCAT_DEMO, "Enables the new demo player with rewind support", ""
+	},
+	{
+		&cl_escapeAbortsDemo, "cl_escapeAbortsDemo", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, "pressing escape aborts demo playback",
+		"Escape aborts demo", CVARCAT_DEMO, "Pressing escape aborts demo playback", ""
+	},
 };
 
 
@@ -2207,9 +2249,668 @@ static const cmdTableItem_t cl_cmds[] =
 };
 
 
+struct cvarTableItemCPMA_t {
+	const char*		name;
+	cvarType_t		type;
+	const char*		guiName;
+	int				categories;
+	const char*		guiDesc;
+	const char*		guiHelp;
+	const char*		guiValues;
+};
+
+
+static const cvarTableItemCPMA_t cpma_cvars[] =
+{
+	{
+		"cg_damageDraw", CVART_BOOL,
+		"Screen blood", CVARCAT_GRAPHICS, "Draws blood when taking damage", ""
+	},
+	{
+		"cg_deadBodyDarken", CVART_BOOL,
+		"Grey corpses", CVARCAT_GRAPHICS, "Renders dead players in dark grey", ""
+	},
+	{
+		"cg_redTeamColors", CVART_COLOR_CHBLS,
+		"Red player colors", CVARCAT_GRAPHICS, "Red team player colors", ""
+	},
+	{
+		"cg_blueTeamColors", CVART_COLOR_CHBLS,
+		"Blue player colors", CVARCAT_GRAPHICS, "Blue team player colors", ""
+	},
+	{
+		"cg_forceTeamColors", CVART_BITMASK,
+		"Force team player colors", CVARCAT_GRAPHICS, "", "",
+		CVAR_GUI_VALUE("0", "Own team in first-person", "")
+		CVAR_GUI_VALUE("1", "Enemy team in first-person", "")
+		CVAR_GUI_VALUE("2", "Free-float camera", "")
+		CVAR_GUI_VALUE("3", "Only for CTF/NTF/CTFS", "")
+	},
+	{
+		"cg_teamModel", CVART_STRING,
+		"Team model", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_forceTeamModel", CVART_BOOL,
+		"Force team model", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_enemyColors", CVART_COLOR_CHBLS,
+		"Enemy player colors", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_enemyModel", CVART_STRING,
+		"Enemy model", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_fallKick", CVART_BOOL,
+		"Fall kick", CVARCAT_GAMEPLAY, "Makes the camera bounce after a fall", ""
+	},
+	{
+		"cg_forceColors", CVART_BOOL,
+		"Force colors on teammates", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_gunOffset", CVART_STRING,
+		"View weapon position", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_itemFX", CVART_BITMASK,
+		"Item effects", CVARCAT_GRAPHICS, "", "",
+		CVAR_GUI_VALUE("0", "Bob up and down", "")
+		CVAR_GUI_VALUE("1", "Rotate", "Asymmetric items will always rotate")
+		CVAR_GUI_VALUE("2", "Scale up on respawn", "")
+	},
+	{
+		"cg_lagHax", CVART_INTEGER,
+		"Adaptive prediction", CVARCAT_NETWORK, "Also does a bit of lag compensation", "",
+		CVAR_GUI_VALUE("0", "Disabled", "")
+		CVAR_GUI_VALUE("-1", "As much as allowed", "")
+	},
+	{
+		"cg_lightningImpact", CVART_INTEGER,
+		"LG impact style", CVARCAT_GRAPHICS, "", "",
+		CVAR_GUI_VALUE("0", "Nothing", "")
+		CVAR_GUI_VALUE("1", "Impact", "")
+		CVAR_GUI_VALUE("2", "Impact and sparks", "")
+	},
+	{
+		"cg_muzzleFlash", CVART_BOOL,
+		"Muzzle flash", CVARCAT_GRAPHICS, "Draws a muzzle flash when firing the view weapon", ""
+	},
+	{
+		"cg_noAmmoChange", CVART_INTEGER,
+		"No-ammo switch", CVARCAT_GAMEPLAY, "Allows from/to out-of-ammo weapon changes", "",
+		CVAR_GUI_VALUE("0", "Switch, disallow 0 ammo", "Switches to the next weapon. Can't select a weapon with no ammo")
+		CVAR_GUI_VALUE("1", "Switch, allow 0 ammo", "Switches to the next weapon. Can select a weapon with no ammo")
+		CVAR_GUI_VALUE("2", "No switch, allow 0 ammo", "Keeps the current weapon. Can select a weapon with no ammo")
+	},
+	{
+		"cg_noHitBeep", CVART_BOOL,
+		"Hit beeps", CVARCAT_SOUND | CVARCAT_GAMEPLAY, "", "",
+		CVAR_GUI_VALUE("1", "Silence", "")
+		CVAR_GUI_VALUE("0", "Hit beeps", "")
+	},
+	{
+		"cg_nudge", CVART_INTEGER,
+		"Time nudge", CVARCAT_NETWORK, "", ""
+	},
+	{
+		"cg_optimiseBW", CVART_BITMASK,
+		"Bandwidth optimizations", CVARCAT_NETWORK, "", "",
+		CVAR_GUI_VALUE("0", "Server-to-client", "Usually forced by servers")
+		CVAR_GUI_VALUE("1", "Client-to-server", "Only use if your upload rate is dial-up level")
+	},
+	{
+		"cg_railCoreWidth", CVART_INTEGER,
+		"Railgun core width", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_railRingStep", CVART_INTEGER,
+		"Railgun ring step", CVARCAT_GRAPHICS, "Distance between the rail rings", ""
+	},
+	{
+		"cg_railRingWidth", CVART_INTEGER,
+		"Railgun ring width", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_railStyle", CVART_BITMASK,
+		"Railgun trail style", CVARCAT_GRAPHICS, "Visual elements of a railgun trail", "",
+		CVAR_GUI_VALUE("0", "Core", "")
+		CVAR_GUI_VALUE("1", "Spiral", "")
+		CVAR_GUI_VALUE("2", "Rings", "")
+	},
+	{
+		"cg_smoke_SG", CVART_BOOL,
+		"Shotgun smoke", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_smokeRadius_RL", CVART_FLOAT,
+		"Rocket launcher smoke radius", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_smokeRadius_GL", CVART_FLOAT,
+		"Grenade launcher smoke radius", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_xerpClients", CVART_INTEGER,
+		"Extrapolate clients", CVARCAT_NETWORK, "", "",
+		CVAR_GUI_VALUE("-1", "Hacked extrapolation", "Intended for high ping")
+		CVAR_GUI_VALUE("0", "No extrapolation", "Fine for low ping")
+		CVAR_GUI_VALUE("1", "Original Q3 behavior", "Just like the original cg_smoothClients code")
+	},
+	{
+		"cg_trueLightning", CVART_FLOAT,
+		"Lightning gun beam prediction", CVARCAT_GRAPHICS | CVARCAT_NETWORK | CVARCAT_GAMEPLAY, "",
+		"LG beam prediction control\n" \
+		"   -1 = Pure client-side (no sway, no beam drawn)\n"
+		"    0 = Pure server-side (sways the most)\n"
+		"    1 = Pure client-side (no sway)\n"
+		"Fractional values: mix between server and client rendering\n"
+		"Negative   values: the beam isn't drawn\n"
+		"Negative fractional values still affect impact mark placement."
+	},
+	{
+		"cg_viewAdjustments", CVART_BOOL,
+		"Enable view bobbing", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_fragSound", CVART_STRING,
+		"Kill sound", CVARCAT_SOUND, "", "",
+		CVAR_GUI_VALUE("0", "No sound", "")
+		CVAR_GUI_VALUE("1", "Tonal impact: D", "")
+		CVAR_GUI_VALUE("2", "Tonal impact: E", "")
+		CVAR_GUI_VALUE("3", "Tonal impact: F#", "")
+		CVAR_GUI_VALUE("4", "Tonal impact: G", "")
+		CVAR_GUI_VALUE("5", "Cork pop", "")
+		CVAR_GUI_VALUE("6", "Cash register", "")
+		CVAR_GUI_VALUE("7", "Hook impact", "")
+	},
+	{
+		"cg_newModels", CVART_BOOL,
+		"Better 3D models", CVARCAT_GRAPHICS, "Uses better meshes for items", ""
+	},
+	{
+		"cg_animateChatBalloon", CVART_BOOL,
+		"Animated chat sprite", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_demoMapOverrides", CVART_BOOL,
+		"Override demo maps", CVARCAT_GRAPHICS, "Replaces maps for demo playback",
+		"The override list is loaded from 'cfg-maps/demomaps.txt'.\n"
+		"Each line has the format 'DemoName DisplayName'.\n"
+		"Example: 'cpm3a cpm3b_b1' will display cpm3b_b1 instead of cpm3a."
+	},
+	{
+		"ch_crosshairAlpha", CVART_FLOAT,
+		"Crosshair opacity", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_crosshairColor", CVART_COLOR_CPMA,
+		"Crosshair color", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_crosshairPulse", CVART_INTEGER,
+		"Crosshair pulses", CVARCAT_HUD, "Crosshair pulses on events", "",
+		CVAR_GUI_VALUE("0", "Never", "")
+		CVAR_GUI_VALUE("1", "Item pick-ups", "")
+		CVAR_GUI_VALUE("2", "Enemy damage", "")
+		CVAR_GUI_VALUE("3", "Enemy frags", "")
+	},
+	{
+		"ch_crosshairText", CVART_STRING,
+		"Crosshair text", CVARCAT_HUD, "Crosshair uses this text instead of an icon", ""
+	},
+	{
+		"ch_crosshairHitColor", CVART_COLOR_CPMA_E,
+		"Crosshair hit color", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_crosshairFragColor", CVART_COLOR_CPMA_E,
+		"Crosshair kill color", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_drawWarmup", CVART_BOOL,
+		"Warm-up info", CVARCAT_HUD, "Displays gameplay settings during warm-up", ""
+	},
+	{
+		"ch_file", CVART_STRING,
+		"HUD config file", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_playerNames", CVART_BOOL,
+		"Draw player names", CVARCAT_DEMO, "Draws names above heads during demo playback", ""
+	},
+	{
+		"ch_recordMessage", CVART_BOOL,
+		"Draw demo recording", CVARCAT_HUD, "Draws a message when recording demos", ""
+	},
+	{
+		"ch_selfOnTeamOverlay", CVART_BOOL,
+		"Team overlay self row", CVARCAT_HUD, "Draw a row for yourself in the team overlays", ""
+	},
+	{
+		"ch_shortNames", CVART_BOOL,
+		"Team overlay nicknames", CVARCAT_HUD, "Team overlays uses nicknames (max. 5 characters) instead of names", ""
+	},
+	{
+		"ch_locations", CVART_BOOL,
+		"Team overlay locations", CVARCAT_HUD, "Draws locations in the team overlays", ""
+	},
+	{
+		"ch_shortScoreboard", CVART_BOOL,
+		"Short scoreboard", CVARCAT_HUD, "Disables stats display in 1v1 scoreboard", ""
+	},
+	{
+		"ch_3waveFont", CVART_BOOL,
+		"Threewave font", CVARCAT_HUD, "Uses the Threewave font in the scoreboard", ""
+	},
+	{
+		"ch_wstatsTime", CVART_INTEGER,
+		"Weapon stats time", CVARCAT_HUD, "Max. +wstats display duration in intermission", ""
+	},
+	{
+		"ch_gauntlet", CVART_BOOL,
+		"Gauntlet in weapon list", CVARCAT_HUD, "Draws the gauntlet in the WeaponList SuperHUD element", ""
+	},
+	{
+		"ch_drawKeys", CVART_BITMASK,
+		"Draw movement keys", CVARCAT_HUD, "Enables the KeyDown_* and KeyUp_* SuperHUD elements", "",
+		CVAR_GUI_VALUE("0", "When playing", "")
+		CVAR_GUI_VALUE("1", "When spectating", "")
+		CVAR_GUI_VALUE("2", "During demo playback", "Won't work with pre-1.50 demos")
+	},
+	{
+		"ch_hiddenElements", CVART_STRING,
+		"Hidden SuperHUD elements", CVARCAT_HUD, "List of hidden SuperHUD elements", "Use /hud_hide and /hud_show to manipulate this list"
+	},
+	{
+		"ch_timersList", CVART_STRING,
+		"Item timers draw list", CVARCAT_HUD, "Space-separated list of item types to draw", "Use /itemtimerlist to see the type list"
+	},
+	{
+		"ch_timersOrderOR", CVART_INTEGER,
+		"Own/red item timers order", CVARCAT_HUD, "", "",
+		CVAR_GUI_VALUE("0", "Flag -> Mid", "")
+		CVAR_GUI_VALUE("1", "Mid  -> Flag", "")
+		CVAR_GUI_VALUE("2", "Custom list", "")
+		CVAR_GUI_VALUE("3", "Custom list, inverted", "")
+	},
+	{
+		"ch_timersOrderEB", CVART_INTEGER,
+		"Enemy/blue item timers order", CVARCAT_HUD, "", "",
+		CVAR_GUI_VALUE("0", "Flag -> Mid", "")
+		CVAR_GUI_VALUE("1", "Mid  -> Flag", "")
+		CVAR_GUI_VALUE("2", "Custom list", "")
+		CVAR_GUI_VALUE("3", "Custom list, inverted", "")
+	},
+	{
+		"ch_timersOrderTeams", CVART_INTEGER,
+		"Item timers team order", CVARCAT_HUD, "", "",
+		CVAR_GUI_VALUE("0", "Own   -> Enemy", "")
+		CVAR_GUI_VALUE("1", "Enemy -> Own", "")
+		CVAR_GUI_VALUE("2", "Red   -> Blue", "")
+		CVAR_GUI_VALUE("3", "Blue  -> Red", "")
+	},
+	{
+		"ch_timersSync", CVART_BOOL,
+		"Synchronize item timers", CVARCAT_HUD, "Synchronizes all timer updates in the HUD", ""
+	},
+	{
+		"cg_demoSkipPauses", CVART_BOOL,
+		"Skip server pauses", CVARCAT_DEMO, "Skips timeouts and referee pauses",
+		"When not paused, it will skip past server pauses\n"
+		"Only available with CNQ3's new demo player"
+	},
+	{
+		"mvw_DM", CVART_STRING,
+		"Multi-view 1v1 window", CVARCAT_HUD, "PiP window coordinates for the opponent in 1v1", ""
+	},
+	{
+		"mvw_TDM1", CVART_STRING,
+		"Multi-view TDM window #1", CVARCAT_HUD, "PiP window coordinates for teammate #1", ""
+	},
+	{
+		"mvw_TDM2", CVART_STRING,
+		"Multi-view TDM window #2", CVARCAT_HUD, "PiP window coordinates for teammate #2", ""
+	},
+	{
+		"mvw_TDM3", CVART_STRING,
+		"Multi-view TDM window #3", CVARCAT_HUD, "PiP window coordinates for teammate #3", ""
+	},
+	{
+		"mvw_TDM4", CVART_STRING,
+		"Multi-view TDM window #4", CVARCAT_HUD, "PiP window coordinates for teammate #4", ""
+	},
+	{
+		"s_ambient", CVART_BOOL,
+		"Ambient sounds", CVARCAT_SOUND, "Enables the maps' ambient sounds", ""
+	},
+	{
+		"cg_drawBrightSpawns", CVART_BOOL,
+		"Bright spawn points", CVARCAT_GRAPHICS, "Draws spawn points more visibly during warm-up", ""
+	},
+	{
+		"cg_drawBrightWeapons", CVART_BITMASK,
+		"Fullbright weapons", CVARCAT_GRAPHICS, "Enables fullbright weapons", "",
+		CVAR_GUI_VALUE("0", "First-person, your own gun", "")
+		CVAR_GUI_VALUE("1", "First-person, carried by teammates", "")
+		CVAR_GUI_VALUE("2", "First-person, carried by enemies", "")
+		CVAR_GUI_VALUE("3", "Weapons lying on the map", "")
+		CVAR_GUI_VALUE("4", "Freecam, carried by players", "")
+	},
+	{
+		"s_announcer", CVART_STRING,
+		"Announcer", CVARCAT_SOUND, "Announcer sound pack", "",
+		CVAR_GUI_VALUE("feedback", "Q3's male announcer", "")
+		CVAR_GUI_VALUE("hellchick", "CPMA's female announcer", "")
+	},
+	{
+		"ch_consoleLines", CVART_INTEGER,
+		"Max console lines", CVARCAT_HUD, "Maximum number of lines in the 'Console' SuperHUD element", ""
+	},
+	{
+		"ch_eventLines", CVART_INTEGER,
+		"Max event lines", CVARCAT_HUD, "Maximum number of lines in the 'GameEvents' SuperHUD element", ""
+	},
+	{
+		"ch_eventForceColors", CVART_BOOL,
+		"Force event colors", CVARCAT_HUD, "Enables custom team colors in the 'GameEvents' SuperHUD element", ""
+	},
+	{
+		"ch_eventOwnColor", CVART_COLOR_CPMA,
+		"Own team event color", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_eventEnemyColor", CVART_COLOR_CPMA,
+		"Enemy team event color", CVARCAT_HUD, "", ""
+	},
+	{
+		"ch_chatLines", CVART_INTEGER,
+		"Max chat lines", CVARCAT_HUD, "Maximum number of lines in the 'Chat' SuperHUD element", ""
+	},
+	{
+		"ch_animateScroll", CVART_BOOL,
+		"Scrolling animations", CVARCAT_HUD, "For console, chat, game events and rewards", ""
+	},
+	{
+		"ch_animateRewardIcons", CVART_INTEGER,
+		"Animate reward icons", CVARCAT_HUD, "", "",
+		CVAR_GUI_VALUE("0", "No animation", "")
+		CVAR_GUI_VALUE("1", "Play animation once", "")
+		CVAR_GUI_VALUE("2", "Play looped animation", "")
+	},
+	{
+		"ui_swapMouseButtons", CVART_BOOL,
+		"Swap mouse buttons", CVARCAT_GUI, "Swaps the left and right mouse buttons", ""
+	},
+	{
+		"ui_sensitivity", CVART_FLOAT,
+		"UI mouse sensitivity", CVARCAT_GUI, "Mouse sensitivity in the UI", ""
+	},
+	{
+		"cg_mvSensitivity", CVART_FLOAT,
+		"Coach view mouse sensitivity", CVARCAT_GUI, "Mouse sensitivity in the live coach view UI", ""
+	},
+	{
+		"cg_ammoWarning", CVART_BOOL,
+		"Ammo warning", CVARCAT_SOUND, "Plays a click sound when out of ammo", ""
+	},
+	{
+		"cg_autoswitch", CVART_BOOL,
+		"Weapon auto-switch", CVARCAT_GAMEPLAY, "Auto-switches to the weapon you just picked up", ""
+	},
+	{
+		"com_blood", CVART_INTEGER,
+		"Draw blood", CVARCAT_GRAPHICS, "Draws blood when players are hit", "",
+		CVAR_GUI_VALUE("0", "Disabled", "")
+		CVAR_GUI_VALUE("1", "Old style", "Large, long, slow updates")
+		CVAR_GUI_VALUE("2", "New style", "Small, short, fast updates")
+	},
+	{
+		"cg_drawGun", CVART_INTEGER,
+		"View weapon", CVARCAT_GRAPHICS, "", "",
+		CVAR_GUI_VALUE("0", "No gun", "")
+		CVAR_GUI_VALUE("1", "Gun visible, sways", "")
+		CVAR_GUI_VALUE("2", "Gun visible, doesn't sway", "")
+	},
+	{
+		"cg_zoomfov", CVART_FLOAT,
+		"Zoom FoV", CVARCAT_GRAPHICS | CVARCAT_GAMEPLAY, "Field of view when zoomed in", ""
+	},
+	{
+		"cg_zoomAnimationTime", CVART_INTEGER,
+		"Zoom animation time", CVARCAT_GRAPHICS | CVARCAT_GAMEPLAY, "Zoom in/out animation duration, in milliseconds", ""
+	},
+	{
+		"cg_zoomSensitivity", CVART_FLOAT,
+		"Zoom mouse sensitivity", CVARCAT_GAMEPLAY, "Relative to the main sensitivity", ""
+	},
+	{
+		"cg_fov", CVART_FLOAT,
+		"FoV", CVARCAT_GRAPHICS | CVARCAT_GAMEPLAY, "Field of view", "Enable depth clamping to raise the limit to 150"
+	},
+	{
+		"cg_viewsize", CVART_INTEGER,
+		"Gameplay window size", CVARCAT_HUD, "Percentage scale of the gameplay window", ""
+	},
+	{
+		"cg_shadows", CVART_BOOL,
+		"Blob player shadows", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"cg_gibs", CVART_BOOL,
+		"Giblets", CVARCAT_GRAPHICS, "Enables giblets and the blood spatter effect", ""
+	},
+	{
+		"cg_draw2D", CVART_BOOL,
+		"Enable HUD", CVARCAT_HUD, "", ""
+	},
+	{
+		"cg_draw3dIcons", CVART_BOOL,
+		"3D icons", CVARCAT_HUD, "Draws 3D heads/flags in the HUD", ""
+	},
+	{
+		"cg_drawCrosshair", CVART_INTEGER,
+		"Crosshair icon", CVARCAT_HUD, "", "",
+		CVAR_GUI_VALUE("0", "No crosshair", "")
+		CVAR_GUI_VALUE("1", "Cross", "")
+		CVAR_GUI_VALUE("2", "Exploded cross", "")
+		CVAR_GUI_VALUE("3", "Disk + dot", "")
+		CVAR_GUI_VALUE("4", "Circle + dot", "")
+		CVAR_GUI_VALUE("5", "Big dot", "")
+		CVAR_GUI_VALUE("6", "Circle + cross", "")
+		CVAR_GUI_VALUE("7", "Big exploded cross", "")
+		CVAR_GUI_VALUE("8", "Big exploded cross + dot", "")
+		CVAR_GUI_VALUE("9", "Side curves + dot", "")
+		CVAR_GUI_VALUE("10", "Circle + dot", "")
+		CVAR_GUI_VALUE("11", "Cross with black outline", "")
+		CVAR_GUI_VALUE("12", "Exploded cross with black outline", "")
+		CVAR_GUI_VALUE("13", "Disk + dot with black outline", "")
+		CVAR_GUI_VALUE("14", "Circle + dot with black outline", "")
+		CVAR_GUI_VALUE("15", "Dot with black outline", "")
+		CVAR_GUI_VALUE("16", "Circle + cross with black outline", "")
+		CVAR_GUI_VALUE("17", "Mirrored L with black outline", "")
+		CVAR_GUI_VALUE("18", "Cross + dot with black outlines", "")
+		CVAR_GUI_VALUE("19", "Side curves + dot with black outline", "")
+		CVAR_GUI_VALUE("20", "Circle + exploded cross + dot", "")
+	},
+	{
+		"cg_drawCrosshairNames", CVART_INTEGER,
+		"Draw crosshair names", CVARCAT_HUD, "Draws the name and status of the player under the crosshair",
+		"SuperHUD elements: 'TargetName' and 'TargetStatus'",
+		CVAR_GUI_VALUE("0", "Disabled", "")
+		CVAR_GUI_VALUE("1", "All players", "")
+		CVAR_GUI_VALUE("2", "Teammates only", "")
+	},
+	{
+		"cg_crosshairSize", CVART_STRING,
+		"Crosshair scale", CVARCAT_HUD, "Examples: '26', '26x32'", ""
+	},
+	{
+		"cg_crosshairHealth", CVART_BOOL,
+		"Crosshair health", CVARCAT_HUD, "Sets crosshair color based on your stack", ""
+	},
+	{
+		"cg_crosshairX", CVART_INTEGER,
+		"Crosshair X offset", CVARCAT_HUD, "X-axis offset from screen center", ""
+	},
+	{
+		"cg_crosshairY", CVART_INTEGER,
+		"Crosshair Y offset", CVARCAT_HUD, "Y-axis offset from screen center", ""
+	},
+	{
+		"cg_simpleItems", CVART_BOOL,
+		"Simple items", CVARCAT_GRAPHICS | CVARCAT_PERFORMANCE, "Shows items as sprites", ""
+	},
+	{
+		"cg_brassTime", CVART_INTEGER,
+		"Brass lifetime", CVARCAT_GRAPHICS, "MG/SG shell visibility duration, in milliseconds", ""
+	},
+	{
+		"cg_marks", CVART_INTEGER,
+		"Explosion marks lifetime", CVARCAT_GRAPHICS, "Explosion marks visibility duration, in milliseconds", ""
+	},
+	{
+		"cg_railTrailTime", CVART_INTEGER,
+		"Rail trails lifetime", CVARCAT_GRAPHICS, "Rail trails visibility duration, in milliseconds", ""
+	},
+	{
+		"cg_errordecay", CVART_INTEGER,
+		"Prediction error decay", CVARCAT_NETWORK, "Duration for client-side mispredictions smoothing, in milliseconds", ""
+	},
+	{
+		"cg_predict", CVART_INTEGER,
+		"Player movement prediction", CVARCAT_NETWORK, "", "",
+		CVAR_GUI_VALUE("0", "Disabled", "")
+		CVAR_GUI_VALUE("1", "Enabled", "")
+		CVAR_GUI_VALUE("2", "Optimized", "Has errors and performance gains aren't significant")
+	},
+	{
+		"cg_noProjectileTrail", CVART_BOOL,
+		"Projectile trails", CVARCAT_GRAPHICS, "", "",
+		CVAR_GUI_VALUE("1", "None in water", "")
+		CVAR_GUI_VALUE("0", "Everywhere", "")
+	},
+	{
+		"cg_noTaunt", CVART_BOOL,
+		"Taunt sounds", CVARCAT_SOUND, "", "",
+		CVAR_GUI_VALUE("1", "Silence", "")
+		CVAR_GUI_VALUE("0", "Taunt sounds", "")
+	},
+	{
+		"cg_forceModel", CVART_BOOL,
+		"Force model on teammates", CVARCAT_GRAPHICS, "Draws your teammates with the same model as yours", ""
+	},
+	{
+		"cg_predictItems", CVART_BOOL,
+		"Item pick-up prediction", CVARCAT_NETWORK, "Disable if you get false pick-ups", ""
+	},
+	{
+		"cg_deferPlayers", CVART_BOOL,
+		"Delay model loads", CVARCAT_GRAPHICS | CVARCAT_PERFORMANCE, "Delays player model loads to avoid hitches", ""
+	},
+	{
+		"cg_drawFriend", CVART_BOOL,
+		"Friend markers", CVARCAT_HUD, "Draws triangles above teammates' heads", ""
+	},
+	{
+		"cg_teamChatsOnly", CVART_BOOL,
+		"Global chat sink", CVARCAT_HUD, "To which SuperHUD element does global chat go?", "Team chat always goes to the 'Chat' SuperHUD element",
+		CVAR_GUI_VALUE("0", "Chat", "")
+		CVAR_GUI_VALUE("1", "Console", "")
+	},
+	{
+		"cg_altLightning", CVART_STRING,
+		"LG beam style", CVARCAT_GRAPHICS, "In order: self, enemies, teammates",
+		"0 = Original (pre-TA) id LG beam\n"
+		"1 = CPMA lightning\n"
+		"2 = Thin lightning\n"
+		"3 = Lightning using 1.44 render"
+	},
+	{
+		"cg_altPlasma", CVART_BOOL,
+		"CPMA plasma projectile", CVARCAT_GRAPHICS, "Enables the CPMA plasma gun projectile", ""
+	},
+	{
+		"cg_autoAction", CVART_BITMASK,
+		"Automated actions", CVARCAT_GENERAL, "", "",
+		CVAR_GUI_VALUE("0", "Save stats to a .txt file", "")
+		CVAR_GUI_VALUE("1", "Take an end-game screenshot", "")
+		CVAR_GUI_VALUE("2", "Record a demo: match start", "Only if present at match start")
+		CVAR_GUI_VALUE("3", "Multi-view the game", "")
+		CVAR_GUI_VALUE("4", "Only if you're playing", "")
+		CVAR_GUI_VALUE("5", "Follow power-up", "")
+		CVAR_GUI_VALUE("6", "Follow killer", "")
+		CVAR_GUI_VALUE("7", "Record a demo: late join", "When not present at match start")
+	},
+	{
+		"cg_customLoc", CVART_BOOL,
+		"Custom map locations", CVARCAT_HUD, "Uses client-local map location names", "The locations are in .cfg files in the 'locs' folder"
+	},
+	{
+		"cg_nochatbeep", CVART_BOOL,
+		"Global chat beeps", CVARCAT_SOUND, "", "",
+		CVAR_GUI_VALUE("0", "Global chat beeps", "")
+		CVAR_GUI_VALUE("1", "Silence", "")
+	},
+	{
+		"cg_nomip", CVART_BITMASK,
+		"Picmip overrides", CVARCAT_GRAPHICS, "Enable to keep specific visuals sharp", "",
+		CVAR_GUI_VALUE("0", "Lightning beams", "")
+		CVAR_GUI_VALUE("1", "Plasma balls", "")
+		CVAR_GUI_VALUE("2", "Rocket and grenade explosions", "")
+		CVAR_GUI_VALUE("3", "Grenade projectiles", "")
+		CVAR_GUI_VALUE("4", "Bullet impact marks", "")
+		CVAR_GUI_VALUE("5", "Railgun impact mark", "")
+		CVAR_GUI_VALUE("6", "BFG explosion", "")
+		CVAR_GUI_VALUE("7", "Blood", "")
+		CVAR_GUI_VALUE("8", "Smoke", "")
+		CVAR_GUI_VALUE("9", "Rocket projectiles", "")
+	},
+	{
+		"cg_noteamchatbeep", CVART_BOOL,
+		"Team chat beeps", CVARCAT_SOUND, "", "",
+		CVAR_GUI_VALUE("1", "Silence", "")
+		CVAR_GUI_VALUE("0", "Team chat beeps", "")
+	},
+	{
+		"cg_oldCTFSounds", CVART_INTEGER,
+		"CTF sounds", CVARCAT_SOUND, "", "",
+		CVAR_GUI_VALUE("0", "Team Arena", "With voice-overs")
+		CVAR_GUI_VALUE("1", "Quake 3 1.17", "Same for both teams")
+		CVAR_GUI_VALUE("2", "Team-specific", "No voice-overs")
+	},
+	{
+		"cg_showPlayerLean", CVART_BOOL,
+		"Player model leaning", CVARCAT_GAMEPLAY, "Enables player model leaning", "Off is more accurate wrt collision models"
+	},
+	{
+		"cg_useScreenShotJPEG", CVART_BOOL,
+		"Automated screenshot format", CVARCAT_GENERAL, "", "",
+		CVAR_GUI_VALUE("0", "TARGA (.tga)", "")
+		CVAR_GUI_VALUE("1", "JPEG (.jpg)", "")
+	},
+	{
+		"color", CVART_COLOR_CHBLS,
+		"Player colors", CVARCAT_GRAPHICS, "", "",
+	},
+	{
+		"model", CVART_STRING,
+		"Player model", CVARCAT_GRAPHICS, "", ""
+	},
+	{
+		"nick",  CVART_STRING,
+		"Nickname", CVARCAT_GENERAL, "Short name (max. 5 chars) for team overlays", ""
+	}
+};
+
+
 void CL_Init()
 {
 	//QSUBSYSTEM_INIT_START( "Client" );
+
+	cls.fullClientShutDown = qfalse;
 
 	CL_ConInit();
 
@@ -2233,6 +2934,8 @@ void CL_Init()
 
 	CL_MapDownload_Init();
 
+	CL_IMGUI_Init();
+
 	//QSUBSYSTEM_INIT_DONE( "Client" );
 }
 
@@ -2253,6 +2956,8 @@ void CL_Shutdown()
 	}
 	recursive = qtrue;
 
+	cls.fullClientShutDown = qtrue;
+
 	CL_Disconnect( qtrue );
 
 	S_Shutdown();
@@ -2268,6 +2973,8 @@ void CL_Shutdown()
 
 	CL_ConShutdown();
 
+	CL_IMGUI_Shutdown();
+
 	Cvar_Set( "cl_running", "0" );
 
 	recursive = qfalse;
@@ -2275,4 +2982,16 @@ void CL_Shutdown()
 	Com_Memset( &cls, 0, sizeof( cls ) );
 
 	Com_Printf( "-----------------------\n" );
+}
+
+
+void CL_SetMenuData( qboolean typeOnly )
+{
+	for ( int i = 0; i < ARRAY_LEN( cpma_cvars ); ++i ) {
+		const cvarTableItemCPMA_t* const cvar = &cpma_cvars[i];
+		Cvar_SetDataType( cvar->name, cvar->type );
+		if ( !typeOnly ) {
+			Cvar_SetMenuData( cvar->name, cvar->categories, cvar->guiName, cvar->guiDesc, cvar->guiHelp, cvar->guiValues );
+		}
+	}
 }

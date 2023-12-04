@@ -1,2 +1,3 @@
-#define GIT_COMMIT "25e5bb916a57f1a3e209222001aee09114b979d2" 
-#define GIT_BRANCH "master"
+#define GIT_COMMIT "9a14a9701eac8338297b63160531adc9a351715b" 
+#define GIT_COMMIT_SHORT "9a14a97" 
+#define GIT_BRANCH "d3d12"

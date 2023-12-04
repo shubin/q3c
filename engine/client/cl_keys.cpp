@@ -1085,6 +1085,10 @@ void CL_KeyEvent( int key, qbool down, unsigned time )
 	}
 #endif
 
+	if (CL_IMGUI_KeyEvent( key, down, keys[key].binding )) {
+		return;
+	}
+
 	// console key is hardcoded, so the user can never unbind it
 	if (key == '`' || key == '~') {
 		if (!down) {
@@ -1217,6 +1221,11 @@ Normal keyboard characters, already shifted / capslocked / etc
 void CL_CharEvent( int key ) {
 	// the console key should never be used as a char
 	if ( key == '`' || key == '~' ) {
+		return;
+	}
+
+	if ( cls.keyCatchers & KEYCATCH_IMGUI ) {
+		CL_IMGUI_CharEvent( key );
 		return;
 	}
 

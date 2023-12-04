@@ -33,22 +33,22 @@ static cvar_t* con_speed;
 static cvar_t* con_drawHelp;
 
 #define COLOR_LIST(X) \
-	X(BG,		"101013F6",	qtrue,	"RGBA color of the background") \
-	X(Border,	"4778B2FF",	qtrue,	"RGBA color of the border") \
-	X(Arrow,	"4778B2FF",	qtrue,	"RGBA color of backscroll arrows") \
-	X(Shadow,	"000000FF",	qtrue,	"RGBA color of text shadows") \
-	X(MkBG,		"BFBFBFFF",	qtrue,	"RGBA color of the mark background") \
-	X(MkShadow,	"FFFFFF00",	qtrue,	"RGBA color of the mark text shadows") \
-	X(Text,		"E2E2E2",	qfalse,	"RGB color of text") \
-	X(MkText,	"000000",	qfalse,	"RGB color of mark text") \
-	X(CVar,		"4778B2",	qfalse,	"RGB color of variable names") \
-	X(Cmd,		"4FA7BD",	qfalse,	"RGB color of command names") \
-	X(Value,	"E5BC39",	qfalse,	"RGB color of variable values") \
-	X(Help,		"ABC1C6",	qfalse,	"RGB color of help text") \
-	X(Search,	"FFFF00",	qfalse,	"RGB color of search result marker") \
-	X(HL,		"303033FF",	qtrue,	help_con_colHL)
+	X(BG,		"101013F6",	qtrue,	"RGBA color of the background",			"Console background") \
+	X(Border,	"4778B2FF",	qtrue,	"RGBA color of the border",				"Console border") \
+	X(Arrow,	"4778B2FF",	qtrue,	"RGBA color of backscroll arrows",		"Console backscroll arrows") \
+	X(Shadow,	"000000FF",	qtrue,	"RGBA color of text shadows",			"Console text shadows") \
+	X(MkBG,		"BFBFBFFF",	qtrue,	"RGBA color of the mark background",	"Console mark background") \
+	X(MkShadow,	"FFFFFF00",	qtrue,	"RGBA color of the mark text shadows",	"Console mark text shadows") \
+	X(Text,		"E2E2E2",	qfalse,	"RGB color of text",					"Console text") \
+	X(MkText,	"000000",	qfalse,	"RGB color of mark text",				"Console mark text") \
+	X(CVar,		"4778B2",	qfalse,	"RGB color of variable names",			"Console variable names") \
+	X(Cmd,		"4FA7BD",	qfalse,	"RGB color of command names",			"Console command names") \
+	X(Value,	"E5BC39",	qfalse,	"RGB color of variable values",			"Console variable values") \
+	X(Help,		"ABC1C6",	qfalse,	"RGB color of help text",				"Console help text") \
+	X(Search,	"FFFF00",	qfalse,	"RGB color of search result marker",	"Console search result marker") \
+	X(HL,		"303033FF",	qtrue,	help_con_colHL,							"Console completion highlights")
 
-#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help ) \
+#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help, Title ) \
 	static cvar_t* con_col##Name; \
 	static vec4_t col##Name;
 COLOR_LIST( COLOR_LIST_ITEM )
@@ -146,13 +146,8 @@ static qbool IsValidHexColor( const char* s, qbool hasAlpha )
 	return *s == '\0';
 }
 
-static void GetFloatColor( float* c, cvar_t* cvar, qbool hasAlpha )
+static void GetFloatColor( float* c, const cvar_t* cvar, qbool hasAlpha )
 {
-	c[0] = 1.0f;
-	c[1] = 1.0f;
-	c[2] = 1.0f;
-	c[3] = 1.0f;
-
 	const char* s = cvar->string;
 	if ( !IsValidHexColor(s, hasAlpha) ) {
 		s = cvar->resetString;
@@ -160,22 +155,7 @@ static void GetFloatColor( float* c, cvar_t* cvar, qbool hasAlpha )
 			return;
 	}
 
-	unsigned int uc[4];
-	if ( hasAlpha ) {
-		if ( sscanf(s, "%02X%02X%02X%02X", &uc[0], &uc[1], &uc[2], &uc[3]) != 4 )
-			return;
-		c[0] = uc[0] / 255.0f;
-		c[1] = uc[1] / 255.0f;
-		c[2] = uc[2] / 255.0f;
-		c[3] = uc[3] / 255.0f;
-	} else {
-		if ( sscanf(s, "%02X%02X%02X", &uc[0], &uc[1], &uc[2]) != 3 )
-			return;
-		c[0] = uc[0] / 255.0f;
-		c[1] = uc[1] / 255.0f;
-		c[2] = uc[2] / 255.0f;
-		c[3] = 1.0f;
-	}
+	Com_ParseHexColor( c, s, hasAlpha );
 }
 
 const float* ConsoleColorFromChar( char ccode )
@@ -435,18 +415,49 @@ static void Con_ResizeFont()
 
 static const cvarTableItem_t con_cvars[] =
 {
-#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help ) { &con_col##Name, "con_col" #Name, Default, CVAR_ARCHIVE, CVART_STRING, NULL, NULL, Help },
+#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help, Title ) \
+	{ \
+		&con_col##Name, "con_col" #Name, Default, CVAR_ARCHIVE, HasAlpha ? CVART_COLOR_RGBA : CVART_COLOR_RGB, NULL, NULL, Help, \
+		Title, CVARCAT_CONSOLE, "", "" \
+	},
 	COLOR_LIST( COLOR_LIST_ITEM )
 #undef COLOR_LIST_ITEM
 	// con_scale:
 	// bugs in the renderer's overflow handling will cause crashes
 	// if the console has too many polys/verts because of too small a font
-	{ &con_noprint, "con_noprint", "0", 0, CVART_BOOL, NULL, NULL, "disables console printing and history writing" },
-	{ &con_notifytime, "con_notifytime", "-1", CVAR_ARCHIVE, CVART_FLOAT, "-1", "30", help_con_notifytime },
-	{ &con_scale, "con_scale", "1.2", CVAR_ARCHIVE, CVART_FLOAT, "0.25", "10", "console text scaling factor" },
-	{ &con_scaleMode, "con_scaleMode", "0", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", help_con_scaleMode },
-	{ &con_speed, "con_speed", "1000", CVAR_ARCHIVE, CVART_FLOAT, "0.1", "1000", "console opening/closing speed" },
-	{ &con_drawHelp, "con_drawHelp", "1", CVAR_ARCHIVE, CVART_BITMASK, "0", XSTRING(DRAWHELP_MAX), help_con_drawHelp }
+	{
+		&con_noprint, "con_noprint", "0", 0, CVART_BOOL, NULL, NULL, "disables console printing and history writing",
+		"No console print", CVARCAT_CONSOLE, "Disables console printing and history writing", ""
+	},
+	{
+		&con_notifytime, "con_notifytime", "-1", CVAR_ARCHIVE, CVART_FLOAT, "-1", "30", help_con_notifytime,
+		"Console notify time", CVARCAT_CONSOLE,
+		"Seconds messages stay visible in the notify area\n"
+		"Set to -1 for CPMA to draw the 'Console' SuperHUD element", ""
+	},
+	{
+		&con_scale, "con_scale", "1.2", CVAR_ARCHIVE, CVART_FLOAT, "0.25", "10", "console text scaling factor",
+		"Console text scale", CVARCAT_CONSOLE, "", ""
+	},
+	{
+		&con_scaleMode, "con_scaleMode", "0", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", help_con_scaleMode,
+		"Console text scale mode", CVARCAT_CONSOLE, "", "",
+		CVAR_GUI_VALUE("0", "Doesn't scale with res", "")
+		CVAR_GUI_VALUE("1", "Scales with res", "")
+		CVAR_GUI_VALUE("2", "Fixed 8x12 size", "")
+	},
+	{
+		&con_speed, "con_speed", "1000", CVAR_ARCHIVE, CVART_FLOAT, "0.1", "1000", "console opening/closing speed",
+		"Console open speed", CVARCAT_CONSOLE, "", ""
+	},
+	{
+		&con_drawHelp, "con_drawHelp", "1", CVAR_ARCHIVE, CVART_BITMASK, "0", XSTRING(DRAWHELP_MAX), "draws help text below the console",
+		"Console help panel", CVARCAT_CONSOLE, "Draws a panel below the console", "",
+		CVAR_GUI_VALUE("0", "Enable panel", "Enables the help panel below the console")
+		CVAR_GUI_VALUE("1", "Force draw", "Draws the help panel even if the CVar/cmd has no help text")
+		CVAR_GUI_VALUE("2", "Draw modules", "Draws the list of modules")
+		CVAR_GUI_VALUE("3", "Draw attributes", "Draws the list of attributes (CVars only)")
+	}
 };
 
 
@@ -804,11 +815,11 @@ static void Con_DrawSolidConsole( float frac )
 	Con_FillRect( 0, y, cls.glconfig.vidWidth, 2, colBorder );
 
 	re.SetColor( colText );
-	i = sizeof( Q3_VERSION )/sizeof(char) - 1;
+	i = strlen( com_cnq3VersionWithHash );
 	x = cls.glconfig.vidWidth - SMALLCHAR_WIDTH;
 	while (--i >= 0) {
 		x -= SMALLCHAR_WIDTH;
-		SCR_DrawChar( x, scanlines - (SMALLCHAR_HEIGHT * 1.5), SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, Q3_VERSION[i] );
+		SCR_DrawChar( x, scanlines - (SMALLCHAR_HEIGHT * 1.5), SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, com_cnq3VersionWithHash[i] );
 	}
 
 	const int cw = (int)ceilf( con.cw );
@@ -965,7 +976,7 @@ void Con_RunConsole()
 			con.displayFrac = con.finalFrac;
 	}
 
-#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help ) GetFloatColor( col##Name, con_col##Name, HasAlpha );
+#define COLOR_LIST_ITEM( Name, Default, HasAlpha, Help, Title ) GetFloatColor( col##Name, con_col##Name, HasAlpha );
 	COLOR_LIST( COLOR_LIST_ITEM )
 #undef COLOR_LIST_ITEM
 }

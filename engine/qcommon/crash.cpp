@@ -21,7 +21,6 @@ along with Challenge Quake 3. If not, see <https://www.gnu.org/licenses/>.
 // save and print useful data for JSON crash report files
 
 #include "crash.h"
-#include "git.h"
 #include "vm_local.h"
 #include <sys/stat.h>
 
@@ -224,8 +223,8 @@ void Crash_PrintToFile(const char* engineFilePath)
 #else
 	JSONW_BooleanValue("engine_dev_build", qfalse);
 #endif
-	JSONW_StringValue("engine_git_branch", GIT_BRANCH);
-	JSONW_StringValue("engine_git_commit", GIT_COMMIT);
+	JSONW_StringValue("engine_git_branch", com_gitBranch);
+	JSONW_StringValue("engine_git_commit", com_gitCommit);
 	const unsigned int crc32 = CRC32_HashFile(engineFilePath);
 	if (crc32)
 		JSONW_HexValue("engine_crc32", crc32);

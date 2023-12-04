@@ -50,32 +50,8 @@ const vec4_t r_mipBlendColors[16] = {
 };
 
 
-// colors are not pre-multiplied
-static const byte mipBlendColors[16][4] = {
-	{ 0, 0, 0, 0 },
-	{ 255, 0, 0, 128 },
-	{ 0, 255, 0, 128 },
-	{ 0, 0, 255, 128 },
-	{ 255, 0, 0, 128 },
-	{ 0, 255, 0, 128 },
-	{ 0, 0, 255, 128 },
-	{ 255, 0, 0, 128 },
-	{ 0, 255, 0, 128 },
-	{ 0, 0, 255, 128 },
-	{ 255, 0, 0, 128 },
-	{ 0, 255, 0, 128 },
-	{ 0, 0, 255, 128 },
-	{ 255, 0, 0, 128 },
-	{ 0, 255, 0, 128 },
-	{ 0, 0, 255, 128 }
-};
-
-
 #define IMAGE_HASH_SIZE 1024
 static image_t* hashTable[IMAGE_HASH_SIZE];
-
-
-static byte s_intensitytable[256];
 
 
 void R_ImageList_f( void )
@@ -181,40 +157,7 @@ void R_ImageInfo_f()
 ///////////////////////////////////////////////////////////////
 
 
-// scale up the pixel values in a texture to increase the lighting range
-
-static void R_LightScaleTexture( byte* p, int width, int height )
-{
-	const int pixels = width * height;
-	for (int i = 0 ; i < pixels; ++i) {
-		p[0] = s_intensitytable[p[0]];
-		p[1] = s_intensitytable[p[1]];
-		p[2] = s_intensitytable[p[2]];
-		p += 4;
-	}
-}
-
-
-// apply a color blend over a set of pixels - used for r_colorMipLevels
-
-static void R_BlendOverTexture( byte *data, int pixelCount, const byte blend[4] )
-{
-	int premult[3];
-	int inverseAlpha = 255 - blend[3];
-
-	premult[0] = blend[0] * blend[3];
-	premult[1] = blend[1] * blend[3];
-	premult[2] = blend[2] * blend[3];
-
-	for (int i = 0; i < pixelCount; ++i, data+=4) {
-		data[0] = ( data[0] * inverseAlpha + premult[0] ) >> 9;
-		data[1] = ( data[1] * inverseAlpha + premult[1] ) >> 9;
-		data[2] = ( data[2] * inverseAlpha + premult[2] ) >> 9;
-	}
-}
-
-
-static int ComputeMipCount( int scaled_width, int scaled_height )
+int R_ComputeMipCount( int scaled_width, int scaled_height )
 {
 	int mipCount = 1;
 	while ( scaled_width > 1 || scaled_height > 1 ) {
@@ -235,7 +178,7 @@ static void Upload32( image_t* image, unsigned int* data )
 	if ( image->flags & IMG_LMATLAS ) {
 		image->flags |= IMG_NOMIPMAP;
 		image->flags |= IMG_NOAF;
-		gal.CreateTexture( image, 1, image->width, image->height );
+		renderPipeline->CreateTexture( image, 1, image->width, image->height );
 		return;
 	}
 
@@ -309,79 +252,15 @@ static void Upload32( image_t* image, unsigned int* data )
 		scaled_height >>= 1;
 	}
 
-	if ( glInfo.mipGenSupport && image->format == TF_RGBA8 && ( image->flags & IMG_NOMIPMAP ) == 0 ) {
-		const int w = image->width;
-		const int h = image->height;
-		const int mipCount = ComputeMipCount( w, h );
-		int mipOffset = 0;
-		while ( image->width > scaled_width || image->height > scaled_height ) {
-			image->width = max( image->width >> 1, 1 );
-			image->height = max( image->height >> 1, 1 );
-			mipOffset++;
-		}
-		gal.CreateTextureEx( image, mipCount, mipOffset, w, h, data );
-		return;
-	}
-
-	RI_AutoPtr pScaled( sizeof(unsigned) * scaled_width * scaled_height );
-	// copy or resample data as appropriate for first MIP level
-	if ( ( scaled_width == image->width ) && ( scaled_height == image->height ) ) {
-		if ( image->flags & IMG_NOMIPMAP ) {
-			gal.CreateTexture( image, 1, image->width, image->height );
-			gal.UpdateTexture( image, 0, 0, 0, image->width, image->height, data );
-			return;
-		}
-		Com_Memcpy( pScaled, data, image->width * image->height * 4 );
-	}
-	else
-	{
-		// use the normal mip-mapping function to go down from here
-		while ( image->width > scaled_width || image->height > scaled_height ) {
-			byte* resampled;
-			R_MipMap( &resampled, (const byte*)data, image->width, image->height, image->wrapClampMode );
-			data = (unsigned int*)resampled;
-			image->width = max( image->width >> 1, 1 );
-			image->height = max( image->height >> 1, 1 );
-		}
-		Com_Memcpy( pScaled, data, image->width * image->height * 4 );
-	}
-
-	if ( !(image->flags & IMG_NOIMANIP) )
-		R_LightScaleTexture( pScaled.Get<byte>(), scaled_width, scaled_height );
-
-	const int mipCount = ( image->flags & IMG_NOMIPMAP ) ? 1 : ComputeMipCount( scaled_width, scaled_height );
-	gal.CreateTexture( image, mipCount, scaled_width, scaled_height );
-	gal.UpdateTexture( image, 0, 0, 0, scaled_width, scaled_height, pScaled );
-
-	if ( !(image->flags & IMG_NOMIPMAP) )
-	{
-		byte* imageData = pScaled.Get<byte>();
-
-		int miplevel = 0;
-		while (scaled_width > 1 || scaled_height > 1)
-		{
-			byte* resampled;
-			R_MipMap( &resampled, imageData, scaled_width, scaled_height, image->wrapClampMode );
-			imageData = resampled;
-			scaled_width = max( scaled_width >> 1, 1 );
-			scaled_height = max( scaled_height >> 1, 1 );
-			++miplevel;
-
-			if ( r_colorMipLevels->integer )
-				R_BlendOverTexture( imageData, scaled_width * scaled_height, mipBlendColors[miplevel] );
-
-			gal.UpdateTexture( image, miplevel, 0, 0, scaled_width, scaled_height, imageData );
-		}
-	}	
-}
-
-
-void R_UploadLightmapTile( image_t* image, byte* pic, int x, int y, int width, int height )
-{
-	if ( !(image->flags & IMG_LMATLAS) )
-		ri.Error( ERR_DROP, "R_UploadLightmapTile: IMG_LMATLAS flag not defined\n" );
-
-	gal.UpdateTexture( image, 0, x, y, width, height, pic );
+	const int w = image->width;
+	const int h = image->height;
+	int mipCount = R_ComputeMipCount( w, h );
+	if ( image->format != TF_RGBA8 )
+		image->flags |= IMG_NOMIPMAP;
+	if ( image->flags & IMG_NOMIPMAP )
+		mipCount = 1;
+	renderPipeline->CreateTexture( image, mipCount, w, h );
+	renderPipeline->UpoadTextureAndGenerateMipMaps( image, (const byte*)data );
 }
 
 
@@ -913,66 +792,6 @@ image_t* R_FindImageFile( const char* name, int flags, textureWrap_t glWrapClamp
 }
 
 
-void R_InitFogTable()
-{
-	const float exp = 0.5;
-
-	for (int i = 0; i < FOG_TABLE_SIZE; ++i) {
-		tr.fogTable[i] = pow( (float)i/(FOG_TABLE_SIZE-1), exp );
-	}
-}
-
-
-/*
-Returns a 0.0 to 1.0 fog density value
-This is called for each texel of the fog texture on startup
-and for each vertex of transparent shaders in fog dynamically
-*/
-float R_FogFactor( float s, float t )
-{
-	s -= 1.0/512;
-	if ( s < 0 ) {
-		return 0;
-	}
-	if ( t < 1.0/32 ) {
-		return 0;
-	}
-	if ( t < 31.0/32 ) {
-		s *= (t - 1.0f/32.0f) / (30.0f/32.0f);
-	}
-
-	// we need to leave a lot of clamp range
-	s *= 8;
-
-	if ( s > 1.0 ) {
-		s = 1.0;
-	}
-
-	return tr.fogTable[ (int)(s * (FOG_TABLE_SIZE-1)) ];
-}
-
-
-static void R_CreateFogImage()
-{
-	const int FOG_S = 256;
-	const int FOG_T = 32;
-
-	RI_AutoPtr ap( FOG_S * FOG_T * 4 );
-	byte* p = ap;
-
-	// S is distance, T is depth
-	for (int x = 0; x < FOG_S; ++x) {
-		for (int y = 0; y < FOG_T; ++y) {
-			float d = R_FogFactor( ( x + 0.5f ) / FOG_S, ( y + 0.5f ) / FOG_T );
-			p[(y*FOG_S+x)*4+0] = p[(y*FOG_S+x)*4+1] = p[(y*FOG_S+x)*4+2] = 255;
-			p[(y*FOG_S+x)*4+3] = 255*d;
-		}
-	}
-
-	tr.fogImage = R_CreateImage( "*fog", p, FOG_S, FOG_T, TF_RGBA8, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
-}
-
-
 static void R_CreateDefaultImage()
 {
 	const int DEFAULT_SIZE = 16;
@@ -1014,8 +833,6 @@ static void R_CreateBuiltinImages()
 	// these are just placeholders: RE_StretchRaw will regenerate them when it wants them
 	for (i = 0; i < ARRAY_LEN(tr.scratchImage); ++i)
 		tr.scratchImage[i] = R_CreateImage( "*scratch", data, 1, 1, TF_RGBA8, IMG_NOMIPMAP | IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
-
-	R_CreateFogImage();
 }
 
 
@@ -1023,10 +840,6 @@ void R_SetColorMappings()
 {
 	tr.identityLight = 1.0f / r_brightness->value;
 	tr.identityLightByte = (int)( 255.0f * tr.identityLight );
-
-	for (int i = 0; i < 256; ++i) {
-		s_intensitytable[i] = (byte)min( r_intensity->value * i, 255.0f );
-	}
 }
 
 

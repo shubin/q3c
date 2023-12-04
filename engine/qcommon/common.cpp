@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "q_shared.h"
 #include "qcommon.h"
 #include "common_help.h"
+#include "git.h"
 #include <setjmp.h>
+#include <float.h>
 
 #ifndef INT64_MIN
 #	define INT64_MIN 0x8000000000000000LL
@@ -92,10 +94,7 @@ cvar_t	*com_noErrorInterrupt;
 static cvar_t	*con_completionStyle;	// 0 = legacy, 1 = ET-style
 static cvar_t	*con_history;
 
-// com_speeds times
-int		time_game;
-int		time_frontend;		// renderer frontend time
-int		time_backend;		// renderer backend time
+int		time_game; // for com_speeds
 
 int		com_frameTime;
 int		com_frameNumber;
@@ -103,7 +102,13 @@ int		com_frameNumber;
 qbool	com_errorEntered;
 qbool	com_fullyInitialized;
 
+int64_t	com_nextTargetTimeUS = INT64_MIN;
+
 static char com_errorMessage[MAXPRINTMSG];
+
+const char* const com_cnq3VersionWithHash = Q3_VERSION " " GIT_COMMIT_SHORT;
+const char* const com_gitBranch = GIT_BRANCH;
+const char* const com_gitCommit = GIT_COMMIT;
 
 static void Com_WriteConfigToFile( const char* filename, qbool forceWrite );
 static void Com_WriteConfig_f();
@@ -252,7 +257,6 @@ void QDECL Com_ErrorExt( int code, int module, qbool realError, PRINTF_FORMAT_ST
 
 	if ( code == ERR_DROP_NDP ) {
 #if !defined(DEDICATED)
-		void CL_NDP_HandleError();
 		CL_NDP_HandleError();
 #endif
 		code = ERR_DROP;
@@ -1476,12 +1480,6 @@ qbool Hunk_CheckMark()
 void Hunk_Clear()
 {
 #ifndef DEDICATED
-	extern void CL_ShutdownCGame();
-	extern void CL_ShutdownUI();
-#endif
-	extern void SV_ShutdownGameProgs();
-
-#ifndef DEDICATED
 	CL_ShutdownCGame();
 	CL_ShutdownUI();
 #endif
@@ -2187,11 +2185,17 @@ static const cmdTableItem_t com_cmds[] =
 static const cvarTableItem_t com_cvars[] =
 {
 #if defined( QC )
-	// we use pmove_float so I guess higher FPS are possible as well
-	{ &com_maxfps, "com_maxfps", "125", CVAR_ARCHIVE, CVART_INTEGER, "60", "500", help_com_maxfps },
-#else
-	{ &com_maxfps, "com_maxfps", "125", CVAR_ARCHIVE, CVART_INTEGER, "60", "250", help_com_maxfps },
-#endif
+	{
+		&com_maxfps, "com_maxfps", "250", CVAR_ARCHIVE, CVART_INTEGER, "60", "500", help_com_maxfps,
+		"Framerate cap", CVARCAT_DISPLAY, "If you see 'connection interrupted' online, lower the cap", ""
+	},
+#else // QC
+	{
+		&com_maxfps, "com_maxfps", "125", CVAR_ARCHIVE, CVART_INTEGER, "60", "250", help_com_maxfps,
+		"Framerate cap", CVARCAT_DISPLAY, "If you see 'connection interrupted' online, lower the cap", ""
+	},
+#endif // QC
+
 	{ &com_developer, "developer", "0", CVAR_TEMP, CVART_BOOL, NULL, NULL, "enables detailed logging" },
 	{ &com_logfile, "logfile", "0", CVAR_TEMP, CVART_INTEGER, "0", "2", help_com_logfile },
 	{ &com_timescale, "timescale", "1", CVAR_CHEAT | CVAR_SYSTEMINFO, CVART_FLOAT, "0", "100", "game time to real time ratio" },
@@ -2209,8 +2213,16 @@ static const cvarTableItem_t com_cvars[] =
 #if defined(_WIN32) && defined(_DEBUG)
 	{ &com_noErrorInterrupt, "com_noErrorInterrupt", "0", 0, CVART_BOOL },
 #endif
-	{ &con_completionStyle, "con_completionStyle", "0", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_con_completionStyle },
-	{ &con_history, "con_history", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, "writes the command history to a file on exit" }
+	{
+		&con_completionStyle, "con_completionStyle", "0", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_con_completionStyle,
+		"Console completion style", CVARCAT_CONSOLE, "", "",
+		CVAR_GUI_VALUE("0", "Quake 3", "Always prints all results")
+		CVAR_GUI_VALUE("1", "Enemy Territory", "Prints once then cycles")
+	},
+	{
+		&con_history, "con_history", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, "writes the command history to a file on exit",
+		"Save console history", CVARCAT_CONSOLE, "save the command history to a file on exit", ""
+	}
 };
 
 
@@ -2295,7 +2307,7 @@ void Com_Init( char *commandLine )
 
 	Cmd_RegisterArray( com_cmds, MODULE_COMMON );
 
-	const char* s = Q3_VERSION " " PLATFORM_STRING " " __DATE__;
+	const char* const s = Q3_VERSION " " GIT_COMMIT_SHORT " " PLATFORM_STRING " " __DATE__;
 	com_version = Cvar_Get( "version", s, CVAR_ROM | CVAR_SERVERINFO );
 
 	Cvar_Get( "sys_compiler", Com_GetCompilerInfo(), CVAR_ROM );
@@ -2471,6 +2483,7 @@ static void Com_FrameSleep( qbool demoPlayback )
 		targetTimeUS = Sys_Microseconds() + sleepUS;
 	else
 		targetTimeUS += sleepUS;
+	com_nextTargetTimeUS = targetTimeUS + 1000000 / com_maxfps->integer;
 
 	// sleep if needed
 	if ( com_dedicated->integer ) {
@@ -2486,10 +2499,8 @@ static void Com_FrameSleep( qbool demoPlayback )
 				const int64_t remainingUS = targetTimeUS - Sys_Microseconds();
 				if ( remainingUS > 3000 && runEventLoop )
 					Com_EventLoop();
-				else if ( remainingUS > 1000 )
-					Sys_Sleep( 1 );
-				else if ( remainingUS > 50 )
-					Sys_MicroSleep( 50 );
+				else if ( remainingUS > 0 )
+					Sys_MicroSleep( remainingUS );
 				else
 					break;
 			}
@@ -2505,6 +2516,9 @@ static void Com_FrameSleep( qbool demoPlayback )
 void Com_Frame( qbool demoPlayback )
 {
 	if ( setjmp(abortframe) ) {
+#ifndef DEDICATED
+		CL_AbortFrame();
+#endif
 		return;			// an ERR_DROP was thrown
 	}
 
@@ -2584,6 +2598,8 @@ void Com_Frame( qbool demoPlayback )
 	// client system
 	//
 	if ( !com_dedicated->integer ) {
+		R_WaitBeforeInputSampling();
+
 		//
 		// run event loop a second time to get server to client packets
 		// without a frame of latency
@@ -2616,9 +2632,7 @@ void Com_Frame( qbool demoPlayback )
 		int all = timeAfter - timeBeforeServer;
 		int sv = timeBeforeEvents - timeBeforeServer - time_game;
 		int ev = timeBeforeServer - timeBeforeFirstEvents + timeBeforeClient - timeBeforeEvents;
-		int cl = timeAfter - timeBeforeClient - (time_frontend + time_backend);
-		Com_Printf( "frame:%i all:%3i sv:%3i ev:%3i cl:%3i gm:%3i rf:%3i bk:%3i\n",
-				com_frameNumber, all, sv, ev, cl, time_game, time_frontend, time_backend );
+		Com_Printf( "frame:%i all:%3i sv:%3i ev:%3i gm:%3i\n", com_frameNumber, all, sv, ev, time_game );
 	}
 
 	//
@@ -3526,12 +3540,13 @@ printHelpResult_t Com_PrintHelp( const char* name, printf_t print, qbool printNo
 	if ( !desc ) {
 		if ( printNotFound )
 			print(	"no help text found for %s %s%s\n",
-			isCvar ? "cvar" : "command", isCvar ? S_COLOR_CVAR : S_COLOR_CMD, name );
+				isCvar ? "cvar" : "command", isCvar ? S_COLOR_CVAR : S_COLOR_CMD, name );
 		return PHR_NOHELP;
 	}
 
 	const char firstLetter = toupper( *desc );
 	print( S_COLOR_HELP "%c%s" S_COLOR_HELP ".\n", firstLetter, desc + 1 );
+
 	if ( help )
 		print( S_COLOR_HELP "%s\n", help );
 
@@ -3613,17 +3628,145 @@ static const char* Com_GetCompilerInfo()
 }
 
 
-const char* Com_FormatBytes( int numBytes )
+const char* Com_FormatBytes( uint64_t numBytes )
 {
 	const char* units[] = { "bytes", "KB", "MB", "GB" };
 	const float dividers[] = { 1.0f, float(1 << 10), float(1 << 20), float(1 << 30) };
 
 	int unit = 0;
-	for ( int vi = numBytes; vi >= 1024; vi >>= 10 ) {
+	for ( uint64_t vi = numBytes; vi >= 1024; vi >>= 10 ) {
 		unit++;
 	}
 
 	const float vf = (float)numBytes / dividers[unit];
 
 	return va( "%.3f %s", vf, units[unit] );
+}
+
+
+static int QDECL SortIntDescending( const void* a, const void* b )
+{
+	return *(const int*)b - *(const int*)a;
+}
+
+
+static int QDECL SortFloatDescending( const void* aPtr, const void* bPtr )
+{
+	const float a = *(const float*)aPtr;
+	const float b = *(const float*)bPtr;
+
+	return (a < b) - (a > b);
+}
+
+
+typedef int (QDECL* qsortCallback_t)( const void*, const void* );
+
+
+template<typename T>
+static void StatsFromArray( const T* samples, int numSamples, qsortCallback_t sortFunction, T* temp, stats_t* stats )
+{
+	memcpy( temp, samples, sizeof(T) * numSamples );
+	qsort( temp, numSamples, sizeof(T), sortFunction );
+	stats->median = temp[numSamples / 2];
+	stats->percentile99 = temp[numSamples / 100];
+
+	float sum = 0.0f;
+	float minimum =  FLT_MAX;
+	float maximum = -FLT_MAX;
+	for ( int i = 0; i < numSamples; ++i ) {
+		const float sample = (float)samples[i];
+		sum += sample;
+		minimum = min(minimum, sample);
+		maximum = max(maximum, sample);
+	}
+	const float average = sum / (float)numSamples;
+	stats->average = average;
+	stats->minimum = minimum;
+	stats->maximum = maximum;
+
+	float variance = 0.0f;
+	for ( int i = 0; i < numSamples; ++i ) {
+		const float delta = (float)samples[i] - average;
+		variance += delta * delta;
+	}
+	stats->variance = variance;
+	stats->stdDev = sqrtf( variance );
+}
+
+
+void Com_StatsFromArray( const int* input, int numSamples, int* temp, stats_t* stats )
+{
+	StatsFromArray<int>( input, numSamples, &SortIntDescending, temp, stats );
+}
+
+
+void Com_StatsFromArray( const float* input, int numSamples, float* temp, stats_t* stats )
+{
+	StatsFromArray<float>( input, numSamples, &SortFloatDescending, temp, stats );
+}
+
+
+void Com_ParseHexColor( float* c, const char* text, qbool hasAlpha )
+{
+	c[0] = 1.0f;
+	c[1] = 1.0f;
+	c[2] = 1.0f;
+	c[3] = 1.0f;
+
+	unsigned int uc[4];
+	if ( hasAlpha ) {
+		if ( sscanf(text, "%02X%02X%02X%02X", &uc[0], &uc[1], &uc[2], &uc[3]) != 4 )
+			return;
+		c[0] = uc[0] / 255.0f;
+		c[1] = uc[1] / 255.0f;
+		c[2] = uc[2] / 255.0f;
+		c[3] = uc[3] / 255.0f;
+	} else {
+		if ( sscanf(text, "%02X%02X%02X", &uc[0], &uc[1], &uc[2]) != 3 )
+			return;
+		c[0] = uc[0] / 255.0f;
+		c[1] = uc[1] / 255.0f;
+		c[2] = uc[2] / 255.0f;
+		c[3] = 1.0f;
+	}
+}
+
+
+static uint32_t asuint( float x )
+{
+	return *(uint32_t*)&x;
+}
+
+
+static float asfloat( uint32_t x )
+{
+	return *(float*)&x;
+}
+
+
+// IEEE-754 16-bit floating-point format (without infinity)
+// "Accuracy and performance of the lattice Boltzmann method with 64-bit, 32-bit, and customized 16-bit number formats"
+// x86 intrinsic: _cvtsh_ss
+float f16tof32( uint16_t x )
+{
+	const uint32_t e = (x & 0x7C00) >> 10; // exponent
+	const uint32_t m = (x & 0x03FF) << 13; // mantissa
+	const uint32_t v = asuint((float)m) >> 23; // log2 bit hack to count leading zeros in denormalized format
+	const float r = asfloat((x & 0x8000) << 16 | (e != 0) * ((e + 112) << 23 | m) | ((e == 0) & (m != 0)) * ((v - 37) << 23 | ((m << (150 - v)) & 0x007FE000))); // sign : normalized : denormalized
+
+	return r;
+}
+
+
+// IEEE-754 16-bit floating-point format (without infinity)
+// "Accuracy and performance of the lattice Boltzmann method with 64-bit, 32-bit, and customized 16-bit number formats"
+// x86 intrinsic: _cvtss_sh
+uint16_t f32tof16( float x )
+{
+	const uint32_t b = asuint(x) + 0x00001000; // round-to-nearest-even: add last bit after truncated mantissa
+	const uint32_t e = (b & 0x7F800000) >> 23; // exponent
+	const uint32_t m = b & 0x007FFFFF; // mantissa; in line below: 0x007FF000 = 0x00800000-0x00001000 = decimal indicator flag - initial rounding
+	const uint16_t r = (b & 0x80000000) >> 16 | (e > 112) * ((((e - 112) << 10) & 0x7C00) | m >> 13) | ((e < 113) & (e > 101)) * ((((0x007FF000 + m) >> (125 - e)) + 1) >> 1) | (e > 143) * 0x7FFF; // sign : normalized : denormalized : saturate
+
+	return r;
 }

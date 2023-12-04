@@ -287,7 +287,7 @@ static void MakeSkyVec( float s, float t, int axis, vec2_t st, vec3_t xyz )
 	};
 
 	vec3_t b;
-	float boxSize = backEnd.viewParms.zFar / 1.75;		// div sqrt(3)
+	float boxSize = backEnd.viewParms.zFar;
 	b[0] = boxSize * s;
 	b[1] = boxSize * t;
 	b[2] = boxSize;
@@ -323,7 +323,7 @@ static void FillCloudySkySide( const int mins[2], const int maxs[2], qbool addIn
 		(uint32_t)tr.identityLightByte |
 		((uint32_t)tr.identityLightByte << 8) |
 		((uint32_t)tr.identityLightByte << 16) |
-		((uint32_t)256 << 24);
+		((uint32_t)255 << 24);
 
 	for ( int t = mins[1]+HALF_SKY_SUBDIVISIONS; t <= maxs[1]+HALF_SKY_SUBDIVISIONS; t++ )
 	{
@@ -423,7 +423,7 @@ static void FillCloudBox( const shader_t* shader, int stage )
 
 void R_BuildCloudData()
 {
-	assert( tess.shader->sort == SS_ENVIRONMENT );
+	Q_assert( tess.shader->isSky );
 
 	// set up for drawing
 	tess.numIndexes = 0;
@@ -495,9 +495,10 @@ void R_InitSkyTexCoords( float heightCloud )
 static void DrawSkyBox()
 {
 	image_t* const* skyImages = &tess.shader->sky.outerbox[0];
-	RB_PushSingleStageShader( GLS_DEPTHMASK_TRUE, CT_TWO_SIDED );
+	RB_PushSingleStageShader( 0, CT_TWO_SIDED );
 	shaderStage_t* const stage = tess.shader->stages[0];
 	stage->rgbGen = CGEN_IDENTITY_LIGHTING;
+	((shader_t*)tess.shader)->isSky = qtrue;
 
 	for (int i = 0; i < 6; ++i)
 	{
@@ -528,7 +529,7 @@ static void DrawSkyBox()
 		tess.numVertexes = 0;
 		tess.numIndexes = 0;
 		FillCloudySkySide( sky_mins_subd, sky_maxs_subd, qtrue );
-		gal.Draw( DT_GENERIC );
+		renderPipeline->DrawSkyBox();
 		
 	}
 
@@ -548,19 +549,12 @@ void RB_DrawSky()
 	RB_ClipSkyPolygons();
 	RB_CalcSkyBounds();
 
-	// r_showsky will let all the sky blocks be drawn in
-	// front of everything to allow developers to see how
-	// much sky is getting sucked in
-	gal.BeginSkyAndClouds(r_showsky->integer ? 0.0 : 1.0);
-	
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 		DrawSkyBox();
 
 	if (tess.shader->sky.cloudHeight > 0.0f) {
 		R_BuildCloudData();
-		if (tess.numVertexes)
-			gal.Draw(DT_GENERIC);
+		if (tess.numVertexes > 0 && tess.numIndexes > 0)
+			renderPipeline->DrawClouds();
 	}
-
-	gal.EndSkyAndClouds();
 }

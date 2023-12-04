@@ -42,7 +42,7 @@ typedef struct aviFileData_s
 {
   qbool         fileOpen;
   fileHandle_t  f;
-  char          fileName[ MAX_QPATH ];
+  char          fileName[ 256 + 64 ]; // extra room for the "videos/" prefix and name suffix
   int           fileSize;
   int           moviOffset;
   int           moviSize;

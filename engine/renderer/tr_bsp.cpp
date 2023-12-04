@@ -180,6 +180,9 @@ static void R_LoadLightmaps( const lump_t* l )
 	for ( int a = 0; a < numAtlases; ++a ) {
 		tr.lightmaps[a] = R_CreateImage( va("*lightmapatlas%i", a), NULL, sizeX, sizeY, TF_RGBA8, IMG_LMATLAS, TW_CLAMP_TO_EDGE );
 
+		RHI::MappedTexture upload;
+		renderPipeline->BeginTextureUpload( upload, tr.lightmaps[a] );
+
 		for ( int t = 0; t < numTilesPerAtlas && i < numFileLightmaps; ++t ) {
 			for ( int y = 0; y < LMVirtPageSize; ++y ) {
 				const byte* s = p + y * LMVirtPageSize * 3;
@@ -197,7 +200,12 @@ static void R_LoadLightmaps( const lump_t* l )
 
 			const int offX = (t % countX) * LMPhysPageSize;
 			const int offY = (t / countX) * LMPhysPageSize;
-			R_UploadLightmapTile( tr.lightmaps[a], image, offX, offY, LMPhysPageSize, LMPhysPageSize );
+			const int srcRowByteCount = LMPhysPageSize * 4;
+			for ( int r = 0; r < LMPhysPageSize; ++r ) {
+				const byte* src = image + r * srcRowByteCount;
+				byte* dst = upload.mappedData + (offY + r) * upload.dstRowByteCount + offX * 4;
+				memcpy( dst, src, srcRowByteCount );
+			}
 
 			lightmapBiases[i][0] = (float)(offX + LMBorderSize) / (float)sizeX;
 			lightmapBiases[i][1] = (float)(offY + LMBorderSize) / (float)sizeY;
@@ -205,6 +213,8 @@ static void R_LoadLightmaps( const lump_t* l )
 			p += LMVirtPageSize * LMVirtPageSize * 3;
 			++i;
 		}
+
+		renderPipeline->EndTextureUpload();
 	}
 
 	tr.numLightmaps = numAtlases;
@@ -295,7 +305,7 @@ static shader_t* ShaderForShaderNum( int shaderNum, int lightmapNum )
 		flags |= FINDSHADER_VERTEXLIGHT_BIT;
 	shader_t* shader = R_FindShader( dsh->shader, lightmapNum, flags );
 
-	if ( r_singleShader->integer && (shader->sort != SS_ENVIRONMENT) )
+	if ( r_singleShader->integer && !shader->isSky )
 		return tr.defaultShader;
 
 	// if the shader had errors, just use default shader
@@ -506,9 +516,14 @@ static void ParseTriSurf( const dsurface_t* ds, const drawVert_t* verts, msurfac
 
 static void ParseFlare( const dsurface_t* ds, msurface_t* surf )
 {
+	// @NOTE: we don't support/render flares, so we shouldn't load shaders:
+	// 1. it could create resources that are never used to render the map
+	// 2. it could force loading images used elsewhere with the wrong settings
+	//    e.g. the cpm25 skybox would end up not being set up as clampMap
 	static surfaceType_t flare = SF_FLARE;
 	surf->fogIndex = LittleLong( ds->fogNum ) + 1;
-	surf->shader = ShaderForShaderNum( ds->shaderNum, LIGHTMAP_BY_VERTEX );
+	//surf->shader = ShaderForShaderNum( ds->shaderNum, LIGHTMAP_BY_VERTEX );
+	surf->shader = tr.defaultShader;
 	surf->data = &flare;
 }
 
@@ -1614,8 +1629,6 @@ void RE_LoadWorldMap( const char* name )
 	if ( tr.worldMapLoaded )
 		ri.Error( ERR_DROP, "ERROR: attempted to redundantly load world map\n" );
 
-	tr.worldMapLoaded = qtrue;
-
 	byte* buffer;
 	int pakChecksum = 0;
 	ri.FS_ReadFilePak( name, (void**)&buffer, &pakChecksum );
@@ -1657,6 +1670,7 @@ void RE_LoadWorldMap( const char* name )
 	R_LoadVisibility( &header->lumps[LUMP_VISIBILITY] );
 	R_LoadEntities( &header->lumps[LUMP_ENTITIES] );
 	R_LoadLightGrid( &header->lumps[LUMP_LIGHTGRID] );
+	renderPipeline->ProcessWorld( s_worldData );
 
 	s_worldData.dataSize = (byte*)ri.Hunk_Alloc( 0, h_low ) - startMarker;
 
@@ -1673,6 +1687,8 @@ void RE_LoadWorldMap( const char* name )
 	     !Q_stricmp( s_worldData.surfaces[2859].shader->name, "textures/inpe/m_liq/meat_liquid_bloodpool_A" ) ) {
 		s_worldData.surfaces[2859].shader = R_FindShader( "textures/liquids/calm_poollight", LIGHTMAP_NONE, 0 );
 	}
+
+	tr.worldMapLoaded = qtrue;
 }
 
 

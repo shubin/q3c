@@ -295,6 +295,7 @@ qhandle_t RE_RegisterModel( const char* name )
 			mod->numLods++;
 			mod->md3[lod] = mod->md3[lod+1];
 		}
+		renderPipeline->ProcessModel( *tr.models[mod->index] );
 		return mod->index;
 	}
 #ifdef _DEBUG

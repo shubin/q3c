@@ -129,14 +129,12 @@ static const char *vmName[ VM_COUNT ] = {
 };
 
 
-#if !defined( QC ) || 1
 static const cvarTableItem_t vm_cvars[] =
 {
 	{ NULL, "vm_cgame", "2", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", "how to load the cgame VM" help_vm_load },
 	{ NULL, "vm_game", "2", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", "how to load the qagame VM" help_vm_load },
 	{ NULL, "vm_ui", "2", CVAR_ARCHIVE, CVART_INTEGER, "0", "2", "how to load the ui VM" help_vm_load }
 };
-#endif
 
 
 /*
@@ -932,14 +930,12 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 	vm->index = index;
 	vm->systemCall = systemCalls;
 
-#if !defined( QC ) || 1
 	// never allow dll loading with a demo
 	if ( interpret == VMI_NATIVE ) {
 		if ( Cvar_VariableValue( "fs_restrict" ) ) {
 			interpret = VMI_COMPILED;
 		}
 	}
-#endif
 
 	if ( interpret == VMI_NATIVE ) {
 		// try to load as a system dll
@@ -950,15 +946,8 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 		}
 
 		Com_Printf( "Failed to load dll, looking for qvm.\n" );
-#if defined( QC ) && 0
-		return NULL;
-#else
 		interpret = VMI_COMPILED;
-#endif
 	}
-#if defined( QC ) && 0
-	return NULL;
-#else
 
 	// load the image
 	if( ( header = VM_LoadQVM( vm, qtrue ) ) == NULL ) {
@@ -1014,7 +1003,6 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 	Com_Printf( "%s loaded in %d bytes on the hunk\n", vm->name, remaining - Hunk_MemoryRemaining() );
 
 	return vm;
-#endif
 }
 
 

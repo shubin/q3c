@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define __TR_PUBLIC_H
 
 #include "../qcommon/tr_types.h"
+#include "rhi_public.h"
 
 
 // print levels for severity-coloring (FIXME: move to qcommon for cgame as well?)
@@ -145,7 +146,7 @@ typedef struct {
 	void	(*BeginFrame)( stereoFrame_t stereoFrame );
 
 	// if the pointers are not NULL, they will be filled with stats tables
-	void	(*EndFrame)( int* pcFE, int* pc2D, int* pc3D, qbool render );
+	void	(*EndFrame)( qbool render );
 
 	int		(*MarkFragments)( int numPoints, const vec3_t *points, const vec3_t projection,
 					int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer );
@@ -166,9 +167,6 @@ typedef struct {
 
 	void (*TakeVideoFrame)( int h, int w, byte* captureBuffer, byte *encodeBuffer, qbool motionJpeg );
 
-	// when the final model-view matrix is computed, for cl_drawMouseLag
-	int		(*GetCameraMatrixTime)();
-
 	// qtrue means it should be safe to call any other function
 	qbool	(*Registered)();
 
@@ -178,8 +176,10 @@ typedef struct {
 	// is depth clamping enabled?
 	qbool	(*DepthClamp)();
 
+	// transforms window (client rect) coordinates into render target coordinates
+	void	(*ComputeCursorPosition)( int* x, int* y );
 #if defined( QC )
-	void (*GetAdvertisements)(int *num, float *verts, void *shaders);
+	void	(*GetAdvertisements)( int *num, float *verts, void *shaders );
 #endif
 } refexport_t;
 

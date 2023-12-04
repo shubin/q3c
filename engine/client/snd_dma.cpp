@@ -584,7 +584,7 @@ static void S_Base_ClearLoopingSounds()
 // called during entity generation for a frame
 
 #if defined( QC )
-static void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, int max_dist, sfxHandle_t sfxHandle)
+static void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, int maxDist, sfxHandle_t sfxHandle)
 #else  // QC
 static void S_Base_AddLoopingSound( int entityNum, const vec3_t origin, sfxHandle_t sfxHandle )
 #endif // QC
@@ -612,7 +612,7 @@ static void S_Base_AddLoopingSound( int entityNum, const vec3_t origin, sfxHandl
 	loopSounds[entityNum].sfx = sfx;
 	loopSounds[entityNum].active = qtrue;
 #if defined( QC )
-	loopSounds[entityNum].maxDist = max_dist;
+	loopSounds[entityNum].maxDist = maxDist;
 #endif // QC
 }
 
@@ -810,7 +810,7 @@ static void S_Base_Respatialize( int entityNum, const vec3_t head, const vec3_t 
 {
 	vec3_t origin;
 #if defined( QC )
-	int max_dist;
+	int maxdist;
 #endif // QC
 
 	if ( !s_soundStarted || s_soundMuted ) {
@@ -837,16 +837,16 @@ static void S_Base_Respatialize( int entityNum, const vec3_t head, const vec3_t 
 			if (ch->fixed_origin) {
 				VectorCopy( ch->origin, origin );
 #if defined( QC )
-				max_dist = SOUND_MAX_DIST;
+				maxdist = SOUND_MAX_DIST;
 #endif // QC
 			} else {
 				VectorCopy( loopSounds[ ch->entnum ].origin, origin );
 #if defined( QC )
-				max_dist = loopSounds[ ch->entnum ].maxDist;
+				maxdist = loopSounds[ ch->entnum ].maxDist;
 #endif // QC
 			}
 #if defined( QC )
-			S_SpatializeOrigin(origin, ch->master_vol, max_dist, &ch->leftvol, &ch->rightvol);
+			S_SpatializeOrigin(origin, ch->master_vol, maxdist, &ch->leftvol, &ch->rightvol);
 #else // QC
 			S_SpatializeOrigin( origin, ch->master_vol, &ch->leftvol, &ch->rightvol );
 #endif // QC
