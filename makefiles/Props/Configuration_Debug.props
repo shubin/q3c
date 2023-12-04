@@ -4,8 +4,7 @@
 		<ClCompile>
 			<WarningLevel>Level4</WarningLevel>
 			<InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-			<Optimization>Disabled</Optimization>
-			<BrowseInformation>true</BrowseInformation>
+			<Optimization>Disabled</Optimization>			
 			<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
 			<PreprocessorDefinitions>_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<GenerateDebugInformation>true</GenerateDebugInformation>

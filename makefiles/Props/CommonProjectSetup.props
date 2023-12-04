@@ -22,6 +22,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalLibraryDirectories>$(LibraryOutputDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<BrowseInformation>false</BrowseInformation>
 		</Link>
 	</ItemDefinitionGroup>
 

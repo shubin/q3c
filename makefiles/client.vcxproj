@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C9BA6D30-AF2A-4145-A6ED-67D82C3F7299}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_client.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(EngineSrcDir)client\cl_avi.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_browser.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_cgame.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_cin.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_console.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_demo.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_download.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_imgui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_input.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_keys.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_net_chan.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_parse.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_scrn.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\cl_ui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_codec.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_codec_wav.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_dma.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_mem.cpp" />
+    <ClCompile Include="$(EngineSrcDir)client\snd_mix.cpp" />
+    <ClCompile Include="$(EngineSrcDir)imgui\imgui.cpp" />
+    <ClCompile Include="$(EngineSrcDir)imgui\imgui_demo.cpp" />
+    <ClCompile Include="$(EngineSrcDir)imgui\imgui_draw.cpp" />
+    <ClCompile Include="$(EngineSrcDir)imgui\imgui_tables.cpp" />
+    <ClCompile Include="$(EngineSrcDir)imgui\imgui_widgets.cpp" />
+    <ClCompile Include="$(EngineSrcDir)implot\example_implot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)implot\implot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)implot\implot_demo.cpp" />
+    <ClCompile Include="$(EngineSrcDir)implot\implot_items.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_load.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_patch.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_polylib.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_test.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cm_trace.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cmd.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\common.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\crash.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\cvar.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\files.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\huffman.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\huffman_static.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\json.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\md4.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\md5.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\msg.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\net_chan.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\net_ip.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\q_math.c" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\q_shared.c" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\unzip.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm_interpreted.cpp" />
+    <ClCompile Include="$(EngineSrcDir)qcommon\vm_x86.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_bot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_ccmds.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_client.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_game.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_init.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_net_chan.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_snapshot.cpp" />
+    <ClCompile Include="$(EngineSrcDir)server\sv_world.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_exception.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_files.cpp">
+      <ExcludedFromBuild Condition="'$(Game)'!='QC'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)win32\win_glimp.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_input.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_main.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_shared.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_snd.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_syscon.cpp" />
+    <ClCompile Include="$(EngineSrcDir)win32\win_wndproc.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(EngineSrcDir)botlib\aasfile.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_bsp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_cluster.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_debug.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_def.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_entity.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_file.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_funcs.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_main.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_optimize.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_reach.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_route.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_routealt.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_aas_sample.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_char.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_chat.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_gen.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_goal.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_move.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weap.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ai_weight.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_ea.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\be_interface.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\botlib.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_crc.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_libvar.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_log.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_memory.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_precomp.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_script.h" />
+    <ClInclude Include="$(EngineSrcDir)botlib\l_struct.h" />
+    <ClInclude Include="$(EngineSrcDir)client\cl_imgui.h" />
+    <ClInclude Include="$(EngineSrcDir)client\client.h" />
+    <ClInclude Include="$(EngineSrcDir)client\client_help.h" />
+    <ClInclude Include="$(EngineSrcDir)client\keycodes.h" />
+    <ClInclude Include="$(EngineSrcDir)client\keys.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_codec.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_local.h" />
+    <ClInclude Include="$(EngineSrcDir)client\snd_public.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\ProggyClean.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\Sweet16Mono.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imconfig.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imgui.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imgui_internal.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imstb_rectpack.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imstb_textedit.h" />
+    <ClInclude Include="$(EngineSrcDir)imgui\imstb_truetype.h" />
+    <ClInclude Include="$(EngineSrcDir)implot\implot.h" />
+    <ClInclude Include="$(EngineSrcDir)implot\implot_internal.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cg_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_local.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_patch.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_polylib.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\cm_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\common_help.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\crash.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\g_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\git.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\q_platform.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\q_shared.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\qcommon.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\qfiles.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\surfaceflags.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\syscall_ext.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\tr_types.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\ui_public.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\unzip.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\vm_local.h" />
+    <ClInclude Include="$(EngineSrcDir)qcommon\vm_shim.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\D3D12MemAlloc.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\grp_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\rhi_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\rhi_public.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\smaa_area_texture.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\smaa_search_texture.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\stb_image.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_help.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_local.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\tr_public.h" />
+    <ClInclude Include="$(EngineSrcDir)renderer\uber_shaders.h" />
+    <ClInclude Include="$(EngineSrcDir)server\server.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\glw_win.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\resource.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\win_help.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\win_local.h" />
+    <ClInclude Include="$(EngineSrcDir)win32\windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="botlib.vcxproj">
+      <Project>{e4934d28-d339-4a97-93fa-8e69495b7fa1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libjpeg-turbo.vcxproj">
+      <Project>{96a3f3d4-af5a-4c5d-9cd4-093691d35b1c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="renderer.vcxproj">
+      <Project>{f6df9617-1655-4f97-bd2a-db7d16707905}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
