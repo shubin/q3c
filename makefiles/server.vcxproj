@@ -122,6 +122,9 @@
     <ClInclude Include="$(EngineSrcDir)win32\windows.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="..\engine\win32\winquake.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="botlib.vcxproj">
       <Project>{F6DF9617-1655-4F97-BD2A-DB7D16707905}</Project>
     </ProjectReference>

@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <conio.h>
 #include <malloc.h>
 #include <VersionHelpers.h>
+#include "../renderdoc/renderdoc_app.h"
 
 
 WinVars_t g_wv;
@@ -41,37 +42,6 @@ WinVars_t g_wv;
 
 static qbool win_timePeriodActive = qfalse;
 
-#if defined( QC )
-/*
-==================
-SetTimerResolution
-
-Try to set lower timer period
-==================
-*/
-static void SetTimerResolution(void)
-{
-	typedef HRESULT(WINAPI * pfnNtQueryTimerResolution)(PULONG MinRes, PULONG MaxRes, PULONG CurRes);
-	typedef HRESULT(WINAPI * pfnNtSetTimerResolution)(ULONG NewRes, BOOLEAN SetRes, PULONG CurRes);
-	pfnNtQueryTimerResolution pNtQueryTimerResolution;
-	pfnNtSetTimerResolution pNtSetTimerResolution;
-	ULONG curr, minr, maxr;
-	HMODULE dll;
-
-	dll = LoadLibraryA("ntdll");
-	if (dll) {
-		pNtQueryTimerResolution = (pfnNtQueryTimerResolution)GetProcAddress(dll, "NtQueryTimerResolution");
-		pNtSetTimerResolution = (pfnNtSetTimerResolution)GetProcAddress(dll, "NtSetTimerResolution");
-		if (pNtQueryTimerResolution && pNtSetTimerResolution) {
-			pNtQueryTimerResolution(&minr, &maxr, &curr);
-			if (maxr < 5000) // well, we don't need less than 0.5ms periods for select()
-				maxr = 5000;
-			pNtSetTimerResolution(maxr, TRUE, &curr);
-		}
-		FreeLibrary(dll);
-	}
-}
-#endif
 
 static void WIN_BeginTimePeriod()
 {
@@ -79,9 +49,6 @@ static void WIN_BeginTimePeriod()
 		return;
 
 	timeBeginPeriod( 1 );
-#if defined( QC )
-	//SetTimerResolution();
-#endif
 	win_timePeriodActive = qtrue;
 }
 
@@ -362,7 +329,7 @@ char *Sys_GetClipboardData( void )
 				data = (char*)Z_Malloc( GlobalSize( hClipboardData ) + 1 );
 				Q_strncpyz( data, cliptext, GlobalSize( hClipboardData ) );
 				GlobalUnlock( hClipboardData );
-				strtok( data, "\n\r\b" );
+				//strtok( data, "\n\r\b" ); // keep all the lines...
 			}
 		}
 
@@ -393,6 +360,16 @@ void Sys_SetClipboardData( const char* text )
 }
 
 
+void Sys_GetCursorPosition( int* x, int* y )
+{
+	POINT point;
+	GetCursorPos( &point );
+	ScreenToClient( g_wv.hWnd, &point );
+	*x = point.x;
+	*y = point.y;
+}
+
+
 /*
 ========================================================================
 
@@ -419,21 +396,16 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 {
 	char filename[MAX_QPATH];
 #if defined( QC )
-#if defined(_M_X64 )
-	Com_sprintf(filename, sizeof(filename), "%sx86_64.dll", name);
+	Com_sprintf(filename, sizeof(filename), "%s.dll", name);
 #else
-	Com_sprintf( filename, sizeof( filename ), "%sx86.dll", name );
-#endif
-#else
-	Com_sprintf( filename, sizeof( filename ), "%sx86.dll", name );
+	Com_sprintf(filename, sizeof(filename), "%sx86.dll", name);
 #endif
 
 	const char* basepath = Cvar_VariableString( "fs_basepath" );
 	const char* gamedir = Cvar_VariableString( "fs_game" );
 	const char* fn = FS_BuildOSPath( basepath, gamedir, filename );
 
-#if !defined( QC )
-#ifdef NDEBUG
+#if !defined( QC ) && defined( NDEBUG )
 	static int lastWarning = 0;
 	int timestamp = Sys_Milliseconds();
 	if( ((timestamp - lastWarning) > (5 * 60000)) && !Cvar_VariableIntegerValue( "dedicated" )
@@ -450,7 +422,6 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 				return NULL;
 		}
 	}
-#endif
 #endif
 
 	HINSTANCE libHandle = LoadLibrary( fn );
@@ -694,6 +665,24 @@ static void S_Frame()
 		mute = minimized;
 	}
 	WIN_S_Mute( mute );
+}
+
+
+static void WIN_LoadRenderDoc()
+{
+	renderDocAPI = NULL;
+
+	const HMODULE module = GetModuleHandleA( "renderdoc.dll" );
+	if ( module != NULL ) {
+		const pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)GetProcAddress( module, "RENDERDOC_GetAPI" );
+		if ( RENDERDOC_GetAPI( CNQ3_RENDERDOC_API_VERSION, (void**)&renderDocAPI ) != 1 ) {
+			renderDocAPI = NULL;
+		}
+	}
+
+	if ( renderDocAPI ) {
+		renderDocAPI->UnloadCrashHandler();
+	}
 }
 
 
@@ -1025,6 +1014,24 @@ static void WIN_SetCorePreference()
 }
 
 
+static void WIN_SetThreadName( PCWSTR name )
+{
+	// SetThreadDescription is only available since Windows 10 version 1607
+
+	typedef HRESULT (WINAPI *SetThreadDescription_t)( HANDLE, PCWSTR );
+
+	HINSTANCE module = LoadLibraryA( "KernelBase.dll" );
+	if ( module == NULL )
+		return;
+
+	SetThreadDescription_t pSetThreadDescription = (SetThreadDescription_t)GetProcAddress( module, "SetThreadDescription" );
+	if ( pSetThreadDescription != NULL )
+		(*pSetThreadDescription)( GetCurrentThread(), name );
+
+	FreeLibrary( module );
+}
+
+
 ///////////////////////////////////////////////////////////////
 
 
@@ -1036,9 +1043,14 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	g_wv.hInstance = hInstance;
 
+#ifndef DEDICATED
+	WIN_LoadRenderDoc(); // load first to avoid messing with our exception handlers
+#endif
+
 	WIN_InstallExceptionHandlers();
 
-#if !defined( QC )
+	WIN_SetThreadName( L"main thread" );
+
 	WIN_FixCurrentDirectory();
 
 	if ( !Q_stricmp( lpCmdLine, "/reg_demo_ext" ) ) {
@@ -1050,7 +1062,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		WIN_UnregisterDemoExtensions();
 		return 0;
 	}
-#endif // QC
 
 	// done here so the early console can be shown on the primary monitor
 	WIN_InitMonitorList();
@@ -1066,9 +1077,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	Com_Init( sys_cmdline );
 	WIN_RegisterExceptionCommands();
 	WIN_RegisterMonitorCommands();
-#if !defined( QC )
 	WIN_RegisterDemoShellCommands();
-#endif // QC
 	WIN_SetCorePreference();
 
 	NET_Init();

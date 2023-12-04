@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../client/client.h"
 #include "win_local.h"
-#include "glw_win.h"
 
 
 // Console variables that we need to access from this module
@@ -303,13 +302,13 @@ LRESULT CALLBACK MainWndProc (
 		break;
 
 	case WM_SETFOCUS:
-		if ( glw_state.cdsDevModeValid ) // is there a valid mode to restore?
+		if ( g_wv.cdsDevModeValid ) // is there a valid mode to restore?
 		{
 			WIN_SetGameDisplaySettings();
-			if ( glw_state.cdsDevModeValid ) // was the mode successfully restored?
+			if ( g_wv.cdsDevModeValid ) // was the mode successfully restored?
 			{
 				const RECT& rect = g_wv.monitorRects[g_wv.monitor];
-				const DEVMODE& dm = glw_state.cdsDevMode;
+				const DEVMODE& dm = g_wv.cdsDevMode;
 				SetWindowPos( hWnd, NULL, (int)rect.left, (int)rect.top, (int)dm.dmPelsWidth, (int)dm.dmPelsHeight, SWP_NOZORDER );
 			}
 		}
@@ -319,7 +318,7 @@ LRESULT CALLBACK MainWndProc (
 
 	case WM_KILLFOCUS:
 		g_wv.activeApp = qfalse;
-		if ( glw_state.cdsDevModeValid )
+		if ( g_wv.cdsDevModeValid )
 			WIN_SetDesktopDisplaySettings();
 		break;
 

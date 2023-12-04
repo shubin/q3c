@@ -84,6 +84,9 @@ typedef struct {
 	qbool		inputInitialized;
 
 	qbool		forceUnmute;	// overrides s_autoMute
+
+	DEVMODE		cdsDevMode;			// custom device mode for full-screen with r_mode 1
+	qbool		cdsDevModeValid;
 } WinVars_t;
 
 extern WinVars_t g_wv;

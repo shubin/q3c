@@ -4,5 +4,8 @@
 		<ClCompile>
 			<PreprocessorDefinitions>QC=QC;UNLAGGED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		</ClCompile>
+		<ResourceCompile>
+			<PreprocessorDefinitions Condition="'$(Game)'=='QC'">QC=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ResourceCompile>
 	</ItemDefinitionGroup>
 </Project>

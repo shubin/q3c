@@ -163,7 +163,10 @@ qbool rawmouse_t::ProcessMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		UpdateWheel( (SHORT)ri.data.mouse.usButtonData );
 
 	for (int i = 0; i < 5; ++i) {
-		if (active && (ri.data.mouse.usButtonFlags & riBtnDnFlags[i]) != 0)
+		// @TODO: was previously only sent when active was qtrue
+		// is this still okay now?
+		//if (active && (ri.data.mouse.usButtonFlags & riBtnDnFlags[i]) != 0)
+		if (ri.data.mouse.usButtonFlags & riBtnDnFlags[i])
 			WIN_QueEvent( g_wv.sysMsgTime, SE_KEY, K_MOUSE1 + i, qtrue, 0, NULL );
 
 		// we always send the button up events to avoid
@@ -449,7 +452,12 @@ void IN_Activate( qbool active )
 
 static qbool IN_ShouldBeActive()
 {
+	// @TODO: move most of this out so shared client code handles this once
+
 	if ( in_noGrab && in_noGrab->integer )
+		return qfalse;
+
+	if ( Cvar_VariableIntegerValue("r_debugInput") )
 		return qfalse;
 
 	const qbool isConsoleDown = (cls.keyCatchers & KEYCATCH_CONSOLE) != 0;

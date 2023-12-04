@@ -189,5 +189,8 @@
       <Project>{f6df9617-1655-4f97-bd2a-db7d16707905}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\engine\win32\winquake.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

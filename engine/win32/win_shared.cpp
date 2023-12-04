@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "win_local.h"
+#include <shlwapi.h>
 
 
 int Sys_Milliseconds()
@@ -42,10 +43,13 @@ void Sys_Sleep( int ms )
 		Sleep(ms);
 }
 
+
 void Sys_MicroSleep( int us )
 {
-	if (us <= 0)
+	if (us <= 50)
 		return;
+
+	us -= 50;
 
 	LARGE_INTEGER frequency;
 	LARGE_INTEGER endTime;
@@ -53,11 +57,26 @@ void Sys_MicroSleep( int us )
 	QueryPerformanceFrequency(&frequency);
 	endTime.QuadPart += ((LONGLONG)us * frequency.QuadPart) / 1000000LL;
 
-	LARGE_INTEGER currentTime;
-	do {
-		SwitchToThread();
+	// reminder: we call timeBeginPeriod(1) at init
+	// Sleep(1) will generally last 1000-2000 us,
+	// but in some cases quite a bit more (I've seen up to 3500 us)
+	// because threads can take longer to wake up
+	const LONGLONG thresholdUS = (LONGLONG)Cvar_Get("r_sleepThreshold", "2500", CVAR_ARCHIVE)->integer;
+	const LONGLONG bigSleepTicks = (thresholdUS * frequency.QuadPart) / 1000000LL;
+
+	for (;;) {
+		LARGE_INTEGER currentTime;
 		QueryPerformanceCounter(&currentTime);
-	} while (currentTime.QuadPart < endTime.QuadPart);
+		const LONGLONG remainingTicks = endTime.QuadPart - currentTime.QuadPart;
+		if (remainingTicks <= 0) {
+			break;
+		}
+		if (remainingTicks >= bigSleepTicks) {
+			Sleep(1);
+		} else {
+			YieldProcessor();
+		}
+	}
 }
 
 
@@ -149,3 +168,15 @@ qbool Sys_IsDebuggerAttached()
 	return IsDebuggerPresent();
 }
 
+
+qbool Sys_IsAbsolutePath( const char* path )
+{
+	return PathIsRelativeA(path) != TRUE;
+}
+
+
+void Sys_Crash( const char* message, const char* file, int line, const char* function )
+{
+	const ULONG_PTR args[4] = { (ULONG_PTR)message, (ULONG_PTR)file, (ULONG_PTR)line, (ULONG_PTR)function };
+	RaiseException(CNQ3_WINDOWS_EXCEPTION_CODE, EXCEPTION_NONCONTINUABLE, ARRAY_LEN(args), args);
+}
