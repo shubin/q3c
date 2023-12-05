@@ -59,9 +59,6 @@ DeathMenu_MenuInit
 */
 void DeathMenu_MenuInit( void ) {
 	int		y;
-	uiClientState_t	cs;
-	char	info[MAX_INFO_STRING];
-	int		team;
 
 	memset( &s_deathmenu, 0 ,sizeof(deathmenu_t) );
 

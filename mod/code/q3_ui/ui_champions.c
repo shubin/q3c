@@ -109,7 +109,6 @@ static void ChampionsMenu_LoadModel( void ) {
 static void ChampionsMenu_UpdateModel( void ) {
 	vec3_t	viewangles;
 	vec3_t	moveangles;
-	int weapons[] = { WP_LOUSY_MACHINEGUN, WP_LOUSY_SHOTGUN, WP_LOUSY_PLASMAGUN };
 
 	viewangles[YAW]   = 180 - 30;
 	viewangles[PITCH] = 0;

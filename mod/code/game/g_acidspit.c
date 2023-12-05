@@ -79,6 +79,7 @@ void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
 	gentity_t *trigger;
 	gclient_t *client;
 	int r;
+	static int seed = 0x33;
 
 	if ( ent->parent == NULL || ent->parent->client == NULL ) {
 		return;
@@ -112,7 +113,7 @@ void G_SpitHitWall( gentity_t *ent, trace_t *trace ) {
 	VectorNegate( ent->s.angles2, trigger->s.angles2 );
 	VectorCopy( trace->endpos, trigger->s.origin2 );
 	trigger->s.time2 = level.time;
-	trigger->s.modelindex2 = ( int )( random() * 180 );
+	trigger->s.modelindex2 = ( int )( Q_random( &seed ) * 180 );
 	trigger->s.generic1 = r; // trigger radius for bounding box display
 
 	trigger->s.loopSound = level.snd_fry;
