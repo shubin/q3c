@@ -2,3 +2,4 @@
 *.user
 makefiles/.vs
 *.log
+workdir
