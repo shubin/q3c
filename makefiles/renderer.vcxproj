@@ -16,6 +16,7 @@
     <ClCompile Include="$(EngineSrcDir)renderer\grp_imgui.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\grp_main.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\grp_mip_gen.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\grp_nuklear.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\grp_post.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\grp_smaa.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\grp_ui.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="$(EngineSrcDir)renderer\tr_mesh.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\tr_model.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\tr_noise.cpp" />
+    <ClCompile Include="$(EngineSrcDir)renderer\tr_nuklear.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\tr_renderdoc.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\tr_scene.cpp" />
     <ClCompile Include="$(EngineSrcDir)renderer\tr_shade_calc.cpp" />
