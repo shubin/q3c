@@ -41,6 +41,12 @@ cvar_t* cl_showSend;
 cvar_t	*cl_timedemo;
 cvar_t	*cl_aviFrameRate;
 cvar_t	*cl_aviMotionJpeg;
+cvar_t	*cl_ffmpeg;
+cvar_t	*cl_ffmpegCommand;
+cvar_t	*cl_ffmpegExePath;
+cvar_t	*cl_ffmpegOutPath;
+cvar_t	*cl_ffmpegOutExt;
+cvar_t	*cl_ffmpegLog;
 
 cvar_t	*cl_allowDownload;
 cvar_t	*cl_inGameVideo;
@@ -1970,7 +1976,7 @@ static void CL_Video_f()
 				1900+t.tm_year, 1+t.tm_mon, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec );
 	}
 
-	CL_OpenAVIForWriting( va( "videos/%s", s ), qfalse );
+	CL_OpenAVIForWriting( s );
 }
 
 
@@ -2166,6 +2172,41 @@ static const cvarTableItem_t cl_cvars[] =
 	{
 		&cl_aviMotionJpeg, "cl_aviMotionJpeg", "1", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL, help_cl_aviMotionJpeg,
 		"AVI motion JPEG", CVARCAT_DEMO, "", ""
+	},
+	{
+		&cl_ffmpeg, "cl_ffmpeg", "0", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL,
+			"use FFmpeg for video export\n"
+			"Pipes video through FFmpeg instead of writing raw .avi files.",
+		"Use FFmpeg", CVARCAT_DEMO, "Uses FFmpeg instead of writing raw .avi files", ""
+	},
+	{
+		&cl_ffmpegCommand, "cl_ffmpegCommand", "-movflags faststart -bf 2 -c:v libx264 -preset medium -crf 23 -vf format=yuv420p -c:a aac -b:a 320k",
+			CVAR_ARCHIVE, CVART_STRING, NULL, NULL,
+			"FFmpeg encode settings\n"
+			"The full command-line options for the output file.",
+		"FFmpeg encode settings", CVARCAT_DEMO, "Command-line options for the output file", ""
+	},
+	{
+		&cl_ffmpegExePath, "cl_ffmpegExePath", "ffmpeg", CVAR_ARCHIVE, CVART_STRING, NULL, NULL,
+			"FFmpeg executable path\n"
+			"The path cannot contain spaces.",
+		"FFmpeg executable path", CVARCAT_DEMO, "The path cannot contain spaces", ""
+	},
+	{
+		&cl_ffmpegOutPath, "cl_ffmpegOutPath", "", CVAR_ARCHIVE, CVART_STRING, NULL, NULL,
+			"FFmpeg output directory\n"
+			"Leave empty to write to cpma/videos as with .avi files.",
+		"FFmpeg output directory", CVARCAT_DEMO, "Leave empty to write to cpma/videos as with .avi files", ""
+	},
+	{
+		&cl_ffmpegOutExt, "cl_ffmpegOutExt", "mp4", CVAR_ARCHIVE, CVART_STRING, NULL, NULL, "FFmpeg output file extension",
+		"FFmpeg output file extension", CVARCAT_DEMO, "", ""
+	},
+	{
+		&cl_ffmpegLog, "cl_ffmpegLog", "0", CVAR_ARCHIVE, CVART_BOOL, NULL, NULL,
+			"FFmpeg log file creation\n"
+			"Creates 1 log file per capture.",
+		"FFmpeg log file creation", CVARCAT_DEMO, "Creates 1 log file per capture", ""
 	},
 	{ &rconAddress, "rconAddress", "", 0, CVART_STRING, NULL, NULL, help_rconAddress },
 	{

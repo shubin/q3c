@@ -290,6 +290,9 @@ typedef struct {
 	// extension: forward input to cgame regardless of keycatcher state?
 	int			cgameForwardInput;	// 1=mouse, 2=keys (note: we don't forward the escape key)
 
+	// extension: forward char events to cgame the same way it's done for ui
+	qbool		cgameCharEvents;
+
 	int			framecount;
 	int			frametime;			// msec since last frame
 
@@ -371,6 +374,12 @@ extern	cvar_t	*cl_serverStatusResendTime;
 extern	cvar_t	*cl_timedemo;
 extern	cvar_t	*cl_aviFrameRate;
 extern	cvar_t	*cl_aviMotionJpeg;
+extern	cvar_t	*cl_ffmpeg;
+extern	cvar_t	*cl_ffmpegCommand;
+extern	cvar_t	*cl_ffmpegExePath;
+extern	cvar_t	*cl_ffmpegOutPath;
+extern	cvar_t	*cl_ffmpegOutExt;
+extern	cvar_t	*cl_ffmpegLog;
 
 extern	cvar_t	*cl_allowDownload;	// 0=off, 1=CNQ3, -1=id
 extern	cvar_t	*cl_inGameVideo;
@@ -547,12 +556,12 @@ qbool CL_Netchan_Process( netchan_t *chan, msg_t *msg );
 //
 // cl_avi.c
 //
-qbool CL_OpenAVIForWriting( const char *fileNameNoExt, qbool reOpen );
-void CL_TakeVideoFrame( void );
+qbool CL_OpenAVIForWriting( const char *fileNameNoExt );
+void CL_TakeVideoFrame();
 void CL_WriteAVIVideoFrame( const byte *imageBuffer, int size );
 void CL_WriteAVIAudioFrame( const byte *pcmBuffer, int size );
-qbool CL_CloseAVI( void );
-qbool CL_VideoRecording( void );
+qbool CL_CloseAVI();
+qbool CL_VideoRecording();
 
 //
 // cl_download.cpp

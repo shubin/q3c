@@ -680,6 +680,8 @@ void	FS_FreeFileList( char **list );
 qbool FS_FileExists( const char *file );						// checks in current game dir
 qbool FS_FileExistsEx( const char *file, qbool curGameDir );	// if curGameDir is qfalse, checks in "baseq3"
 
+void	FS_ReplaceSeparators( char *path );
+
 char* FS_BuildOSPath( const char *base, const char *game, const char *qpath );
 
 int		FS_LoadStack();
@@ -689,6 +691,8 @@ int		FS_GetModList(  char *listbuf, int bufsize );
 
 fileHandle_t	FS_FOpenFileWrite( const char *qpath );
 // will properly create any needed paths and deal with seperater character issues
+
+fileHandle_t	FS_OpenPipeWrite( const char* command );
 
 fileHandle_t FS_SV_FOpenFileWrite( const char *filename );
 int		FS_SV_FOpenFileRead( const char *filename, fileHandle_t *fp );

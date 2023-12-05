@@ -323,6 +323,7 @@ void CL_ShutdownCGame()
 	cls.keyCatchers &= ~KEYCATCH_CGAME;
 	cls.cgameStarted = qfalse;
 	cls.cgameForwardInput = 0;
+	cls.cgameCharEvents = 0;
 	CL_MapDownload_Cancel();
 	Cmd_UnregisterArray( cl_cmds );
 	if ( !cgvm ) {
@@ -356,6 +357,10 @@ static qbool CL_CG_GetValue( char* value, int valueSize, const char* key )
 		{ "trap_CNQ3_NDP_StartVideo", CG_EXT_NDP_STARTVIDEO },
 		{ "trap_CNQ3_NDP_StopVideo", CG_EXT_NDP_STOPVIDEO },
 		{ "trap_CNQ3_R_RenderScene", CG_EXT_R_RENDERSCENE },
+		{ "trap_CNQ3_NK_CreateFontAtlas", CG_EXT_NK_CREATEFONTATLAS },
+		{ "trap_CNQ3_NK_Upload", CG_EXT_NK_UPLOAD },
+		{ "trap_CNQ3_NK_Draw", CG_EXT_NK_DRAW },
+		{ "trap_CNQ3_SetCharEvents", CG_EXT_SETCHAREVENTS },
 		// commands
 		{ "screenshotnc", 1 },
 		{ "screenshotncJPEG", 1 },
@@ -404,11 +409,6 @@ static intptr_t CL_CgameSystemCalls( intptr_t *args )
 		Cvar_Update( VMA(1) );
 		return 0;
 	case CG_CVAR_SET:
-		// @TODO: remove
-		if(!Q_stricmp(VMA(1), "com_maxfps"))
-		{
-			return 0;
-		}
 		Cvar_Set( VMA(1), VMA(2) );
 		return 0;
 	case CG_CVAR_VARIABLESTRINGBUFFER:
@@ -731,7 +731,7 @@ static intptr_t CL_CgameSystemCalls( intptr_t *args )
 
 	case CG_EXT_NDP_STARTVIDEO:
 		Cvar_Set( cl_aviFrameRate->name, va( "%d", (int)args[2] ) );
-		return CL_OpenAVIForWriting( va( "videos/%s", (const char*)VMA(1) ), qfalse );
+		return CL_OpenAVIForWriting( VMA(1) );
 
 	case CG_EXT_NDP_STOPVIDEO:
 		CL_CloseAVI();
@@ -739,6 +739,21 @@ static intptr_t CL_CgameSystemCalls( intptr_t *args )
 
 	case CG_EXT_R_RENDERSCENE:
 		re.RenderScene( VMA(1), args[2] );
+		return 0;
+
+	case CG_EXT_NK_CREATEFONTATLAS:
+		return RE_NK_CreateFontAtlas( VM_UI, interopBufferOut, interopBufferOutSize, interopBufferIn, interopBufferInSize );
+
+	case CG_EXT_NK_UPLOAD:
+		RE_UploadNuklear( VMA(1), args[2], VMA(3), args[4] );
+		return 0;
+
+	case CG_EXT_NK_DRAW:
+		RE_DrawNuklear( args[1], args[2], args[3], VMA(4) );
+		return 0;
+
+	case CG_EXT_SETCHAREVENTS:
+		cls.cgameCharEvents = (qbool)args[1];
 		return 0;
 
 	default:
@@ -770,6 +785,7 @@ void CL_InitCGame()
 	int t = Sys_Milliseconds();
 
 	cls.cgameForwardInput = 0;
+	cls.cgameCharEvents = 0;
 	cls.cgameNewDemoPlayer = qfalse;
 
 	// put away the console

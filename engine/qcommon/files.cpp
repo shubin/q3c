@@ -174,6 +174,14 @@ or configs will never get loaded from disk!
 #define	MAX_SEARCH_PATHS	4096
 #define MAX_FILEHASH_SIZE	1024
 
+#if defined( _WIN32 )
+#define Sys_OpenPipeWrite(Command)	_popen(Command, "wb")
+#define Sys_ClosePipe(Pipe)			_pclose(Pipe)
+#else
+#define Sys_OpenPipeWrite(Command)	popen(Command, "w")
+#define Sys_ClosePipe(Pipe)			pclose(Pipe)
+#endif
+
 typedef struct fileInPack_s {
 	char					*name;		// name of the file
 	unsigned long			pos;		// file info position in zip
@@ -231,6 +239,7 @@ typedef union {
 typedef struct {
 	qfile_gut	file;
 	qbool		unique;
+	qbool		isPipe;
 } qfile_ut;
 
 typedef struct {
@@ -323,6 +332,7 @@ static fileHandle_t FS_HandleForFile()
 {
 	for ( int i = 1; i < MAX_FILE_HANDLES; ++i ) {
 		if ( fsh[i].handleFiles.file.o == NULL ) {
+			Com_Memset( &fsh[i], 0, sizeof( fsh[i] ) );
 			return i;
 		}
 	}
@@ -385,7 +395,7 @@ FS_ReplaceSeparators
 Fix things up differently for win/unix/mac
 ====================
 */
-static void FS_ReplaceSeparators( char *path ) {
+void FS_ReplaceSeparators( char *path ) {
 	char	*s;
 
 	for ( s = path ; *s ; s++ ) {
@@ -718,7 +728,11 @@ void FS_FCloseFile( fileHandle_t f ) {
 
 	// we didn't find it as a pak, so close it as a unique file
 	if (fsh[f].handleFiles.file.o) {
-		fclose (fsh[f].handleFiles.file.o);
+		if (fsh[f].handleFiles.isPipe) {
+			Sys_ClosePipe( fsh[f].handleFiles.file.o );
+		} else {
+			fclose( fsh[f].handleFiles.file.o );
+		}
 	}
 	Com_Memset( &fsh[f], 0, sizeof( fsh[f] ) );
 }
@@ -761,6 +775,21 @@ fileHandle_t FS_FOpenFileWrite( const char *filename ) {
 	if (!fsh[f].handleFiles.file.o) {
 		f = 0;
 	}
+	return f;
+}
+
+fileHandle_t FS_OpenPipeWrite( const char* command ) {
+	fileHandle_t f = FS_HandleForFile();
+	fsh[f].zipFile = qfalse;
+
+	fsh[f].handleFiles.file.o = Sys_OpenPipeWrite( command );
+	fsh[f].handleFiles.isPipe = qtrue;
+	Q_strncpyz( fsh[f].name, "$pipe", sizeof(fsh[f].name));
+	fsh[f].handleSync = qfalse;
+	if ( !fsh[f].handleFiles.file.o ) {
+		f = 0;
+	}
+
 	return f;
 }
 

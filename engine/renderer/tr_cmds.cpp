@@ -394,6 +394,7 @@ void R_EndScene( const viewParms_t* viewParms )
 	cmd->viewParms = *viewParms;
 }
 
+
 void RE_UploadNuklear( void* vertexes, int numVertexBytes, void* indexes, int numIndexBytes )
 {
 	if ( !CanAllocateRenderCommand<nuklearUploadCommand_t>() )

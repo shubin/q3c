@@ -763,6 +763,9 @@ static qbool CL_UI_GetValue( char* value, int valueSize, const char* key )
 		{ "trap_Cmd_SetHelp", UI_EXT_CMD_SETHELP },
 		{ "trap_Error2", UI_EXT_ERROR2 },
 		{ "trap_EnableErrorCallback", UI_EXT_ENABLEERRORCALLBACK },
+		{ "trap_CNQ3_NK_CreateFontAtlas", UI_EXT_NK_CREATEFONTATLAS },
+		{ "trap_CNQ3_NK_Upload", UI_EXT_NK_UPLOAD },
+		{ "trap_CNQ3_NK_Draw", UI_EXT_NK_DRAW },
 		// commands
 		{ "screenshotnc", 1 },
 		{ "screenshotncJPEG", 1 },
@@ -1157,6 +1160,17 @@ static intptr_t CL_UISystemCalls( intptr_t* args )
 
 	case UI_EXT_ENABLEERRORCALLBACK:
 		cls.uivmCalls[UIVM_ERROR_CALLBACK] = (int)args[1];
+		return 0;
+
+	case UI_EXT_NK_CREATEFONTATLAS:
+		return RE_NK_CreateFontAtlas( VM_UI, interopBufferOut, interopBufferOutSize, interopBufferIn, interopBufferInSize );
+
+	case UI_EXT_NK_UPLOAD:
+		RE_UploadNuklear( VMA(1), args[2], VMA(3), args[4] );
+		return 0;
+
+	case UI_EXT_NK_DRAW:
+		RE_DrawNuklear( args[1], args[2], args[3], VMA(4) );
 		return 0;
 
 	default:

@@ -1063,6 +1063,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		return 0;
 	}
 
+	// prevent child processes from spawning a command prompt window
+#ifndef DEDICATED
+	AllocConsole();
+	ShowWindow( GetConsoleWindow(), SW_HIDE );
+#endif
+
 	// done here so the early console can be shown on the primary monitor
 	WIN_InitMonitorList();
 

@@ -1,3 +1,2 @@
-#define GIT_COMMIT "9a14a9701eac8338297b63160531adc9a351715b" 
-#define GIT_COMMIT_SHORT "9a14a97" 
-#define GIT_BRANCH "d3d12"
+#define GIT_COMMIT "" 
+#define GIT_BRANCH ""

@@ -237,6 +237,7 @@ int main(int /*argc*/, const char** argv)
 	CompileVSAndPS("post_gamma", "post_gamma.hlsl");
 	CompileVSAndPS("post_inverse_gamma", "post_inverse_gamma.hlsl");
 	CompileVSAndPS("imgui", "imgui.hlsl");
+	CompileVSAndPS("nuklear", "nuklear.hlsl");
 	CompileVSAndPS("ui", "ui.hlsl");
 	CompileVSAndPS("depth_pre_pass", "depth_pre_pass.hlsl");
 	CompileVSAndPS("dynamic_light", "dynamic_light.hlsl");

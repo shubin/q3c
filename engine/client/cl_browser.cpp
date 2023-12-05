@@ -119,7 +119,7 @@ void CL_ServersResponsePacket( const netadr_t& from, msg_t *msg )
 				addresses[numservers].ip[1],
 				addresses[numservers].ip[2],
 				addresses[numservers].ip[3],
-				BigShort( addresses[numservers].port ) );
+				addresses[numservers].port );
 
 		numservers++;
 		if (numservers >= MAX_SERVERSPERPACKET) {
