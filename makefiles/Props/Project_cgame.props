@@ -8,5 +8,6 @@
 		<Link>
 			<AdditionalDependencies Condition="'$(Game)'=='QC'">cgame.qc.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
-	</ItemDefinitionGroup>
+	</ItemDefinitionGroup>	
+	<Import Project="CopyModFiles.props"/>
 </Project>

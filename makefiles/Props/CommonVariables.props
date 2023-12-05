@@ -7,6 +7,7 @@
 		<ProjectOutputDir Condition="'$(ProjectOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\output\</ProjectOutputDir>
 		<ProjectIntermediateDir Condition="'$(ProjectIntermediateDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\intermediate\</ProjectIntermediateDir>
 	    <LibraryOutputDir Condition="'$(LibratyOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\lib\</LibraryOutputDir>
+		<WorkDir>$(ProjectRoot)workdir\</WorkDir>
 
 		<ModSrcDir>$(ProjectRoot)mod\</ModSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>
@@ -16,6 +17,9 @@
 
 		<Game Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">VQ3</Game>
 		<Game Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">QC</Game>
+
+		<GameBase Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">baseq3</GameBase>
+		<GameBase Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">base</GameBase>		
 
 		<Compiler Condition="'$(Platform)'=='x64'">MSVC</Compiler>
 	</PropertyGroup>

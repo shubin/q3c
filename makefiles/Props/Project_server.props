@@ -16,4 +16,6 @@
 			<AdditionalDependencies>botlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="CopyExeFiles.props"/>
+	<Import Project="Debugger.props"/>
 </Project>
