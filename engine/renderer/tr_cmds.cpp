@@ -165,12 +165,31 @@ static void End3D( qbool endFrame = qfalse )
 }
 
 
+static void BeginNK()
+{
+	if ( tr.renderMode != RM_NK ) {
+		tr.renderMode = RM_NK;
+		AllocateRenderCommand<beginNuklearCommand_t>( RC_BEGIN_NK );
+	}
+}
+
+
+static void EndNK( qbool endFrame = qfalse )
+{
+	if ( tr.renderMode == RM_NK ) {
+		tr.renderMode = RM_NONE;
+		AllocateRenderCommand<endNuklearCommand_t>( RC_END_NK, endFrame );
+	}
+}
+
+
 void R_AddDrawSurfCmd( drawSurf_t* drawSurfs, int numDrawSurfs, int numTranspSurfs )
 {
 	if ( !CanAllocateRenderCommand<drawSceneViewCommand_t>() )
 		return;
 
 	End2D();
+	EndNK();
 	Begin3D();
 
 	drawSceneViewCommand_t* const cmd = AllocateRenderCommand<drawSceneViewCommand_t>(RC_DRAW_SCENE_VIEW);
@@ -232,6 +251,7 @@ void RE_StretchPic( float x, float y, float w, float h, float s1, float t1, floa
 		return;
 
 	End3D();
+	EndNK();
 	Begin2D();
 
 	uiDrawQuadCommand_t* const cmd = AllocateRenderCommand<uiDrawQuadCommand_t>(RC_UI_DRAW_QUAD);
@@ -248,12 +268,14 @@ void RE_StretchPic( float x, float y, float w, float h, float s1, float t1, floa
 	cmd->t2 = t2;
 }
 
+
 void RE_DrawTriangle( float x0, float y0, float x1, float y1, float x2, float y2, float s0, float t0, float s1, float t1, float s2, float t2, qhandle_t hShader )
 {
 	if ( !CanAllocateRenderCommand<uiDrawTriangleCommand_t>() )
 		return;
 
 	End3D();
+	EndNK();
 	Begin2D();
 
 	uiDrawTriangleCommand_t* const cmd = AllocateRenderCommand<uiDrawTriangleCommand_t>(RC_UI_DRAW_TRIANGLE);
@@ -322,6 +344,7 @@ void RE_EndFrame( qbool render )
 
 	End2D( qtrue );
 	End3D( qtrue );
+	EndNK( qtrue );
 
 	if ( render ) {
 		AllocateRenderCommand<swapBuffersCommand_t>( RC_SWAP_BUFFERS, qtrue );
@@ -346,6 +369,7 @@ void RE_TakeVideoFrame( int width, int height, byte *captureBuffer, byte *encode
 
 	End2D();
 	End3D();
+	EndNK();
 
 	videoFrameCommand_t* const cmd = &backEndData->readbackCommands.videoFrame;
 	cmd->requested = qtrue;
@@ -370,7 +394,49 @@ void R_EndScene( const viewParms_t* viewParms )
 	cmd->viewParms = *viewParms;
 }
 
-#if defined(QC)
+void RE_UploadNuklear( void* vertexes, int numVertexBytes, void* indexes, int numIndexBytes )
+{
+	if ( !CanAllocateRenderCommand<nuklearUploadCommand_t>() )
+		return;
+
+	End2D();
+	End3D();
+	BeginNK();
+
+	Q_assert( tr.renderMode == RM_NK );
+
+	nuklearUploadCommand_t* const cmd = AllocateRenderCommand<nuklearUploadCommand_t>( RC_NK_UPLOAD );
+	Q_assert( cmd );
+
+	cmd->vertexes = vertexes;
+	cmd->numVertexBytes = numVertexBytes;
+	cmd->indexes = indexes;
+	cmd->numIndexBytes = numIndexBytes;
+}
+
+
+void RE_DrawNuklear( int firstIndex, int numIndexes, qhandle_t shader, const int* scissorRect )
+{
+	if ( !CanAllocateRenderCommand<nuklearDrawCommand_t>() )
+		return;
+
+	Q_assert( tr.renderMode == RM_NK );
+	if ( tr.renderMode != RM_NK )
+		return;
+
+	nuklearDrawCommand_t* const cmd = AllocateRenderCommand<nuklearDrawCommand_t>( RC_NK_DRAW );
+	Q_assert( cmd );
+
+	cmd->firstIndex = firstIndex;
+	cmd->numIndexes = numIndexes;
+	cmd->shader = shader;
+	cmd->scissorRect[0] = scissorRect[0];
+	cmd->scissorRect[1] = scissorRect[1];
+	cmd->scissorRect[2] = scissorRect[2];
+	cmd->scissorRect[3] = scissorRect[3];
+}
+
+#if defined( QC )
 void RE_GetAdvertisements(int* num, float* verts, void* shaders)
 {
 	*num = 0;

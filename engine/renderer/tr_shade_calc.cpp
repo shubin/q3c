@@ -931,8 +931,7 @@ void R_ComputeColors( const shaderStage_t* pStage, stageVars_t& svars, int first
 		Com_Memcpy( &svars.colors[firstVertex], &tess.vertexColors[firstVertex], numVertexes * sizeof( tess.vertexColors[0] ) );
 		break;
 	case CGEN_ONE_MINUS_VERTEX:
-		if ( tr.identityLight == 1
-			)
+		if ( tr.identityLight == 1 )
 		{
 			for ( int i = firstVertex; i < firstVertex + numVertexes; i++ )
 			{

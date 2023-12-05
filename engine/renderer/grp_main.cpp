@@ -295,6 +295,7 @@ void GRP::Init()
 	world.Init();
 	mipMapGen.Init();
 	imgui.Init();
+	nuklear.Init();
 	post.Init();
 	post.SetToneMapInput(renderTarget);
 	smaa.Init(); // must be after post
@@ -321,6 +322,7 @@ void GRP::BeginFrame()
 	RHI::BeginFrame();
 	ui.BeginFrame();
 	world.BeginFrame();
+	nuklear.BeginFrame();
 
 	const float clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	const TextureBarrier barrier(renderTarget, ResourceStates::RenderTargetBit);
@@ -938,7 +940,18 @@ void GRP::ExecuteRenderCommands(const byte* data, bool readbackRequested)
 			case RC_END_SCENE:
 				smaa.Draw(((const endSceneCommand_t*)data)->viewParms);
 				break;
-
+			case RC_BEGIN_NK:
+				nuklear.Begin();
+				break;
+			case RC_END_NK:
+				nuklear.End();
+				break;
+			case RC_NK_UPLOAD:
+				nuklear.Upload(*(const nuklearUploadCommand_t*)data);
+				break;
+			case RC_NK_DRAW:
+				nuklear.Draw(*(const nuklearDrawCommand_t*)data);
+				break;
 			default:
 				Q_assert(!"Unsupported render command type");
 				return;

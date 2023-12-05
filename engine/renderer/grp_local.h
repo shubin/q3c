@@ -508,6 +508,34 @@ struct ImGUI
 	bool frameStarted = false;
 };
 
+struct Nuklear
+{
+	void Init();
+	void BeginFrame();
+	void Begin();
+	void End();
+	void Upload(const nuklearUploadCommand_t& cmd);
+	void Draw(const nuklearDrawCommand_t& cmd);
+
+	struct FrameResources
+	{
+		HBuffer indexBuffer;
+		HBuffer vertexBuffer;
+	};
+
+	HRootSignature rootSignature;
+	HPipeline pipeline;
+	FrameResources frameResources[FrameCount];
+	uint32_t renderPassIndex;
+	int prevScissorRect[4];
+
+	// reset every frame
+	int firstVertex;
+	int firstIndex;
+	int numVertexes; // set in Upload
+	int numIndexes; // set in Upload
+};
+
 struct RenderMode
 {
 	enum Id
@@ -516,6 +544,7 @@ struct RenderMode
 		UI,
 		World,
 		ImGui,
+		Nuklear,
 		Count
 	};
 };
@@ -688,6 +717,7 @@ struct GRP : IRenderPipeline
 	ImGUI imgui;
 	PostProcess post;
 	SMAA smaa;
+	Nuklear nuklear;
 	bool firstInit = true;
 	RenderMode::Id renderMode; // necessary for sampler selection, useful for debugging
 	float frameSeed;

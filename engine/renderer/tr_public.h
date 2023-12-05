@@ -183,6 +183,13 @@ typedef struct {
 #endif
 } refexport_t;
 
+// CNQ3 currently has no real use for the DLL/SO split even though it might be useful at some point in the future
+// to switch between parallel implementations or support live code reload
+
+qhandle_t RE_NK_CreateFontAtlas( vmIndex_t, byte * outBuf, int outSize, const byte* inBuf, int inSize ); // 1 call per VM at most
+void RE_UploadNuklear( void* vertexes, int numVertexBytes, void* indexes, int numIndexBytes );
+void RE_DrawNuklear( int firstIndex, int numIndexes, qhandle_t shader, const int* scissorRect );
+
 //
 // these are the functions imported by the refresh module
 //

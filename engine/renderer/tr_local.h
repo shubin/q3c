@@ -870,7 +870,8 @@ typedef struct {
 enum renderMode_t {
 	RM_NONE,
 	RM_UI,
-	RM_3D
+	RM_3D,
+	RM_NK
 };
 
 
@@ -1460,6 +1461,8 @@ typedef renderCommandBase_t beginUICommand_t;
 typedef renderCommandBase_t endUICommand_t;
 typedef renderCommandBase_t begin3DCommand_t;
 typedef renderCommandBase_t end3DCommand_t;
+typedef renderCommandBase_t beginNuklearCommand_t;
+typedef renderCommandBase_t endNuklearCommand_t;
 
 struct uiSetColorCommand_t : renderCommandBase_t {
 	float	color[4];
@@ -1503,6 +1506,50 @@ struct endSceneCommand_t : renderCommandBase_t {
 	uint32_t padding2;
 };
 
+struct nuklearUploadCommand_t : renderCommandBase_t {
+	void* vertexes;
+	void* indexes;
+	int numVertexBytes;
+	int numIndexBytes;
+};
+
+struct nuklearDrawCommand_t : renderCommandBase_t {
+	int scissorRect[4]; // x y w h
+	int firstIndex;
+	int numIndexes;
+	qhandle_t shader;
+	int padding2;
+};
+
+#pragma pack(pop)
+
+#define RENDER_COMMAND_LIST(Cmd) \
+	Cmd(RC_END_OF_LIST, renderCommandBase_t) \
+	Cmd(RC_BEGIN_UI, beginUICommand_t) \
+	Cmd(RC_END_UI, endUICommand_t) \
+	Cmd(RC_UI_SET_COLOR, uiSetColorCommand_t) \
+	Cmd(RC_UI_DRAW_QUAD, uiDrawQuadCommand_t) \
+	Cmd(RC_UI_DRAW_TRIANGLE, uiDrawTriangleCommand_t) \
+	Cmd(RC_BEGIN_3D, begin3DCommand_t) \
+	Cmd(RC_END_3D, end3DCommand_t) \
+	Cmd(RC_DRAW_SCENE_VIEW, drawSceneViewCommand_t) \
+	Cmd(RC_END_SCENE, endSceneCommand_t) \
+	Cmd(RC_BEGIN_FRAME, beginFrameCommand_t) \
+	Cmd(RC_SWAP_BUFFERS, swapBuffersCommand_t) \
+	Cmd(RC_BEGIN_NK, beginNuklearCommand_t) \
+	Cmd(RC_END_NK, endNuklearCommand_t) \
+	Cmd(RC_NK_UPLOAD, nuklearUploadCommand_t) \
+	Cmd(RC_NK_DRAW, nuklearDrawCommand_t)
+
+#define RC(Enum, Type) Enum,
+enum renderCommand_t {
+	RENDER_COMMAND_LIST(RC)
+	RC_COUNT
+};
+#undef RC
+
+extern const int renderCommandSizes[RC_COUNT + 1];
+
 struct readbackCommandBase_t {
 	qbool requested;
 };
@@ -1528,32 +1575,6 @@ struct readbackCommands_t {
 	screenshotCommand_t screenshot;
 	videoFrameCommand_t videoFrame;
 };
-
-#pragma pack(pop)
-
-#define RENDER_COMMAND_LIST(Cmd) \
-	Cmd(RC_END_OF_LIST, renderCommandBase_t) \
-	Cmd(RC_BEGIN_UI, beginUICommand_t) \
-	Cmd(RC_END_UI, endUICommand_t) \
-	Cmd(RC_UI_SET_COLOR, uiSetColorCommand_t) \
-	Cmd(RC_UI_DRAW_QUAD, uiDrawQuadCommand_t) \
-	Cmd(RC_UI_DRAW_TRIANGLE, uiDrawTriangleCommand_t) \
-	Cmd(RC_BEGIN_3D, begin3DCommand_t) \
-	Cmd(RC_END_3D, end3DCommand_t) \
-	Cmd(RC_DRAW_SCENE_VIEW, drawSceneViewCommand_t) \
-	Cmd(RC_END_SCENE, endSceneCommand_t) \
-	Cmd(RC_BEGIN_FRAME, beginFrameCommand_t) \
-	Cmd(RC_SWAP_BUFFERS, swapBuffersCommand_t)
-
-#define RC(Enum, Type) Enum,
-enum renderCommand_t {
-	RENDER_COMMAND_LIST(RC)
-	RC_COUNT
-};
-#undef RC
-
-extern const int renderCommandSizes[RC_COUNT + 1];
-
 
 #define MAX_DLIGHTS		32			// completely arbitrary now  :D
 #define MAX_REFENTITIES	1023		// can't be increased without changing drawsurf bit packing
@@ -1615,8 +1636,6 @@ void RE_TakeVideoFrame( int width, int height,
 #if defined( QC )
 void RE_GetAdvertisements( int *num, float *verts, void *shaders );
 #endif
-
-void R_EndScene( const viewParms_t* viewParms );
 
 void R_EndScene( const viewParms_t* viewParms );
 
