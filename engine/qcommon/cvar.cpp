@@ -645,7 +645,7 @@ void Cvar_SetDataType( const char* cvarName, cvarType_t type )
 	if ( cvar == NULL )
 		return;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined( QC )
 	if ( cvar->type == CVART_STRING ) {
 		Q_assert(
 			type == CVART_STRING ||
@@ -693,7 +693,7 @@ void Cvar_SetMenuData( const char* cvarName, int categories, const char* title, 
 		string += length + 1;
 	}
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined( QC )
 	// make sure we have 1 set of strings for each possible value
 	if ( cvar->type == CVART_INTEGER ) {
 		Q_assert( numValues == cvar->validator.i.max - cvar->validator.i.min + 1 );

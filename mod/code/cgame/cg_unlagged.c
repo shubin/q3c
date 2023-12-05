@@ -244,6 +244,7 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 				fleshEntityNum = tr.entityNum;
 			} else {
 				flesh = qfalse;
+				fleshEntityNum = -1;
 			}
 
 			// do the bullet impact
