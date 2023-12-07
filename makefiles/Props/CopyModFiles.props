@@ -4,7 +4,7 @@
 		<CopyModFiles>true</CopyModFiles>
 	</PropertyGroup>
 	<Target Name="CopyModFiles" AfterTargets="Build" Condition="'$(CopyModFiles)|$(ConfigurationType)'=='true|DynamicLibrary'">
-		<Message Importance="High" Text="Copying $(TargetName)$(TargetExt) into $(WorkDir)$(GameBase)..." />
+		<Message Importance="High" Text="$(TargetName)$(TargetExt) -> $(WorkDir)$(GameBase)" />
 		<Copy
 			SourceFiles="$(TargetPath)"
 			DestinationFolder="$(WorkDir)$(GameBase)\"
