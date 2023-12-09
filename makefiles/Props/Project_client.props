@@ -18,6 +18,7 @@
 			<AdditionalDependencies>botlib.lib;renderer.lib;libjpeg-turbo.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="BuildSettings.props"/>
 	<Import Project="CopyExeFiles.props"/>
 	<Import Project="Debugger.props"/>
 </Project>

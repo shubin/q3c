@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Rule
+      Name="BuildSettings"
+      DisplayName="Bloodrun Dev Settings"
+      PageTemplate="Generic"
+      Description="Experimental and Developer settings "
+      xmlns="http://schemas.microsoft.com/build/2009/properties">
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile" />
+  </Rule.DataSource>
+  <Rule.Categories>
+    <Category Name="DevSettings" DisplayName="Developer Settings" />
+	<Category Name="ExpSettings" DisplayName="Experimental Settings" />
+  </Rule.Categories>
+
+  <BoolProperty Name="fs_developer"
+                  DisplayName="FS Developer"
+                  Description="Changes asset loading priority (if enabled, plain files are always being loaded first)."
+                  Category="DevSettings" /> 
+
+  <BoolProperty Name="sys_peloader"
+                  DisplayName="Custom PE Loader"
+                  Description="Custom PE Loader for DLL files instead of the system one."
+                  Category="DevSettings" /> 
+</Rule>

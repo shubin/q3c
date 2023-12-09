@@ -193,4 +193,7 @@
     <ResourceCompile Include="..\engine\win32\winquake.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\BuildSettings.xml" />
+  </ItemGroup>
 </Project>

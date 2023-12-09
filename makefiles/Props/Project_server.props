@@ -17,6 +17,7 @@
 			<LibraryDependencies Condition="'$(TargetOS)'=='Linux'">botlib;%(AdditionalDependencies)</LibraryDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="BuildSettings.props"/>
 	<Import Project="CopyExeFiles.props"/>
 	<Import Project="Debugger.props"/>
 </Project>

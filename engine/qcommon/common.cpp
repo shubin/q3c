@@ -2307,7 +2307,20 @@ void Com_Init( char *commandLine )
 
 	Cmd_RegisterArray( com_cmds, MODULE_COMMON );
 
+#if defined( QC )
+	char  s[250];
+	strcpy( s, Q3_VERSION );	
+#if defined( FS_DEVELOPER )
+	strcat( s, " #FS_DEVELOPER" );
+#endif
+#if defined( PE_LOADER )
+	strcat( s, " #PE_LOADER" );
+#endif
+	strcat( s, " " PLATFORM_STRING " " );
+	strcat( s, __DATE__ );
+#else
 	const char* const s = Q3_VERSION " " GIT_COMMIT_SHORT " " PLATFORM_STRING " " __DATE__;
+#endif
 	com_version = Cvar_Get( "version", s, CVAR_ROM | CVAR_SERVERINFO );
 
 	Cvar_Get( "sys_compiler", Com_GetCompilerInfo(), CVAR_ROM );
