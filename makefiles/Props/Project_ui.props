@@ -6,8 +6,10 @@
 			<PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		</ClCompile>
 		<Link>
-			<AdditionalDependencies Condition="'$(Game)'=='QC'">ui.qc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<LibraryDependencies Condition="'$(Game)|$(Compiler)'=='QC|GCC'">ui.qc;%(LibraryDependencies)</LibraryDependencies>
+			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">ui.qc$(LibExt);%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="VM.props"/>
 	<Import Project="CopyModFiles.props"/>
 </Project>

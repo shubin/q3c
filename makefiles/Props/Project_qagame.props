@@ -6,8 +6,10 @@
 			<PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		</ClCompile>
 		<Link>
-			<AdditionalDependencies Condition="'$(Game)'=='QC'">qagame.qc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<LibraryDependencies Condition="'$(Game)|$(Compiler)'=='QC|GCC'">qagame.qc;%(LibraryDependencies)</LibraryDependencies>
+			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">qagame.qc$(LibExt);%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="VM.props"/>
 	<Import Project="CopyModFiles.props"/>
 </Project>

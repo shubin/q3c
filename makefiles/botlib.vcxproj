@@ -7,6 +7,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <ImportGroup Label="PropertySheets">
     <Import Project="Props\Project_botlib.props" />

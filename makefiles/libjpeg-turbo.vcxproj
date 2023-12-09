@@ -7,12 +7,12 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <Import Project="Props\nasm.props" />
   <ImportGroup Label="PropertySheets">
     <Import Project="Props\Project_libjpeg-turbo.props" />
   </ImportGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release QC|x64'" />
   <ItemGroup>
     <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcapimin.c" />
     <ClCompile Include="$(EngineSrcDir)libjpeg-turbo\jcapistd.c" />

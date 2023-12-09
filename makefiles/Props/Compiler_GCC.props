@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<LibExt>.a</LibExt>
+	</PropertyGroup>
 	<ItemDefinitionGroup>
 		<ClCompile>
-			<DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<PositionIndependentCode>true</PositionIndependentCode>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+			<CppLanguageStandard>c++98</CppLanguageStandard>
+			<CLanguageStandard>c99</CLanguageStandard>
+			<ExceptionHandling>Disabled</ExceptionHandling>
+			<AdditionalOptions>-Wno-unused-parameter -Wno-write-strings -Wno-parentheses -Wno-conversion -Wno-float-conversion -Wno-unused-variable %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>
 	</ItemDefinitionGroup>
 </Project>

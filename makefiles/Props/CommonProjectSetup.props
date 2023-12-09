@@ -5,8 +5,16 @@
 	<PropertyGroup Condition="'$(BuildType)'=='Debug'" Label="Configuration">
 		<UseDebugLibraries>true</UseDebugLibraries>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
+
+	<PropertyGroup Condition="'$(Platform)|$(TargetOS)'=='x64|Windows'" Label="Configuration">
 		<PlatformToolset>v143</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Platform)|$(TargetOS)'=='x64|Linux'" Label="Configuration">
+    	<ApplicationType>Linux</ApplicationType>
+	    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+	    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+	    <LinuxProjectType>{D51BCBC9-82E9-4017-911E-C93873C4EA2B}</LinuxProjectType>
+	    <PlatformToolset>WSL_1_0</PlatformToolset>
 	</PropertyGroup>
 
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

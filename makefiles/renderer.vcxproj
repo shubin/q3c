@@ -82,6 +82,10 @@
     <None Include="$(EngineSrcDir)renderer\hlsl\shared.hlsli" />
     <None Include="$(EngineSrcDir)renderer\hlsl\smaa.hlsli" />
   </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="shadercomp.vcxproj">
+      <Project>{2046331e-a7da-43ce-a9af-bf63bb4afaea}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -12,15 +12,32 @@
 		<ModSrcDir>$(ProjectRoot)mod\</ModSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>
 
+		<BuildType>NOT_SET</BuildType>
 		<BuildType Condition="('$(Configuration)'=='Debug VQ3')OR('$(Configuration)'=='Debug QC')">Debug</BuildType>
 		<BuildType Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Release QC')">Release</BuildType>
+		<BuildType Condition="('$(Configuration)'=='DebugLinux VQ3')OR('$(Configuration)'=='DebugLinux QC')">Debug</BuildType>
+		<BuildType Condition="('$(Configuration)'=='ReleaseLinux VQ3')OR('$(Configuration)'=='ReleaseLinux QC')">Release</BuildType>
 
+		<Game>NOT_SET</Game>
 		<Game Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">VQ3</Game>
 		<Game Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">QC</Game>
+		<Game Condition="('$(Configuration)'=='ReleaseLinux VQ3')OR('$(Configuration)'=='DebugLinux VQ3')">VQ3</Game>
+		<Game Condition="('$(Configuration)'=='ReleaseLinux QC')OR('$(Configuration)'=='DebugLinux QC')">QC</Game>
 
+		<GameBase>NOT_SET</GameBase>
 		<GameBase Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">baseq3</GameBase>
 		<GameBase Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">base</GameBase>		
+		<GameBase Condition="('$(Configuration)'=='ReleaseLinux VQ3')OR('$(Configuration)'=='DebugLinux VQ3')">baseq3</GameBase>
+		<GameBase Condition="('$(Configuration)'=='ReleaseLinux QC')OR('$(Configuration)'=='DebugLinux QC')">base</GameBase>		
 
-		<Compiler Condition="'$(Platform)'=='x64'">MSVC</Compiler>
+		<TargetOS>NOT_SET</TargetOS>
+		<TargetOS Condition="('$(Configuration)'=='Release VQ3')OR('$(Configuration)'=='Debug VQ3')">Windows</TargetOS>
+		<TargetOS Condition="('$(Configuration)'=='Release QC')OR('$(Configuration)'=='Debug QC')">Windows</TargetOS>		
+		<TargetOS Condition="('$(Configuration)'=='ReleaseLinux VQ3')OR('$(Configuration)'=='DebugLinux VQ3')">Linux</TargetOS>
+		<TargetOS Condition="('$(Configuration)'=='ReleaseLinux QC')OR('$(Configuration)'=='DebugLinux QC')">Linux</TargetOS>		
+
+		<Compiler>NOT_SET</Compiler>
+		<Compiler Condition="'$(TargetOS)'=='Windows'">MSVC</Compiler>
+		<Compiler Condition="'$(TargetOS)'=='Linux'">GCC</Compiler>
 	</PropertyGroup>
 </Project>
