@@ -158,7 +158,12 @@ static void* try_dlopen( const char* base, const char* gamedir, const char* file
 void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_t systemcalls )
 {
 	char filename[MAX_QPATH];
+
+#if defined( QC )
+	Com_sprintf( filename, sizeof( filename ), "%s" DLL_EXT, name );
+#else
 	Com_sprintf( filename, sizeof( filename ), "%s" ARCH_STRING DLL_EXT, name );
+#endif
 
 	void* libHandle = 0;
 	// FIXME: use fs_searchpaths from files.c
