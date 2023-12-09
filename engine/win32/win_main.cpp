@@ -36,6 +36,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <VersionHelpers.h>
 #include "../renderdoc/renderdoc_app.h"
 
+#if defined( SYS_PELOADER )
+#include "../x86_64/pe_loader.h"
+#endif // PE_LOADER
 
 WinVars_t g_wv;
 
@@ -384,9 +387,15 @@ void Sys_UnloadDll( void *dllHandle )
 	if ( !dllHandle ) {
 		return;
 	}
+#if defined( SYS_PELOADER )
+	if ( !PE_FreeLibrary( (PEHandle)dllHandle ) ) {
+		Com_Error (ERR_FATAL, "Sys_UnloadDll PE_FreeLibrary failed: %s", PE_ErrorMessage( PE_GetLastError() ) );
+	}
+#else
 	if ( !FreeLibrary( (HMODULE)dllHandle ) ) {
 		Com_Error (ERR_FATAL, "Sys_UnloadDll FreeLibrary failed");
 	}
+#endif
 }
 
 
@@ -424,21 +433,39 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	}
 #endif
 
+#if defined( SYS_PELOADER )
+	PEHandle libHandle = PE_LoadLibrary( fn );
+#else
 	HINSTANCE libHandle = LoadLibrary( fn );
+#endif
 
 #ifndef NDEBUG
+#if defined( SYS_PELOADER )
+	Com_Printf( "PE_LoadLibrary '%s': %s\n", fn, PE_ErrorMessage( PE_GetLastError() ) );
+#else
 	Com_Printf( "LoadLibrary '%s' %s\n", fn, libHandle ? "ok" : "failed" );
 #endif
+#endif
+
 
 	if ( !libHandle )
 		return NULL;
 
+#if defined( SYS_PELOADER )
+	dllEntry_t dllEntry = ( dllEntry_t ) PE_GetProcAddress( libHandle, "dllEntry" );
+	*entryPoint = ( dllSyscall_t ) PE_GetProcAddress( libHandle, "vmMain" );
+	if ( !*entryPoint || !dllEntry ) {
+		PE_FreeLibrary( libHandle );
+		return NULL;
+	}
+#else
 	dllEntry_t dllEntry = ( dllEntry_t ) GetProcAddress( libHandle, "dllEntry" );
 	*entryPoint = ( dllSyscall_t ) GetProcAddress( libHandle, "vmMain" );
 	if ( !*entryPoint || !dllEntry ) {
 		FreeLibrary( libHandle );
 		return NULL;
 	}
+#endif
 	dllEntry( systemcalls );
 
 	return libHandle;
