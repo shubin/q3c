@@ -3,3 +3,4 @@
 makefiles/.vs
 *.log
 workdir
+*.tlog
