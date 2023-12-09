@@ -2231,7 +2231,7 @@ void CG_ActivateAbility( centity_t *cent ) {
 	event = es->event & ~EV_EVENT_BITS;	
 	clientNum = es->clientNum;
 	ci = &cgs.clientinfo[clientNum];
-	chan = clientNum == cg.snap->ps.clientNum == clientNum ? CHAN_ANNOUNCER: CHAN_BODY;
+	chan = ( cg.snap->ps.clientNum == clientNum ? CHAN_ANNOUNCER : CHAN_BODY );
 
 	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
 		clientNum = 0;

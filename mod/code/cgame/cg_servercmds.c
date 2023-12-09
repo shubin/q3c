@@ -179,27 +179,6 @@ static void CG_ParseScores( void ) {
 
 #endif
 
-#if defined( QC )
-/*
-=================
-CG_ParseDamageDir
-
-=================
-*/
-
-static void CG_ParseDamageDir( void ) {
-    int		damage, clientnum;
-    vec3_t	position;
-
-    clientnum	= atoi( CG_Argv(1) );
-    damage		= atoi( CG_Argv(2) );
-    position[0] = atof( CG_Argv(3) );
-    position[1] = atof( CG_Argv(4) );
-    position[2] = atof( CG_Argv(5) );
-    CG_AddDamageDir( clientnum, damage, position );
-}
-#endif
-
 /*
 =================
 CG_ParseTeamInfo
