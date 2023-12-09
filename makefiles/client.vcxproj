@@ -87,6 +87,9 @@
     <ClCompile Include="$(EngineSrcDir)win32\win_snd.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_syscon.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_wndproc.cpp" />
+    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c" >
+      <ExcludedFromBuild Condition="'$(sys_peloader)'!='true'">true</ExcludedFromBuild>
+	</ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(EngineSrcDir)botlib\aasfile.h" />
@@ -177,6 +180,8 @@
     <ClInclude Include="$(EngineSrcDir)win32\win_help.h" />
     <ClInclude Include="$(EngineSrcDir)win32\win_local.h" />
     <ClInclude Include="$(EngineSrcDir)win32\windows.h" />
+    <ClInclude Include="$(EngineSrcDir)x86_64\pe_loader.h" />
+    <ClInclude Include="$(EngineSrcDir)x86_64\pe_local.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="botlib.vcxproj">
