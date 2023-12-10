@@ -885,6 +885,12 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2b.wav", qfalse );
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
+#if defined( QC ) && 0
+		weaponInfo->altFlashSound[0] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf1c.wav", qfalse );
+		weaponInfo->altFlashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2c.wav", qfalse );
+		weaponInfo->altFlashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3c.wav", qfalse );
+		weaponInfo->altFlashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4c.wav", qfalse );
+#endif // QC
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
 		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
 		break;
@@ -892,10 +898,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 #if defined( QC )
 	case WP_LOUSY_MACHINEGUN:
 		MAKERGB( weaponInfo->flashDlightColor, 1, 1, 0.5f );
-		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf1b.wav", qfalse );
-		weaponInfo->flashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2b.wav", qfalse );
-		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
-		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
+		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf1a.wav", qfalse );
+		weaponInfo->flashSound[1] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf2a.wav", qfalse );
+		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3a.wav", qfalse );
+		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4a.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
 		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
 		break;
@@ -2141,6 +2147,9 @@ void CG_FireWeapon( centity_t *cent ) {
 	entityState_t *ent;
 	int				c;
 	weaponInfo_t	*weap;
+#if defined( QC )
+	sfxHandle_t		*sfx;
+#endif // QC
 
 	ent = &cent->currentState;
 	if ( ent->weapon == WP_NONE ) {
@@ -2179,6 +2188,26 @@ void CG_FireWeapon( centity_t *cent ) {
 		trap_S_StartSound (NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound );
 	}
 
+#if defined( QC )
+	if ( ent->weapon == WP_MACHINEGUN && weap->altFlashSound[0] != 0 && cg.zoomed ) {
+		sfx = weap->altFlashSound;
+	} else {
+		sfx = weap->flashSound;
+	}
+	// play a sound
+	for ( c = 0 ; c < 4 ; c++ ) {
+		if ( !sfx[c] ) {
+			break;
+		}
+	}
+	if ( c > 0 ) {
+		c = rand() % c;
+		if ( sfx[c] )
+		{
+			trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, sfx[c] );
+		}
+	}
+#else
 	// play a sound
 	for ( c = 0 ; c < 4 ; c++ ) {
 		if ( !weap->flashSound[c] ) {
@@ -2192,6 +2221,7 @@ void CG_FireWeapon( centity_t *cent ) {
 			trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, weap->flashSound[c] );
 		}
 	}
+#endif
 
 	// do brass ejection
 	if ( weap->ejectBrassFunc && cg_brassTime.integer > 0 ) {

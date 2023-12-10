@@ -438,6 +438,9 @@ typedef struct weaponInfo_s {
 	float			flashDlight;
 	vec3_t			flashDlightColor;
 	sfxHandle_t		flashSound[4];		// fast firing weapons randomly choose
+#if defined( QC )
+	sfxHandle_t		altFlashSound[4];	// alternative set of sounds (i.e. for HMG zoom)
+#endif // QC
 
 	qhandle_t		weaponIcon;
 	qhandle_t		ammoIcon;
