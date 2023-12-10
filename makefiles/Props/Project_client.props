@@ -20,5 +20,6 @@
 	</ItemDefinitionGroup>
 	<Import Project="BuildSettings.props"/>
 	<Import Project="CopyExeFiles.props"/>
+	<Import Project="CopyD3D12Runtime.props"/>
 	<Import Project="Debugger.props"/>
 </Project>

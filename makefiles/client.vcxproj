@@ -87,9 +87,10 @@
     <ClCompile Include="$(EngineSrcDir)win32\win_snd.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_syscon.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_wndproc.cpp" />
-    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c" >
+    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c">
       <ExcludedFromBuild Condition="'$(sys_peloader)'!='true'">true</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)mmLoader\mmLoader.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(EngineSrcDir)botlib\aasfile.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="$(EngineSrcDir)win32\windows.h" />
     <ClInclude Include="$(EngineSrcDir)x86_64\pe_loader.h" />
     <ClInclude Include="$(EngineSrcDir)x86_64\pe_local.h" />
+    <ClInclude Include="$(EngineSrcDir)mmLoader\mmLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="botlib.vcxproj">
@@ -195,7 +197,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\engine\win32\winquake.rc" />
+    <ResourceCompile Include="$(EngineSrcDir)win32\winquake.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>

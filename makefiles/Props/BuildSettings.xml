@@ -19,7 +19,12 @@
                   Category="DevSettings" /> 
 
   <BoolProperty Name="sys_peloader"
-                  DisplayName="Custom PE Loader"
+                  DisplayName="Use custom PE Loader"
                   Description="Custom PE Loader for DLL files instead of the system one."
+                  Category="DevSettings" /> 
+
+  <BoolProperty Name="sys_mmloader"
+                  DisplayName="Use mmLoader"
+                  Description="Use mmLoader to load DLL."
                   Category="DevSettings" /> 
 </Rule>

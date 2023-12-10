@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<CopyD3D12Runtime Condition="'$(CopyD3D12Runtime)'==''">true</CopyD3D12Runtime>			
+	</PropertyGroup>
+	<Target Name="CopyD3D12Runtime" AfterTargets="Build" Condition="'$(CopyD3D12Runtime)|$(ConfigurationType)'=='true|Application'">
+		<ItemGroup>
+			<D3D12Runtime Include="$(ProjectRoot)redist\D3D12 Runtime 1.608\*.*" />
+		</ItemGroup>
+		<Message Importance="High" Text="Copying D3D12 Runtime" />
+		<Copy
+			SourceFiles="@(D3D12Runtime)"
+			DestinationFolder="$(WorkDir)cnq3\"
+			SkipUnchangedFiles="true"
+		/>
+	</Target>
+</Project>

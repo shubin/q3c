@@ -40,6 +40,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../x86_64/pe_loader.h"
 #endif // PE_LOADER
 
+#if defined( SYS_MMLOADER )
+#include "../mmLoader/mmLoader.h"
+#endif
+
 WinVars_t g_wv;
 
 
@@ -391,6 +395,8 @@ void Sys_UnloadDll( void *dllHandle )
 	if ( !PE_FreeLibrary( (PEHandle)dllHandle ) ) {
 		Com_Error (ERR_FATAL, "Sys_UnloadDll PE_FreeLibrary failed: %s", PE_ErrorMessage( PE_GetLastError() ) );
 	}
+#elif defined( SYS_MMLOADER )
+	FreeMemModule( (HMEMMODULE)dllHandle );
 #else
 	if ( !FreeLibrary( (HMODULE)dllHandle ) ) {
 		Com_Error (ERR_FATAL, "Sys_UnloadDll FreeLibrary failed");
@@ -435,6 +441,9 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 
 #if defined( SYS_PELOADER )
 	PEHandle libHandle = PE_LoadLibrary( fn );
+#elif defined( SYS_MMLOADER )
+	DWORD dwError;
+	HMEMMODULE libHandle = LoadFileModule( fn, FALSE, &dwError );
 #else
 	HINSTANCE libHandle = LoadLibrary( fn );
 #endif
@@ -442,6 +451,8 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 #ifndef NDEBUG
 #if defined( SYS_PELOADER )
 	Com_Printf( "PE_LoadLibrary '%s': %s\n", fn, PE_ErrorMessage( PE_GetLastError() ) );
+#elif defined( SYS_MMLOADER )
+	Com_Printf( "LoadFileModule '%s': %u\n", fn, dwError );
 #else
 	Com_Printf( "LoadLibrary '%s' %s\n", fn, libHandle ? "ok" : "failed" );
 #endif
@@ -456,6 +467,13 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	*entryPoint = ( dllSyscall_t ) PE_GetProcAddress( libHandle, "vmMain" );
 	if ( !*entryPoint || !dllEntry ) {
 		PE_FreeLibrary( libHandle );
+		return NULL;
+	}
+#elif defined( SYS_MMLOADER )
+	dllEntry_t dllEntry = ( dllEntry_t ) GetMemModuleProc( libHandle, "dllEntry" );
+	*entryPoint = ( dllSyscall_t ) GetMemModuleProc( libHandle, "vmMain" );
+	if ( !*entryPoint || !dllEntry ) {
+		FreeMemModule( libHandle );
 		return NULL;
 	}
 #else
