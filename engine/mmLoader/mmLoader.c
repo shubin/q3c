@@ -1194,7 +1194,7 @@ mml_strcpyW(wchar_t *pszDest, const wchar_t *pszSrc, unsigned int nMax) {
   return pszDest;
 }
 
-#pragma optimize("gtpy", off)
+#pragma optimize("", off)
 /// <summary>
 /// Sets the memory with specific value.
 /// </summary>
@@ -1204,7 +1204,7 @@ mml_memset(void *pv, int c, unsigned int cb) {
     ((unsigned char *)pv)[i] = (unsigned char)c;
   return pv;
 }
-#pragma optimize("gtpy", on)
+#pragma optimize("", on)
 
 /// <summary>
 /// Moves the source memory data to the destination buffer.
