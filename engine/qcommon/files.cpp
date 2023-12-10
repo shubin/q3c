@@ -220,6 +220,9 @@ static cvar_t* fs_basepath;
 #if defined( QC )
 static cvar_t* fs_q3apath;
 #endif
+#if defined( FS_DEVELOPER )
+static cvar_t* fs_developer;
+#endif
 static cvar_t* fs_basegame;
 static cvar_t* fs_gamedirvar;
 static searchpath_t* fs_searchpaths;
@@ -2720,6 +2723,9 @@ static void FS_Startup( const char *gameName )
 #if defined( QC )
 	fs_q3apath = Cvar_Get ("fs_q3apath", "", CVAR_INIT);
 #endif
+#if defined( FS_DEVELOPER )
+	fs_developer = Cvar_Get ("fs_developer", "", CVAR_INIT );
+#endif
 	fs_gamedirvar = Cvar_Get ("fs_game", APEXGAME, CVAR_INIT | CVAR_SYSTEMINFO );
 	Cvar_SetHelp( "fs_game", "name of the mod folder" );
 	const char* homePath = Sys_DefaultHomePath();
@@ -2762,10 +2768,12 @@ static void FS_Startup( const char *gameName )
 		}
 	}
 
+#if !defined( QC )
 	Com_ReadCDKey(BASEGAME);
 	if (fs_gamedirvar && fs_gamedirvar->string[0] != 0) {
 		Com_AppendCDKey( fs_gamedirvar->string );
 	}
+#endif
 
 	// add our commands
 	Cmd_RegisterArray( fs_cmds, MODULE_COMMON );
@@ -2773,6 +2781,37 @@ static void FS_Startup( const char *gameName )
 	// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=506
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();
+
+#if defined( FS_DEVELOPER )
+	// reorder the search path so plain files are always loaded first (needed for easier asset debugging)
+	if ( fs_developer->integer ) {
+		searchpath_t *p, *reordererd = NULL;
+		for ( searchpath_t *p = fs_searchpaths; p; p = p->next ) {
+			if ( p->pack ) {
+				searchpath_t* q = Z_New<searchpath_t>();
+				q->pack = p->pack;
+				q->dir = p->dir;
+				q->next = reordererd;
+				reordererd = q;
+			}
+		}
+		for ( searchpath_t *p = fs_searchpaths; p; p = p->next ) {
+			if ( p->dir ) {
+				searchpath_t* q = Z_New<searchpath_t>();
+				q->pack = p->pack;
+				q->dir = p->dir;
+				q->next = reordererd;
+				reordererd = q;
+			}
+		}
+		for ( searchpath_t *p = fs_searchpaths; p; ) {
+			searchpath_t* next = p->next;
+			Z_Free( p );
+			p = next;
+		}
+		fs_searchpaths = reordererd;
+	}
+#endif
 
 	fs_gamedirvar->modified = qfalse; // We just loaded, it's not modified
 
@@ -3152,6 +3191,9 @@ void FS_InitFilesystem()
 	Com_StartupVariable( "fs_game" );
 #if defined( QC )
 	Com_StartupVariable( "fs_q3apath" );
+#endif
+#if defined( FS_DEVELOPER )
+	Com_StartupVariable( "fs_developer" );
 #endif
 
 #if defined( _WIN32 )
