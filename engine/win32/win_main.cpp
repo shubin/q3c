@@ -36,16 +36,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <VersionHelpers.h>
 #include "../renderdoc/renderdoc_app.h"
 
-#if defined( SYS_PELOADER )
+#if defined( QC )
 #include "../x86_64/pe_loader.h"
-#endif // PE_LOADER
-
-#if defined( SYS_MMLOADER )
 #include "../mmLoader/mmLoader.h"
 #endif
 
 WinVars_t g_wv;
 
+#if defined( QC )
+static cvar_t* sys_peloader;
+#endif // QC
 
 static qbool win_timePeriodActive = qfalse;
 
@@ -391,12 +391,22 @@ void Sys_UnloadDll( void *dllHandle )
 	if ( !dllHandle ) {
 		return;
 	}
-#if defined( SYS_PELOADER )
-	if ( !PE_FreeLibrary( (PEHandle)dllHandle ) ) {
-		Com_Error (ERR_FATAL, "Sys_UnloadDll PE_FreeLibrary failed: %s", PE_ErrorMessage( PE_GetLastError() ) );
+#if defined( QC )
+	switch ( sys_peloader->integer ) {
+		case 1:
+			if ( !PE_FreeLibrary( (PEHandle)dllHandle ) ) {
+				Com_Error (ERR_FATAL, "Sys_UnloadDll PE_FreeLibrary failed: %s", PE_ErrorMessage( PE_GetLastError() ) );
+			}
+			break;
+		case 2:
+			FreeMemModule( (HMEMMODULE)dllHandle );
+			break;
+		default:
+			if ( !FreeLibrary( (HMODULE)dllHandle ) ) {
+				Com_Error (ERR_FATAL, "Sys_UnloadDll FreeLibrary failed");
+			}
+			break;
 	}
-#elif defined( SYS_MMLOADER )
-	FreeMemModule( (HMEMMODULE)dllHandle );
 #else
 	if ( !FreeLibrary( (HMODULE)dllHandle ) ) {
 		Com_Error (ERR_FATAL, "Sys_UnloadDll FreeLibrary failed");
@@ -439,20 +449,36 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	}
 #endif
 
-#if defined( SYS_PELOADER )
-	PEHandle libHandle = PE_LoadLibrary( fn );
-#elif defined( SYS_MMLOADER )
-	DWORD dwError;
-	HMEMMODULE libHandle = LoadFileModule( fn, FALSE, &dwError );
+#if defined( QC )
+	void *libHandle;
+	DWORD error;
+	switch ( sys_peloader->integer ) {
+		case 1:
+			libHandle = (void*)PE_LoadLibrary( fn );
+			break;
+		case 2:
+			libHandle = (void*)LoadFileModule( fn, 0, &error );
+		default:
+			libHandle = (void*)LoadLibrary( fn );
+			break;
+	}
 #else
 	HINSTANCE libHandle = LoadLibrary( fn );
 #endif
 
 #ifndef NDEBUG
-#if defined( SYS_PELOADER )
-	Com_Printf( "PE_LoadLibrary '%s': %s\n", fn, PE_ErrorMessage( PE_GetLastError() ) );
-#elif defined( SYS_MMLOADER )
-	Com_Printf( "LoadFileModule '%s': %u\n", fn, dwError );
+#if defined( QC )
+	switch ( sys_peloader->integer ) {
+		case 1:
+			Com_Printf( "PE_LoadLibrary '%s' %s\n", fn, libHandle ? "ok" : "failed", PE_ErrorMessage( PE_GetLastError() ) );
+			break;
+		case 2:
+			Com_Printf( "LoadFileModule '%s' %s ", fn, libHandle ? "ok" : "failed" );
+			break;
+		default:
+			Com_Printf( "LoadLibrary '%s' %s\n", fn, libHandle ? "ok" : "failed" );
+			break;
+	}
 #else
 	Com_Printf( "LoadLibrary '%s' %s\n", fn, libHandle ? "ok" : "failed" );
 #endif
@@ -462,19 +488,32 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	if ( !libHandle )
 		return NULL;
 
-#if defined( SYS_PELOADER )
-	dllEntry_t dllEntry = ( dllEntry_t ) PE_GetProcAddress( libHandle, "dllEntry" );
-	*entryPoint = ( dllSyscall_t ) PE_GetProcAddress( libHandle, "vmMain" );
-	if ( !*entryPoint || !dllEntry ) {
-		PE_FreeLibrary( libHandle );
-		return NULL;
-	}
-#elif defined( SYS_MMLOADER )
-	dllEntry_t dllEntry = ( dllEntry_t ) GetMemModuleProc( libHandle, "dllEntry" );
-	*entryPoint = ( dllSyscall_t ) GetMemModuleProc( libHandle, "vmMain" );
-	if ( !*entryPoint || !dllEntry ) {
-		FreeMemModule( libHandle );
-		return NULL;
+#if defined( QC )
+	dllEntry_t dllEntry = NULL;
+	switch ( sys_peloader->integer ) {
+		case 1:
+			dllEntry = ( dllEntry_t ) PE_GetProcAddress( libHandle, "dllEntry" );
+			*entryPoint = ( dllSyscall_t ) PE_GetProcAddress( libHandle, "vmMain" );
+			if ( !*entryPoint || !dllEntry ) {
+				PE_FreeLibrary( libHandle );
+				return NULL;
+			}
+			break;
+		case 2:
+			dllEntry = ( dllEntry_t ) GetMemModuleProc( (HMEMMODULE)libHandle, "dllEntry" );
+			*entryPoint = ( dllSyscall_t ) GetMemModuleProc( (HMEMMODULE)libHandle, "vmMain" );
+			if ( !*entryPoint || !dllEntry ) {
+				FreeMemModule( (HMEMMODULE)libHandle );
+				return NULL;
+			}
+			break;
+		default:
+			dllEntry = ( dllEntry_t ) GetProcAddress( (HMODULE)libHandle, "dllEntry" );
+			*entryPoint = ( dllSyscall_t ) GetProcAddress( (HMODULE)libHandle, "vmMain" );
+			if ( !*entryPoint || !dllEntry ) {
+				FreeLibrary( (HMODULE)libHandle );
+				return NULL;
+			}
 	}
 #else
 	dllEntry_t dllEntry = ( dllEntry_t ) GetProcAddress( libHandle, "dllEntry" );
@@ -609,6 +648,9 @@ static void Sys_Net_Restart_f( void )
 // called after the common systems (cvars, files, etc) are initialized
 void Sys_Init()
 {
+#if defined( QC )
+	sys_peloader = Cvar_Get( "sys_peloader", "0", CVAR_INIT );
+#endif // QC
 	// make sure the timer is high precision, otherwise NT gets 18ms resolution
 	WIN_BeginTimePeriod();
 

@@ -56,5 +56,8 @@
       <Project>{2cffb539-8be8-4c54-b32a-8e0cc9a57c0b}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

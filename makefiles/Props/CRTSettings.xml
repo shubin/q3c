@@ -13,8 +13,8 @@
 	<Category Name="ExpSettings" DisplayName="Experimental Settings" />
   </Rule.Categories>
 
-  <BoolProperty Name="fs_developer"
-                  DisplayName="FS Developer"
-                  Description="Changes asset loading priority (if enabled, plain files are always being loaded first)."
+  <BoolProperty Name="NoCRT"
+                  DisplayName="Turn off CRT for game code DLLs"
+                  Description="Don't use CRT at all for qagame/cgame/ui DLLs"
                   Category="DevSettings" /> 
 </Rule>

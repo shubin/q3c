@@ -5,14 +5,4 @@
 			<PreprocessorDefinitions>FS_DEVELOPER=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 		</ClCompile>
 	</ItemDefinitionGroup>
-	<ItemDefinitionGroup Condition="$(sys_peloader)=='true'">
-		<ClCompile>      
-			<PreprocessorDefinitions>SYS_PELOADER=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemDefinitionGroup>
-	<ItemDefinitionGroup Condition="$(sys_mmloader)=='true'">
-		<ClCompile>      
-			<PreprocessorDefinitions>SYS_MMLOADER=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemDefinitionGroup>
 </Project>

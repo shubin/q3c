@@ -73,6 +73,15 @@
     <ClCompile Include="$(EngineSrcDir)linux\linux_tty.cpp">
       <ExcludedFromBuild Condition="'$(TargetOS)'!='Linux'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)mmLoader\mmLoader.c">
+      <ExcludedFromBuild Condition="'$(TargetOS)'!='Windows'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(EngineSrcDir)mmLoader\mmLoader.h" />
+    <ClInclude Include="$(EngineSrcDir)x86_64\pe_loader.h" />
+    <ClInclude Include="$(EngineSrcDir)x86_64\pe_local.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(EngineSrcDir)win32\winquake.rc">

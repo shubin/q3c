@@ -20,5 +20,8 @@
   <ItemGroup>
     <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
   </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

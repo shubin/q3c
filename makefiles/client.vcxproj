@@ -87,9 +87,7 @@
     <ClCompile Include="$(EngineSrcDir)win32\win_snd.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_syscon.cpp" />
     <ClCompile Include="$(EngineSrcDir)win32\win_wndproc.cpp" />
-    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c">
-      <ExcludedFromBuild Condition="'$(sys_peloader)'!='true'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="$(EngineSrcDir)x86_64\pe_loader.c" />
     <ClCompile Include="$(EngineSrcDir)mmLoader\mmLoader.c" />
   </ItemGroup>
   <ItemGroup>

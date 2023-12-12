@@ -10,7 +10,5 @@
 			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">ui.qc$(LibExt);%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
-	<Import Project="VM.props"/>
-	<Import Project="NoCRT.props" Condition="'$(BuildType)'=='Release'" />
-	<Import Project="CopyModFiles.props"/>
+	<Import Project="VM.props" />
 </Project>

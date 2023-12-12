@@ -8,4 +8,6 @@
 	<PropertyGroup Condition="'$(ConfigurationType)'=='DynamicLibrary'">
 		<TargetName>$(ProjectName)</TargetName>
 	</PropertyGroup>
+	<Import Project="NoCRT.props" />
+	<Import Project="CopyModFiles.props"/>
 </Project>

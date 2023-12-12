@@ -49,5 +49,8 @@
     <None Include="$(ModSrcDir)code\cgame\font_regular.inc" />
     <None Include="$(ModSrcDir)code\cgame\utf8.inc" />
   </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

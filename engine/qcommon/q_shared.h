@@ -154,8 +154,18 @@ ID_INLINE int PASSFLOAT( float x ) { return (*(const int*)&x); }
 #endif
 
 
-#if defined(Q3_VM)
+#if defined( Q3_VM ) || defined( NO_CRT )
+typedef int intptr_t;
+#elif defined( NO_CRT )
+#	if defined( __x86_64__) || defined( _M_X64 )
+#		if defined( _MSC_VER )
+		typedef __int64 intptr_t;
+#		else
+		typedef long long int intptr_t;
+#		endif
+#	else
 	typedef int intptr_t;
+#	endif
 #else
 	#include <stdint.h>
 #endif

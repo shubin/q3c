@@ -24,5 +24,8 @@
     <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
     <ClInclude Include="$(ModSrcDir)code\game\bg_promode.h" />
   </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
