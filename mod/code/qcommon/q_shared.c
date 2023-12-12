@@ -782,7 +782,7 @@ qboolean Q_isintegral( float f )
 	return (int)f == f;
 }
 
-#ifdef _WIN32
+#if defined( _WIN32 ) && !defined( NO_CRT )
 /*
 =============
 Q_vsnprintf

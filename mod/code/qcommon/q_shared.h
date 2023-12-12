@@ -168,11 +168,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  **********************************************************************/
 
-#ifdef Q3_VM
+#if defined( Q3_VM ) || defined( NO_CRT )
 
 #include "../game/bg_lib.h"
 
+#if defined( __x86_64__ ) || defined( _M_X64 )
+typedef long long int intptr_t;
+#else
 typedef int intptr_t;
+#endif
 
 #else
 

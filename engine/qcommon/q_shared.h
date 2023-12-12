@@ -127,7 +127,7 @@ typedef qbool qboolean;
 
  **********************************************************************/
 
-#ifdef Q3_VM
+#if defined( Q3_VM ) || defined( NO_CRT )
 
 #define QDECL
 #define ID_INLINE

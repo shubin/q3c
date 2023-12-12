@@ -55,6 +55,7 @@
     <ClCompile Include="$(ModSrcDir)code\qcommon\q_math.c" />
     <ClCompile Include="$(ModSrcDir)code\qcommon\q_shared.c" />
     <ClCompile Include="$(ModSrcDir)code\ui\ui_syscalls.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\bg_lib.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ModSrcDir)code\qcommon\q_shared.h" />

@@ -11,5 +11,6 @@
 		</Link>
 	</ItemDefinitionGroup>	
 	<Import Project="VM.props"/>
+	<Import Project="NoCRT.props" Condition="'$(BuildType)'=='Release'" />
 	<Import Project="CopyModFiles.props"/>
 </Project>

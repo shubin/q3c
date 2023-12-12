@@ -3,7 +3,7 @@
 // bg_lib,c -- standard C library replacement routines used by code
 // compiled for the virtual machine
 
-#ifdef Q3_VM
+#if defined( Q3_VM ) || defined( NO_CRT )
 
 #include "../qcommon/q_shared.h"
 
@@ -37,6 +37,30 @@
  */
 
 #include "bg_lib.h"
+
+#if defined( NO_CRT )
+#pragma function(strlen)
+#pragma function(strcat)
+#pragma function(strcpy)
+#pragma function(strcmp)
+#pragma function(memmove)
+#pragma function(tan)
+#pragma function(abs)
+#pragma function(fabs)
+#pragma function(floor)
+#pragma function(ceilf)
+#pragma function(ceil)
+#pragma function(memset)
+#pragma function(memcpy)
+#pragma function(sqrt)
+#pragma function(sin)
+#pragma function(cos)
+#pragma function(acos)
+#pragma function(atan2)
+
+int _fltused = 0;
+
+#endif // NO_CRT
 
 #if defined(LIBC_SCCS) && !defined(lint)
 #if 0
@@ -317,7 +341,40 @@ void *memmove(void *dest, const void *src, size_t count)
 }
 
 
-#if 0
+#if defined( NO_CRT )
+
+static inline void fp_force_eval( double x ) {
+	volatile double y;
+	y = x;
+}
+
+#define EPS 2.22044604925031308085e-16
+
+static const double toint = 1 / EPS;
+
+double ceil( double x ) {
+	union {
+		double f; unsigned long long i;
+	} u = { x };
+	int e = u.i >> 52 & 0x7ff;
+	double y;
+
+	if ( e >= 0x3ff + 52 || x == 0 )
+		return x;
+	/* y = int(x) - x, where int(x) is an integer neighbor of x */
+	if ( u.i >> 63 )
+		y = x - toint + toint - x;
+	else
+		y = x + toint - toint - x;
+	/* special case because of non-nearest rounding modes */
+	if ( e <= 0x3ff - 1 ) {
+		fp_force_eval( y );
+		return u.i >> 63 ? -0.0 : 1;
+	}
+	if ( y < 0 )
+		return x + y + 1;
+	return x + y;
+}
 
 double floor( double x ) {
 	return (int)(x + 0x40000000) - 0x40000000;
@@ -696,7 +753,7 @@ float acostable[] = {
 0.30739505,0.30087304,0.29421096,0.28739907,0.28042645,0.27328078,0.26594810,0.25841250,
 0.25065566,0.24265636,0.23438976,0.22582651,0.21693146,0.20766198,0.19796546,0.18777575,
 0.17700769,0.16554844,0.15324301,0.13986823,0.12508152,0.10830610,0.08841715,0.06251018,
-}
+};
 
 double acos( double x ) {
 	int index;
@@ -1423,7 +1480,11 @@ double fabs( double x ) {
 /* #ifdef HAVE_LONG_LONG */
 # define LLONG long long
 #else
+#if defined( NO_CRT ) && ( defined( __x86_64__ ) || defined( _M_X64 ) )
+# define LLONG long long
+#else
 # define LLONG long
+#endif
 #endif
 
 static int dopr (char *buffer, size_t maxlen, const char *format, 
@@ -1697,7 +1758,7 @@ static int dopr (char *buffer, size_t maxlen, const char *format, va_list args)
 	break;
       case 'p':
 	strvalue = va_arg (args, void *);
-	total += fmtint (buffer, &currlen, maxlen, (long) strvalue, 16, min,
+	total += fmtint (buffer, &currlen, maxlen, (intptr_t) strvalue, 16, min,
                          max, flags);
 	break;
       case 'n':
@@ -2117,3 +2178,10 @@ int sscanf( const char *buffer, const char *fmt, ... ) {
 }
 
 #endif
+
+#if defined( NO_CRT )
+
+void exit( int status ) {}
+void _DllMainCRTStartup( void ) {}
+
+#endif // NO_CRT
