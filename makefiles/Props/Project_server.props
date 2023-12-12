@@ -14,7 +14,7 @@
 			<SubSystem>Windows</SubSystem>
 			<AdditionalDependencies Condition="'$(TargetOS)'=='Windows'">Shlwapi.lib;Winmm.lib;ws2_32.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
 			<AdditionalDependencies Condition="'$(TargetOS)'=='Windows'">botlib$(LibExt);%(AdditionalDependencies)</AdditionalDependencies>
-			<LibraryDependencies Condition="'$(TargetOS)'=='Linux'">botlib;%(AdditionalDependencies)</LibraryDependencies>
+			<LibraryDependencies Condition="'$(TargetOS)'=='Linux'">dl;botlib;%(AdditionalDependencies)</LibraryDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<Import Project="BuildSettings.props"/>

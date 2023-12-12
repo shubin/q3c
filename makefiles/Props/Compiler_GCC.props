@@ -8,7 +8,7 @@
 			<PositionIndependentCode>true</PositionIndependentCode>
 			<RuntimeTypeInfo>false</RuntimeTypeInfo>
 			<CppLanguageStandard>c++98</CppLanguageStandard>
-			<CLanguageStandard>c99</CLanguageStandard>
+			<CLanguageStandard>gnu11</CLanguageStandard>
 			<ExceptionHandling>Disabled</ExceptionHandling>
 			<AdditionalOptions>-Wno-unused-parameter -Wno-write-strings -Wno-parentheses -Wno-conversion -Wno-float-conversion -Wno-unused-variable %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>

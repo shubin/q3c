@@ -42,9 +42,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "linux_local.h"
 
+#if defined( QC )
+#include "../x86_64/pe_loader.h"
+#endif
 
 #define MEM_THRESHOLD 96*1024*1024
 
+#if defined( QC )
+cvar_t *sys_peloader;
+#endif
 
 static void LIN_MicroSleep( int us )
 {
@@ -118,7 +124,18 @@ void Sys_Quit( int status )
 
 const char* Sys_DllError()
 {
+#if defined( QC )
+	int err;
+	switch ( sys_peloader->integer ) {
+		case 1:
+			err = PE_GetLastError();
+			return err == PE_OK ? NULL : PE_ErrorMessage( err );
+		default:
+			return dlerror();
+	}
+#elif
 	return dlerror();
+#endif
 }
 
 
@@ -127,8 +144,17 @@ void Sys_UnloadDll( void* dllHandle )
 	if ( !dllHandle )
 		return;
 
+#if defined( QC )
+	switch ( sys_peloader->integer ) {
+		case 1:
+			PE_FreeLibrary( (PEHandle)dllHandle );
+		default:
+			dlclose( dllHandle );
+			break;
+	}
+#else
 	dlclose( dllHandle );
-
+#endif
 	const char* err = Sys_DllError();
 	if ( err ) {
 		Com_Error( ERR_FATAL, "Sys_UnloadDll failed: %s\n", err );
@@ -139,7 +165,20 @@ void Sys_UnloadDll( void* dllHandle )
 static void* try_dlopen( const char* base, const char* gamedir, const char* filename )
 {
 	const char* fn = FS_BuildOSPath( base, gamedir, filename );
+
+#if defined( QC )
+	void *libHandle;
+	switch ( sys_peloader->integer ) {
+		case 1:
+			libHandle = (void*)PE_LoadLibrary( fn );
+			break;
+		default:
+			libHandle = dlopen( fn, RTLD_NOW );
+			break;
+	}
+#else
 	void* libHandle = dlopen( fn, RTLD_NOW );
+#endif
 
 	if (!libHandle) {
 		Com_Printf( "Sys_LoadDll(%s) failed: %s\n", fn, Sys_DllError() );
@@ -160,7 +199,14 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	char filename[MAX_QPATH];
 
 #if defined( QC )
-	Com_sprintf( filename, sizeof( filename ), "%s" DLL_EXT, name );
+	switch ( sys_peloader->integer ) {
+		case 1:
+			Com_sprintf( filename, sizeof( filename ), "%s.dll", name );
+			break;
+		default:
+			Com_sprintf( filename, sizeof( filename ), "%s" DLL_EXT, name );
+			break;
+	}
 #else
 	Com_sprintf( filename, sizeof( filename ), "%s" ARCH_STRING DLL_EXT, name );
 #endif
@@ -184,8 +230,22 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 	if ( !libHandle )
 		return NULL;
 
+#if defined( QC )
+	dllEntry_t dllEntry;
+	switch ( sys_peloader->integer ) {
+		case 1:
+			dllEntry = (dllEntry_t)PE_GetProcAddress( (PEHandle)libHandle, "dllEntry" );
+			*entryPoint = (dllSyscall_t)PE_GetProcAddress( libHandle, "vmMain" );
+			break;
+		default:
+			dllEntry_t dllEntry = (dllEntry_t)dlsym( libHandle, "dllEntry" );
+			*entryPoint = (dllSyscall_t)dlsym( libHandle, "vmMain" );
+			break;
+	}
+#else
 	dllEntry_t dllEntry = (dllEntry_t)dlsym( libHandle, "dllEntry" );
 	*entryPoint = (dllSyscall_t)dlsym( libHandle, "vmMain" );
+#endif
 
 	if ( !*entryPoint || !dllEntry ) {
 		const char* err = Sys_DllError();
@@ -213,6 +273,9 @@ void Sys_SetClipboardData( const char* )
 
 void Sys_Init()
 {
+#if defined( QC )
+	sys_peloader = Cvar_Get( "sys_peloader", "0", CVAR_INIT );
+#endif
 	Cvar_Set( "arch", OS_STRING " " ARCH_STRING );
 }
 
