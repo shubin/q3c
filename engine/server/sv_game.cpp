@@ -264,7 +264,7 @@ static qbool SV_G_GetValue( char* value, int valueSize, const char* key )
 
 // the game module is making a system call
 
-static intptr_t SV_GameSystemCalls( intptr_t* args )
+static intptr_t MSABI SV_GameSystemCalls( intptr_t* args )
 {
 	switch( args[0] ) {
 	case G_PRINT:
@@ -873,7 +873,9 @@ static void SV_InitGameVM( qbool restart )
 
 	// use the current msec count for a random seed
 	// init for this gamestate
+	Com_Printf("-- Call GAME_INIT\n");
 	VM_Call( gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart );
+	Com_Printf("-- Done\n");
 }
 
 

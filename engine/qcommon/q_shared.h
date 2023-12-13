@@ -638,9 +638,30 @@ int Q_PrintStroff( const char *string, int charOffset );
 // removes color sequences from string
 char *Q_CleanStr( char *string );
 
-typedef intptr_t ( *syscall_t )( intptr_t *parms );
-typedef intptr_t ( QDECL *dllSyscall_t )( intptr_t callNum, ... );
-typedef void ( QDECL *dllEntry_t )( dllSyscall_t syscallptr );
+#if defined( QC )
+#define MSABI __attribute__((ms_abi))
+#endif // QC
+
+typedef intptr_t ( MSABI *syscall_t )( intptr_t *parms );
+typedef intptr_t ( MSABI *dllSyscall_t )( intptr_t callNum, 
+	intptr_t arg0,
+	intptr_t arg1,
+	intptr_t arg2,
+	intptr_t arg3,
+	intptr_t arg4,
+	intptr_t arg5,
+	intptr_t arg6,
+	intptr_t arg7,
+	intptr_t arg8,
+	intptr_t arg9,
+	intptr_t arg10,
+	intptr_t arg11,
+	intptr_t arg12,
+	intptr_t arg13,
+	intptr_t arg14,
+	intptr_t arg15
+	);
+typedef void ( MSABI *dllEntry_t )( dllSyscall_t syscallptr );
 
 
 //

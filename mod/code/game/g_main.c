@@ -466,7 +466,6 @@ G_InitGame
 */
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
-
 	G_Printf ("------- Game Initialization -------\n");
 	G_Printf ("gamename: %s\n", GAMEVERSION);
 	G_Printf ("gamedate: %s\n", PRODUCT_DATE);
@@ -587,16 +586,21 @@ void G_ShutdownGame( int restart ) {
 	if ( level.logFile ) {
 		G_LogPrintf("ShutdownGame:\n" );
 		G_LogPrintf("------------------------------------------------------------\n" );
+		G_LogPrintf("-- CloseFile: %d\n", level.logFile );
 		trap_FS_FCloseFile( level.logFile );
+		G_LogPrintf( "-- CloseFile ok\n" );
 		level.logFile = 0;
 	}
-
+	G_LogPrintf( "-- Write session data\n" );
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
+	G_LogPrintf( "-- Write session data ok\n" );
 
 	if ( trap_Cvar_VariableIntegerValue( "bot_enable" ) ) {
 		BotAIShutdown( restart );
 	}
+
+	G_LogPrintf( "-- Shutdown ok\n" );
 }
 
 

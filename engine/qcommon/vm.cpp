@@ -305,19 +305,55 @@ Dlls will call this directly
 
 ============
 */
-intptr_t QDECL VM_DllSyscall( intptr_t arg, ... ) {
+intptr_t MSABI VM_DllSyscall( intptr_t arg, 
+	intptr_t arg0,
+	intptr_t arg1,
+	intptr_t arg2,
+	intptr_t arg3,
+	intptr_t arg4,
+	intptr_t arg5,
+	intptr_t arg6,
+	intptr_t arg7,
+	intptr_t arg8,
+	intptr_t arg9,
+	intptr_t arg10,
+	intptr_t arg11,
+	intptr_t arg12,
+	intptr_t arg13,
+	intptr_t arg14,
+	intptr_t arg15
+	) {
 #if !id386 || defined __clang__
   // rcg010206 - see commentary above
-  intptr_t args[16];
+  intptr_t args[17];
   int i;
   va_list ap;
 
   args[0] = arg;
 
+  args[1] = arg0;
+  args[2] = arg1;
+  args[3] = arg2;
+  args[4] = arg3;
+  args[5] = arg4;
+  args[6] = arg5;
+  args[7] = arg6;
+  args[8] = arg7;
+  args[9] = arg8;
+  args[10] = arg9;
+  args[11] = arg10;
+  args[12] = arg11;
+  args[13] = arg12;
+  args[14] = arg13;
+  args[15] = arg14;
+  args[16] = arg15;
+
+  #if 0
   va_start(ap, arg);
   for (i = 1; i < ARRAY_LEN (args); i++)
     args[i] = va_arg(ap, intptr_t);
   va_end(ap);
+  #endif
 
   return currentVM->systemCall( args );
 #else // original id code
@@ -1123,7 +1159,8 @@ intptr_t QDECL VM_Call( vm_t *vm, int callnum, ... )
 
 		r = vm->entryPoint( callnum, args[0], args[1], args[2], args[3],
 			args[4], args[5], args[6], args[7],
-			args[8], args[9], args[10], args[11] );
+		    args[8], args[9], args[10], args[11], 
+			args[12], args[13], args[14], args[15] );
 	} else {
 #if id386 && !defined __clang__ // calling convention doesn't need conversion in some cases
 #ifndef NO_VM_COMPILED

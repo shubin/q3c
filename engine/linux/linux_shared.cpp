@@ -254,7 +254,18 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 		return NULL;
 	}
 
+#if defined( QC )
+	switch ( sys_peloader->integer ) {
+		case 1:
+			dllEntry( systemcalls );
+			break;
+		default:
+			dllEntry( systemcalls );
+			break;
+	}
+#else
 	dllEntry( systemcalls );
+#endif
 	return libHandle;
 }
 
