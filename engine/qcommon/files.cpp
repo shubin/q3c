@@ -279,7 +279,7 @@ static char lastValidGame[MAX_OSPATH];
 static FILE* missingFiles = NULL;
 #endif
 
-#if defined( QC ) && defined( WIN32 )
+#if defined( QC ) && defined( _WIN32 )
 void Sys_FindQ3APath( void );
 qboolean Sys_LocateQ3APath( void );
 #endif // QC
@@ -2891,7 +2891,7 @@ static void FS_CheckPaks()
 				break;
 			}
 		}
-#if defined( QC ) && !defined( DEDICATED ) && defined( WIN32 )
+#if defined( QC ) && !defined( DEDICATED ) && defined( _WIN32 )
 		if ( Sys_LocateQ3APath() ) {
 			Com_Error( ERR_FATAL, "Please restart the game" );
 		} else {
@@ -3182,7 +3182,7 @@ void FS_InitFilesystem()
 	// line variable sets don't happen until after the filesystem
 	// has already been initialized
 
-#if defined( QC ) && defined ( WIN32 )
+#if defined( QC ) && defined ( _WIN32 )
 	Sys_FindQ3APath();
 #endif
 
