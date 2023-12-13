@@ -148,6 +148,7 @@ void Sys_UnloadDll( void* dllHandle )
 	switch ( sys_peloader->integer ) {
 		case 1:
 			PE_FreeLibrary( (PEHandle)dllHandle );
+			break;
 		default:
 			dlclose( dllHandle );
 			break;
