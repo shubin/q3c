@@ -2785,31 +2785,20 @@ static void FS_Startup( const char *gameName )
 #if defined( FS_DEVELOPER )
 	// reorder the search path so plain files are always loaded first (needed for easier asset debugging)
 	if ( fs_developer->integer ) {
-		searchpath_t *p, *reordererd = NULL;
+		searchpath_t *prev = NULL, *base = NULL;
+
 		for ( searchpath_t *p = fs_searchpaths; p; p = p->next ) {
-			if ( p->pack ) {
-				searchpath_t* q = Z_New<searchpath_t>();
-				q->pack = p->pack;
-				q->dir = p->dir;
-				q->next = reordererd;
-				reordererd = q;
+			if ( p->dir && !strcmp( p->dir->gamedir, APEXGAME ) ) {
+				base = p;
+				break;
 			}
+			prev = p;
 		}
-		for ( searchpath_t *p = fs_searchpaths; p; p = p->next ) {
-			if ( p->dir ) {
-				searchpath_t* q = Z_New<searchpath_t>();
-				q->pack = p->pack;
-				q->dir = p->dir;
-				q->next = reordererd;
-				reordererd = q;
-			}
+		if ( base != NULL && prev != NULL ) {
+			prev->next = base->next;
+			base->next = fs_searchpaths;
+			fs_searchpaths = base;
 		}
-		for ( searchpath_t *p = fs_searchpaths; p; ) {
-			searchpath_t* next = p->next;
-			Z_Free( p );
-			p = next;
-		}
-		fs_searchpaths = reordererd;
 	}
 #endif
 
