@@ -45,7 +45,9 @@
     <ClCompile Include="$(ModSrcDir)code\game\g_session.c" />
     <ClCompile Include="$(ModSrcDir)code\game\g_spawn.c" />
     <ClCompile Include="$(ModSrcDir)code\game\g_svcmds.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_syscalls.c" />
+    <ClCompile Include="$(ModSrcDir)code\game\g_syscalls.c">
+      <CompileAs Condition="'$(Game)'=='QC'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="$(ModSrcDir)code\game\g_target.c" />
     <ClCompile Include="$(ModSrcDir)code\game\g_team.c" />
     <ClCompile Include="$(ModSrcDir)code\game\g_trigger.c" />

@@ -30,7 +30,9 @@
     <ClCompile Include="$(ModSrcDir)code\cgame\cg_scoreboard.c" />
     <ClCompile Include="$(ModSrcDir)code\cgame\cg_servercmds.c" />
     <ClCompile Include="$(ModSrcDir)code\cgame\cg_snapshot.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_syscalls.c" />
+    <ClCompile Include="$(ModSrcDir)code\cgame\cg_syscalls.c">
+      <CompileAs Condition="'$(Game)'=='QC'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="$(ModSrcDir)code\cgame\cg_view.c" />
     <ClCompile Include="$(ModSrcDir)code\cgame\cg_weapons.c" />
     <ClCompile Include="$(ModSrcDir)code\game\bg_lib.c" />

@@ -7,7 +7,8 @@
 		<ClCompile>
 			<PositionIndependentCode>true</PositionIndependentCode>
 			<RuntimeTypeInfo>false</RuntimeTypeInfo>
-			<CppLanguageStandard>c++98</CppLanguageStandard>
+			<CppLanguageStandard Condition="'$(Game)'=='QC'">gnu++11</CppLanguageStandard>
+			<CppLanguageStandard Condition="'$(Game)'!='QC'">c++98</CppLanguageStandard>
 			<CLanguageStandard>gnu11</CLanguageStandard>
 			<ExceptionHandling>Disabled</ExceptionHandling>
 			<AdditionalOptions>-Wno-unused-parameter -Wno-write-strings -Wno-parentheses -Wno-conversion -Wno-float-conversion -Wno-unused-variable %(AdditionalOptions)</AdditionalOptions>

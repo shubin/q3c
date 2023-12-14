@@ -81,6 +81,7 @@ struct VM_Arg {
 	VMA_CONVOP( pc_token_t );
 #endif
 
+#if !defined( QC )
 	// this is not strictly necessary as it will fail otherwise,
 	// but it improves the error message
 #if __cplusplus >= 201103L
@@ -91,6 +92,8 @@ struct VM_Arg {
 		return (T*)p;
 	}
 #endif
+#endif
+
 };
 #pragma pack(pop)
 

@@ -264,7 +264,11 @@ static qbool SV_G_GetValue( char* value, int valueSize, const char* key )
 
 // the game module is making a system call
 
+#if defined( QC )
+static intptr_t VMCALL SV_GameSystemCalls( intptr_t* args )
+#else
 static intptr_t SV_GameSystemCalls( intptr_t* args )
+#endif
 {
 	switch( args[0] ) {
 	case G_PRINT:

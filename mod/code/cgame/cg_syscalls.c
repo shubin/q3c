@@ -22,18 +22,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // cg_syscalls.c -- this file is only included when building a dll
 // cg_syscalls.asm is included instead when building a qvm
+
+#if defined( QC )
+	extern "C" {
+	#include "cg_local.h"
+	}
+	#define TRAP_IMPL
+	#include "../qcommon/vm_syscall.h"
+#else
+	#include "cg_local.h"
+#endif
+
+// this file is only included when building a dll
+// g_syscalls.asm is included instead when building a qvm
 #ifdef Q3_VM
 #error "Do not use in VM build"
 #endif
 
-#include "cg_local.h"
-
+#if !defined( QC )
 static intptr_t (QDECL *syscall)( intptr_t arg, ... ) = (intptr_t (QDECL *)( intptr_t, ...))-1;
 
 
 Q_EXPORT void dllEntry( intptr_t (QDECL  *syscallptr)( intptr_t arg,... ) ) {
 	syscall = syscallptr;
 }
+#endif // QC
 
 
 int PASSFLOAT( float x ) {
@@ -45,6 +58,10 @@ int PASSFLOAT( float x ) {
 void	trap_Print( const char *fmt ) {
 	syscall( CG_PRINT, fmt );
 }
+
+#if defined( __cplusplus )
+extern "C" void exit( int );
+#endif
 
 void trap_Error(const char *fmt)
 {
@@ -344,11 +361,11 @@ void		trap_GetCurrentSnapshotNumber( int *snapshotNumber, int *serverTime ) {
 }
 
 qboolean	trap_GetSnapshot( int snapshotNumber, snapshot_t *snapshot ) {
-	return syscall( CG_GETSNAPSHOT, snapshotNumber, snapshot );
+	return (qboolean)syscall( CG_GETSNAPSHOT, snapshotNumber, snapshot );
 }
 
 qboolean	trap_GetServerCommand( int serverCommandNumber ) {
-	return syscall( CG_GETSERVERCOMMAND, serverCommandNumber );
+	return (qboolean)syscall( CG_GETSERVERCOMMAND, serverCommandNumber );
 }
 
 int			trap_GetCurrentCmdNumber( void ) {
@@ -356,7 +373,7 @@ int			trap_GetCurrentCmdNumber( void ) {
 }
 
 qboolean	trap_GetUserCmd( int cmdNumber, usercmd_t *ucmd ) {
-	return syscall( CG_GETUSERCMD, cmdNumber, ucmd );
+	return (qboolean)syscall( CG_GETUSERCMD, cmdNumber, ucmd );
 }
 
 void		trap_SetUserCmdValue( int stateValue, float sensitivityScale ) {
@@ -376,7 +393,7 @@ int trap_MemoryRemaining( void ) {
 }
 
 qboolean trap_Key_IsDown( int keynum ) {
-	return syscall( CG_KEY_ISDOWN, keynum );
+	return (qboolean)syscall( CG_KEY_ISDOWN, keynum );
 }
 
 int trap_Key_GetCatcher( void ) {
@@ -433,13 +450,13 @@ int trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int
 // stops playing the cinematic and ends it.  should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
 e_status trap_CIN_StopCinematic(int handle) {
-  return syscall(CG_CIN_STOPCINEMATIC, handle);
+  return (e_status)syscall(CG_CIN_STOPCINEMATIC, handle);
 }
 
 
 // will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic (int handle) {
-  return syscall(CG_CIN_RUNCINEMATIC, handle);
+  return (e_status)syscall(CG_CIN_RUNCINEMATIC, handle);
 }
  
 
@@ -469,11 +486,11 @@ qboolean trap_getCameraInfo( int time, vec3_t *origin, vec3_t *angles) {
 */
 
 qboolean trap_GetEntityToken( char *buffer, int bufferSize ) {
-	return syscall( CG_GET_ENTITY_TOKEN, buffer, bufferSize );
+	return (qboolean)syscall( CG_GET_ENTITY_TOKEN, buffer, bufferSize );
 }
 
 qboolean trap_R_inPVS( const vec3_t p1, const vec3_t p2 ) {
-	return syscall( CG_R_INPVS, p1, p2 );
+	return (qboolean)syscall( CG_R_INPVS, p1, p2 );
 }
 
 #if defined( QC )
@@ -500,7 +517,7 @@ void	trap_R_DrawTriangle(
 // CNQ3 engine extensions
 
 qboolean trap_GetValue( char *value, int valueSize, const char *key ) {
-	return syscall( CG_EXT_GETVALUE, value, valueSize, key );
+	return (qboolean)syscall( CG_EXT_GETVALUE, value, valueSize, key );
 }
 
 void trap_LocateInteropData( unsigned char *interopBufferIn, int interopBufferInSize, unsigned char *interopBufferOut, int interopBufferOutSize ) {
@@ -540,11 +557,11 @@ void trap_Error2( const char *message, qboolean realError ) {
 }
 
 qboolean trap_IsRecordingDemo( void ) {
-	return syscall( CG_EXT_ISRECORDINGDEMO );
+	return (qboolean)syscall( CG_EXT_ISRECORDINGDEMO );
 }
 
 qboolean trap_NDP_Enable( int analyzeCommands, int generateCommands, int isCsNeeded, int analyzeSnapshot, int endAnalyzis ) {
-	return syscall( CG_EXT_NDP_ENABLE, analyzeCommands, generateCommands, isCsNeeded, analyzeSnapshot, endAnalyzis );
+	return (qboolean)syscall( CG_EXT_NDP_ENABLE, analyzeCommands, generateCommands, isCsNeeded, analyzeSnapshot, endAnalyzis );
 }
 
 int trap_NDP_Seek( int serverTime ) {
@@ -556,7 +573,7 @@ void trap_NDP_ReadUntil( int serverTime ) {
 }
 
 qboolean trap_NDP_StartVideo( const char *fileNameNoExt, int aviFrameRate ) {
-	return syscall( CG_EXT_NDP_STARTVIDEO, fileNameNoExt, aviFrameRate ); 
+	return (qboolean)syscall( CG_EXT_NDP_STARTVIDEO, fileNameNoExt, aviFrameRate ); 
 }
 
 void trap_NDP_StopVideo( void ) {

@@ -571,8 +571,8 @@ int		COM_Compress( char *data_p );
 void SkipBracedSection( const char** data );
 void SkipRestOfLine( const char** data );
 
-#define QSUBSYSTEM_INIT_START(X) Com_Printf( ">>> Initializing "X"\n" );
-#define QSUBSYSTEM_INIT_DONE(X)  Com_Printf( "<<< "X" Initialization Complete\n" );
+#define QSUBSYSTEM_INIT_START(X) Com_Printf( ">>> Initializing " X "\n" );
+#define QSUBSYSTEM_INIT_DONE(X)  Com_Printf( "<<< " X " Initialization Complete\n" );
 
 
 // botlib crap hacked into the engine for no good reason
@@ -638,10 +638,13 @@ int Q_PrintStroff( const char *string, int charOffset );
 // removes color sequences from string
 char *Q_CleanStr( char *string );
 
+#if !defined( QC )
 typedef intptr_t ( *syscall_t )( intptr_t *parms );
 typedef intptr_t ( QDECL *dllSyscall_t )( intptr_t callNum, ... );
 typedef void ( QDECL *dllEntry_t )( dllSyscall_t syscallptr );
-
+#else
+#include "vm_syscall.h"
+#endif
 
 //
 // key / value info strings

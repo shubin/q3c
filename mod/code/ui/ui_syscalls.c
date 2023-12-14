@@ -19,21 +19,30 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-//
-#include "ui_local.h"
+#if defined( QC )
+	extern "C" {
+	#include "ui_local.h"
+	}
+	#define TRAP_IMPL
+	#include "../qcommon/vm_syscall.h"
+#else
+	#include "ui_local.h"
+#endif
 
 // this file is only included when building a dll
-// syscalls.asm is included instead when building a qvm
+// g_syscalls.asm is included instead when building a qvm
 #ifdef Q3_VM
 #error "Do not use in VM build"
 #endif
 
+#if !defined( QC )
 static intptr_t (QDECL *syscall)( intptr_t arg, ... ) = (intptr_t (QDECL *)( intptr_t, ...))-1;
+
 
 Q_EXPORT void dllEntry( intptr_t (QDECL *syscallptr)( intptr_t arg,... ) ) {
 	syscall = syscallptr;
 }
-
+#endif // QC
 int PASSFLOAT( float x ) {
 	floatint_t fi;
 	fi.f = x;
@@ -43,6 +52,10 @@ int PASSFLOAT( float x ) {
 void trap_Print( const char *string ) {
 	syscall( UI_PRINT, string );
 }
+
+#if defined( __cplusplus )
+extern "C" void exit( int );
+#endif
 
 void trap_Error(const char *string)
 {
@@ -226,11 +239,11 @@ void trap_Key_SetBinding( int keynum, const char *binding ) {
 }
 
 qboolean trap_Key_IsDown( int keynum ) {
-	return syscall( UI_KEY_ISDOWN, keynum );
+	return (qboolean)syscall( UI_KEY_ISDOWN, keynum );
 }
 
 qboolean trap_Key_GetOverstrikeMode( void ) {
-	return syscall( UI_KEY_GETOVERSTRIKEMODE );
+	return ( qboolean )syscall( UI_KEY_GETOVERSTRIKEMODE );
 }
 
 void trap_Key_SetOverstrikeMode( qboolean state ) {
@@ -322,7 +335,7 @@ int trap_LAN_ServerIsVisible( int source, int n) {
 }
 
 qboolean trap_LAN_UpdateVisiblePings( int source ) {
-	return syscall( UI_LAN_UPDATEVISIBLEPINGS, source );
+	return (qboolean)syscall( UI_LAN_UPDATEVISIBLEPINGS, source );
 }
 
 int trap_LAN_AddServer(int source, const char *name, const char *addr) {
@@ -389,13 +402,13 @@ int trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int
 // stops playing the cinematic and ends it.  should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
 e_status trap_CIN_StopCinematic(int handle) {
-  return syscall(UI_CIN_STOPCINEMATIC, handle);
+  return (e_status)syscall(UI_CIN_STOPCINEMATIC, handle);
 }
 
 
 // will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic (int handle) {
-  return syscall(UI_CIN_RUNCINEMATIC, handle);
+  return (e_status)syscall(UI_CIN_RUNCINEMATIC, handle);
 }
  
 
@@ -416,7 +429,7 @@ void	trap_R_RemapShader( const char *oldShader, const char *newShader, const cha
 }
 
 qboolean trap_VerifyCDKey( const char *key, const char *chksum) {
-	return syscall( UI_VERIFY_CDKEY, key, chksum);
+	return (qboolean)syscall( UI_VERIFY_CDKEY, key, chksum);
 }
 
 void trap_SetPbClStatus( int status ) {

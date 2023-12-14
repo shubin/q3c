@@ -54,7 +54,9 @@
     <ClCompile Include="$(ModSrcDir)code\q3_ui\ui_video.c" />
     <ClCompile Include="$(ModSrcDir)code\qcommon\q_math.c" />
     <ClCompile Include="$(ModSrcDir)code\qcommon\q_shared.c" />
-    <ClCompile Include="$(ModSrcDir)code\ui\ui_syscalls.c" />
+    <ClCompile Include="$(ModSrcDir)code\ui\ui_syscalls.c">
+      <CompileAs Condition="'$(Game)'=='QC'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="$(ModSrcDir)code\game\bg_lib.c" />
   </ItemGroup>
   <ItemGroup>

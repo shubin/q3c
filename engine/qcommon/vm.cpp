@@ -305,6 +305,16 @@ Dlls will call this directly
 
 ============
 */
+
+#if defined( QC )
+
+#include "../qcommon/vm_syscall.h"
+
+intptr_t VMCALL VM_DllSyscall( intptr_t *args ) {
+	return currentVM->systemCall( args );
+}
+
+#else
 intptr_t QDECL VM_DllSyscall( intptr_t arg, ... ) {
 #if !id386 || defined __clang__
   // rcg010206 - see commentary above
@@ -324,6 +334,7 @@ intptr_t QDECL VM_DllSyscall( intptr_t arg, ... ) {
 	return currentVM->systemCall( &arg );
 #endif
 }
+#endif
 
 
 /*
@@ -1096,6 +1107,7 @@ locals from sp
 ==============
 */
 
+#if !defined( QC )
 intptr_t QDECL VM_Call( vm_t *vm, int callnum, ... )
 {
 	if ( !vm ) {
@@ -1159,4 +1171,16 @@ intptr_t QDECL VM_Call( vm_t *vm, int callnum, ... )
 	  currentVM = oldVM;
 	return r;
 }
+#else // QC
+void VM_IncCallLevel( vm_t *vm, int delta ) {
+	vm->callLevel += delta;
+}
 
+dllSyscall_t VM_EntryPoint( vm_t *vm ) {
+	return vm->entryPoint;
+}
+
+qboolean VM_Compiled( vm_t *vm ) {
+	return vm->compiled;
+}
+#endif // QC

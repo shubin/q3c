@@ -294,7 +294,78 @@ void	VM_Forced_Unload_Start(void);
 void	VM_Forced_Unload_Done(void);
 vm_t	*VM_Restart( vm_t *vm );
 
+#if defined( QC )
+
+// bloodrun: see vm_syscall.h for details
+
+template< typename ... Params>
+intptr_t QDECL VM_Call( vm_t *vm, int callnum, Params... parms )
+{
+	if ( !vm ) {
+		Com_Error( ERR_FATAL, "VM_Call with NULL vm" );
+	}
+
+	extern vm_t *currentVM;
+	extern vm_t *lastVM;
+	extern int VM_CallCompiled( vm_t* vm, int *args );
+	extern int VM_CallInterpreted2( vm_t *vm, int *args );
+	extern void VM_IncCallLevel( vm_t *vm, int delta );
+	extern dllSyscall_t VM_EntryPoint( vm_t *vm );
+	extern qboolean VM_Compiled( vm_t *vm );
+
+	vm_t *oldVM = currentVM;
+	currentVM = vm;
+	lastVM = vm;
+
+	//++vm->callLevel;
+	VM_IncCallLevel( vm, 1 );
+
+	intptr_t r;
+	// if we have a dll loaded, call it directly
+	dllSyscall_t vm_entryPoint = VM_EntryPoint( vm );
+
+	if ( vm_entryPoint )
+	{
+		intptr_t p[] = { callnum, (intptr_t)parms... };
+		r = vm_entryPoint( p );
+	} else {
+#if id386 && !defined __clang__ // calling convention doesn't need conversion in some cases
+#ifndef NO_VM_COMPILED
+		if ( vm->compiled )
+			r = VM_CallCompiled( vm, (int*)&callnum );
+		else
+#endif
+			r = VM_CallInterpreted2( vm, (int*)&callnum );
+#else
+		struct {
+			int callnum;
+			int args[/*VMMAIN_CALL_ARGS*/ 13 - 1];
+		} a = {};
+
+		a.callnum = callnum;
+		intptr_t p[12] = { (intptr_t)parms... };
+		for (int i = 0; i < ARRAY_LEN( p ); i++ ) {
+			a.args[i] = (int)p[i];
+		}
+
+#ifndef NO_VM_COMPILED
+		if ( VM_Compiled( vm ) )
+			r = VM_CallCompiled( vm, &a.callnum );
+		else
+#endif
+			r = VM_CallInterpreted2( vm, &a.callnum );
+#endif
+	}
+	//--vm->callLevel;
+	VM_IncCallLevel( vm, -1 );
+
+	if ( oldVM != NULL )
+	  currentVM = oldVM;
+	return r;
+}
+#else
 intptr_t	QDECL VM_Call( vm_t *vm, int callNum, ... );
+#endif // QC
 
 void	VM_Debug( int level );
 

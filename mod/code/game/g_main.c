@@ -254,7 +254,24 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .q3vm file
 ================
 */
-Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  ) {
+#if defined( QC ) && !defined( Q3_VM )
+Q_EXPORT intptr_t vmMain( intptr_t *args ) {
+	#define command args[0]
+	#define	arg0 args[1]
+	#define	arg1 args[2]
+	#define	arg2 args[3]
+	#define	arg3 args[4]
+	#define	arg4 args[5]
+	#define	arg5 args[6]
+	#define	arg6 args[7]
+	#define	arg7 args[8]
+	#define	arg8 args[9]
+	#define	arg9 args[10]
+	#define	arg10 args[11]
+	#define	arg11 args[12]
+#else
+Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11 ) {
+#endif
 	switch ( command ) {
 	case GAME_INIT:
 		G_InitGame( arg0, arg1, arg2 );

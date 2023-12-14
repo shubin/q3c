@@ -143,7 +143,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #if (defined _MSC_VER)
+#if defined( __cplusplus )
+#define Q_EXPORT extern "C" __declspec(dllexport)
+#else
 #define Q_EXPORT __declspec(dllexport)
+#endif
 #elif (defined __SUNPRO_C)
 #define Q_EXPORT __global
 #elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))

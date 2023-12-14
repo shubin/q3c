@@ -382,4 +382,6 @@ float FloatSwap (const float *f);
 
 #endif
 
+#include "../qcommon/vm_syscall.h"
+
 #endif
