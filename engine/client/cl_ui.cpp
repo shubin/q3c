@@ -789,7 +789,11 @@ static qbool CL_UI_GetValue( char* value, int valueSize, const char* key )
 
 // the ui module is making a system call
 
+#if defined( QC )
+static intptr_t VMCALL CL_UISystemCalls( intptr_t* args )
+#else
 static intptr_t CL_UISystemCalls( intptr_t* args )
+#endif
 {
 	switch( args[0] ) {
 	case UI_ERROR:

@@ -390,7 +390,11 @@ static qbool CL_CG_GetValue( char* value, int valueSize, const char* key )
 
 // the cgame module is making a system call
 
+#if defined( QC )
+static intptr_t VMCALL CL_CgameSystemCalls( intptr_t *args )
+#else
 static intptr_t CL_CgameSystemCalls( intptr_t *args )
+#endif
 {
 	switch( args[0] ) {
 	case CG_PRINT:
