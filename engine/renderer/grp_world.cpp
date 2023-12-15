@@ -1284,7 +1284,8 @@ void World::DrawFog()
 	// fog 0 is invalid
 	if(!drawFog ||
 		tr.world == NULL ||
-		tr.world->numfogs <= 1)
+		tr.world->numfogs <= 1 ||
+		backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
