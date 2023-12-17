@@ -38,14 +38,14 @@ void DeathMenu_Event( void *ptr, void *next, int notification ) {
 }
 
 static void UI_DeathMenu_RespawnEvent( void* ptr, int notification ) {
-	if (notification != QM_ACTIVATED) {
+	if ( notification != QM_ACTIVATED ) {
 		return;
 	}
 	UI_SetActiveMenu( UIMENU_NONE );
 }
 
 static void UI_DeathMenu_ChampionsEvent( void* ptr, int notification ) {
-	if (notification != QM_ACTIVATED) {
+	if ( notification != QM_ACTIVATED ) {
 		return;
 	}
 	s_deathmenu.exit_to_champions_menu = qtrue;
