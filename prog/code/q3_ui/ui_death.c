@@ -32,7 +32,7 @@ DeathMenu_Event
 void DeathMenu_Event( void *ptr, void *next, int notification ) {
 	if ( notification == QM_CLOSED ) {
 		if ( next == NULL && !s_deathmenu.exit_to_champions_menu ) {
-			trap_Cmd_ExecuteText( EXEC_NOW, "respawn" );
+			trap_Cmd_ExecuteText( EXEC_NOW, "respawn\n" );
 		}
 	}
 }

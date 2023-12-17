@@ -210,7 +210,7 @@ void CG_Respawn( void ) {
 	cg.weaponSelect = cg.snap->ps.weapon;
 #if defined( QC )
 	cg.killerInfo.clientNum = -1;
-	trap_SendConsoleCommand( "togglemenu 0" );
+	trap_SendConsoleCommand( "togglemenu 0\n" );
 #endif
 }
 
