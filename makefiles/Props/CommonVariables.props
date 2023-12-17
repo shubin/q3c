@@ -9,7 +9,7 @@
 	    <LibraryOutputDir Condition="'$(LibratyOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\lib\</LibraryOutputDir>
 		<WorkDir>$(ProjectRoot)workdir\</WorkDir>
 
-		<ModSrcDir>$(ProjectRoot)mod\</ModSrcDir>
+		<ModSrcDir>$(ProjectRoot)prog\</ModSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>
 
 		<BuildType>NOT_SET</BuildType>
