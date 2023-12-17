@@ -155,7 +155,7 @@ void P_WorldEffects( gentity_t *ent ) {
 				G_AddEvent( ent, EV_POWERUP_BATTLESUIT, 0 );
 			} else {
 #if defined( QC )
-				if ( ent->watertype & CONTENTS_LAVA && ent->client->ps.champion != CHAMP_DK ) {
+				if ( ( ent->watertype & CONTENTS_LAVA ) && ent->client->ps.champion != CHAMP_DK ) {
 #else // QC
 				if (ent->watertype & CONTENTS_LAVA) {
 #endif // QC
@@ -163,7 +163,7 @@ void P_WorldEffects( gentity_t *ent ) {
 						30*waterlevel, 0, MOD_LAVA);
 				}
 #if defined( QC )
-				if ( ent->watertype & CONTENTS_SLIME && ent->client->ps.champion != CHAMP_SORLAG ) {
+				if ( ( ent->watertype & CONTENTS_SLIME ) && ent->client->ps.champion != CHAMP_SORLAG ) {
 #else // QC
 				if (ent->watertype & CONTENTS_SLIME) {
 #endif // QC
