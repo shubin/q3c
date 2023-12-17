@@ -890,6 +890,9 @@ void CalculateRanks( void ) {
 		level.numteamVotingClients[i] = 0;
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
+#if defined( QC )
+		level.clients[i].pers.voting = qfalse;
+#endif
 		if ( level.clients[i].pers.connected != CON_DISCONNECTED ) {
 			level.sortedClients[level.numConnectedClients] = i;
 			level.numConnectedClients++;
@@ -902,6 +905,9 @@ void CalculateRanks( void ) {
 					level.numPlayingClients++;
 					if ( !(g_entities[i].r.svFlags & SVF_BOT) ) {
 						level.numVotingClients++;
+#if defined( QC )
+						level.clients[i].pers.voting = qtrue;
+#endif
 						if ( level.clients[i].sess.sessionTeam == TEAM_RED )
 							level.numteamVotingClients[0]++;
 						else if ( level.clients[i].sess.sessionTeam == TEAM_BLUE )
@@ -1687,6 +1693,28 @@ CheckVote
 ==================
 */
 void CheckVote( void ) {
+#if defined( QC )
+	int	passingScore, i;
+
+	if ( !strncmp( level.voteString, "clientkick ", 11 ) ) {
+		// calculate the passing score in a different manner
+		// if client has a voting right, didn't vote and AFK for more than a minute then passing score will be lowered
+		passingScore = level.numVotingClients;
+		for ( i = 0 ; i < level.maxclients ; i++ ) {
+			if (
+				level.clients[i].pers.voting &&
+				( level.time - level.clients[i].lastInput > 60000 ) &&
+				!( level.clients[i].ps.eFlags & EF_VOTED )
+			) {
+				passingScore--;
+			}
+		}
+		passingScore /= 2;
+	} else {
+		passingScore = level.numVotingClients / 2;
+	}
+#endif
+
 	if ( level.voteExecuteTime && level.voteExecuteTime < level.time ) {
 		level.voteExecuteTime = 0;
 		trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", level.voteString ) );
@@ -1698,11 +1726,19 @@ void CheckVote( void ) {
 		trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
 	} else {
 		// ATVI Q3 1.32 Patch #9, WNF
+#if defined( QC )
+		if ( level.voteYes > passingScore ) {
+#else
 		if ( level.voteYes > level.numVotingClients/2 ) {
+#endif
 			// execute the command, then remove the vote
 			trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
 			level.voteExecuteTime = level.time + 3000;
+#if defined( QC )
+		} else if ( level.voteNo >= passingScore ) {
+#else
 		} else if ( level.voteNo >= level.numVotingClients/2 ) {
+#endif
 			// same behavior as a timeout
 			trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
 		} else {

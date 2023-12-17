@@ -1299,9 +1299,15 @@ A new command has arrived from the client
 ==================
 */
 void ClientThink( int clientNum ) {
+#if defined( QC )
+	usercmd_t	lastCmd;
+#endif // QC
 	gentity_t *ent;
 
 	ent = g_entities + clientNum;
+#if defined( QC )
+	memcpy( &lastCmd, &ent->client->pers.cmd, sizeof( usercmd_t ) );
+#endif // QC
 	trap_GetUsercmd( clientNum, &ent->client->pers.cmd );
 
 #if !defined( UNLAGGED ) //unlagged - smooth clients #1
@@ -1311,6 +1317,17 @@ void ClientThink( int clientNum ) {
 	// phone jack if they don't get any for a while
 	ent->client->lastCmdTime = level.time;
 #endif
+
+#if defined( QC )
+	if ( ( lastCmd.buttons != ent->client->pers.cmd.buttons ) ||
+		 ( lastCmd.angles[0] != ent->client->pers.cmd.angles[0] ) ||
+		 ( lastCmd.angles[1] != ent->client->pers.cmd.angles[1] ) ||
+		 ( lastCmd.angles[2] != ent->client->pers.cmd.angles[2] )
+		)
+	{
+		ent->client->lastInput = level.time;
+	}
+#endif // QC
 
 	if ( !(ent->r.svFlags & SVF_BOT) && !g_synchronousClients.integer ) {
 		ClientThink_real( ent );

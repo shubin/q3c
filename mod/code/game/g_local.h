@@ -280,6 +280,7 @@ typedef struct {
 	int			champion;			// selected champion
 	int			startingWeapon;		// weapon with which the player spawns by default, could be one of "lousy" weapons
 	int			baseHealth;			// base health persistence (needed for Anarki)
+	qboolean	voting;				// indicates if this client has a voting right
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 	// these correspond with variables in the userinfo string
@@ -333,6 +334,9 @@ struct gclient_s {
 	int			lastCmdTime;		// level.time of last usercmd_t, for EF_CONNECTION
 									// we can't just use pers.lastCommand.time, because
 									// of the g_sycronousclients case
+#endif
+#if defined( QC )
+	int			lastInput;			// level.time of the last input
 #endif
 	int			buttons;
 	int			oldbuttons;
