@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // perform the server side effects of a weapon firing
 
 #include "g_local.h"
+#if defined( QC )
+#include "bg_champions.h"
+#endif
 
 static	float	s_quadFactor;
 static	vec3_t	forward, right, up;
@@ -1158,7 +1161,11 @@ set muzzle location relative to pivoting eye
 void CalcMuzzlePoint ( gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint ) {
 	VectorCopy( ent->s.pos.trBase, muzzlePoint );
 	muzzlePoint[2] += ent->client->ps.viewheight;
+#if defined( QC )
+	VectorMA( muzzlePoint, champion_stats[ent->client->ps.champion].maxs[0] - 1, forward, muzzlePoint);
+#else
 	VectorMA( muzzlePoint, 14, forward, muzzlePoint );
+#endif
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector( muzzlePoint );
 }
@@ -1173,7 +1180,11 @@ set muzzle location relative to pivoting eye
 void CalcMuzzlePointOrigin ( gentity_t *ent, vec3_t origin, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint ) {
 	VectorCopy( ent->s.pos.trBase, muzzlePoint );
 	muzzlePoint[2] += ent->client->ps.viewheight;
+#if defined( QC )
+	VectorMA( muzzlePoint, champion_stats[ent->client->ps.champion].maxs[0] - 1, forward, muzzlePoint);
+#else
 	VectorMA( muzzlePoint, 14, forward, muzzlePoint );
+#endif
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector( muzzlePoint );
 }
