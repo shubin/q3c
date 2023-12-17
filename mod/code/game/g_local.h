@@ -205,6 +205,10 @@ typedef enum {
 	SM_MANUAL,
 	SM_FOLLOW_KILLER,
 } spectatorMode_t;
+
+typedef enum {
+	SF_SPECONLY = 1,
+} sessionFlags_t;
 #endif
 
 typedef enum {
@@ -240,6 +244,7 @@ typedef struct {
 	spectatorState_t	spectatorState;
 #if defined( QC )
 	spectatorMode_t		spectatorMode;
+	sessionFlags_t		sessionFlags;
 	int			switchTo;	// client num to switch to
 	int			switchAt;	// level.time to switch at
 #endif

@@ -89,6 +89,7 @@ vmCvar_t	pmove_msec;
 #if defined( QC )
 vmCvar_t	pmove_float;
 vmCvar_t	pmove_speedlimit;
+vmCvar_t	cg_specOnly;
 #endif
 vmCvar_t	g_rankings;
 vmCvar_t	g_listEntity;
@@ -215,8 +216,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO, 0, qfalse},
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse},
 #if defined( QC )
-	{ &pmove_float, "pmove_float", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
-	{ &pmove_speedlimit, "pmove_speedlimit", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
+	{ &pmove_float, "pmove_float", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue },
+	{ &pmove_speedlimit, "pmove_speedlimit", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue },
+	{ &cg_specOnly, "cg_specOnly", "0", CVAR_ARCHIVE | CVAR_USERINFO, 0, qtrue },
 #endif
 	{ &g_rankings, "g_rankings", "0", 0, 0, qfalse},
 	{ &g_localTeamPref, "g_localTeamPref", "", 0, 0, qfalse },
@@ -684,6 +686,9 @@ void AddTournamentPlayer( void ) {
 		}
 		// never select the dedicated follow or scoreboard clients
 		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD || 
+#if defined( QC )
+			( client->sess.sessionFlags & SF_SPECONLY ) ||
+#endif
 			client->sess.spectatorClient < 0  ) {
 			continue;
 		}
@@ -724,6 +729,9 @@ void AddTournamentQueue(gclient_t *client)
 			if(curclient == client)
 				curclient->sess.spectatorNum = 0;
 			else if(curclient->sess.sessionTeam == TEAM_SPECTATOR)
+#if defined( QC )
+				if ( !( client->sess.sessionFlags & SF_SPECONLY ) )
+#endif
 				curclient->sess.spectatorNum++;
 		}
 	}

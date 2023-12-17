@@ -803,6 +803,13 @@ void Cmd_Team_f( gentity_t *ent ) {
 		return;
 	}
 
+#if defined( QC )
+	if ( ent->client->sess.sessionFlags & SF_SPECONLY ) {
+		trap_SendServerCommand( ent-g_entities, "print \"May not switch teams while cg_specOnly is enabled\"" );
+		return;
+	}
+#endif // QC
+
 	// if they are playing a tournement game, count as a loss
 	if ( (g_gametype.integer == GT_TOURNAMENT )
 		&& ent->client->sess.sessionTeam == TEAM_FREE ) {

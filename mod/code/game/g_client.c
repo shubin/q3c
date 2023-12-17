@@ -956,6 +956,18 @@ void ClientUserinfoChanged( int clientNum ) {
 	client->pers.plOut = atoi( s );
 #endif
 
+#if defined( QC )
+	s = Info_ValueForKey( userinfo, "cg_specOnly" );
+	if ( atoi( s ) ) {
+		client->sess.sessionFlags |= SF_SPECONLY;
+		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
+			SetTeam( ent, "spectator" );
+		}
+	} else {
+		client->sess.sessionFlags &= ~SF_SPECONLY;
+	}
+#endif // QC
+
 	// set name
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
 	s = Info_ValueForKey (userinfo, "name");

@@ -44,15 +44,22 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	const char	*s;
 	const char	*var;
 
-	s = va("%i %i %i %i %i %i %i", 
-		client->sess.sessionTeam,
-		client->sess.spectatorNum,
-		client->sess.spectatorState,
-		client->sess.spectatorClient,
-		client->sess.wins,
-		client->sess.losses,
-		client->sess.teamLeader
-		);
+	s = va("%i %i %i %i %i %i %i"
+#if defined( QC )
+		" %i %i"
+#endif
+		, client->sess.sessionTeam
+		, client->sess.spectatorNum
+		, client->sess.spectatorState
+		, client->sess.spectatorClient
+		, client->sess.wins
+		, client->sess.losses
+		, client->sess.teamLeader
+#if defined( QC )
+		, client->sess.spectatorMode
+		, client->sess.sessionFlags
+#endif
+	);
 
 	var = va( "session%i", (int)(client - level.clients) );
 
@@ -76,14 +83,21 @@ void G_ReadSessionData( gclient_t *client ) {
 	var = va( "session%i", (int)(client - level.clients) );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 
-	sscanf( s, "%i %i %i %i %i %i %i",
-		&sessionTeam,
-		&client->sess.spectatorNum,
-		&spectatorState,
-		&client->sess.spectatorClient,
-		&client->sess.wins,
-		&client->sess.losses,
-		&teamLeader
+	sscanf( s, "%i %i %i %i %i %i %i"
+#if defined( QC )
+		" %i %i"
+#endif
+		, &sessionTeam
+		, &client->sess.spectatorNum
+		, &spectatorState
+		, &client->sess.spectatorClient
+		, &client->sess.wins
+		, &client->sess.losses
+		, &teamLeader
+#if defined( QC )
+		, &client->sess.spectatorMode
+		, &client->sess.sessionFlags
+#endif
 		);
 
 	client->sess.sessionTeam = (team_t)sessionTeam;
