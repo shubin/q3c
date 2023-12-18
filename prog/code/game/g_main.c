@@ -1696,7 +1696,7 @@ void CheckVote( void ) {
 #if defined( QC )
 	int	passingScore, i;
 
-	if ( !strncmp( level.voteString, "clientkick ", 11 ) ) {
+	if ( !Q_strncmp( level.voteString, "clientkick ", 11 ) ) {
 		// calculate the passing score in a different manner
 		// if client has a voting right, didn't vote and AFK for more than a minute then passing score will be lowered
 		passingScore = level.numVotingClients;
