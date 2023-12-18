@@ -3,6 +3,8 @@
 //  - the very first element is the syscall id (callnum)
 //  - C++ made it possible to keep the existing syntax with ellipsis
 
+#if !defined( Q3_VM )
+
 #if defined( __x86_64__ ) || defined( _M_X64 )
 	#if defined( _MSC_VER )
 		#define VMDECL
@@ -32,3 +34,5 @@ Q_EXPORT void dllEntry( syscall_t ptr ) {
 }
 
 #endif // TRAP_IMPL
+
+#endif
