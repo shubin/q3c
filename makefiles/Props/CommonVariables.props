@@ -8,6 +8,7 @@
 		<ProjectIntermediateDir Condition="'$(ProjectIntermediateDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\intermediate\</ProjectIntermediateDir>
 	    <LibraryOutputDir Condition="'$(LibratyOutputDir)'==''">$(ProjectRoot)build\$(Platform)\$(Configuration)\lib\</LibraryOutputDir>
 		<WorkDir>$(ProjectRoot)workdir\</WorkDir>
+		<ToolDir>$(ProjectRoot)tools\</ToolDir>
 
 		<ProgSrcDir>$(ProjectRoot)prog\</ProgSrcDir>
 		<EngineSrcDir>$(ProjectRoot)engine\</EngineSrcDir>

@@ -8,6 +8,7 @@
   </PropertyGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
+  <Import Project="Props\CopyTools.props" />
   <ItemGroup>
     <ClCompile Include="$(ProgSrcDir)code\tools\lcc\src\alloc.c" />
     <ClCompile Include="$(ProgSrcDir)code\tools\lcc\src\bind.c" />

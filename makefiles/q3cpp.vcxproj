@@ -8,6 +8,7 @@
   </PropertyGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
+  <Import Project="Props\CopyTools.props" />
   <ItemGroup>
     <ClCompile Include="$(ProgSrcDir)code\tools\lcc\cpp\cpp.c" />
     <ClCompile Include="$(ProgSrcDir)code\tools\lcc\cpp\eval.c" />

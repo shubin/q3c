@@ -4,10 +4,10 @@
 		<CopyExeFiles Condition="'$(CopyExeFiles)'==''">true</CopyExeFiles>	
 	</PropertyGroup>
 	<Target Name="CopyExeFiles" AfterTargets="Build" Condition="'$(CopyExeFiles)|$(ConfigurationType)'=='true|Application'">
-		<Message Importance="High" Text="$(TargetName)$(TargetExt) -> $(WorkDir)" />
+		<Message Importance="High" Text="$(TargetName)$(TargetExt) -> $(ToolDir)" />
 		<Copy
 			SourceFiles="$(TargetPath)"
-			DestinationFolder="$(WorkDir)"
+			DestinationFolder="$(ToolDir)"
 		/>
 	</Target>
 </Project>
