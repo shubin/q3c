@@ -9,14 +9,14 @@
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\tools\asm\cmdlib.c" />
-    <ClCompile Include="$(ModSrcDir)code\tools\asm\q3asm.c" />
-    <ClCompile Include="$(ModSrcDir)code\tools\asm\q3vm.c" />
+    <ClCompile Include="$(ProgSrcDir)code\tools\asm\cmdlib.c" />
+    <ClCompile Include="$(ProgSrcDir)code\tools\asm\q3asm.c" />
+    <ClCompile Include="$(ProgSrcDir)code\tools\asm\q3vm.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\tools\asm\cmdlib.h" />
-    <ClInclude Include="$(ModSrcDir)code\tools\asm\opstrings.h" />
-    <ClInclude Include="$(ModSrcDir)code\tools\asm\qvm.h" />
+    <ClInclude Include="$(ProgSrcDir)code\tools\asm\cmdlib.h" />
+    <ClInclude Include="$(ProgSrcDir)code\tools\asm\opstrings.h" />
+    <ClInclude Include="$(ProgSrcDir)code\tools\asm\qvm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

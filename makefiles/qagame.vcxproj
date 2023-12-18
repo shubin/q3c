@@ -19,64 +19,64 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\game\ai_chat.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_cmd.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_dmnet.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_dmq3.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_main.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_team.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\ai_vcmd.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_lib.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_misc.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_pmove.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_slidemove.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_active.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_arenas.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_bot.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_client.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_cmds.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_combat.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_items.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_main.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_mem.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_misc.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_missile.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_mover.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_session.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_spawn.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_svcmds.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_syscalls.c">
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_chat.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_cmd.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_dmnet.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_dmq3.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_main.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_team.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\ai_vcmd.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_lib.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_misc.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_pmove.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_slidemove.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_active.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_arenas.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_bot.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_client.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_cmds.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_combat.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_items.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_main.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_mem.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_misc.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_missile.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_mover.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_session.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_spawn.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_svcmds.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_syscalls.c">
       <CompileAs Condition="'$(Game)'=='QC'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="$(ModSrcDir)code\game\g_target.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_team.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_trigger.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_utils.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_weapon.c" />
-    <ClCompile Include="$(ModSrcDir)code\qcommon\q_math.c" />
-    <ClCompile Include="$(ModSrcDir)code\qcommon\q_shared.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_target.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_team.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_trigger.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_utils.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_weapon.c" />
+    <ClCompile Include="$(ProgSrcDir)code\qcommon\q_math.c" />
+    <ClCompile Include="$(ProgSrcDir)code\qcommon\q_shared.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\game\ai_chat.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_cmd.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_dmnet.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_dmq3.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_main.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_team.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\ai_vcmd.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_lib.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_local.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_public.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\g_local.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\g_public.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\g_team.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\inv.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\match.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\syn.h" />
-    <ClInclude Include="$(ModSrcDir)code\qcommon\q_shared.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_chat.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_cmd.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_dmnet.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_dmq3.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_main.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_team.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\ai_vcmd.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_lib.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_local.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_public.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\g_local.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\g_public.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\g_team.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\inv.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\match.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\syn.h" />
+    <ClInclude Include="$(ProgSrcDir)code\qcommon\q_shared.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(ModSrcDir)code\game\g_syscalls.asm" />
+    <None Include="$(ProgSrcDir)code\game\g_syscalls.asm" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />

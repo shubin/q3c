@@ -9,11 +9,11 @@
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\tools\lcc\lburg\gram.c" />
-    <ClCompile Include="$(ModSrcDir)code\tools\lcc\lburg\lburg.c" />
+    <ClCompile Include="$(ProgSrcDir)code\tools\lcc\lburg\gram.c" />
+    <ClCompile Include="$(ProgSrcDir)code\tools\lcc\lburg\lburg.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\tools\lcc\lburg\lburg.h" />
+    <ClInclude Include="$(ProgSrcDir)code\tools\lcc\lburg\lburg.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

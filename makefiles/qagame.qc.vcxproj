@@ -13,16 +13,16 @@
     <Import Project="Props\Project_qagame.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\game\bg_champions.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_promode.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_ability.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_acidspit.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_totem.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\g_unlagged.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_champions.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_promode.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_ability.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_acidspit.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_totem.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\g_unlagged.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_promode.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_champions.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_promode.h" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />

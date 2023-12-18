@@ -13,41 +13,41 @@
     <Import Project="Props\Project_cgame.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_champions.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_damageplum.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_decals.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_dmgdir.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_hud.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\cg_unlagged.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_ability.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_ammo.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_crosshair.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_deathmessage.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_ffa_scores.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_fragmessage.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_obituary.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_pickups.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_playerstatus.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_shared.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_tdm_scores.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_timer.c" />
-    <ClCompile Include="$(ModSrcDir)code\cgame\hud_tournament_scores.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_champions.c" />
-    <ClCompile Include="$(ModSrcDir)code\game\bg_promode.c" />
-    <ClCompile Include="$(ModSrcDir)code\hudlib\hudlib.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_champions.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_damageplum.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_decals.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_dmgdir.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_hud.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\cg_unlagged.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_ability.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_ammo.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_crosshair.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_deathmessage.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_ffa_scores.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_fragmessage.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_obituary.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_pickups.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_playerstatus.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_shared.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_tdm_scores.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_timer.c" />
+    <ClCompile Include="$(ProgSrcDir)code\cgame\hud_tournament_scores.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_champions.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_promode.c" />
+    <ClCompile Include="$(ProgSrcDir)code\hudlib\hudlib.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\cgame\cg_champions.h" />
-    <ClInclude Include="$(ModSrcDir)code\cgame\hud_local.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_lib.h" />
-    <ClInclude Include="$(ModSrcDir)code\game\bg_promode.h" />
+    <ClInclude Include="$(ProgSrcDir)code\cgame\cg_champions.h" />
+    <ClInclude Include="$(ProgSrcDir)code\cgame\hud_local.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_champions.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_lib.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_promode.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(ModSrcDir)code\cgame\font_large.inc" />
-    <None Include="$(ModSrcDir)code\cgame\font_qcde.inc" />
-    <None Include="$(ModSrcDir)code\cgame\font_regular.inc" />
-    <None Include="$(ModSrcDir)code\cgame\utf8.inc" />
+    <None Include="$(ProgSrcDir)code\cgame\font_large.inc" />
+    <None Include="$(ProgSrcDir)code\cgame\font_qcde.inc" />
+    <None Include="$(ProgSrcDir)code\cgame\font_regular.inc" />
+    <None Include="$(ProgSrcDir)code\cgame\utf8.inc" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />

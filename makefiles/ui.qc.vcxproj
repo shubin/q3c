@@ -13,12 +13,12 @@
     <Import Project="Props\Project_ui.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\game\bg_champions.c" />
-    <ClCompile Include="$(ModSrcDir)code\q3_ui\ui_champions.c" />
-    <ClCompile Include="$(ModSrcDir)code\q3_ui\ui_death.c" />
+    <ClCompile Include="$(ProgSrcDir)code\game\bg_champions.c" />
+    <ClCompile Include="$(ProgSrcDir)code\q3_ui\ui_champions.c" />
+    <ClCompile Include="$(ProgSrcDir)code\q3_ui\ui_death.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\game\bg_champions.h" />
+    <ClInclude Include="$(ProgSrcDir)code\game\bg_champions.h" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />
