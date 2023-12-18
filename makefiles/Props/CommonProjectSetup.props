@@ -40,6 +40,19 @@
 		<IntDir>$(ProjectIntermediateDir)$(ProjectName)\</IntDir>
 	</PropertyGroup>
 
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<ExceptionHandling>false</ExceptionHandling>
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+			<TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+		</ClCompile>
+	</ItemDefinitionGroup>
+
+	<PropertyGroup Label="Configuration">
+		<SpectreMitigation>false</SpectreMitigation>
+	</PropertyGroup>
+
 	<Import Project="Configuration_$(BuildType).props" />
 	<Import Project="Compiler_$(Compiler).props" />
 	<Import Project="Game_$(Game).props" />
