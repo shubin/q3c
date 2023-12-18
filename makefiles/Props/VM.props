@@ -9,5 +9,5 @@
 		<TargetName>$(ProjectName)</TargetName>
 	</PropertyGroup>
 	<Import Project="NoCRT.props" />
-	<Import Project="CopyModFiles.props"/>
+	<Import Project="CopyProgFiles.props"/>
 </Project>
