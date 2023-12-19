@@ -245,8 +245,8 @@ void QDECL Com_Error( int level, PRINTF_FORMAT_STRING const char* fmt, ... )
 	va_list argptr;
 	va_start( argptr, fmt );
 	Q_vsnprintf( msg, sizeof(msg), fmt, argptr );
-	Com_ErrorExt( level, EXT_ERRMOD_ENGINE, qtrue, "%s", msg );
 	va_end(argptr);
+	Com_ErrorExt( level, EXT_ERRMOD_ENGINE, qtrue, "%s", msg );
 }
 
 
@@ -2525,6 +2525,7 @@ static void Com_FrameSleep( qbool demoPlayback )
 	}
 }
 
+int stackvalid = 0;
 
 void Com_Frame( qbool demoPlayback )
 {
@@ -2532,8 +2533,10 @@ void Com_Frame( qbool demoPlayback )
 #ifndef DEDICATED
 		CL_AbortFrame();
 #endif
+		stackvalid = 0;
 		return;			// an ERR_DROP was thrown
 	}
+	stackvalid = 1;
 
 	// bk001204 - init to zero.
 	//  also:  might be clobbered by `longjmp' or `vfork'
@@ -2668,6 +2671,7 @@ void Com_Frame( qbool demoPlayback )
 	// meaning the config would always be written to on exit
 	if ( com_frameNumber == 1 )
 		cvar_modifiedFlags &= ~CVAR_ARCHIVE;
+	stackvalid = 0;
 }
 
 
