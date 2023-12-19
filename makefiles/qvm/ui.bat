@@ -1,0 +1,54 @@
+set ProjectRoot=..\..\
+set ToolDir=%ProjectRoot%tools\
+set ProgDir=%ProjectRoot%mod\
+set IntDir=%ProjectRoot%build\qvm\
+set LCC=%ToolDir%q3lcc.exe -DQ3_VM -DQC=1 -DUNLAGGED=1 -S -Wf-target=bytecode -Wf-g -I%ProgDir%code\q3_ui -I%ProgDir%code\qcommon -I%ProgDir%code\game -I%ProgDir%code\hudlib
+set Q3ASM=%ToolDir%q3asm.exe
+
+%LCC% %ProgDir%code\game\bg_misc.c
+%LCC% %ProgDir%code\q3_ui\ui_addbots.c
+%LCC% %ProgDir%code\q3_ui\ui_atoms.c
+%LCC% %ProgDir%code\q3_ui\ui_cdkey.c
+%LCC% %ProgDir%code\q3_ui\ui_cinematics.c
+%LCC% %ProgDir%code\q3_ui\ui_confirm.c
+%LCC% %ProgDir%code\q3_ui\ui_connect.c
+%LCC% %ProgDir%code\q3_ui\ui_controls2.c
+%LCC% %ProgDir%code\q3_ui\ui_credits.c
+%LCC% %ProgDir%code\q3_ui\ui_demo2.c
+%LCC% %ProgDir%code\q3_ui\ui_display.c
+%LCC% %ProgDir%code\q3_ui\ui_gameinfo.c
+%LCC% %ProgDir%code\q3_ui\ui_ingame.c
+%LCC% %ProgDir%code\q3_ui\ui_main.c
+%LCC% %ProgDir%code\q3_ui\ui_menu.c
+%LCC% %ProgDir%code\q3_ui\ui_mfield.c
+%LCC% %ProgDir%code\q3_ui\ui_mods.c
+%LCC% %ProgDir%code\q3_ui\ui_network.c
+%LCC% %ProgDir%code\q3_ui\ui_options.c
+%LCC% %ProgDir%code\q3_ui\ui_playermodel.c
+%LCC% %ProgDir%code\q3_ui\ui_players.c
+%LCC% %ProgDir%code\q3_ui\ui_playersettings.c
+%LCC% %ProgDir%code\q3_ui\ui_preferences.c
+%LCC% %ProgDir%code\q3_ui\ui_qmenu.c
+%LCC% %ProgDir%code\q3_ui\ui_removebots.c
+%LCC% %ProgDir%code\q3_ui\ui_serverinfo.c
+%LCC% %ProgDir%code\q3_ui\ui_servers2.c
+%LCC% %ProgDir%code\q3_ui\ui_setup.c
+%LCC% %ProgDir%code\q3_ui\ui_sound.c
+%LCC% %ProgDir%code\q3_ui\ui_sparena.c
+%LCC% %ProgDir%code\q3_ui\ui_specifyserver.c
+%LCC% %ProgDir%code\q3_ui\ui_splevel.c
+%LCC% %ProgDir%code\q3_ui\ui_sppostgame.c
+%LCC% %ProgDir%code\q3_ui\ui_spreset.c
+%LCC% %ProgDir%code\q3_ui\ui_spskill.c
+%LCC% %ProgDir%code\q3_ui\ui_startserver.c
+%LCC% %ProgDir%code\q3_ui\ui_team.c
+%LCC% %ProgDir%code\q3_ui\ui_teamorders.c
+%LCC% %ProgDir%code\q3_ui\ui_video.c
+%LCC% %ProgDir%code\qcommon\q_math.c
+%LCC% %ProgDir%code\qcommon\q_shared.c
+%LCC% %ProgDir%code\game\bg_lib.c
+%LCC% %ProgDir%code\game\bg_champions.c
+%LCC% %ProgDir%code\q3_ui\ui_champions.c
+%LCC% %ProgDir%code\q3_ui\ui_death.c
+
+%Q3ASM% -f ui
