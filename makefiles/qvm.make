@@ -1,9 +1,14 @@
 SourceDir=$(ProjectRoot)/prog/code
 ToolDir=$(ProjectRoot)/tools
 IntDir=$(ProjectRoot)/build/qvm
+WorkDir=$(ProjectRoot)/workdir
+BaseDir=$(WorkDir)/base
 
 CC=$(ToolDir)/q3lcc
 ASM=$(ToolDir)/q3asm
+RM=$(ToolDir)/rm
+CP=$(ToolDir)/cp
+MKDIR=$(ToolDir)/mkdir
 
 CFLAGS=-DQ3_VM=1 -DUNLAGGED=1 -DQC=1 -S -Wf-target=bytecode -Wf-g
 
@@ -160,6 +165,13 @@ CGameAsmList=$(addprefix $(IntDir)/,$(addsuffix .asm,$(CGameSources)))
 UIAsmList=$(addprefix $(IntDir)/,$(addsuffix .asm,$(UISources)))
 
 all: $(IntDir)/qagame.qvm $(IntDir)/cgame.qvm $(IntDir)/ui.qvm
+
+clean:
+	$(RM) -f $(GameAsmList) $(CGameAsmList) $(UIAsmList) $(IntDir)/qagame.qvm $(IntDir)/qagame.map $(IntDir)/cgame.qvm $(IntDir)/cgame.map $(IntDir)/ui.qvm $(IntDir)/ui.map
+
+copy: $(IntDir)/qagame.qvm $(IntDir)/cgame.qvm $(IntDir)/ui.qvm
+	$(MKDIR) -p $(BaseDir)/vm/
+	$(CP) $^ $(BaseDir)/vm/
 
 $(IntDir)/qagame.qvm: $(SourceDir)/game/g_syscalls.asm $(GameAsmList)
 	$(ASM) -o $@ $^
