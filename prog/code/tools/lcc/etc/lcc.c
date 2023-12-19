@@ -28,6 +28,14 @@ static char rcsid[] = "$Id$";
 
 #undef WIN32
 
+#ifdef _WIN32
+#include <direct.h>
+#elif defined(NeXT)
+#include <libc.h>
+#else
+#include <unistd.h>
+#endif
+
 static size_t quotedlen(LPCTSTR arg) {
 	const TCHAR* p;
 	size_t  bCount;
@@ -481,8 +489,77 @@ char *concat(char *s1, char *s2) {
 	return s;
 }
 
+/*
+=================
+Error
+
+For abnormal program terminations in console apps
+=================
+*/
+void Error( const char *error, ... ) {
+	va_list argptr;
+
+	printf( "\n************ ERROR ************\n" );
+	va_start( argptr, error );
+	vprintf( error, argptr );
+	va_end( argptr );
+	printf( "\n" );
+	exit( 1 );
+}
+
+void Q_mkdir( const char *path ) {
+#ifdef _WIN32
+	if ( _mkdir( path ) != -1 )
+		return;
+#else
+	if ( mkdir( path, 0777 ) != -1 )
+		return;
+#endif
+	if ( errno != EEXIST )
+		Error( "mkdir %s: %s", path, strerror( errno ) );
+}
+
+/*
+============
+CreatePath
+============
+*/
+void	CreatePath( const char *path ) {
+	const char *ofs;
+	char		c;
+	char		dir[1024];
+
+#ifdef _WIN32
+	int		olddrive = -1;
+
+	if ( path[1] == ':' ) {
+		olddrive = _getdrive();
+		_chdrive( toupper( path[0] ) - 'A' + 1 );
+	}
+#endif
+
+	if ( path[1] == ':' )
+		path += 2;
+
+	for ( ofs = path + 1; *ofs; ofs++ ) {
+		c = *ofs;
+		if ( c == '/' || c == '\\' ) {	// create the directory
+			memcpy( dir, path, ofs - path );
+			dir[ofs - path] = 0;
+			Q_mkdir( dir );
+		}
+	}
+
+#ifdef _WIN32
+	if ( olddrive != -1 ) {
+		_chdrive( olddrive );
+	}
+#endif
+}
+
 /* compile - compile src into dst, return status */
 static int compile(char *src, char *dst) {
+	CreatePath( dst );
 	compose(com, clist, append(src, 0), append(dst, 0));
 	return callsys(av);
 }

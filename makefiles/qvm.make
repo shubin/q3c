@@ -1,12 +1,11 @@
-SourceDir=$(ProjectRoot)/mod/code
+SourceDir=$(ProjectRoot)/prog/code
 ToolDir=$(ProjectRoot)/tools
 IntDir=$(ProjectRoot)/build/qvm
 
 CC=$(ToolDir)/q3lcc
 ASM=$(ToolDir)/q3asm
 
-CFLAGS=-DQ3_VM=1 -S -Wf-target=bytecode -Wf-g
-#CFLAGS_QC=-DUNLAGGED=1 -DQC=1
+CFLAGS=-DQ3_VM=1 -DUNLAGGED=1 -DQC=1 -S -Wf-target=bytecode -Wf-g
 
 GameVQ3Sources=					\
 	game/g_main					\
@@ -152,9 +151,9 @@ UIQCSources=					\
 	q3_ui/ui_death
 
 
-GameSources=$(GameVQ3Sources)
-CGameSources=$(CGameVQ3Sources)
-UISources=$(UIVQ3Sources)
+GameSources=$(GameVQ3Sources) $(GameQCSources)
+CGameSources=$(CGameVQ3Sources) $(CGameQCSources)
+UISources=$(UIVQ3Sources) $(UIQCSources)
 
 GameAsmList=$(addprefix $(IntDir)/,$(addsuffix .asm,$(GameSources)))
 CGameAsmList=$(addprefix $(IntDir)/,$(addsuffix .asm,$(CGameSources)))
