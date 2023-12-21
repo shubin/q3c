@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8F5D33DD-82DA-4CCA-A1C6-8DF98FEDA96F}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_ui.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ModSrcDir)code\qc_ui\ui_main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ModSrcDir)code\qcommon\q_shared.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
