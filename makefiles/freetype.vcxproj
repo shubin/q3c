@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F001B5C2-FBAE-4272-BD55-25AF6D9073CA}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_freetype.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\autofit\autofit.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftbase.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftbbox.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftbdf.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftbitmap.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftcid.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftfstype.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftgasp.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftglyph.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftgxval.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftinit.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftmm.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftotval.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftpatent.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftpfr.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftstroke.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftsynth.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\fttype1.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\base\ftwinfnt.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\bdf\bdf.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\cache\ftcache.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\cff\cff.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\cid\type1cid.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\dlg\dlgwrap.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\gzip\ftgzip.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\lzw\ftlzw.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\pcf\pcf.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\pfr\pfr.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\psaux\psaux.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\pshinter\pshinter.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\psnames\psmodule.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\raster\raster.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\sfnt\sfnt.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\smooth\smooth.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\sdf\sdf.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\svg\svg.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\truetype\truetype.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\type1\type1.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\type42\type42.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\src\winfonts\winfnt.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\windows\ftdebug.c">
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)lib\freetype\windows\ftsystem.c">
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
