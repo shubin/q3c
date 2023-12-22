@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{43324650-20B6-4A30-AE8D-EAF51D36838B}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_lua.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lapi.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lauxlib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lbaselib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lcode.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lcorolib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lctype.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ldblib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ldebug.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ldo.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ldump.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lfunc.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lgc.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\linit.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\liolib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\llex.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lmathlib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lmem.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\loadlib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lobject.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lopcodes.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\loslib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lparser.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lstate.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lstring.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lstrlib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ltable.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ltablib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\ltm.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lua.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
