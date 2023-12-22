@@ -13,13 +13,24 @@
     <Import Project="Props\Project_qcui.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="$(ModSrcDir)code\qc_ui\ui_main.cpp" />
+    <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ModSrcDir)code\qcommon\q_shared.h" />
+    <ClInclude Include="$(ProgSrcDir)code\qcommon\q_shared.h" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="freetype.vcxproj">
+      <Project>{f001b5c2-fbae-4272-bd55-25af6d9073ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="lua.vcxproj">
+      <Project>{43324650-20b6-4a30-ae8d-eaf51d36838b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RmlUi.vcxproj">
+      <Project>{22e9de0f-3a2f-44c4-908c-6dc46be6e90f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

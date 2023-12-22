@@ -2,6 +2,9 @@
 #include "ui_public.h"
 #include "ui_local.h"
 
+#undef DotProduct
+#include <RmlUi/Core.h>
+
 Q_EXPORT intptr_t vmMain( intptr_t *args ) {
 	switch ( args[0] ) {
 		case UI_GETAPIVERSION:
@@ -49,9 +52,11 @@ Q_EXPORT intptr_t vmMain( intptr_t *args ) {
 }
 
 void UI_Init( void ) {
+	Rml::Initialise();
 }
 
 void UI_Shutdown( void ) {
+	Rml::Shutdown();
 }
 
 void UI_KeyEvent( int key, int down ) {
