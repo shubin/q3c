@@ -204,6 +204,15 @@ void trap_R_DrawTriangle(
 		PASSFLOAT(s2), PASSFLOAT(t2),
 		hShader );
 }
+
+qhandle_t trap_R_CreateTextureFromMemory( int width, int height, const void *rgba ) {
+	return syscall( UI_R_CREATETEXTUREFROMMEMORY, width, height, rgba );
+}
+
+void trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height ) {
+	syscall( UI_R_GETSHADERIMAGEDIMENSIONS, shader, nstage, nimage, width, height );
+}
+
 #endif
 
 void	trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {

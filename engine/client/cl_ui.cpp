@@ -890,6 +890,15 @@ static intptr_t CL_UISystemCalls( intptr_t* args )
 	case UI_R_REGISTERSHADERNOMIP:
 		return re.RegisterShaderNoMip( VMA(1) );
 
+#if defined( QC )
+	case UI_R_CREATETEXTUREFROMMEMORY:
+		return re.CreateTextureFromMemory( args[1], args[2], VMA(3) );
+
+	case UI_R_GETSHADERIMAGEDIMENSIONS:
+		re.GetShaderImageDimensions( args[1], args[2], args[3], VMA(4), VMA(5) );
+		return 0;
+#endif
+
 	case UI_R_CLEARSCENE:
 		re.ClearScene();
 		return 0;

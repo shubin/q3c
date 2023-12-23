@@ -897,9 +897,6 @@ const refexport_t* GetRefAPI( const refimport_t* rimp )
 	re.EndFrame = RE_EndFrame;
 
 	re.MarkFragments = R_MarkFragments;
-#if defined( QC )
-	re.ProjectDecal = R_ProjectDecal;
-#endif // QC
 	re.LerpTag = R_LerpTag;
 	re.ModelBounds = R_ModelBounds;
 
@@ -929,6 +926,9 @@ const refexport_t* GetRefAPI( const refimport_t* rimp )
 	re.ComputeCursorPosition = RE_ComputeCursorPosition;
 
 #if defined( QC )
+	re.CreateTextureFromMemory = RE_CreateTextureFromMemory;
+	re.GetShaderImageDimensions = RE_GetShaderImageDimensions;
+	re.ProjectDecal = R_ProjectDecal;
 	re.GetAdvertisements = RE_GetAdvertisements;
 #endif
 

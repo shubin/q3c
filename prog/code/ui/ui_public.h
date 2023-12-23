@@ -137,6 +137,8 @@ typedef enum {
 
 #if defined( QC )
 	UI_R_DRAWTRIANGLE = 500,
+	UI_R_CREATETEXTUREFROMMEMORY = 501,
+	UI_R_GETSHADERIMAGEDIMENSIONS = 502,
 #endif
 
 #if defined( QC ) // CNQ3 extensions

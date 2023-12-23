@@ -948,12 +948,6 @@ void			trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float
 void			trap_R_RenderScene( const refdef_t *fd );
 void			trap_R_SetColor( const float *rgba );
 void			trap_R_DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );
-#if defined( QC )
-void trap_R_DrawTriangle( 
-	float x0, float y0, float x1, float y1, float x2, float y2,
-	float s0, float t0, float s1, float t1, float s2, float t2,
-	qhandle_t hShader );
-#endif
 void			trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs );
 void			trap_UpdateScreen( void );
 int				trap_CM_LerpTag( orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName );
@@ -1006,6 +1000,16 @@ void			trap_R_RemapShader( const char *oldShader, const char *newShader, const c
 qboolean		trap_VerifyCDKey( const char *key, const char *chksum);
 
 void			trap_SetPbClStatus( int status );
+
+#if defined( QC )
+// QC extensions
+void trap_R_DrawTriangle( 
+	float x0, float y0, float x1, float y1, float x2, float y2,
+	float s0, float t0, float s1, float t1, float s2, float t2,
+	qhandle_t hShader );
+qhandle_t trap_R_CreateTextureFromMemory( int width, int height, const void *rgba );
+void trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+#endif
 
 #if defined( QC )
 // CNQ3 extensions

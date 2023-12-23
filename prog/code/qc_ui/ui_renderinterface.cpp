@@ -78,14 +78,19 @@ void QRenderInterface::SetScissorRegion( int x, int y, int width, int height ) {
 
 bool QRenderInterface::LoadTexture( TextureHandle &texture_handle, Vector2i &texture_dimensions, const String &source ) {
 	texture_handle = trap_R_RegisterShaderNoMip( source.c_str() );
-	texture_dimensions.x = 128;
-	texture_dimensions.y = 128;
+	if ( texture_handle == 0 ) {
+		return false;
+	}
+	int width, height;
+	trap_R_GetShaderImageDimensions( texture_handle, 0, 0, &width, &height );
+	texture_dimensions.x = width;
+	texture_dimensions.y = height;
 	return true;
 }
 
 bool QRenderInterface::GenerateTexture( TextureHandle &texture_handle, const byte *source, const Vector2i &source_dimensions ) {
-	texture_handle = trap_R_RegisterShaderNoMip( "*white" );	
-	return true;
+	texture_handle = trap_R_CreateTextureFromMemory( source_dimensions.x, source_dimensions.y, (const void*)source );
+	return texture_handle != 0;
 }
 
 void QRenderInterface::ReleaseTexture( TextureHandle texture ) {

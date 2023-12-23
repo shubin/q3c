@@ -115,6 +115,7 @@ typedef struct {
 	qhandle_t (*RegisterSkin)( const char *name );
 	qhandle_t (*RegisterShader)( const char *name );
 	qhandle_t (*RegisterShaderNoMip)( const char *name );
+
 	void	(*LoadWorld)( const char *name );
 
 	// the vis data is a large enough block of data that we go to the trouble
@@ -150,13 +151,6 @@ typedef struct {
 
 	int		(*MarkFragments)( int numPoints, const vec3_t *points, const vec3_t projection,
 					int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer );
-#if defined( QC )
-	int		(*ProjectDecal)(
-		const vec3_t origin, const vec3_t dir, 
-		vec_t radius, vec_t depth, vec_t orientation,
-		int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
-		int maxFragments, markFragment_t *fragmentBuffer );
-#endif // QC
 
 	int		(*LerpTag)( orientation_t *tag,  qhandle_t model, int startFrame, int endFrame,
 					float frac, const char *tagName );
@@ -179,6 +173,14 @@ typedef struct {
 	// transforms window (client rect) coordinates into render target coordinates
 	void	(*ComputeCursorPosition)( int* x, int* y );
 #if defined( QC )
+	qhandle_t	(*CreateTextureFromMemory)( int width, int height, const byte *rgba );
+	void	(*GetShaderImageDimensions)( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+	int		(*ProjectDecal) (
+		const vec3_t origin, const vec3_t dir, 
+		vec_t radius, vec_t depth, vec_t orientation,
+		int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
+		int maxFragments, markFragment_t *fragmentBuffer
+	);
 	void	(*GetAdvertisements)( int *num, float *verts, void *shaders );
 #endif
 } refexport_t;

@@ -191,6 +191,11 @@ qboolean		trap_VerifyCDKey( const char *key, const char *chksum);
 
 void			trap_SetPbClStatus( int status );
 
+// QC extensions
+
+qhandle_t		trap_R_CreateTextureFromMemory( int width, int height, const void *rgba );
+void			trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+
 // CNQ3 extensions
 void			trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes );
 void			trap_NK_Draw( int firstIndex, int numIndexes, qhandle_t shader, const int *scissorRect );

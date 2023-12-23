@@ -1392,14 +1392,6 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS
 int R_MarkFragments( int numPoints, const vec3_t *points, const vec3_t projection,
 		int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer );
 
-#if defined( QC )
-int R_ProjectDecal(
-		const vec3_t origin, const vec3_t dir,
-		vec_t radius, vec_t depth, vec_t orientation,
-		int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
-		int maxFragments, markFragment_t *fragmentBuffer );
-#endif // QC
-
 /*
 ============================================================
 
@@ -1634,6 +1626,13 @@ int SaveJPGToBuffer( byte* out, int quality, int image_width, int image_height, 
 void RE_TakeVideoFrame( int width, int height,
 		byte *captureBuffer, byte *encodeBuffer, qbool motionJpeg );
 #if defined( QC )
+qhandle_t RE_CreateTextureFromMemory( int width, int height, const byte *rgba );
+void RE_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+int R_ProjectDecal(
+		const vec3_t origin, const vec3_t dir,
+		vec_t radius, vec_t depth, vec_t orientation,
+		int maxPoints, vec3_t pointBuffer, vec3_t attribBuffer,
+		int maxFragments, markFragment_t *fragmentBuffer );
 void RE_GetAdvertisements( int *num, float *verts, void *shaders );
 #endif
 

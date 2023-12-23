@@ -438,8 +438,40 @@ void RE_DrawNuklear( int firstIndex, int numIndexes, qhandle_t shader, const int
 }
 
 #if defined( QC )
-void RE_GetAdvertisements(int* num, float* verts, void* shaders)
-{
+
+qhandle_t RE_CreateTextureFromMemory( int width, int height, const byte* rgba ) {
+	image_t *img;
+	static int imgindex = 0;
+	img = R_CreateImage( va("img%d", ++imgindex ), (byte*)rgba, width, height, TF_RGBA8, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
+	qhandle_t r = RE_RegisterShaderFromImage( va("shader%d", imgindex ), img );
+	return r;
+}
+
+void RE_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height ) {
+	const shader_t *sh = R_GetShaderByHandle( shader );
+	if ( ( sh == NULL ) || ( nstage >= sh->numStages ) ) {
+		*width = 0;
+		*height = 0;
+		return;
+	}
+	const shaderStage_t *stage = sh->stages[nstage];
+	if ( nimage >= MAX_IMAGE_ANIMATIONS ) {
+		*width = 0;
+		*height = 0;
+		return;
+	}
+	image_t *image = stage->bundle.image[nimage];
+	if ( image == NULL ) {
+		*width = 0;
+		*height = 0;
+		return;
+	}
+	*width = image->width;
+	*height = image->height;
+}
+
+void RE_GetAdvertisements( int* num, float* verts, void* shaders ) {
 	*num = 0;
 }
+
 #endif
