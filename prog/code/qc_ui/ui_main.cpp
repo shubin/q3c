@@ -16,6 +16,9 @@ Rml::QSystemInterface g_systemInterface;
 Rml::Context *g_context;
 Rml::ElementDocument *g_mainDoc;
 
+Rml::Vector2i g_mousePos;
+qhandle_t g_pointer;
+
 static
 void UI_LoadFonts() {
 	const Rml::String directory = "assets/";
@@ -58,6 +61,10 @@ void UI_Init( void ) {
 		trap_Error( "RmlUi: Cannot load main menu\n" );
 	}
 	g_mainDoc->Show();
+
+	g_pointer = trap_R_RegisterShaderNoMip( "menu/art/3_cursor2" );
+	g_mousePos.x = g_glConfig.vidWidth / 2;
+	g_mousePos.y = g_glConfig.vidHeight / 2;
 }
 
 void UI_Shutdown( void ) {
@@ -66,9 +73,29 @@ void UI_Shutdown( void ) {
 }
 
 void UI_KeyEvent( int key, int down ) {
+	if ( down ) {
+		g_context->ProcessMouseButtonDown( 0, 0 );
+	} else {
+		g_context->ProcessMouseButtonUp( 0, 0 );
+	}
 }
 
 void UI_MouseEvent( int dx, int dy ) {
+	g_mousePos.x += dx;
+	g_mousePos.y += dy;
+	if ( g_mousePos.x < 0 ) {
+		g_mousePos.x = 0;
+	}
+	if ( g_mousePos.x > g_glConfig.vidWidth - 1 ) {
+		g_mousePos.x = g_glConfig.vidWidth - 1;
+	}
+	if ( g_mousePos.y < 0 ) {
+		g_mousePos.y = 0;
+	}
+	if ( g_mousePos.y > g_glConfig.vidHeight - 1 ) {
+		g_mousePos.y = g_glConfig.vidHeight - 1;
+	}
+	g_context->ProcessMouseMove( g_mousePos.x, g_mousePos.y, 0 );
 }
 
 void UI_Refresh( int realtime ) {
@@ -78,6 +105,9 @@ void UI_Refresh( int realtime ) {
 	g_context->Update();
 	g_context->Render();
 	g_renderInterface.Flush();
+
+	trap_R_SetColor( NULL );
+	trap_R_DrawStretchPic( g_mousePos.x - 16, g_mousePos.y - 16, 32, 32, 0, 0, 1, 1, g_pointer );
 }
 
 qboolean UI_IsFullscreen( void ) {
