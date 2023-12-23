@@ -56,7 +56,7 @@ void UI_Init( void ) {
 		trap_Error( "RmlUi: Context creation failed\n" );
 	}
 
-	g_mainDoc = g_context->LoadDocument( "ui/tutorial.rml" );
+	g_mainDoc = g_context->LoadDocument( "assets/demo.rml" );
 	if ( g_mainDoc == NULL ) {
 		trap_Error( "RmlUi: Cannot load main menu\n" );
 	}
