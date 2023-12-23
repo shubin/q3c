@@ -15,15 +15,9 @@ using namespace Rml;
 #define MAX_NUKLEAR_COMMAND_COUNT	(  64 * 1024)
 
 QRenderInterface::QRenderInterface()
-	: mScissorEnabled( false )
-	, mWholeScreen{ 0 }
-	, mScissor{ 0 }
-	, mVertices( 0 )
-	, mIndices( 0 )
-	, mCommands( 0 )
-	, pCurrentVertex( 0 )
-	, pCurrentIndex( 0 )
-	, pCurrentCommand( 0 )
+	: mScissorEnabled( false ), mWholeScreen{ 0 }, mScissor{ 0 }
+	, mVertices( 0 ), mIndices( 0 ), mCommands( 0 ), pCurrentVertex( 0 )
+	, pCurrentIndex( 0 ), pCurrentCommand( 0 )
 {
 }
 
