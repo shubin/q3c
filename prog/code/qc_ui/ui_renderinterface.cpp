@@ -9,12 +9,21 @@
 
 using namespace Rml;
 
+
+
+struct QDrawCmd {
+	int x, y, w, h; // scissor
+
+};
+
 QRenderInterface::QRenderInterface() {
 }
 
 QRenderInterface::~QRenderInterface() {
 }
 
+// Rml::Vertex field order has been changed to match the CNQ3's NuklearVertex
+// see Core/Vertex.h
 void QRenderInterface::RenderGeometry( Vertex *vertices, int num_vertices, int *indices, int num_indices, TextureHandle texture, const Vector2f &translation ) {
 }
 

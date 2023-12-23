@@ -15,7 +15,13 @@ void UI_SetActiveMenu( uiMenuCommand_t menu );
 qboolean UI_ConsoleCommand( int realTime );
 void UI_DrawConnectScreen( qboolean overlay );
 
+extern glconfig_t g_glConfig;
+
 namespace Rml {
+
+#if defined( RMLUI_CORE_CORE_H )
+
+#endif // RMLUI_CORE_CORE_H
 
 #if defined( RMLUI_CORE_RENDERINTERFACE_H )
 
