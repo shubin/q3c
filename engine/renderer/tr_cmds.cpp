@@ -449,25 +449,19 @@ qhandle_t RE_CreateTextureFromMemory( int width, int height, const byte* rgba ) 
 
 void RE_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int* width, int* height ) {
 	const shader_t *sh = R_GetShaderByHandle( shader );
-	if ( ( sh == NULL ) || ( nstage >= sh->numStages ) ) {
-		*width = 0;
-		*height = 0;
-		return;
+	if ( sh != NULL && nstage < sh->numStages && nimage < MAX_IMAGE_ANIMATIONS ) {
+		const shaderStage_t* stage = sh->stages[nstage];
+		if ( stage != NULL ) {
+			const image_t* image = stage->bundle.image[nimage];
+			if ( image != NULL ) {
+				*width = image->width;
+				*height = image->height;
+				return;
+			}
+		}
 	}
-	const shaderStage_t *stage = sh->stages[nstage];
-	if ( nimage >= MAX_IMAGE_ANIMATIONS ) {
-		*width = 0;
-		*height = 0;
-		return;
-	}
-	image_t *image = stage->bundle.image[nimage];
-	if ( image == NULL ) {
-		*width = 0;
-		*height = 0;
-		return;
-	}
-	*width = image->width;
-	*height = image->height;
+	*width = 0;
+	*height = 0;
 }
 
 void RE_GetAdvertisements( int* num, float* verts, void* shaders ) {
