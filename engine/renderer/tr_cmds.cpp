@@ -447,7 +447,7 @@ qhandle_t RE_CreateTextureFromMemory( int width, int height, const byte* rgba ) 
 	return r;
 }
 
-void RE_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height ) {
+void RE_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int* width, int* height ) {
 	const shader_t *sh = R_GetShaderByHandle( shader );
 	if ( ( sh == NULL ) || ( nstage >= sh->numStages ) ) {
 		*width = 0;
