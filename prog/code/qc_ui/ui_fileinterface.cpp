@@ -61,7 +61,7 @@ size_t QFileInterface::Read( void *buffer, size_t size, FileHandle file ) {
 	}
 
 	if ( size > 0 ) {
-		trap_FS_Read( buffer, ( int )size, ( fileHandle_t )file );
+		trap_FS_Read( buffer, ( int )size, fd->qfile );
 		fd->pos += size;
 	}
 	return size;
@@ -73,8 +73,14 @@ bool QFileInterface::Seek( FileHandle file, long offset, int origin ) {
 }
 
 size_t QFileInterface::Tell( FileHandle file ) {
-	trap_Error( "qcui: FileInterface::Tell: not supported\n" );
-	return 0;
+	FileData *fd = ( FileData * )file;
+
+	if ( fd == NULL ) {
+		trap_Error( "qcui: QFileInterface::Tell: wrong file handle" );
+		return 0;
+	}
+
+	return fd->pos;
 }
 
 size_t QFileInterface::Length( FileHandle file ) {

@@ -27,6 +27,19 @@ namespace Rml {
 
 class QRenderInterface : public RenderInterface {
 public:
+#pragma pack(push,1)
+	struct QScissor {
+		int x, y, w, h;
+	};
+#pragma pack(pop)
+
+	struct QRenderCmd {
+		int				firstIndex, numIndices;
+		qhandle_t		shader;
+		QScissor		scissor;
+	};
+
+
 	QRenderInterface();
 	virtual ~QRenderInterface();
 	virtual void RenderGeometry( Vertex *vertices, int num_vertices, int *indices, int num_indices, TextureHandle texture, const Vector2f &translation );
@@ -36,6 +49,16 @@ public:
 	virtual bool GenerateTexture( TextureHandle &texture_handle, const byte *source, const Vector2i &source_dimensions );
 	virtual void ReleaseTexture( TextureHandle texture );
 	virtual void SetTransform( const Matrix4f *transform );
+
+	bool		mScissorEnabled;
+	QScissor	mWholeScreen, mScissor;
+	Vertex		*mVertices, *pCurrentVertex;
+	uint32_t	*mIndices, *pCurrentIndex;
+	QRenderCmd	*mCommands, *pCurrentCommand;
+
+	void Initialize( int width, int height );
+	void Shutdown();
+	void Flush();
 };
 
 #endif // RMLUI_CORE_RENDERINTERFACE_H
@@ -56,6 +79,25 @@ public:
 };
 
 #endif // RMLUI_CORE_FILEINTERFACE_H
+
+#if defined( RMLUI_CORE_SYSTEMINTERFACE_H )
+
+class QSystemInterface : public SystemInterface {
+public:
+	QSystemInterface();
+	virtual ~QSystemInterface();
+	virtual double GetElapsedTime();
+	virtual bool LogMessage( Log::Type type, const String &message );
+	/*
+	virtual int TranslateString( String &translated, const String &input );
+	virtual void JoinPath( String &translated_path, const String &document_path, const String &path );
+	virtual void SetMouseCursor( const String &cursor_name );
+	virtual void SetClipboardText( const String &text );
+	virtual void GetClipboardText( String &text );
+	*/
+};
+
+#endif // RMLUI_CORE_SYSTEMINTERFACE_H
 
 }
 
@@ -148,6 +190,15 @@ void			trap_R_RemapShader( const char *oldShader, const char *newShader, const c
 qboolean		trap_VerifyCDKey( const char *key, const char *chksum);
 
 void			trap_SetPbClStatus( int status );
+
+// CNQ3 extensions
+void			trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes );
+void			trap_NK_Draw( int firstIndex, int numIndexes, qhandle_t shader, const int *scissorRect );
+
+//
+// ui_atoms.c
+//
+const char		*UI_Argv( int n );
 
 }
 

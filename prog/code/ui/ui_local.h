@@ -1007,6 +1007,12 @@ qboolean		trap_VerifyCDKey( const char *key, const char *chksum);
 
 void			trap_SetPbClStatus( int status );
 
+#if defined( QC )
+// CNQ3 extensions
+void			trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes );
+void			trap_NK_Draw( int firstIndex, int numIndexes, qhandle_t shader, const int *scissorRect );
+#endif // QC
+
 //
 // ui_addbots.c
 //

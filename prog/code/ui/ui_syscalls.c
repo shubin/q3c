@@ -435,3 +435,15 @@ qboolean trap_VerifyCDKey( const char *key, const char *chksum) {
 void trap_SetPbClStatus( int status ) {
 	syscall( UI_SET_PBCLSTATUS, status );
 }
+
+#if defined( QC )
+
+void trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes ) {
+	syscall( UI_EXT_NK_UPLOAD, vertexes, numVertexBytes, indexes, numIndexBytes );
+}
+
+void trap_NK_Draw( int firstIndex, int numIndexes, qhandle_t shader, const int *scissorRect ) {
+	syscall( UI_EXT_NK_DRAW, firstIndex, numIndexes, shader, scissorRect );
+}
+
+#endif // QC
