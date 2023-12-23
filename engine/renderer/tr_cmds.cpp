@@ -442,8 +442,8 @@ void RE_DrawNuklear( int firstIndex, int numIndexes, qhandle_t shader, const int
 qhandle_t RE_CreateTextureFromMemory( int width, int height, const byte* rgba ) {
 	image_t *img;
 	static int imgindex = 0;
-	img = R_CreateImage( va("img%d", ++imgindex ), (byte*)rgba, width, height, TF_RGBA8, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
-	qhandle_t r = RE_RegisterShaderFromImage( va("shader%d", imgindex ), img );
+	img = R_CreateImage( va("$img[%d]", ++imgindex ), (byte*)rgba, width, height, TF_RGBA8, IMG_NOPICMIP, TW_CLAMP_TO_EDGE );
+	qhandle_t r = RE_RegisterShaderFromImage( va("$shader[%d]", imgindex ), img );
 	return r;
 }
 
