@@ -265,7 +265,7 @@ void UI_BindLua( lua_State *L ) {
 		// file api skipped
 		.addFunction( "trap_R_RegisterModel", trap_R_RegisterModel )
 		.addFunction( "trap_R_RegisterSkin", trap_R_RegisterSkin )
-		// register font skipped
+		// trap_R_RegisterFont skipped
 		.addFunction( "trap_R_RegisterShaderNoMip", trap_R_RegisterShaderNoMip )
 		.addFunction( "trap_R_ClearScene", trap_R_ClearScene )
 		.addFunction( "trap_R_AddRefEntityToScene", trap_R_AddRefEntityToScene )
