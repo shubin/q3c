@@ -43,7 +43,7 @@ struct QColor {
 	QColor( const float *v ) { Vector4Copy( v, rgba ); }
 };
 
-std::string lua_loadfile( const char *qpath ) {	
+static std::string lua_loadfile( const char *qpath ) {	
 	long len;
 	std::string result;
 	fileHandle_t fh;
@@ -59,7 +59,7 @@ std::string lua_loadfile( const char *qpath ) {
 	return result;
 }
 
-void lua_require( const char *module ) {
+static void lua_require( const char *module ) {
 	char qpath[MAX_QPATH];
 	long len;
 	fileHandle_t fh;
@@ -84,7 +84,7 @@ void lua_require( const char *module ) {
 	}
 }
 
-void UI_BindLua( lua_State *L ) {
+static void UI_BindLua( lua_State *L ) {
 	luabridge::getGlobalNamespace( L )
 		.addFunction( "require", lua_require )
 		.addFunction( "loadfile", lua_loadfile )
@@ -265,7 +265,7 @@ void UI_BindLua( lua_State *L ) {
 		// file api skipped
 		.addFunction( "trap_R_RegisterModel", trap_R_RegisterModel )
 		.addFunction( "trap_R_RegisterSkin", trap_R_RegisterSkin )
-		// trap_R_RegisterFont skipped
+		// register font skipped
 		.addFunction( "trap_R_RegisterShaderNoMip", trap_R_RegisterShaderNoMip )
 		.addFunction( "trap_R_ClearScene", trap_R_ClearScene )
 		.addFunction( "trap_R_AddRefEntityToScene", trap_R_AddRefEntityToScene )
@@ -278,6 +278,14 @@ void UI_BindLua( lua_State *L ) {
 		)
 		.addFunction( "trap_R_DrawStretchPic", trap_R_DrawStretchPic )
 		.addFunction( "trap_R_DrawTriangle", trap_R_DrawTriangle )
+		.addFunction( "trap_R_GetShaderImageDimensions",
+			+[]( qhandle_t shader, int nstage, int nimage ) {
+				int width, height;
+				trap_R_GetShaderImageDimensions( shader, nstage, nimage, &width, &height );
+				trap_R_GetShaderImageDimensions( shader, nstage, nimage, &width, &height );
+				return QVec2( width, height );
+			}
+		)
 		.addFunction( "trap_R_ModelBounds", +[]( clipHandle_t model, QVec3 *mins, QVec3 *maxs ) { trap_R_ModelBounds( model, mins->vec, maxs->vec ); } )
 		.addFunction( "trap_UpdateScreen", trap_UpdateScreen )
 		.beginClass<orientation_t>( "orientation_t" )
