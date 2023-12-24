@@ -3,6 +3,9 @@ gPointerSize = Vector2f.new(48, 48)
 gPointerHotspot = Vector2f.new(0.3, 0)
 
 function UI_Refresh(realtime)
+  if gCurrentMenu == UIMENU_NONE then
+    return
+  end
   gContext:Update()
   gContext:Render()
   trap_R_DrawStretchPic(

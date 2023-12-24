@@ -7,7 +7,7 @@
 	<div id="title_bar">
 		<handle move_target="#document">
 			<div id="icon"></div>
-			<span id="title">Title</span>
+			<span id="title">Blood Run</span>
 		</handle>
 	</div>
 	<div id="window">
