@@ -515,7 +515,7 @@ qboolean UI_IsFullscreen( void ) {
 		if ( result.hasFailed() ) {
 			return qtrue;
 		}
-		return (qboolean)(bool)result;
+		return (qboolean)result[0].cast<bool>().value();;
 	}
 	return qtrue;
 }
@@ -528,13 +528,17 @@ void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 }
 
 qboolean UI_ConsoleCommand( int realTime ) {
-	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_ConsoleCommand" );
+	lua_State *L = Rml::Lua::Interpreter::GetLuaState();
+	if ( L == NULL ) {
+		return qfalse;
+	}
+	auto func = luabridge::getGlobal( L, "UI_ConsoleCommand" );
 	if ( func.isCallable() ) {
 		auto result = luabridge::call( func, realTime );
 		if ( result.hasFailed() ) {
 			return qfalse;
 		}
-		return (qboolean)(bool)result;
+		 return (qboolean)result[0].cast<bool>().value();;
 	}
 	return qfalse;
 }
