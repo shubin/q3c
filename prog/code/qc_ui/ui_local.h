@@ -200,11 +200,6 @@ void			trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage
 void			trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes );
 void			trap_NK_Draw( int firstIndex, int numIndexes, qhandle_t shader, const int *scissorRect );
 
-//
-// ui_atoms.c
-//
-const char		*UI_Argv( int n );
-
 }
 
 #endif // UI_LOCAL_H

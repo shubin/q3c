@@ -13,7 +13,6 @@
     <Import Project="Props\Project_qcui.props" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_atoms.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_dispatch.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_lua.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_main.cpp" />
