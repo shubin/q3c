@@ -110,6 +110,9 @@ public:
 	/// is submitted. Then it expects the renderer to use an identity matrix or otherwise omit the multiplication with the transform.
 	/// @param[in] transform The new transform to apply, or nullptr if no transform applies to the current element.
 	virtual void SetTransform(const Matrix4f* transform);
+
+	// Flush all the rendering calls if needed
+	virtual void Flush();
 };
 
 } // namespace Rml

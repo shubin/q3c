@@ -232,7 +232,7 @@ bool Context::Render()
 			Vector2f((float)Math::Clamp(mouse_position.x, 0, dimensions.x), (float)Math::Clamp(mouse_position.y, 0, dimensions.y)), nullptr);
 		cursor_proxy->Render();
 	}
-
+	GetRenderInterface()->Flush();
 	return true;
 }
 

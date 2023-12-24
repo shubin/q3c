@@ -58,7 +58,7 @@ public:
 
 	void Initialize( int width, int height );
 	void Shutdown();
-	void Flush();
+	virtual void Flush();
 };
 
 #endif // RMLUI_CORE_RENDERINTERFACE_H

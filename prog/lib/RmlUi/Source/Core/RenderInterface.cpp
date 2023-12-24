@@ -66,4 +66,5 @@ void RenderInterface::ReleaseTexture(TextureHandle /*texture*/) {}
 
 void RenderInterface::SetTransform(const Matrix4f* /*transform*/) {}
 
+void RenderInterface::Flush() {}
 } // namespace Rml
