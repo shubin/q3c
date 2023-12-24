@@ -282,7 +282,6 @@ static void UI_BindLua( lua_State *L ) {
 			+[]( qhandle_t shader, int nstage, int nimage ) {
 				int width, height;
 				trap_R_GetShaderImageDimensions( shader, nstage, nimage, &width, &height );
-				trap_R_GetShaderImageDimensions( shader, nstage, nimage, &width, &height );
 				return QVec2( width, height );
 			}
 		)
