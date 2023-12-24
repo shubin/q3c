@@ -937,6 +937,13 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 
 	name = vmName[ index ];
 
+#if defined( QC )
+	// if we have scriptable ui, load another VM for that
+	if ( index == VM_UI && FS_FileExists( "shell/main.lua" ) ) {
+		name = "qcui";
+	}
+#endif
+
 	vm->name = name;
 	vm->index = index;
 	vm->systemCall = systemCalls;
