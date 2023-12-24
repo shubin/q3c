@@ -15,6 +15,8 @@ void UI_SetActiveMenu( uiMenuCommand_t menu );
 qboolean UI_ConsoleCommand( int realTime );
 void UI_DrawConnectScreen( qboolean overlay );
 
+void UI_MapKey( int key, int *ki, int *chr );
+
 extern glconfig_t g_glConfig;
 
 namespace Rml {

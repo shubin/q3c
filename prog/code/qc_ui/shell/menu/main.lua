@@ -1,9 +1,9 @@
 menu.main = {}
 menu.main.doc = LoadDocument("menu/main.rml")
 
-function menu.main:start()
+function menu.main:open(nmenu)
   self.doc:Hide()
-  menu.start.doc:Show()
+  menu[nmenu].doc:Show()
 end
 
 function menu.main:restart()

@@ -8,6 +8,17 @@ function UI_KeyEvent(key, down)
         gContext:ProcessMouseButtonUp(0, 0)
     end
   end
+  local rmlkey, char = MapKey( key )
+  if rmlkey ~= rmlui.KI_UNKNOWN then
+    if down then
+      gContext:ProcessKeyDown(rmlkey, 0)
+      if char then
+        gContext:ProcessTextInput(string.char(char))
+      end
+    else
+      gContext:ProcessKeyUp(rmlkey, 0)
+    end
+  end
 end
 
 function UI_MouseEvent(dx, dy)

@@ -88,6 +88,16 @@ static void UI_BindLua( lua_State *L ) {
 	luabridge::getGlobalNamespace( L )
 		.addFunction( "require", lua_require )
 		.addFunction( "loadfile", lua_loadfile )
+		.addFunction( "MapKey", 
+			+[]( lua_State *L ) {
+				auto key = luabridge::Stack<int>::get( L, 1 );
+				int rmlkey, chr;
+				UI_MapKey( key.value(), &rmlkey, &chr );
+				auto retval = luabridge::Stack<int>::push( L, rmlkey );
+				retval = luabridge::Stack<int>::push( L, chr );
+				return 2;
+			}
+		)
 		.beginClass<QVec2>( "vec2_t" )
 			.addConstructor<void(*)()>()
 			.addConstructor<void(*)( float, float )>()
@@ -420,7 +430,7 @@ static void UI_BindLua( lua_State *L ) {
 		.addFunction( "trap_LAN_ResetPings", trap_LAN_ResetPings )
 		.addFunction( "trap_LAN_ClearPing", trap_LAN_ClearPing )
 		.addFunction( "trap_LAN_GetPing",
-			+[]( lua_State *L, int nargs ) {
+			+[]( lua_State *L ) {
 				auto n = luabridge::Stack<int>::get( L, 1 );
 				std::string result;
 				int pingtime;
@@ -429,6 +439,7 @@ static void UI_BindLua( lua_State *L ) {
 				result.resize( strlen( result.c_str() ) );
 				auto retval = luabridge::Stack<std::string>::push( L, result );
 				retval = luabridge::Stack<int>::push( L, pingtime );
+				return 2;
 			}
 		)
 		.addFunction( "trap_LAN_GetPingInfo",

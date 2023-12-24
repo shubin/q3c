@@ -8,4 +8,5 @@ gContext = rmlui:CreateContext("main", Vector2i.new(gGlConfig.vidWidth, gGlConfi
 menu = {}
 require("shell.menu.main")
 require("shell.menu.start")
+require("shell.menu.setup")
 require("shell.menu.ingame")

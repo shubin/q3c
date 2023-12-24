@@ -1,6 +1,6 @@
 <rml>
 	<head>
-		<title>Main</title>
+		<title>Setup</title>
 		<link type="text/template" href="/shell/assets/window.rml" />
 		<style>
 			body
@@ -9,6 +9,7 @@
 				height: 225dp;
 
 				margin: auto;
+				color: black;
 			}
 
 			div#title_bar div#icon
@@ -23,11 +24,10 @@
  			button { color: black; }
 		</style>
 	</head>
-	<body template="window">
-		Main menu here.<br/>
-       <button onclick='menu.main:open("start")'>Start Game</button>
-       <button onclick='menu.main:open("setup")'>Setup</button>
-       <button onclick='menu.main:restart()'>Restart</button>
-       <button onclick='menu.main:quit()'>Quit</button>
+	<body template="window" onshow="menu.setup:show()">
+		Setup menu here.<br/><textarea>!!!</textarea>
+       Name:<input id="param_name" type="text"/><br/> 
+       <button onclick='menu.setup:apply()'>Apply</button>
+       <button onclick='menu.setup:back()'>Back</button>
 	</body>
 </rml>
