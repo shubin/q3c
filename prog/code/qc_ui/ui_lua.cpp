@@ -427,8 +427,8 @@ static void UI_BindLua( lua_State *L ) {
 				result.resize( 1024 );
 				trap_LAN_GetPing( n.value(), result.data(), result.size(), &pingtime);
 				result.resize( strlen( result.c_str() ) );
-				luabridge::Stack<std::string>::push( L, result );
-				luabridge::Stack<int>::push( L, pingtime );
+				auto retval = luabridge::Stack<std::string>::push( L, result );
+				retval = luabridge::Stack<int>::push( L, pingtime );
 			}
 		)
 		.addFunction( "trap_LAN_GetPingInfo",
