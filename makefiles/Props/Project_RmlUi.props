@@ -9,4 +9,5 @@
 			<RuntimeTypeInfo>true</RuntimeTypeInfo>
 		</ClCompile>
 	</ItemDefinitionGroup>
+	<Import Project="Compiler_qcui.props" />
 </Project>

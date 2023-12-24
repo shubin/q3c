@@ -42,6 +42,10 @@
     <ClCompile Include="$(ProgSrcDir)lib\lua\ltablib.c" />
     <ClCompile Include="$(ProgSrcDir)lib\lua\ltm.c" />
     <ClCompile Include="$(ProgSrcDir)lib\lua\lua.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lundump.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lutf8lib.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lvm.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\lua\lzio.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

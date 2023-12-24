@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemDefinitionGroup>
 		<ClCompile>      
-			<AdditionalIncludeDirectories>$(ProgSrcDir)lib/RmlUi/Include;$(ProgSrcDir)lib/freetype/include;$(ProgSrcDir)lib/lua;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>$(ProgSrcDir)lib/RmlUi/Include;$(ProgSrcDir)lib/freetype/include;$(ProgSrcDir)lib/lua;$(ProgSrcDir)lib/LuaBridge3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 			<PreprocessorDefinitions>RMLUI_STATIC_LIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<ExceptionHandling>Sync</ExceptionHandling>
 			<RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -12,5 +12,6 @@
 			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">lua.lib;freetype.lib;RmlUi.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
+	<Import Project="Compiler_qcui.props" />
 	<Import Project="VM.props" />
 </Project>
