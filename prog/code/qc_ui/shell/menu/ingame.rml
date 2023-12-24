@@ -1,7 +1,7 @@
 <rml>
 	<head>
 		<title>Ingame</title>
-		<link type="text/template" href="window.rml" />
+		<link type="text/template" href="/shell/assets/window.rml" />
 		<style>
 			body
 			{
