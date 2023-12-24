@@ -454,7 +454,7 @@ void UI_ShutdownLua( void ) {
 void UI_KeyEvent( int key, int down ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_KeyEvent" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, key, down );
+		luabridge::call( func, key, (bool)down );
 	}
 }
 
