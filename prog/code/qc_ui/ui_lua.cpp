@@ -120,7 +120,6 @@ static void UI_BindLua( lua_State *L ) {
 			.addProperty( "a" , +[] ( const QRGBA *qc ) { return qc->rgba[3]; }, +[] ( QRGBA *qc, int value ) { qc->rgba[3] = value; } )
 		.endClass()
 		.beginClass<glconfig_t>( "glconfig_t" )
-			.addConstructor<void(*)()>()
 			.addProperty( "renderer_string", +[] ( const glconfig_t *glc ) { return glc->renderer_string; } )
 			.addProperty( "vendor_string", +[]( const glconfig_t *glc ) { return glc->vendor_string; } )
 			.addProperty( "version_string", +[]( const glconfig_t *glc ) { return glc->version_string; } )
@@ -141,7 +140,12 @@ static void UI_BindLua( lua_State *L ) {
 			.addProperty( "stereoEnabled", &glconfig_t::stereoEnabled, false )			
 		.endClass()
 		.beginClass<vmCvar_t>( "vmCvar_t" )
-			.addConstructor<void(*)()>()
+			.addConstructor( []( void *ptr ) { 
+					vmCvar_t *cv = new ( ptr ) vmCvar_t( );
+					memset( cv, 0, sizeof( vmCvar_t ) );
+					return cv;
+				}
+			)
 			.addProperty( "handle", &vmCvar_t::handle )
 			.addProperty( "modificationCount", &vmCvar_t::modificationCount )
 			.addProperty( "value", &vmCvar_t::value )
@@ -152,7 +156,12 @@ static void UI_BindLua( lua_State *L ) {
 				)
 		.endClass()
 		.beginClass<refEntity_t>( "refEntity_t" )
-			.addConstructor<void(*)()>()
+			.addConstructor( []( void *ptr ) { 
+					refEntity_t *re = new ( ptr ) refEntity_t( );
+					memset( re, 0, sizeof( refEntity_t ) );
+					return re;
+				}
+			)
 			.addProperty( "reType", &refEntity_t::reType )
 			.addProperty( "renderfx", &refEntity_t::renderfx )
 			.addProperty( "hModel", &refEntity_t::hModel )
@@ -201,7 +210,12 @@ static void UI_BindLua( lua_State *L ) {
 			.addProperty( "rotation", &refEntity_t::rotation )
 		.endClass()
 		.beginClass<refdef_t>( "refdef_t" )
-			.addConstructor<void(*)()>()
+			.addConstructor( []( void *ptr ) { 
+					refdef_t *rd = new ( ptr ) refdef_t( );
+					memset( rd, 0, sizeof( refdef_t ) );
+					return rd;
+				}
+			)
 			.addProperty( "x", &refdef_t::x )
 			.addProperty( "y", &refdef_t::y )
 			.addProperty( "width", &refdef_t::width )
@@ -288,7 +302,12 @@ static void UI_BindLua( lua_State *L ) {
 		.addFunction( "trap_R_ModelBounds", +[]( clipHandle_t model, QVec3 *mins, QVec3 *maxs ) { trap_R_ModelBounds( model, mins->vec, maxs->vec ); } )
 		.addFunction( "trap_UpdateScreen", trap_UpdateScreen )
 		.beginClass<orientation_t>( "orientation_t" )
-			.addConstructor<void(*)()>()
+			.addConstructor( []( void *ptr ) {
+					orientation_t *orient = new (ptr) orientation_t();
+					memset( orient, 0, sizeof( orientation_t ) );
+					return orient;
+				}
+			)
 			.addProperty( "origin", 
 				+[]( const orientation_t *orient ) { return QVec3( orient->origin ); },
 				+[]( orientation_t *orient, const QVec3 *value ) { VectorCopy( value->vec, orient->origin ); }
@@ -336,7 +355,6 @@ static void UI_BindLua( lua_State *L ) {
 		.addFunction( "trap_Key_SetCatcher", trap_Key_SetCatcher )
 		// trap_GetClipboardData skipped
 		.beginClass<uiClientState_t>( "uiClientState_t" )
-			.addConstructor<void(*)()>()
 			.addProperty( "connstate", &uiClientState_t::connState, false )
 			.addProperty( "connectPacketCount", &uiClientState_t::connectPacketCount, false )
 			.addProperty( "clientNum", &uiClientState_t::clientNum, false )
@@ -344,8 +362,20 @@ static void UI_BindLua( lua_State *L ) {
 			.addProperty( "updateInfoString", +[] ( const uiClientState_t *uics ) { return uics->updateInfoString; } )
 			.addProperty( "messageString", +[] ( const uiClientState_t *uics ) { return uics->messageString; } )
 		.endClass()
-		.addFunction( "trap_GetClientState", trap_GetClientState )
-		.addFunction( "trap_GetGlconfig", trap_GetGlconfig )
+		.addFunction( "trap_GetClientState", 
+			+[] () {
+				uiClientState_t uics = { 0 };
+				trap_GetClientState( &uics );
+				return uics;
+			}
+		)
+		.addFunction( "trap_GetGlconfig", 
+			+[] () {
+				glconfig_t glc = { 0 };
+				trap_GetGlconfig( &glc );
+				return glc;
+			}
+		)
 		.addFunction( "trap_GetConfigString",
 			+[] ( int index ) {
 				std::string result;
@@ -431,7 +461,13 @@ static void UI_BindLua( lua_State *L ) {
 			.addProperty( "tm_yday", &qtime_t::tm_yday, false )
 			.addProperty( "tm_isdst", &qtime_t::tm_isdst, false )
 		.endClass()
-		.addFunction( "trap_RealTime", trap_RealTime )
+		.addFunction( "trap_RealTime",
+			+[] () {
+				qtime_t qt = { 0 };
+				trap_RealTime( &qt );
+				return qt;
+			}
+		)
 		// Cinematic handling functions skipped
 		.addFunction( "trap_R_RemapShader", trap_R_RemapShader )
 		// CD-key, punkbuster and extension functions skipped
