@@ -61,7 +61,6 @@ std::string lua_loadfile( const char *qpath ) {
 
 void lua_require( const char *module ) {
 	char qpath[MAX_QPATH];
-	char *buf;
 	long len;
 	fileHandle_t fh;
 
@@ -75,12 +74,11 @@ void lua_require( const char *module ) {
 	strncat( qpath, ".lua", MAX_QPATH - 1 );
 	len = trap_FS_FOpenFile( qpath, &fh, FS_READ );
 	if ( fh != 0 ) {
-		buf = new char[len+1];
-		trap_FS_Read( buf, len, fh );
+		std::string source;
+		source.resize( len );
+		trap_FS_Read( source.data(), len, fh);
 		trap_FS_FCloseFile( fh );
-		buf[len] = '\0';
-		Rml::Lua::Interpreter::DoString( buf, qpath );
-		delete[] buf;
+		Rml::Lua::Interpreter::DoString( source.c_str(), qpath);
 	} else {
 		trap_Print( va( "require: cannot open file: %s\n", qpath ) );
 	}
