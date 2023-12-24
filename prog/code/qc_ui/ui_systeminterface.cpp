@@ -26,13 +26,12 @@ bool QSystemInterface::LogMessage( Log::Type type, const String &message ) {
 	String prefix;
 
 	switch ( type ) {
-		case Log::LT_ALWAYS:	prefix = "[RMLUI::ALWAYS] "; break;
-		case Log::LT_ERROR:		prefix = "[RMLUI::ERRROR] "; break;
-		case Log::LT_ASSERT:	prefix = "[RMLUI::ASSERT] "; break;
-		case Log::LT_WARNING:	prefix = "[RMLUI::WARNING] "; break;
-		case Log::LT_INFO:		prefix = "[RMLUI::INFO] "; break;
-		case Log::LT_DEBUG:		prefix = "[RMLUI::DEBUG] "; break;
-		default:				prefix = "[RMLUI::UNKNOWN] "; break;
+		case Log::LT_ALWAYS:	prefix = "^4shell: "; break;
+		case Log::LT_ERROR:		prefix = "^1shell: "; break;
+		case Log::LT_ASSERT:	prefix = "^2shell: "; break;
+		case Log::LT_WARNING:	prefix = "^3shell: "; break;
+		case Log::LT_INFO:		prefix = "^5shell: "; break;
+		case Log::LT_DEBUG:		prefix = "^6shell: "; break;
 	}
 	trap_Print( ( prefix + message + "\n" ).c_str());
 	return true;

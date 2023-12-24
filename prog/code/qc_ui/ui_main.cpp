@@ -3,7 +3,9 @@
 #include <RmlUi/Core/FileInterface.h>
 #include <RmlUi/Core/SystemInterface.h>
 
-#include "../qcommon/q_shared.h"
+extern "C" {
+	#include "../qcommon/q_shared.h"
+}
 #include "ui_public.h"
 #include "ui_local.h"
 #undef DotProduct
@@ -32,4 +34,28 @@ void UI_Shutdown( void ) {
 	UI_ShutdownLua();
 	Rml::Shutdown();
 	g_renderInterface.Shutdown();
+}
+
+/*
+============
+va
+
+does a varargs printf into a temp buffer, so I don't need to have
+varargs versions of all text functions.
+============
+*/
+char *QDECL va( char *format, ... ) {
+	va_list		argptr;
+	static char string[2][32000]; // in case va is called by nested functions
+	static int	index = 0;
+	char *buf;
+
+	buf = string[index & 1];
+	index++;
+
+	va_start( argptr, format );
+	vsnprintf( buf, sizeof( *string ), format, argptr );
+	va_end( argptr );
+
+	return buf;
 }
