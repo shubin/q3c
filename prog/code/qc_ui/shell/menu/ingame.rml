@@ -23,7 +23,7 @@
  			button { color: black; }
 		</style>
 	</head>
-	<body template="window">
+	<body template="window" onkeydown="menu.ingame:keydown(event)">
 		Ingame menu here.<br/>
        <button onclick='menu.ingame:disconnect()'>Disconnect</button>
        <button onclick='menu.ingame:resume()'>Resume</button>

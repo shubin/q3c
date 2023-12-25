@@ -11,3 +11,11 @@ function menu.ingame:resume()
   self.doc:Hide()
   UI_SetActiveMenu( UIMENU_NONE )
 end
+
+function menu.ingame:keydown(event)
+  if event.parameters.key_identifier == rmlui.key_identifier.ESCAPE then
+    self:resume()
+    return true
+  end
+  return false
+end
