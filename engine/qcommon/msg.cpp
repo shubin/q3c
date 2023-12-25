@@ -906,7 +906,7 @@ static const netField_t playerStateFields[] =
 { PSF(legsAnim), 8 },
 { PSF(events[1]), 8 },
 #if defined( QC )
-{ PSF(pm_flags), 20 },
+{ PSF(pm_flags), 32 },
 #else
 { PSF(pm_flags), 16 },
 #endif
@@ -941,6 +941,11 @@ static const netField_t playerStateFields[] =
 #if defined( QC )
 { PSF(weaponFiringState), 8 },
 { PSF(champion), 5 },
+
+{ PSF(jumpTime), 16 },
+{ PSF(walljumpTime), 16 },
+{ PSF(crouchSlideTime), 16 },
+
 { PSF(ab_time), 6 }, // up to 64 seconds to recharge an ability
 { PSF(ab_misctime), 24 }, // can count milliseconds for the fair amount of time
 { PSF(ab_flags), 8 },

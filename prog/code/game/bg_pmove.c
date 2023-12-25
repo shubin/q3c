@@ -678,6 +678,176 @@ static qboolean PM_CheckJump( void ) {
 	return qtrue;
 }
 
+#if defined( QC )
+// Could be used to test if player walk touching a wall, if not used in any other part of pm code i'll integrate
+// this function to the walljumpcheck function.
+// usage : nbTestDir = nb of direction to test around the player
+// maxZnormal is the Z value of the normal of a poly to considere it as a wall
+// normal is a pointer to the normal of the nearest wall
+static qboolean PlayerTouchWall( int nbTestDir, float maxZnormal, vec3_t *normal ) {
+	vec3_t min, max, dir;
+	int i, j;
+	trace_t trace;
+	float dist = 1.0;
+	entityState_t *state;
+	qboolean retval;
+
+	retval = qfalse;
+	for ( i = 0; i < nbTestDir; i++ ) {
+		dir[0] = pm->ps->origin[0] + ( pm->maxs[0] * cos( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[0] * 0.015f );
+		dir[1] = pm->ps->origin[1] + ( pm->maxs[1] * sin( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[1] * 0.015f );
+		dir[2] = pm->ps->origin[2];
+
+		for ( j = 0; j < 2; j++ ) {
+			min[j] = pm->mins[j];
+			max[j] = pm->maxs[j];
+		}
+		min[2] = max[2] = 0;
+
+		pm->trace( &trace, pm->ps->origin, min, max, dir, pm->ps->clientNum, pm->tracemask );
+
+		if ( trace.allsolid ) return qfalse;
+
+		if ( trace.fraction == 1 )
+			continue; // no wall in this direction
+
+		if ( trace.surfaceFlags & ( SURF_SKY | SURF_NOWALLJUMP ) )
+			continue;
+
+		if ( trace.entityNum != ENTITYNUM_NONE ) {
+			state = pm->entitystate( trace.entityNum );
+			if ( state->eType == ET_PLAYER ) {
+				continue;
+			}
+		}
+
+		if ( trace.fraction > 0 ) {
+			if ( dist > trace.fraction && fabs( trace.plane.normal[2] ) < maxZnormal ) {
+				dist = trace.fraction;
+				VectorCopy( trace.plane.normal, *normal );
+				retval = qtrue;
+			}
+		}
+	}
+	return retval;
+}
+
+/*
+=============
+PM_CheckDash
+=============
+*/
+static void PM_CheckDash( void ) {
+
+}
+
+#if 0
+#ifdef OLDWALLJUMP
+const float pm_wjupspeed = 370;
+const float pm_wjbouncefactor = 0.5f;
+#define pm_wjminspeed pm_maxspeed
+#else
+const float pm_wjupspeed = ( 330.0f * GRAVITY_COMPENSATE );
+const float pm_failedwjupspeed = ( 50.0f * GRAVITY_COMPENSATE );
+const float pm_wjbouncefactor = 0.3f;
+const float pm_failedwjbouncefactor = 0.1f;
+#define pm_wjminspeed ( ( pml.maxWalkSpeed + pml.maxPlayerSpeed ) * 0.5f )
+#endif
+
+#endif
+
+#define PM_WJBOUNCEFACTOR 0.3f
+#define PM_WJMINSPEED 500
+#define PM_WJUPSPEED 370
+#define WJ_DELAY 1000
+
+/*
+=============
+PM_CheckWallJump
+=============
+*/
+static void PM_CheckWallJump( void ) {
+	trace_t trace;
+	vec3_t normal, point, tv;
+	float hspeed;
+
+	if ( pm->ps->groundEntityNum != ENTITYNUM_NONE ) {
+		pm->ps->pm_flags &= ~( PMF_WALLJUMPING | PMF_WALLJUMPCOUNT );
+	}
+
+	if ( ( pm->ps->pm_flags & PMF_WALLJUMPCOUNT ) && pm->ps->velocity[2] < 0.0f ) {
+		pm->ps->pm_flags &= ~PMF_WALLJUMPING;
+	}
+
+	if ( pm->ps->walljumpTime == 0 ) {
+		pm->ps->pm_flags &= ~PMF_WALLJUMPCOUNT;
+	}
+
+	if ( pm->ps->pm_type != PM_NORMAL ) {
+		return;
+	}
+
+	if ( ( pm->ps->pm_flags & PMF_DASHING ) && ( pm->ps->dashTime > PM_DASH_DELAY - 100 ) ) {
+		return;
+	}
+
+	if ( !pml.groundPlane ) {
+		int bp = 1;
+	}
+
+	if ( ( !pml.groundPlane ) // && ( pm->cmd.upmove >= 10 )
+		&& ( pm->ps->champion == CHAMP_NYX )
+		&& ( !( pm->ps->pm_flags & PMF_WALLJUMPCOUNT ) )
+		&& pm->ps->walljumpTime == 0 )
+	{
+		point[0] = pm->ps->origin[0];
+		point[1] = pm->ps->origin[1];
+		point[2] = pm->ps->origin[2] - STEPSIZE;
+		tv[0] = pm->ps->velocity[0];
+		tv[1] = pm->ps->velocity[1];
+		tv[2] = 0;
+		hspeed = VectorLength( tv );
+		pm->trace( &trace, pm->ps->origin, pm->mins, pm->maxs, point, pm->ps->clientNum, pm->tracemask );
+
+		if( pm->cmd.upmove >= 10
+			|| ( hspeed > pm->ps->dashSpeed && pm->ps->velocity[2] > 8 )
+			|| ( trace.fraction == 1 ) || !trace.startsolid )
+		{
+			VectorClear( normal );
+			if ( !PlayerTouchWall( 12, 0.3f, &normal ) ) {
+				return;
+			}
+
+			if ( !( pm->ps->pm_flags & PMF_WALLJUMPING ) ) {
+				float oldupvelocity = pm->ps->velocity[2];
+				pm->ps->velocity[2] = 0.0f;
+
+				PM_ClipVelocity( pm->ps->velocity, normal, pm->ps->velocity, 1.0005f ); // ???
+				VectorMA( pm->ps->velocity, PM_WJBOUNCEFACTOR, normal, pm->ps->velocity );
+
+				if ( hspeed < PM_WJMINSPEED ) {
+					hspeed = PM_WJMINSPEED;
+				}
+
+				VectorNormalize( pm->ps->velocity );
+				VectorScale( pm->ps->velocity, hspeed, pm->ps->velocity );
+				pm->ps->velocity[2] = ( oldupvelocity > PM_WJUPSPEED ) ? oldupvelocity : PM_WJUPSPEED;
+
+				// PM_ClearDash() ???
+				pm->ps->pm_flags &= ~PMF_JUMPPAD;
+				pm->ps->pm_flags |= ( PMF_WALLJUMPING | PMF_WALLJUMPCOUNT );
+
+				pm->ps->walljumpTime = WJ_DELAY;
+				//BG_AddPredictableEventToPlayerstate( EV_WALLJUMP, DirToByte( normal ), pm->ps );
+			}
+		}
+	}
+	else {
+		pm->ps->pm_flags &= ~PMF_WALLJUMPING;
+	}
+}
+#endif // QC
+
 /*
 =============
 PM_CheckWaterJump
@@ -918,6 +1088,7 @@ static void PM_AirMove( void ) {
 	}
 #endif
 
+	PM_CheckWallJump();
 	PM_Friction();
 
 	fmove = pm->cmd.forwardmove;
@@ -1077,6 +1248,9 @@ static void PM_WalkMove( void ) {
 		return;
 	}
 
+#if defined( QC )
+	PM_CheckDash();
+#endif
 	PM_Friction ();
 
 	fmove = pm->cmd.forwardmove;
@@ -2323,6 +2497,13 @@ static void PM_DropTimers( void ) {
 			pm->ps->crouchSlideTime = 0;
 		} else {
 			pm->ps->crouchSlideTime -= pml.msec;
+		}
+	}
+	if ( pm->ps->walljumpTime ) {
+		if ( pml.msec >= pm->ps->walljumpTime ) {
+			pm->ps->walljumpTime = 0;
+		} else {
+			pm->ps->walljumpTime -= pml.msec;
 		}
 	}
 #endif

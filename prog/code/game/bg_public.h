@@ -169,8 +169,15 @@ typedef enum {
 #define PMF_SCOREBOARD		8192	// spectate as a scoreboard
 #define PMF_INVULEXPAND		16384	// invulnerability sphere set to full size
 #if defined( QC )
-#define PMF_ABILITY_ACTIVATED	32768
-#define PMF_JUMPPAD				65536 // if the bit is set then player is launched by a jumppad
+#define PMF_ABILITY_ACTIVATED	0x08000
+#define PMF_JUMPPAD				0x10000 // if the bit is set then player is launched by a jumppad
+#define PMF_WALLJUMPING			0x20000
+#define PMF_WALLJUMPCOUNT		0x40000
+#define PMF_DASHING				0x80000
+#endif
+
+#if defined( QC )
+#define PM_DASH_DELAY	500
 #endif
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
@@ -218,6 +225,9 @@ typedef struct {
 	// these will be different functions during game and cgame
 	void		(*trace)( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask );
 	int			(*pointcontents)( const vec3_t point, int passEntityNum );
+#if defined( QC )
+	entityState_t* (*entitystate)( int entnum );
+#endif
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
@@ -496,6 +506,7 @@ typedef enum {
 	EV_DAMAGEPLUM,
 	EV_DAMAGEDIR,
 	EV_KILLERINFO,
+	EV_WALLJUMP,
 #endif
 
 //#ifdef MISSIONPACK

@@ -125,7 +125,8 @@ vm_t	vmTable[MAX_VM];
 static const char *vmName[ VM_COUNT ] = {
 	"qagame",
 	"cgame",
-	"ui"
+	//"ui"
+	"qcui"
 };
 
 

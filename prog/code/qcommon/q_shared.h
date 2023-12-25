@@ -1238,6 +1238,7 @@ typedef struct playerState_s {
 	int			clientNum;		// ranges from 0 to MAX_CLIENTS-1
 	int			weapon;			// copied to entityState_t->weapon
 	int			weaponstate;
+
 #if defined( QC )
 	int			weaponFiringState; // for complex weapon behaviors (like tribolt)
 	int			champion;		// selected champion
@@ -1246,7 +1247,8 @@ typedef struct playerState_s {
 
 	int			jumpTime;
 	int			landTime;
-	int			walljumps;
+	int			walljumpTime;
+	int			dashSpeed, dashTime;
 	int			crouchSlideTime;
 
 	int			ab_time;		// ability timer, semantic depends on the flags

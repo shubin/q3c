@@ -222,6 +222,12 @@ int		CG_PointContents( const vec3_t point, int passEntityNum ) {
 }
 
 #if defined( QC )
+entityState_t *CG_EntityState( int entNum ) {
+	return &cg_entities[entNum].currentState;
+}
+#endif // QC
+
+#if defined( QC )
 // same as CG_PointContents but skips friendly entities
 int		CG_PointContentsEx( int clientNum, const vec3_t point, int passEntityNum ) {
 	int			i;
@@ -648,6 +654,9 @@ void CG_PredictPlayerState( void ) {
 	cg_pmove.ps = &cg.predictedPlayerState;
 	cg_pmove.trace = CG_Trace;
 	cg_pmove.pointcontents = CG_PointContents;
+#if defined( QC )
+	cg_pmove.entitystate = CG_EntityState;
+#endif // QC
 	if ( cg_pmove.ps->pm_type == PM_DEAD ) {
 		cg_pmove.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 	}

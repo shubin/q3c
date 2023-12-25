@@ -1101,7 +1101,7 @@ netField_t	playerStateFields[] =
 { PSF(legsAnim), 8 },
 { PSF(events[1]), 8 },
 #if defined( QC )
-{ PSF(pm_flags), 20 },
+{ PSF(pm_flags), 32 },
 #else
 { PSF(pm_flags), 16 },
 #endif
