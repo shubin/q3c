@@ -362,6 +362,10 @@ void G_ActivateAbility( gentity_t *ent ) {
 		case CHAMP_ANARKI:
 			ActivateInjection( ent );
 			break;
+		case CHAMP_NYX:
+			ent->s.eFlags |= EF_TWILIGHT;
+			ent->r.contents |= CONTENTS_TWILIGHT;
+			break;
 		case CHAMP_RANGER:
 			if ( ent->client->ps.ab_num != 0 ) {
 				TeleportToTheOrb( ent );

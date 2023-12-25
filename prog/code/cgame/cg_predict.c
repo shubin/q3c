@@ -137,6 +137,12 @@ static void CG_ClipMoveToEntities ( const vec3_t start, const vec3_t mins, const
 	}
 }
 
+#if defined( QC )
+void	CG_TraceMove( trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask ) {
+	CG_TraceEx( skipNumber, result, start, mins, maxs, end, skipNumber, mask );
+}
+#endif // QC
+
 /*
 ================
 CG_Trace
@@ -167,6 +173,19 @@ qboolean CG_IsEntityFriendly( int clientNum, centity_t *cent ) {
 	return qfalse;
 }
 
+qboolean CG_ShouldSkip( int clientNum, centity_t *cent ) {
+	if ( CG_IsEntityFriendly( clientNum, cent ) )
+		return qtrue;
+	if ( cent->currentState.eFlags & EF_TWILIGHT )
+		return qtrue;
+	if ( cg_entities[clientNum].currentState.eFlags & EF_TWILIGHT ) {
+		if ( cent->currentState.eType == ET_PLAYER ) {
+			return qtrue;
+		}
+	}
+	return qfalse;
+}
+
 // Same as CG_Trace but skips friendly entities (i.e. totems)
 // QC TODO: handle the situation where end position is stuck into the friendly entity.
 // Current implementation works well for predicting hitscans but may fail for other uses.
@@ -175,8 +194,8 @@ void CG_TraceEx( int clientNum,
 	int skipNumber, int mask )
 {
 	CG_Trace( result, start, mins, maxs, end, skipNumber, mask );
-	while ( CG_IsEntityFriendly( clientNum, &cg_entities[result->entityNum] ) ) {
-		// the traced entity is friendly, so continue tracing the next one
+	while ( CG_ShouldSkip( clientNum, &cg_entities[result->entityNum] ) ) {
+		// the traced entity should be skipped, so continue tracing the next one
 		CG_Trace( result, result->endpos, mins, maxs, end, result->entityNum, mask );
 	};
 }
@@ -652,7 +671,11 @@ void CG_PredictPlayerState( void ) {
 
 	// prepare for pmove
 	cg_pmove.ps = &cg.predictedPlayerState;
+#if defined ( QC )
+	cg_pmove.trace = CG_TraceMove;
+#else
 	cg_pmove.trace = CG_Trace;
+#endif // QC
 	cg_pmove.pointcontents = CG_PointContents;
 #if defined( QC )
 	cg_pmove.entitystate = CG_EntityState;

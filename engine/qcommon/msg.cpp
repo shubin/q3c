@@ -578,7 +578,7 @@ static const netField_t entityStateFields[] =
 { ESF(groundEntityNum), GENTITYNUM_BITS },
 { ESF(pos.trType), 8 },
 #if defined( QC )
-{ ESF(eFlags), 24 },
+{ ESF(eFlags), 32 },
 #else // QC
 { ESF(eFlags), 19 },
 #endif // QC
@@ -912,7 +912,11 @@ static const netField_t playerStateFields[] =
 #endif
 { PSF(groundEntityNum), GENTITYNUM_BITS },
 { PSF(weaponstate), 4 },
+#if defined( QC )
+{ PSF(eFlags), 32 },
+#else
 { PSF(eFlags), 16 },
+#endif
 { PSF(externalEvent), 10 },
 { PSF(gravity), 16 },
 { PSF(speed), 16 },

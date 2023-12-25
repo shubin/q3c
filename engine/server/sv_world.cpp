@@ -487,6 +487,15 @@ static void SV_ClipMoveToEntities( moveclip_t *clip )
 	trace_t		trace;
 	clipHandle_t	clipHandle;
 	const float		*origin, *angles;
+#if defined( QC )
+	qboolean	twilight;
+
+	if ( clip->clientNum >= 0 && clip->clientNum < MAX_CLIENTS ) {
+		twilight = SV_GentityNum( clip->clientNum )->r.contents & CONTENTS_TWILIGHT;
+	} else {
+		twilight = qfalse;
+	}
+#endif
 
 	num = SV_AreaEntities( clip->boxmins, clip->boxmaxs, touchlist, MAX_GENTITIES);
 
@@ -518,6 +527,14 @@ static void SV_ClipMoveToEntities( moveclip_t *clip )
 			}
 		}
 #if defined( QC )
+		if ( twilight && ( clip->contentmask & CONTENTS_BODY ) ) {
+			continue;
+		}
+
+		if ( clip->contentmask & CONTENTS_TWILIGHT ) {
+			continue;
+		}
+
 		// filter out friendly entities (i.e. totems)
 		if ( clip->contentmask & CONTENTS_SKIP ) {
 			if ( SV_SkipEntityTrace( clip->clientNum, touch->s.number ) ) {

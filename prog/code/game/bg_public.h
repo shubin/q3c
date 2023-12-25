@@ -314,6 +314,7 @@ typedef enum {
 #define EF_TEAMVOTED		0x00080000		// already cast a team vote
 #if defined( QC )
 #define EF_FMUTE			0x00100000		// mute this entity for friends
+#define EF_TWILIGHT			0x00200000		// the entity is in the twilight dimension
 #endif // QC
 
 // NOTE: may not have more than 16
