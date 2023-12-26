@@ -859,6 +859,24 @@ void SendPendingPredictableEvents( playerState_t *ps ) {
 	}
 }
 
+#if defined( QC )
+/*
+==============
+G_TraceMove
+
+The trace function passed to pmove code, it assumes that
+passEntityNum is the clientNum. This also adds the CONTENTS_SKIP
+flag so we can skip entities we need to skip when tracing (i.e.
+friendly totems, Nyx's being in the twilight etc.)
+==============
+*/
+static
+void G_TraceMove( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask ) {
+	trap_Trace( results, start, mins, maxs, end, passEntityNum | ( passEntityNum << 16 ), contentmask | CONTENTS_SKIP);
+
+}
+#endif // QC
+
 /*
 ==============
 ClientThink
@@ -1157,7 +1175,11 @@ void ClientThink_real( gentity_t *ent ) {
 	else {
 		pm.tracemask = MASK_PLAYERSOLID;
 	}
+#if defined( QC )
+	pm.trace = G_TraceMove;
+#else
 	pm.trace = trap_Trace;
+#endif // QC
 	pm.pointcontents = trap_PointContents;
 #if defined( QC )
 	pm.entitystate = G_EntityState;

@@ -433,7 +433,7 @@ typedef struct {
 	int			contentmask;
 	int			capsule;
 #if defined( QC )
-	int			clientNum;
+	int			traceEntityNum; // the entity which is the subject of tracing
 #endif // QC
 } moveclip_t;
 
@@ -487,15 +487,6 @@ static void SV_ClipMoveToEntities( moveclip_t *clip )
 	trace_t		trace;
 	clipHandle_t	clipHandle;
 	const float		*origin, *angles;
-#if defined( QC )
-	qboolean	twilight;
-
-	if ( clip->clientNum >= 0 && clip->clientNum < MAX_CLIENTS ) {
-		twilight = SV_GentityNum( clip->clientNum )->r.contents & CONTENTS_TWILIGHT;
-	} else {
-		twilight = qfalse;
-	}
-#endif
 
 	num = SV_AreaEntities( clip->boxmins, clip->boxmaxs, touchlist, MAX_GENTITIES);
 
@@ -526,18 +517,11 @@ static void SV_ClipMoveToEntities( moveclip_t *clip )
 				continue;	// don't clip against other missiles from our owner
 			}
 		}
+
 #if defined( QC )
-		if ( twilight && ( clip->contentmask & CONTENTS_BODY ) ) {
-			continue;
-		}
-
-		if ( clip->contentmask & CONTENTS_TWILIGHT ) {
-			continue;
-		}
-
-		// filter out friendly entities (i.e. totems)
+		// filter out entities we should skip (i.e. friendly totems)
 		if ( clip->contentmask & CONTENTS_SKIP ) {
-			if ( SV_SkipEntityTrace( clip->clientNum, touch->s.number ) ) {
+			if ( SV_SkipEntityTrace( clip->traceEntityNum, touch->s.number ) ) {
 				continue;
 			}
 		}
@@ -597,13 +581,13 @@ void SV_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const ve
 	moveclip_t	clip;
 	int			i;
 #if defined( QC )
-	int			clientNum;
+	int			traceEntityNum;
 
-	if ( passEntityNum == -1 ) { // -1 appears to be a special value
-		clientNum = -1;
+	if ( passEntityNum == -1 || !( contentmask & CONTENTS_SKIP ) ) { // -1 appears to be a special value
+		traceEntityNum = ENTITYNUM_NONE;
 	} else {
-		clientNum = passEntityNum >> 24;
-		passEntityNum &= 0x00FFFFFF;
+		traceEntityNum = passEntityNum >> 16;
+		passEntityNum &= 0xFFFF;
 	}
 #endif // QC
 
@@ -633,7 +617,7 @@ void SV_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const ve
 	clip.passEntityNum = passEntityNum;
 	clip.capsule = capsule;
 #if defined( QC )
-	clip.clientNum = clientNum;
+	clip.traceEntityNum = traceEntityNum;
 #endif // QC
 
 	// create the bounding box of the entire move

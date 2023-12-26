@@ -526,18 +526,32 @@ qboolean G_IsEntityFriendly( int clientNum, int traceEnt ) {
 }
 
 qboolean G_SkipEntityTrace( int clientNum, int entityNum ) {
+	gentity_t *client, *ent;
+
 	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
 		return qfalse;
 	}
-	return G_IsEntityFriendly( clientNum, entityNum );
+
+	client = &g_entities[clientNum];
+	ent = &g_entities[entityNum];
+
+	if ( ( client->s.eFlags & EF_TWILIGHT ) || ( ent->s.eFlags & EF_TWILIGHT ) ) {
+		return qtrue;
+	}
+
+	if ( G_IsEntityFriendly( clientNum, entityNum ) ) {
+		return qtrue;
+	}
+
+	return qfalse;
 }
 
 // Same as trap_Trace but skips friendly entities (i.e. totems)
-void G_TraceEx( int clientNum,
+void G_TraceEx( int traceEntityNum,
 	trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
 	int skipNumber, int mask )
 {
-	trap_Trace( result, start, mins, maxs, end, skipNumber | ( clientNum << 24 ), mask | CONTENTS_SKIP);
+	trap_Trace( result, start, mins, maxs, end, skipNumber | ( traceEntityNum << 16 ), mask | CONTENTS_SKIP);
 }
 
 #endif // QC

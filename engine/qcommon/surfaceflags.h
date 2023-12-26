@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 											// clientNum argument. Basically these 8 bits should contain the number of client         \
 											// for which we check "friendliness" of an entity.
 #define CONTENTS_NOTOTEM		0x1000		// don't drop totems here
-#define CONTENTS_TWILIGHT		0x2000		// twilight dimension (Nyx)
+//#define CONTENTS_TWILIGHT		0x2000		// twilight dimension (Nyx)
 #endif // QC
 
 #define	CONTENTS_AREAPORTAL		0x8000

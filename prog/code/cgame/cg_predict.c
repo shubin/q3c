@@ -92,6 +92,19 @@ static void CG_ClipMoveToEntities ( const vec3_t start, const vec3_t mins, const
 	vec3_t		origin, angles;
 	centity_t	*cent;
 
+#if defined( QC )
+	int			traceEntityNum;
+#endif // QC
+
+#if defined( QC )
+	if ( skipNumber == -1 || !(mask & CONTENTS_SKIP) ) {
+		traceEntityNum = ENTITYNUM_NONE;
+	} else {
+		traceEntityNum = skipNumber >> 16;
+		skipNumber &= 0xFFFF;
+	}
+#endif // QC
+
 	for ( i = 0 ; i < cg_numSolidEntities ; i++ ) {
 		cent = cg_solidEntities[ i ];
 		ent = &cent->currentState;
@@ -99,6 +112,12 @@ static void CG_ClipMoveToEntities ( const vec3_t start, const vec3_t mins, const
 		if ( ent->number == skipNumber ) {
 			continue;
 		}
+
+#if defined( QC )
+		if ( traceEntityNum != ENTITYNUM_NONE && CG_ShouldSkip( traceEntityNum, cent ) ) {
+			continue;
+		}
+#endif // QC
 
 		if ( ent->solid == SOLID_BMODEL ) {
 			// special value for bmodel
@@ -138,6 +157,17 @@ static void CG_ClipMoveToEntities ( const vec3_t start, const vec3_t mins, const
 }
 
 #if defined( QC )
+/*
+==============
+CG_TraceMove
+
+The trace function passed to pmove code, it assumes that
+passEntityNum is the clientNum. This also adds the CONTENTS_SKIP
+flag so we can skip entities we need to skip when tracing (i.e.
+friendly totems, Nyx's being in the twilight etc.)
+==============
+*/
+
 void	CG_TraceMove( trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask ) {
 	CG_TraceEx( skipNumber, result, start, mins, maxs, end, skipNumber, mask );
 }
@@ -173,31 +203,23 @@ qboolean CG_IsEntityFriendly( int clientNum, centity_t *cent ) {
 	return qfalse;
 }
 
-qboolean CG_ShouldSkip( int clientNum, centity_t *cent ) {
-	if ( CG_IsEntityFriendly( clientNum, cent ) )
+qboolean CG_ShouldSkip( int traceEntityNum, centity_t *cent ) {
+	if ( CG_IsEntityFriendly( traceEntityNum, cent ) )
 		return qtrue;
 	if ( cent->currentState.eFlags & EF_TWILIGHT )
 		return qtrue;
-	if ( cg_entities[clientNum].currentState.eFlags & EF_TWILIGHT ) {
-		if ( cent->currentState.eType == ET_PLAYER ) {
-			return qtrue;
-		}
+	if ( cg_entities[traceEntityNum].currentState.eFlags & EF_TWILIGHT ) {
+		return qtrue;
 	}
 	return qfalse;
 }
 
 // Same as CG_Trace but skips friendly entities (i.e. totems)
-// QC TODO: handle the situation where end position is stuck into the friendly entity.
-// Current implementation works well for predicting hitscans but may fail for other uses.
 void CG_TraceEx( int clientNum,
 	trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
 	int skipNumber, int mask )
 {
-	CG_Trace( result, start, mins, maxs, end, skipNumber, mask );
-	while ( CG_ShouldSkip( clientNum, &cg_entities[result->entityNum] ) ) {
-		// the traced entity should be skipped, so continue tracing the next one
-		CG_Trace( result, result->endpos, mins, maxs, end, result->entityNum, mask );
-	};
+	CG_Trace( result, start, mins, maxs, end, skipNumber | ( clientNum << 16 ), mask | CONTENTS_SKIP );
 }
 
 #endif // QC
