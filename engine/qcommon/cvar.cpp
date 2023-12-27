@@ -202,6 +202,9 @@ static qbool IsCPMAColorCode( char c )
 
 static qbool Cvar_IsValidValue( cvar_t *var, const char *value, qboolean printWarnings )
 {
+#if defined( QC )
+	return qtrue;
+#else
 #define ERROR( Message , ...)	{ if ( printWarnings ) Com_Printf( "^3%s: " Message "\n", var->name, ## __VA_ARGS__ ); return qfalse; }
 #define WARNING( Message, ... )	{ if ( printWarnings ) Com_Printf( "^3%s: " Message "\n", var->name, ## __VA_ARGS__ ); }
 
@@ -271,6 +274,7 @@ static qbool Cvar_IsValidValue( cvar_t *var, const char *value, qboolean printWa
 
 #undef ERROR
 #undef WARNING
+#endif
 }
 
 
