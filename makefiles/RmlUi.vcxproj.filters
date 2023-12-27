@@ -19,6 +19,9 @@
     <Filter Include="Lua\Elements">
       <UniqueIdentifier>{ae67a5d5-57e2-4117-aaa6-0588f7151307}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Debugger">
+      <UniqueIdentifier>{6e8bfe0f-af8e-48d1-bdc4-574e8950da38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Core\WidgetScroll.h">
@@ -488,6 +491,42 @@
     </ClInclude>
     <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\LuaEventListenerInstancer.h">
       <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\BeaconSource.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\CommonSource.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\DebuggerPlugin.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\DebuggerSystemInterface.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementContextHook.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementInfo.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementLog.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\FontSource.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\Geometry.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\InfoSource.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\LogSource.h">
+      <Filter>Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\MenuSource.h">
+      <Filter>Debugger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1133,10 +1172,36 @@
     <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\LuaEventListenerInstancer.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\Debugger.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\DebuggerPlugin.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\DebuggerSystemInterface.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementContextHook.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementInfo.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\ElementLog.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\Geometry.cpp">
+      <Filter>Debugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(ProgSrcDir)lib\RmlUi\Source\Core\Pool.inl">
       <Filter>Core</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(ProgSrcDir)prog\lib\RmlUi\Source\Debugger\LICENSE.txt">
+      <Filter>Debugger</Filter>
+    </Text>
   </ItemGroup>
 </Project>

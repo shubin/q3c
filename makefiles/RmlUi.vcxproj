@@ -169,6 +169,18 @@
     <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\RmlUiContextsProxy.h" />
     <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\Vector2f.h" />
     <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\Vector2i.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\BeaconSource.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\CommonSource.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\DebuggerPlugin.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\DebuggerSystemInterface.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementContextHook.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementInfo.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementLog.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\FontSource.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\Geometry.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\InfoSource.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\LogSource.h" />
+    <ClInclude Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\MenuSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Core\BaseXMLParser.cpp" />
@@ -385,9 +397,19 @@
     <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\Utilities.cpp" />
     <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\Vector2f.cpp" />
     <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Lua\Vector2i.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\Debugger.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\DebuggerPlugin.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\DebuggerSystemInterface.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementContextHook.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementInfo.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\ElementLog.cpp" />
+    <ClCompile Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\Geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(ProgSrcDir)lib\RmlUi\Source\Core\Pool.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(ProgSrcDir)lib\RmlUi\Source\Debugger\LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

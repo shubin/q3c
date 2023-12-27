@@ -33,6 +33,7 @@
 #include <RmlUi/Core/Core.h>
 #include <RmlUi/Core/Factory.h>
 #include <RmlUi/Core/Input.h>
+#include <RmlUi/Debugger.h>
 
 namespace Rml {
 namespace Lua {
@@ -92,6 +93,40 @@ int LuaRmlUiRegisterTag(lua_State* L, LuaRmlUi* /*obj*/)
 	LuaElementInstancer* lei = (LuaElementInstancer*)LuaType<ElementInstancer>::check(L, 2);
 	RMLUI_CHECK_OBJ(lei);
 	Factory::RegisterElementInstancer(tag, lei);
+	return 0;
+}
+
+int LuaRmlUiInitialiseDebugger(lua_State* L, LuaRmlUi* /*obj*/)
+{
+	Context* context = LuaType<Context>::check(L, 1);
+	RMLUI_CHECK_OBJ(context);
+	lua_pushboolean(L, Debugger::Initialise(context));
+	return 1;
+}
+
+int LuaRmlUiSetDebuggerContext(lua_State* L, LuaRmlUi* /*obj*/)
+{
+	Context* context = LuaType<Context>::check(L, 1);
+	RMLUI_CHECK_OBJ(context);
+	lua_pushboolean(L, Debugger::SetContext(context));
+	return 1;
+}
+
+int LuaRmlUiSetDebuggerVisible(lua_State* L, LuaRmlUi* /*obj*/)
+{
+	bool visible = lua_toboolean(L, 1);
+	Debugger::SetVisible(visible);
+	return 0;
+}
+
+int LuaRmlUiIsDebuggerVisible(lua_State* L, LuaRmlUi* /*obj*/)
+{
+	lua_pushboolean(L, Debugger::IsVisible());
+	return 1;
+}
+
+int LuaRmlUiShutdownDebugger(lua_State* /*L*/, LuaRmlUi * /*obj*/) {
+	Debugger::Shutdown();
 	return 0;
 }
 
@@ -313,7 +348,12 @@ void LuaRmlUiEnumkey_modifier(lua_State* L)
 RegType<LuaRmlUi> LuaRmlUiMethods[] = {
 	RMLUI_LUAMETHOD(LuaRmlUi, CreateContext),
 	RMLUI_LUAMETHOD(LuaRmlUi, LoadFontFace),
-	RMLUI_LUAMETHOD(LuaRmlUi, RegisterTag),
+	RMLUI_LUAMETHOD(LuaRmlUi, InitialiseDebugger),
+	RMLUI_LUAMETHOD(LuaRmlUi, SetDebuggerContext),
+	RMLUI_LUAMETHOD(LuaRmlUi, SetDebuggerVisible),
+	RMLUI_LUAMETHOD(LuaRmlUi, IsDebuggerVisible),
+	RMLUI_LUAMETHOD(LuaRmlUi, ShutdownDebugger),
+	
 	{nullptr, nullptr},
 };
 
