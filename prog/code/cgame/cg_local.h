@@ -860,6 +860,7 @@ typedef struct {
 	qhandle_t	acidTrailShader;
 	qhandle_t	acidBallShader;
 	qhandle_t	piercingSightShader;
+	qhandle_t	dissolveShader;
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;
 	qhandle_t	totemModel;
@@ -1608,10 +1609,9 @@ void CG_RailTrail( clientInfo_t *ci, vec3_t start, vec3_t end );
 void CG_GrappleTrail( centity_t *ent, const weaponInfo_t *wi );
 void CG_AddViewWeapon (playerState_t *ps);
 #if defined( QC )
-void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, byte *piercingSightRGBA );
-#else // QC
-void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team );
+void CG_AddPlayerWeaponEx( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, qhandle_t customShader, byte *shaderRGBA, float shaderTime );
 #endif // QC
+void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team );
 void CG_DrawWeaponSelect( void );
 
 void CG_OutOfAmmoChange( void );	// should this be in pmove?

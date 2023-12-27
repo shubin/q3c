@@ -1465,6 +1465,12 @@ qboolean BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 		Com_Error( ERR_DROP, "BG_CanItemBeGrabbed: index out of range" );
 	}
 
+#if defined( QC )
+	if ( ps->eFlags & EF_TWILIGHT ) {
+		return qfalse;  // can't grab any items while in the twilight
+	}
+#endif // QC
+
 	item = &bg_itemlist[ent->modelindex];
 
 	switch( item->giType ) {
@@ -1656,6 +1662,8 @@ BG_AbilityBeActivated
 */
 qboolean	BG_CanAbilityBeActivated( const playerState_t *ps ) {
 	switch ( ps->champion ) {
+		case CHAMP_NYX:
+			return ( ps->ab_flags & ABF_READY ) && ( ps->weaponTime < 500 );
 		case CHAMP_KEEL:
 			return ps->ab_time > 9 && ps->ab_misctime == 0;
 		case CHAMP_RANGER:

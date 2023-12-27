@@ -1493,7 +1493,11 @@ sound should only be done on the world model case.
 =============
 */
 #if defined( QC )
-void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, byte *piercingSightRGBA ) {
+void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team ) {
+	CG_AddPlayerWeaponEx( parent, ps, cent, team, 0, NULL, 0.0f );
+}
+
+void CG_AddPlayerWeaponEx( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, qhandle_t customShader, byte *shaderRGBA, float shaderTime ) {
 #else // QC
 void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team ) {
 #endif // QC
@@ -1570,9 +1574,10 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	gun.backlerp = parent->backlerp;
 
 #if defined( QC )
-	if ( piercingSightRGBA != NULL ) {
-		memcpy( gun.shaderRGBA, piercingSightRGBA, sizeof( gun.shaderRGBA ) );
-		gun.customShader = cgs.media.piercingSightShader;
+	if ( customShader != 0 ) {
+		memcpy( gun.shaderRGBA, shaderRGBA, sizeof( gun.shaderRGBA ) );
+		gun.customShader = customShader;
+		gun.shaderTime = shaderTime;
 		trap_R_AddRefEntityToScene( &gun );
 	} else {
 		CG_AddWeaponWithPowerups( &gun, cent->currentState.powerups );
@@ -1596,9 +1601,10 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 
 		CG_PositionRotatedEntityOnTag( &barrel, &gun, weapon->weaponModel, "tag_barrel" );
 #if defined( QC )
-		if ( piercingSightRGBA != NULL ) {
-			memcpy( barrel.shaderRGBA, piercingSightRGBA, sizeof( barrel.shaderRGBA ) );
-			barrel.customShader = cgs.media.piercingSightShader;
+		if ( customShader != 0 ) {
+			memcpy( barrel.shaderRGBA, shaderRGBA, sizeof( barrel.shaderRGBA ) );
+			barrel.customShader = customShader;
+			barrel.shaderTime = shaderTime;
 			trap_R_AddRefEntityToScene( &barrel );
 		} else {
 			CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
@@ -1771,11 +1777,7 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 	// add everything onto the hand
-#if defined( QC )
-	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], NULL );
-#else // QC
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM] );
-#endif // QC
 }
 
 /*

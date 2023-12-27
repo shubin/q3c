@@ -950,8 +950,8 @@ static const netField_t playerStateFields[] =
 { PSF(walljumpTime), 16 },
 { PSF(crouchSlideTime), 16 },
 
-{ PSF(ab_time), 6 }, // up to 64 seconds to recharge an ability
-{ PSF(ab_misctime), 24 }, // can count milliseconds for the fair amount of time
+{ PSF(ab_time), 32 }, // up to 64 seconds to recharge an ability; UPD: make it 32 bit why not?
+{ PSF(ab_misctime), 32 }, // can count milliseconds for the fair amount of time; UPD: make it 32 bit why not?
 { PSF(ab_flags), 8 },
 { PSF(ab_num), 32 },
 { PSF(overbounce), 1 },

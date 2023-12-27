@@ -467,7 +467,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 	client = ent->client;
 
 #if defined( QC )
-	G_AbilityTickFrame( client );
+	G_AbilityTickFrame( ent );
 
 	client->timeResidualHiRes += msec;
 	while ( client->timeResidualHiRes >= 100 ) {

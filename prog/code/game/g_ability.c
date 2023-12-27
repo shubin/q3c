@@ -284,10 +284,6 @@ skip_normal_backtrace:
 }
 
 
-#if 1
-#endif
-
-
 static
  void ActivateInjection( gentity_t *ent ) {
 	ent->client->ps.ab_flags &= ~ABF_READY;
@@ -363,7 +359,10 @@ void G_ActivateAbility( gentity_t *ent ) {
 			ActivateInjection( ent );
 			break;
 		case CHAMP_NYX:
+			ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
+			ent->s.time = ent->client->ps.ab_misctime = level.time;
 			ent->client->ps.eFlags |= EF_TWILIGHT;
+			ent->client->ps.weaponTime = 10000; // disable weapon firing
 			break;
 		case CHAMP_RANGER:
 			if ( ent->client->ps.ab_num != 0 ) {
@@ -432,10 +431,24 @@ void G_AbilityTickSecond( gclient_t *client ) {
 	}
 }
 
-void G_AbilityTickFrame( gclient_t *client ) {
+void G_AbilityTickFrame( gentity_t *ent ) {
 	vec3_t		forward, right, up, muzzle;
 	int			damage;
-	gclient_t	*other;
+	gclient_t	*client, *other;
+
+	client = ent->client;
+	// nyx
+	if ( client->ps.champion == CHAMP_NYX && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
+		if ( level.time > client->ps.ab_time ) {
+			client->ps.ab_flags = 0;
+			client->ps.ab_time = 0;
+			client->ps.eFlags &= ~EF_TWILIGHT;
+			client->ps.weaponTime = 0; // enable weapon firing
+			trap_UnlinkEntity( ent );
+			G_KillBox( ent ); // do telefrag
+			trap_LinkEntity( ent );
+		}
+	}
 
 	// visor
 	if ( client->ps.champion == CHAMP_VISOR && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
