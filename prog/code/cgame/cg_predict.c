@@ -34,6 +34,19 @@ static	centity_t	*cg_solidEntities[MAX_ENTITIES_IN_SNAPSHOT];
 static	int			cg_numTriggerEntities;
 static	centity_t	*cg_triggerEntities[MAX_ENTITIES_IN_SNAPSHOT];
 
+#if defined( QC )
+qboolean CG_ShouldSkip( int traceEntityNum, centity_t *cent ) {
+	if ( CG_IsEntityFriendly( traceEntityNum, cent ) )
+		return qtrue;
+	if ( cent->currentState.eFlags & EF_TWILIGHT )
+		return qtrue;
+	if ( cg_entities[traceEntityNum].currentState.eFlags & EF_TWILIGHT ) {
+		return qtrue;
+	}
+	return qfalse;
+}
+#endif // QC
+
 /*
 ====================
 CG_BuildSolidList
@@ -199,17 +212,6 @@ qboolean CG_IsEntityFriendly( int clientNum, centity_t *cent ) {
 		} else {
 			return cent->currentState.affiliation == clientNum;
 		}
-	}
-	return qfalse;
-}
-
-qboolean CG_ShouldSkip( int traceEntityNum, centity_t *cent ) {
-	if ( CG_IsEntityFriendly( traceEntityNum, cent ) )
-		return qtrue;
-	if ( cent->currentState.eFlags & EF_TWILIGHT )
-		return qtrue;
-	if ( cg_entities[traceEntityNum].currentState.eFlags & EF_TWILIGHT ) {
-		return qtrue;
 	}
 	return qfalse;
 }
