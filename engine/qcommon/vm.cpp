@@ -960,6 +960,7 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 		// try to load as a system dll
 		Com_Printf( "Loading dll file %s.\n", name );
 		vm->dllHandle = Sys_LoadDll( name, &vm->entryPoint, VM_DllSyscall );
+		Com_Printf("Loading dll ok!: %x\n", vm->dllHandle);
 		if ( vm->dllHandle ) {
 			return vm;
 		}

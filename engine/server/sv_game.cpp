@@ -911,8 +911,9 @@ void SV_InitGameProgs()
 
 	// load the dll or bytecode
 	gvm = VM_Create( VM_GAME, SV_GameSystemCalls, interpret );
-
+	printf("$$ VM_Create ok\n");
 	SV_InitGameVM( qfalse );
+	printf("$$ SV_InitGameVM ok\n");
 }
 
 

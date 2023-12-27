@@ -9,7 +9,8 @@
 	#if defined( _MSC_VER )
 		#define VMDECL
 	#else
-		#define VMDECL __attribute__((ms_abi)) // use MS ABI for all the callbacks/syscalls to make possible using DLLs on linux
+		//#define VMDECL __attribute__((ms_abi)) // use MS ABI for all the callbacks/syscalls to make possible using DLLs on linux
+		#define VMDECL
 	#endif
 #else
 	#define VMDECL __cdecl
@@ -30,6 +31,7 @@ intptr_t syscall( intptr_t arg, Parms... parms  ) {
 }
 
 Q_EXPORT void dllEntry( syscall_t ptr ) {
+	fprintf( stderr, "dllEntry!\n" );
 	syscallptr = ptr;
 }
 

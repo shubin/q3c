@@ -2,7 +2,8 @@
 	#if defined( _MSC_VER )
 		#define VMCALL
 	#else
-		#define VMCALL __attribute__((ms_abi))
+		//#define VMCALL __attribute__((ms_abi))
+		#define VMCALL
 	#endif
 #else
 	#define VMCALL __cdecl

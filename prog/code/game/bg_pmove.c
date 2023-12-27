@@ -785,6 +785,10 @@ static void PM_CheckWallJump( void ) {
 	vec3_t normal, point, tv;
 	float hspeed;
 
+	vec3_t vel;
+	vec3_t pushback;
+	float d;
+
 	if ( pml.groundPlane ) {
 		pm->ps->pm_flags &= ~( PMF_WALLJUMPING | PMF_WALLJUMPCOUNT );
 	}
@@ -852,10 +856,8 @@ static void PM_CheckWallJump( void ) {
 				VectorScale( pm->ps->velocity, hspeed, pm->ps->velocity );
 				pm->ps->velocity[2] = ( oldupvelocity > PM_WJUPSPEED ) ? oldupvelocity : PM_WJUPSPEED;
 #else
-				vec3_t vel;
 				VectorCopy( pm->ps->velocity, vel );
-				float d = DotProduct( vel, normal );
-				vec3_t pushback;
+				d = DotProduct( vel, normal );
 				VectorScale( normal, 20, pushback );
 				VectorMA( vel, -d, normal, vel );
 				VectorMA( vel, 80, normal, vel );
