@@ -272,6 +272,8 @@ vmCvar_t	cg_kickScale;
 vmCvar_t	cg_playerLean;
 vmCvar_t	cg_piercingSightGreyscale;
 vmCvar_t	cg_piercingSightLight;
+vmCvar_t	cg_ghostWalkGreyscale;
+vmCvar_t	cg_ghostWalkLight;
 vmCvar_t	cg_totemEffects;
 vmCvar_t	cg_totemLight;
 vmCvar_t	cg_abilityGaugeOffset;
@@ -506,6 +508,8 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_playerLean, "cg_playerLean", "1", CVAR_ARCHIVE },
 	{ &cg_piercingSightGreyscale, "cg_piercingSightGreyscale", "1", CVAR_ARCHIVE },
 	{ &cg_piercingSightLight, "cg_piercingSightLight", "1", CVAR_ARCHIVE },
+	{ &cg_ghostWalkGreyscale, "cg_ghostWalkGreyscale", "1", CVAR_ARCHIVE },
+	{ &cg_ghostWalkLight, "cg_ghostWalkLight", "1", CVAR_ARCHIVE },
 	{ &cg_totemEffects, "cg_totemEffects", "1", CVAR_ARCHIVE },
 	{ &cg_totemLight, "cg_totemLight", "1", CVAR_ARCHIVE },
 	{ &cg_abilityGaugeOffset, "cg_abilityGaugeOffset", "0", CVAR_ARCHIVE },

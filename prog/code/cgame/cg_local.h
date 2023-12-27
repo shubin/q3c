@@ -1370,6 +1370,8 @@ extern	vmCvar_t		cg_anarkiSarge;
 extern	vmCvar_t		cg_playerLean;
 extern	vmCvar_t		cg_piercingSightGreyscale;
 extern	vmCvar_t		cg_piercingSightLight;
+extern	vmCvar_t		cg_ghostWalkGreyscale;
+extern	vmCvar_t		cg_ghostWalkLight;
 extern	vmCvar_t		cg_totemEffects;
 extern	vmCvar_t		cg_totemLight;
 extern	vmCvar_t		cg_abilityGaugeOffset;

@@ -2732,6 +2732,32 @@ void CG_DrawActive( stereoFrame_t stereoView ) {
 	cg.refdef.rdflags &= ~RDF_FORCEGREYSCALE;
 	cg.refdef.forcedGreyscale = 0.0f;
 
+	if ( cg.snap->ps.champion == CHAMP_NYX
+		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED )
+		&& ( ( cg_ghostWalkGreyscale.value > 0 ) || ( cg_ghostWalkLight.value > 0 ) )
+		)
+	{
+		float greyscale;
+		if ( cg.time - cg.snap->ps.ab_misctime < champion_stats[CHAMP_NYX].ability_duration * 100 / 2 ) {
+			greyscale = Com_Clamp( 0.0f, 1.0f, ( cg.time - cg.snap->ps.ab_misctime ) / 300.0f );
+		} else {
+			greyscale = Com_Clamp( 0.0f, 1.0f, ( cg.snap->ps.ab_misctime + champion_stats[CHAMP_NYX].ability_duration * 100 - cg.time ) / 300.0f );
+		}
+		if ( greyscale > 0 ) {
+			if ( cg_ghostWalkGreyscale.value > 0 ) {
+				cg.refdef.rdflags |= RDF_FORCEGREYSCALE;
+				cg.refdef.forcedGreyscale = Com_Clamp( 0.0f, 1.0f, greyscale );
+			}
+			if ( cg_ghostWalkLight.value > 0 ) {
+				trap_R_AddLightToScene(
+						cg.predictedPlayerEntity.lerpOrigin,
+						Com_Clamp( 0.0f, 1.0f, greyscale ) * ( 300 + ( rand() & 31 ) ),
+						0.2f, 0.5f, 1
+				);
+			}
+		}
+	}
+
 	if ( cg.snap->ps.champion == CHAMP_VISOR
 		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED ) 
 		&& ( ( cg_piercingSightGreyscale.value > 0 ) || ( cg_piercingSightLight.value > 0 ) )
