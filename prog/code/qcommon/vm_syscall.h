@@ -7,17 +7,18 @@
 
 #if defined( __x86_64__ ) || defined( _M_X64 )
 	#if defined( _MSC_VER )
-		#define VMDECL
+		#define VMCALL
 	#else
-		#define VMDECL __attribute__((ms_abi)) // use MS ABI for all the callbacks/syscalls to make possible using DLLs on linux
+		// use MS ABI for all the callbacks/syscalls to make possible using DLLs on linux
+		#define VMCALL __attribute__((ms_abi))
 	#endif
 #else
-	#define VMDECL __cdecl
+	#define VMCALL __cdecl
 #endif
 
-typedef intptr_t ( VMDECL *syscall_t )    ( intptr_t *parms );
+typedef intptr_t ( VMCALL *syscall_t )    ( intptr_t *parms );
 typedef syscall_t dllSyscall_t;
-typedef void     ( VMDECL *dllEntry_t )   ( syscall_t syscallptr );
+typedef void     ( VMCALL *dllEntry_t )   ( syscall_t syscallptr );
 
 #if defined( TRAP_IMPL )
 
@@ -29,7 +30,7 @@ intptr_t syscall( intptr_t arg, Parms... parms  ) {
 	return syscallptr( p );
 }
 
-Q_EXPORT void dllEntry( syscall_t ptr ) {
+extern "C" Q_EXPORT void VMCALL dllEntry( syscall_t ptr ) {
 	syscallptr = ptr;
 }
 

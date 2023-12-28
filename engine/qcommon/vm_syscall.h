@@ -31,7 +31,7 @@ intptr_t syscall( intptr_t arg, Parms... parms  ) {
 	return syscallptr( p );
 }
 
-Q_EXPORT void dllEntry( syscall_t ptr ) {
+extern "C" Q_EXPORT void VMCALL dllEntry( syscall_t ptr ) {
 	syscallptr = ptr;
 }
 

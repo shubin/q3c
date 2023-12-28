@@ -238,7 +238,7 @@ void* QDECL Sys_LoadDll( const char* name, dllSyscall_t *entryPoint, dllSyscall_
 			*entryPoint = (dllSyscall_t)PE_GetProcAddress( libHandle, "vmMain" );
 			break;
 		default:
-			dllEntry_t dllEntry = (dllEntry_t)dlsym( libHandle, "dllEntry" );
+			dllEntry = (dllEntry_t)dlsym( libHandle, "dllEntry" );
 			*entryPoint = (dllSyscall_t)dlsym( libHandle, "vmMain" );
 			break;
 	}

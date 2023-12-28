@@ -55,7 +55,7 @@ This must be the very first function compiled into the .q3vm file
 ================
 */
 #if defined( QC ) && !defined( Q3_VM )
-Q_EXPORT intptr_t vmMain( intptr_t *args ) {
+Q_EXPORT intptr_t VMCALL vmMain( intptr_t *args ) {
 	#define command args[0]
 	#define	arg0 args[1]
 	#define	arg1 args[2]
