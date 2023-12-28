@@ -46,6 +46,10 @@ Q_EXPORT intptr_t vmMain( intptr_t *args ) {
 
 		case UI_HASUNIQUECDKEY:
 			return qfalse;
+
+		case UI_CVAR_CHANGED:
+			UI_CvarChanged();
+			return 0;
 	}
 
 	return -1;

@@ -213,6 +213,10 @@ void trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, 
 	syscall( UI_R_GETSHADERIMAGEDIMENSIONS, shader, nstage, nimage, width, height );
 }
 
+void trap_Cvar_Watch( const char *cvar_name, qboolean watch ) {
+	syscall( UI_CVAR_WATCH, cvar_name, watch );
+}
+
 #endif
 
 void	trap_R_ModelBounds( clipHandle_t model, vec3_t mins, vec3_t maxs ) {

@@ -143,6 +143,7 @@ typedef enum {
 	UI_R_DRAWTRIANGLE = 500,
 	UI_R_CREATETEXTUREFROMMEMORY = 501,
 	UI_R_GETSHADERIMAGEDIMENSIONS = 502,
+	UI_CVAR_WATCH = 503,
 #endif
 
 	// engine extensions
@@ -305,9 +306,13 @@ typedef enum {
 	UI_DRAW_CONNECT_SCREEN,
 //	void	UI_DrawConnectScreen( qboolean overlay );
 
-	UI_HASUNIQUECDKEY
+	UI_HASUNIQUECDKEY,
 // if !overlay, the background will be drawn, otherwise it will be
 // overlayed over whatever the cgame has drawn.
 // a GetClientState syscall will be made to get the current strings
+#if defined( QC )
+	UI_CVAR_CHANGED = 500,
+//	void UI_CvarChanged( void );
+#endif // QC
 } uiExport_t;
 

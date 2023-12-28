@@ -1009,6 +1009,7 @@ void trap_R_DrawTriangle(
 	qhandle_t hShader );
 qhandle_t trap_R_CreateTextureFromMemory( int width, int height, const void *rgba );
 void trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+void trap_Cvar_Watch( const char *cvar_name, qboolean watch );
 #endif
 
 #if defined( QC )

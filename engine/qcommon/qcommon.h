@@ -581,6 +581,9 @@ typedef struct cvar_s {
 	cvarGui_t	gui;
 	struct cvar_s *next;
 	struct cvar_s *hashNext;
+#if defined( QC )
+	qbool		notifyUI;			// if set then UI is going to be notified about this cvar value change
+#endif
 } cvar_t;
 
 typedef struct cvarTableItem_s {
@@ -696,6 +699,9 @@ extern	int			cvar_modifiedFlags;
 // can then be cleared to allow another change detection.
 // when a bind is modified, the CVAR_ARCHIVE bit is set
 
+#if defined( QC )
+void Cvar_Watch( const char *var_name, qbool watch );
+#endif // QC
 
 ///////////////////////////////////////////////////////////////
 
@@ -1204,6 +1210,9 @@ void SV_ShutdownGameProgs();
 // UI interface
 //
 qbool UI_GameCommand();
+#if defined( QC )
+void UI_CvarChanged( const cvar_t* cvar );
+#endif // QC
 
 
 /*

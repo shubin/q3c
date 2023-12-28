@@ -481,6 +481,11 @@ static void UI_BindLua( lua_State *L ) {
 		)
 		// Cinematic handling functions skipped
 		.addFunction( "trap_R_RemapShader", trap_R_RemapShader )
+		.addFunction( "trap_Cvar_Watch",
+			+[] ( const char *var_name, bool watch ) {
+				trap_Cvar_Watch( var_name, (qboolean)watch );
+			}
+		)
 		// CD-key, punkbuster and extension functions skipped
 	;
 }
@@ -558,5 +563,12 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_DrawConnectScreen" );
 	if ( func.isCallable() ) {
 		luabridge::call( func, (bool)overlay );
+	}
+}
+
+void UI_CvarChanged( void ) {
+	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_CvarChanged" );
+	if ( func.isCallable() ) {
+		luabridge::call( func );
 	}
 }

@@ -14,6 +14,7 @@ qboolean UI_IsFullscreen( void );
 void UI_SetActiveMenu( uiMenuCommand_t menu );
 qboolean UI_ConsoleCommand( int realTime );
 void UI_DrawConnectScreen( qboolean overlay );
+void UI_CvarChanged( void );
 
 void UI_MapKey( int key, int *ki, int *chr );
 
@@ -197,6 +198,7 @@ void			trap_SetPbClStatus( int status );
 
 qhandle_t		trap_R_CreateTextureFromMemory( int width, int height, const void *rgba );
 void			trap_R_GetShaderImageDimensions( qhandle_t shader, int nstage, int nimage, int *width, int *height );
+void			trap_Cvar_Watch( const char *cvar_name, qboolean watch );
 
 // CNQ3 extensions
 void			trap_NK_Upload( void *vertexes, int numVertexBytes, void *indexes, int numIndexBytes );

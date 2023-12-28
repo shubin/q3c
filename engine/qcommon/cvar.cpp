@@ -84,6 +84,11 @@ static qbool Cvar_ValidateString( const char *s )
 	return qtrue;
 }
 
+static void Cvar_NotifyChange( const cvar_t *cvar ) {
+#if !defined( DEDICATED )
+	UI_CvarChanged( cvar );
+#endif
+}
 
 cvar_t* Cvar_FindVar( const char* var_name )
 {
@@ -391,6 +396,11 @@ cvar_t* Cvar_Set2( const char *var_name, const char *value, int cvarSetFlags )
 			var->latchedString = CopyString(value);
 			var->modified = qtrue;
 			var->modificationCount++;
+#if defined( QC )
+			if ( var->notifyUI ) {
+				Cvar_NotifyChange( var );
+			}
+#endif // QC
 			return var;
 		}
 
@@ -416,6 +426,11 @@ cvar_t* Cvar_Set2( const char *var_name, const char *value, int cvarSetFlags )
 	var->value = atof( var->string );
 	var->integer = atoi( var->string );
 
+#if defined( QC )
+	if ( var->notifyUI ) {
+		Cvar_NotifyChange( var );
+	}
+#endif // QC
 	return var;
 }
 
@@ -1466,6 +1481,13 @@ void Cvar_Update( vmCvar_t *vmCvar )
 	vmCvar->integer = cv->integer;
 }
 
+void Cvar_Watch( const char *var_name, qbool watch )
+{
+	cvar_t* cv = Cvar_FindVar( var_name );
+	if ( cv != NULL ) {
+		cv->notifyUI = watch;
+	}
+}
 
 static const cmdTableItem_t cl_cmds[] =
 {

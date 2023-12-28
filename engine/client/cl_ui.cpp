@@ -890,15 +890,6 @@ static intptr_t CL_UISystemCalls( intptr_t* args )
 	case UI_R_REGISTERSHADERNOMIP:
 		return re.RegisterShaderNoMip( VMA(1) );
 
-#if defined( QC )
-	case UI_R_CREATETEXTUREFROMMEMORY:
-		return re.CreateTextureFromMemory( args[1], args[2], VMA(3) );
-
-	case UI_R_GETSHADERIMAGEDIMENSIONS:
-		re.GetShaderImageDimensions( args[1], args[2], args[3], VMA(4), VMA(5) );
-		return 0;
-#endif
-
 	case UI_R_CLEARSCENE:
 		re.ClearScene();
 		return 0;
@@ -926,12 +917,6 @@ static intptr_t CL_UISystemCalls( intptr_t* args )
 	case UI_R_DRAWSTRETCHPIC:
 		re.DrawStretchPic( VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9] );
 		return 0;
-
-#if defined( QC )
-	case UI_R_DRAWTRIANGLE:
-		re.DrawTriangle( VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), VMF(9), VMF(10), VMF(11), VMF(12), args[13] );
-		return 0;
-#endif
 
 	case UI_R_MODELBOUNDS:
 		re.ModelBounds( args[1], VMA(2), VMA(3) );
@@ -1186,6 +1171,24 @@ static intptr_t CL_UISystemCalls( intptr_t* args )
 		RE_DrawNuklear( args[1], args[2], args[3], VMA(4) );
 		return 0;
 
+#if defined( QC )
+// QC extensions
+	case UI_R_CREATETEXTUREFROMMEMORY:
+		return re.CreateTextureFromMemory( args[1], args[2], VMA(3) );
+
+	case UI_R_GETSHADERIMAGEDIMENSIONS:
+		re.GetShaderImageDimensions( args[1], args[2], args[3], VMA(4), VMA(5) );
+		return 0;
+
+	case UI_R_DRAWTRIANGLE:
+		re.DrawTriangle( VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), VMF(9), VMF(10), VMF(11), VMF(12), args[13] );
+		return 0;
+
+	case UI_CVAR_WATCH:
+		Cvar_Watch( VMA(1), args[2] );
+		return 0;
+#endif
+
 	default:
 		Com_Error( ERR_DROP, "Bad UI system trap: %i", args[0] );
 	}
@@ -1207,11 +1210,22 @@ void CL_ShutdownUI()
 	uivm = NULL;
 }
 
+#if defined( QC )
+static void Cvar_ResetWatch()
+{
+	for  ( cvar_t* cvar = Cvar_GetFirst(); cvar; cvar = cvar->next )
+		cvar->notifyUI = false;
+}
+#endif // QC
 
 void CL_InitUI()
 {
 	// if sv_pure is set we only allow qvms to be loaded
 	vmInterpret_t interpret = cl_connectedToPureServer ? VMI_COMPILED : (vmInterpret_t)Cvar_VariableIntegerValue("vm_ui");
+
+#if defined( QC )
+	Cvar_ResetWatch();
+#endif // QC
 
 	uivm = VM_Create( VM_UI, CL_UISystemCalls, interpret );
 	if ( !uivm )
@@ -1254,3 +1268,12 @@ qbool CL_DemoPlaying()
 	return clc.demoplaying;
 }
 
+#if defined( QC )
+void UI_CvarChanged( const cvar_t* cvar )
+{
+	if ( uivm != NULL ) {
+		Cmd_TokenizeString( cvar->name );
+		VM_Call( uivm, UI_CVAR_CHANGED );
+	}
+}
+#endif // QC
