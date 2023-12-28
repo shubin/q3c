@@ -331,7 +331,7 @@ const char* Lin_ConsoleInput()
                 return NULL;
                 break;
               case 'C': // right arrow (move cursor right)
-                if (tty_con.cursor < strlen(tty_con.buffer))
+                if (tty_con.cursor < (int)strlen(tty_con.buffer))
                 {
 				  write(STDOUT_FILENO, "\033[1C", 4);
                   tty_con.cursor++;
@@ -478,7 +478,7 @@ static const int tty_colorTableSize = sizeof( tty_colorTable ) / sizeof( tty_col
 
 static void ANSIColorify( const char *msg, char *buffer, int bufferSize )
 {
-  int   msgLength, pos;
+  int   msgLength;
   int   i, j;
   const char* escapeCode;
   char  tempBuffer[ 7 ];
@@ -487,7 +487,6 @@ static void ANSIColorify( const char *msg, char *buffer, int bufferSize )
     return;
 
   msgLength = strlen( msg );
-  pos = 0;
   i = 0;
   buffer[ 0 ] = '\0';
 
@@ -496,7 +495,7 @@ static void ANSIColorify( const char *msg, char *buffer, int bufferSize )
     if( msg[ i ] == '\n' )
     {
       Com_sprintf( tempBuffer, 7, "%c[0m\n", 0x1B );
-      strncat( buffer, tempBuffer, bufferSize );
+      strncat( buffer, tempBuffer, bufferSize - 1 );
       i++;
     }
     else if( msg[ i ] == Q_COLOR_ESCAPE )
@@ -518,7 +517,7 @@ static void ANSIColorify( const char *msg, char *buffer, int bufferSize )
         if( escapeCode )
         {
           Com_sprintf( tempBuffer, 7, "%c[%sm", 0x1B, escapeCode );
-          strncat( buffer, tempBuffer, bufferSize );
+          strncat( buffer, tempBuffer, bufferSize - 1 );
         }
 
         i++;
@@ -527,7 +526,7 @@ static void ANSIColorify( const char *msg, char *buffer, int bufferSize )
     else
     {
       Com_sprintf( tempBuffer, 7, "%c", msg[ i++ ] );
-      strncat( buffer, tempBuffer, bufferSize );
+      strncat( buffer, tempBuffer, bufferSize - 1 );
     }
   }
 }
