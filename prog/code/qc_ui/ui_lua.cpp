@@ -265,6 +265,7 @@ static void UI_BindLua( lua_State *L ) {
 				std::string result;
 				result.resize( MAX_CVAR_VALUE_STRING );
 				trap_Cvar_VariableStringBuffer( var_name, result.data(), result.size() );
+				result.resize( strlen( result.data() ) );
 				return result;
 			})
 		.addFunction( "trap_Cvar_SetValue", trap_Cvar_SetValue )
@@ -275,6 +276,7 @@ static void UI_BindLua( lua_State *L ) {
 				std::string result;
 				result.resize( MAX_INFO_STRING );
 				trap_Cvar_InfoStringBuffer( bit, result.data(), result.size() );
+				result.resize( strlen( result.data() ) );
 				return result;
 			})
 		.addFunction( "trap_Argc", trap_Argc )
@@ -283,6 +285,7 @@ static void UI_BindLua( lua_State *L ) {
 				std::string result;
 				result.resize( 1024 );
 				trap_Argv( n, result.data(), result.size() );
+				result.resize( strlen( result.data() ) );
 				return result;
 			})
 		.addFunction( "trap_Cmd_ExecuteText", trap_Cmd_ExecuteText )
