@@ -5,6 +5,8 @@ require("shell.init")
 require("shell.input")
 require("shell.refresh")
 
+print("TEST PRINT!")
+
 gCurrentMenu = UIMENU_NONE
 
 function UI_SetActiveMenu(nmenu)

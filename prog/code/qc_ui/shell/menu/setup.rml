@@ -24,7 +24,7 @@
  			button { color: black; }
 		</style>
 	</head>
-	<body template="window" onshow="menu.setup:show()">
+	<body template="window" onshow="menu.setup:show()" onhide="menu.setup:hide()">
 		Setup menu here.<br/>
        Name:<input id="param_name" type="text"/><br/> 
        <button onclick='menu.setup:apply()'>Apply</button>
