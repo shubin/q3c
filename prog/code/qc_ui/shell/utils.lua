@@ -1,8 +1,12 @@
 function print(...)
   local args = table.pack(...)
-  local line = ""
-  for i = 1, args.n do
-    line = line..args[i]
+  if #args == 0 then
+    trap_Print("\n")
+    return
+  end
+  local line = args[1]
+  for i = 2, #args do
+    line = line.." "..args[i]
   end
   line = line.."\n"
   trap_Print(line)
@@ -28,9 +32,12 @@ function Cvar_Watch(var_name, callback)
     trap_Cvar_Watch(var_name, true)
   end
   w[callback] = true
+
+  return { var_name, callback }
 end
 
-function Cvar_Unwatch(var_name, callback)
+function Cvar_Unwatch(handle)
+  local var_name, callback = table.unpack(handle, 1,2)
   local w = watchlist[var_name]
   if w == nil then
     return
@@ -42,8 +49,7 @@ function Cvar_Unwatch(var_name, callback)
   end
 end
 
-function UI_CvarChanged()
-  local var_name = trap_Argv(0)
+function UI_CvarChanged(var_name)
   local w = watchlist[var_name]
   if w ~= nil then
     for func,_ in pairs(w) do

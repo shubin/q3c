@@ -26,7 +26,7 @@
 	</head>
 	<body template="window" onshow="menu.setup:show()" onhide="menu.setup:hide()">
 		Setup menu here.<br/>
-       Name:<input id="param_name" type="text"/><br/> 
+       Name:<input id="$name" type="text"/><br/> 
        <button onclick='menu.setup:apply()'>Apply</button>
        <button onclick='menu.setup:back()'>Back</button>
 	</body>

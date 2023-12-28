@@ -570,8 +570,12 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 }
 
 void UI_CvarChanged( void ) {
+	std::string var_name;
+	var_name.resize( 128 );
+	trap_Argv( 0, var_name.data(), var_name.size() );
+	var_name.resize( strlen( var_name.data() ) );
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_CvarChanged" );
 	if ( func.isCallable() ) {
-		luabridge::call( func );
+		luabridge::call( func, var_name );
 	}
 }
