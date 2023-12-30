@@ -507,14 +507,16 @@ static void UI_BindLua( lua_State *L ) {
 	;
 }
 
+static void lua_registersocket( lua_State *L ) {
+	luaopen_socket_core( L );
+	lua_setglobal( L, "socket" );
+}
+
 void UI_InitLua( void ) {
 	Rml::Lua::Initialise();
 	trap_Cvar_Register( NULL, "ui_debug", "0", CVAR_INIT );
 	if ( trap_Cvar_VariableValue( "ui_debug" ) ) {
-		lua_State *L = Rml::Lua::Interpreter::GetLuaState();
-		luaopen_socket_core( L );
-		lua_setglobal( L, "socket" );
-		lua_settop( L, 0 );
+		lua_registersocket( Rml::Lua::Interpreter::GetLuaState() );
 	}
 	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );
 	Rml::Lua::Interpreter::LoadFile( "shell/main.lua" );
