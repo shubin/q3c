@@ -2,14 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemDefinitionGroup>
 		<ClCompile>      
-			<AdditionalIncludeDirectories>$(ProgSrcDir)lib/RmlUi/Include;$(ProgSrcDir)lib/freetype/include;$(ProgSrcDir)lib/lua;$(ProgSrcDir)lib/LuaBridge3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>$(ProgSrcDir)lib/RmlUi/Include;$(ProgSrcDir)lib/freetype/include;$(ProgSrcDir)lib/lua;$(ProgSrcDir)lib/luasocket;$(ProgSrcDir)lib/LuaBridge3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 			<PreprocessorDefinitions>RMLUI_STATIC_LIB=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<ExceptionHandling>Sync</ExceptionHandling>
 			<RuntimeTypeInfo>true</RuntimeTypeInfo>
 		</ClCompile>
 		<Link>
-			<LibraryDependencies Condition="'$(Game)|$(Compiler)'=='QC|GCC'">lua;freetype;RmlUi;%(LibraryDependencies)</LibraryDependencies>
-			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">lua.lib;freetype.lib;RmlUi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<LibraryDependencies Condition="'$(Game)|$(Compiler)'=='QC|GCC'">lua;luasocket;freetype;RmlUi;%(LibraryDependencies)</LibraryDependencies>
+			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">lua.lib;luasocket.lib;freetype.lib;RmlUi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
 	</ItemDefinitionGroup>
 	<Import Project="Compiler_qcui.props" />

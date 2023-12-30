@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CCEE159C-9606-43B1-B88C-CDB6729EF38B}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="Props\ProjectConfigurations.props" />
+  <Import Project="Props\ProjectConfigurations_Linux.props" />
+  <Import Project="Props\CommonProjectSetup.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Props\Project_luasocket.props" />
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\auxiliar.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\compat.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\buffer.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\except.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\inet.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\io.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\luasocket.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\options.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\select.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\tcp.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\timeout.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\udp.c" />
+    <ClCompile Include="$(ProgSrcDir)lib\luasocket\wsocket.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

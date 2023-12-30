@@ -39,6 +39,9 @@
     <ProjectReference Include="lua.vcxproj">
       <Project>{43324650-20b6-4a30-ae8d-eaf51d36838b}</Project>
     </ProjectReference>
+    <ProjectReference Include="luasocket.vcxproj">
+      <Project>{ccee159c-9606-43b1-b88c-cdb6729ef38b}</Project>
+    </ProjectReference>
     <ProjectReference Include="RmlUi.vcxproj">
       <Project>{22e9de0f-3a2f-44c4-908c-6dc46be6e90f}</Project>
     </ProjectReference>

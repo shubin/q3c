@@ -1,7 +1,8 @@
 extern "C" {
-  #include "lua.h"
-  #include "lauxlib.h"
-  #include "../qcommon/q_shared.h"
+#include "lua.h"
+#include "lauxlib.h"
+#include "luasocket.h"
+#include "../qcommon/q_shared.h"
 }
 #undef DotProduct
 #include "LuaBridge.h"
@@ -59,11 +60,13 @@ static std::string lua_loadfile( const char *qpath ) {
 	return result;
 }
 
-static void lua_require( const char *module ) {
+static int lua_require( lua_State *L ) {
+	const char *module;
 	char qpath[MAX_QPATH];
 	long len;
 	fileHandle_t fh;
 
+	module = luaL_checkstring( L, 1 );
 	strncpy( qpath, module, MAX_QPATH - 1 );
 	qpath[MAX_QPATH - 1] = '\0';
 	for ( char *p = qpath; *p; p++ ) {
@@ -76,12 +79,22 @@ static void lua_require( const char *module ) {
 	if ( fh != 0 ) {
 		std::string source;
 		source.resize( len );
-		trap_FS_Read( source.data(), len, fh);
+		trap_FS_Read( source.data(), len, fh );
 		trap_FS_FCloseFile( fh );
-		Rml::Lua::Interpreter::DoString( source.c_str(), qpath);
-	} else {
-		trap_Print( va( "require: cannot open file: %s\n", qpath ) );
+		//Rml::Lua::Interpreter::DoString( source.c_str(), qpath);
+		//luaL_dostring(  )
+		if ( luaL_loadstring( L, source.c_str() ) ) {
+			trap_Error( va( "luaL_loadstring failed on %s\n", module ) );
+		} else {
+			int top = lua_gettop( L );
+			if ( lua_pcall( L, 0, LUA_MULTRET, 0 ) ) {
+				trap_Error( va( "lua_pcall failed on %s\n", module ) );
+			}
+			return lua_gettop( L ) - top;
+		}
 	}
+	trap_Print( va( "require: cannot open file: %s\n", qpath ) );
+	return 0;
 }
 
 static void UI_BindLua( lua_State *L ) {
@@ -495,6 +508,10 @@ static void UI_BindLua( lua_State *L ) {
 
 void UI_InitLua( void ) {
 	Rml::Lua::Initialise();
+	trap_Cvar_Register( NULL, "ui_debug", "0", CVAR_INIT );
+	if ( trap_Cvar_VariableValue( "ui_debug" ) ) {
+		luaopen_socket_core( Rml::Lua::Interpreter::GetLuaState() );
+	}
 	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );
 	Rml::Lua::Interpreter::LoadFile( "shell/main.lua" );
 }
