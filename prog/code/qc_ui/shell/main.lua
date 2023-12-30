@@ -1,11 +1,10 @@
+require("shell.mobdebug").start("127.0.0.1")
 require("shell.enum")
 require("shell.config")
 require("shell.utils")
 require("shell.init")
 require("shell.input")
 require("shell.refresh")
-
-print("TEST PRINT!")
 
 gCurrentMenu = UIMENU_NONE
 

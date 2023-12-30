@@ -90,7 +90,8 @@ static int lua_require( lua_State *L ) {
 			if ( lua_pcall( L, 0, LUA_MULTRET, 0 ) ) {
 				trap_Error( va( "lua_pcall failed on %s\n", module ) );
 			}
-			return lua_gettop( L ) - top;
+			int nret = lua_gettop( L ) - top + 1;
+			return nret;
 		}
 	}
 	trap_Print( va( "require: cannot open file: %s\n", qpath ) );
@@ -510,7 +511,10 @@ void UI_InitLua( void ) {
 	Rml::Lua::Initialise();
 	trap_Cvar_Register( NULL, "ui_debug", "0", CVAR_INIT );
 	if ( trap_Cvar_VariableValue( "ui_debug" ) ) {
-		luaopen_socket_core( Rml::Lua::Interpreter::GetLuaState() );
+		lua_State *L = Rml::Lua::Interpreter::GetLuaState();
+		luaopen_socket_core( L );
+		lua_setglobal( L, "socket" );
+		lua_settop( L, 0 );
 	}
 	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );
 	Rml::Lua::Interpreter::LoadFile( "shell/main.lua" );
