@@ -706,11 +706,13 @@ static const luaL_Reg ll_funcs[] = {
   {NULL, NULL}
 };
 
+extern int searcher_Quake( lua_State *L );
 
 static void createsearcherstable (lua_State *L) {
   static const lua_CFunction searchers[] = {
     searcher_preload,
-    searcher_Lua,
+    searcher_Quake,
+    //searcher_Lua,
     //searcher_C,
     //searcher_Croot,
     NULL

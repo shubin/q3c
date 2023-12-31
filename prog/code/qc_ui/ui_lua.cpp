@@ -60,7 +60,16 @@ static std::string lua_loadfile( const char *qpath ) {
 	return result;
 }
 
-static int lua_require( lua_State *L ) {
+static int checkload( lua_State *L, int stat, const char *filename ) {
+	if ( luai_likely( stat ) ) {  /* module loaded successfully? */
+		lua_pushstring( L, filename );  /* will be 2nd argument to module */
+		return 2;  /* return open function and file name */
+	} else
+		return luaL_error( L, "error loading module '%s' from file '%s':\n\t%s",
+							  lua_tostring( L, 1 ), filename, lua_tostring( L, -1 ) );
+}
+
+extern "C" int searcher_Quake(lua_State * L) {
 	const char *module;
 	char qpath[MAX_QPATH];
 	long len;
@@ -76,31 +85,21 @@ static int lua_require( lua_State *L ) {
 	}
 	strncat( qpath, ".lua", MAX_QPATH - 1 );
 	len = trap_FS_FOpenFile( qpath, &fh, FS_READ );
-	if ( fh != 0 ) {
-		std::string source;
-		source.resize( len );
-		trap_FS_Read( source.data(), len, fh );
-		trap_FS_FCloseFile( fh );
-		//Rml::Lua::Interpreter::DoString( source.c_str(), qpath);
-		//luaL_dostring(  )
-		if ( luaL_loadstring( L, source.c_str() ) ) {
-			trap_Error( va( "luaL_loadstring failed on %s\n", module ) );
-		} else {
-			int top = lua_gettop( L );
-			if ( lua_pcall( L, 0, LUA_MULTRET, 0 ) ) {
-				trap_Error( va( "lua_pcall failed on %s\n", module ) );
-			}
-			int nret = lua_gettop( L ) - top + 1;
-			return nret;
-		}
+
+	if ( fh == 0 ) {
+		return 1; // cannot open file
 	}
-	trap_Print( va( "require: cannot open file: %s\n", qpath ) );
-	return 0;
+
+	std::string source;
+	source.resize( len );
+	trap_FS_Read( source.data(), len, fh );
+	trap_FS_FCloseFile( fh );
+
+	return checkload( L, ( luaL_loadstring( L, source.c_str() ) == LUA_OK ), qpath );
 }
 
 static void UI_BindLua( lua_State *L ) {
 	luabridge::getGlobalNamespace( L )
-		.addFunction( "require", lua_require )
 		.addFunction( "loadfile", lua_loadfile )
 		.addFunction( "MapKey", 
 			+[]( lua_State *L ) {
