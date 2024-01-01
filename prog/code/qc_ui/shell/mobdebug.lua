@@ -6,7 +6,7 @@
 
 -- use loaded modules or load explicitly on those systems that require that
 local require = require
-local io = io or require "io"
+--local io = io or require "io"
 local table = table or require "table"
 local string = string or require "string"
 local coroutine = coroutine or require "coroutine"
@@ -94,9 +94,14 @@ end
 -- OSX and Windows behave the same way (case insensitive, but case preserving).
 -- OSX can be configured to be case-sensitive, so check for that. This doesn't
 -- handle the case of different partitions having different case-sensitivity.
+--[[
 local win = os and os.getenv and (os.getenv('WINDIR') or (os.getenv('OS') or ''):match('[Ww]indows')) and true or false
 local mac = not win and (os and os.getenv and os.getenv('DYLD_LIBRARY_PATH') or not io.open("/proc")) and true or false
 local iscasepreserving = win or (mac and io.open('/library') ~= nil)
+]]--
+local win = true
+local mac = false
+local iscasepreserving = true
 
 -- turn jit off based on Mike Pall's comment in this discussion:
 -- http://www.freelists.org/post/luajit/Debug-hooks-and-JIT,2
@@ -1375,13 +1380,13 @@ local function handle(params, client, options)
         client:send("LOAD " .. tostring(#lines) .. " " .. file .. "\n")
         client:send(lines)
       else
-        local file = io.open(exp, "r")
+        local file = nil --io.open(exp, "r")
         if not file and pcall(require, "winapi") then
           -- if file is not open and winapi is there, try with a short path;
           -- this may be needed for unicode paths on windows
           winapi.set_encoding(winapi.CP_UTF8)
           local shortp = winapi.short_path(exp)
-          file = shortp and io.open(shortp, "r")
+          file = shortp and nil --io.open(shortp, "r")
         end
         if not file then return nil, nil, "Cannot open file " .. exp end
         -- read the file and remove the shebang line as it causes a compilation error
@@ -1575,6 +1580,7 @@ local function handle(params, client, options)
   return file, line
 end
 
+--[[
 -- Starts debugging server
 local function listen(host, port)
   host = host or "*"
@@ -1612,6 +1618,7 @@ local function listen(host, port)
 
   client:close()
 end
+]]--
 
 local cocreate
 local function coro()
@@ -1649,7 +1656,7 @@ end
 -- make public functions available
 mobdebug.setbreakpoint = set_breakpoint
 mobdebug.removebreakpoint = remove_breakpoint
-mobdebug.listen = listen
+--mobdebug.listen = listen
 mobdebug.loop = loop
 mobdebug.scratchpad = scratchpad
 mobdebug.handle = handle

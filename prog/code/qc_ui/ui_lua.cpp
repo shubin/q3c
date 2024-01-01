@@ -44,20 +44,22 @@ struct QColor {
 	QColor( const float *v ) { Vector4Copy( v, rgba ); }
 };
 
-static std::string lua_loadfile( const char *qpath ) {	
+static int lua_readfile( lua_State *L ) {	
 	long len;
-	std::string result;
+	std::string filecontents;
 	fileHandle_t fh;
+	const char *qpath;
 
+	qpath = luaL_checkstring( L, 1 );
 	len = trap_FS_FOpenFile( qpath, &fh, FS_READ );
 	if ( fh != 0 ) {
-		result.resize( len );
-		trap_FS_Read( result.data(), len, fh );
-		trap_FS_FCloseFile( fh );
-	} else {
-		trap_Print( va( "loadfile: cannot open file: %s\n", qpath ) );
+		return 0;
 	}
-	return result;
+	filecontents.resize( len );
+	trap_FS_Read( filecontents.data(), len, fh );
+	trap_FS_FCloseFile( fh );
+	lua_pushlstring( L, filecontents.data(), filecontents.size() );
+	return 1;
 }
 
 static int checkload( lua_State *L, int stat, const char *filename ) {
@@ -69,7 +71,7 @@ static int checkload( lua_State *L, int stat, const char *filename ) {
 							  lua_tostring( L, 1 ), filename, lua_tostring( L, -1 ) );
 }
 
-extern "C" int searcher_Quake(lua_State * L) {
+extern "C" int searcher_Quake( lua_State *L ) {
 	const char *module;
 	char qpath[MAX_QPATH];
 	long len;
@@ -95,12 +97,12 @@ extern "C" int searcher_Quake(lua_State * L) {
 	trap_FS_Read( source.data(), len, fh );
 	trap_FS_FCloseFile( fh );
 
-	return checkload( L, ( luaL_loadstring( L, source.c_str() ) == LUA_OK ), qpath );
+	return checkload( L, luaL_loadbuffer( L, source.c_str(), source.size(), qpath ) == LUA_OK, qpath);
 }
 
 static void UI_BindLua( lua_State *L ) {
 	luabridge::getGlobalNamespace( L )
-		.addFunction( "loadfile", lua_loadfile )
+		.addFunction( "readfile", lua_readfile )
 		.addFunction( "MapKey", 
 			+[]( lua_State *L ) {
 				auto key = luabridge::Stack<int>::get( L, 1 );
@@ -511,10 +513,12 @@ static void lua_registersocket( lua_State *L ) {
 	lua_setglobal( L, "socket" );
 }
 
+static vmCvar_t ui_debug;
+
 void UI_InitLua( void ) {
 	Rml::Lua::Initialise();
-	trap_Cvar_Register( NULL, "ui_debug", "0", CVAR_INIT );
-	if ( trap_Cvar_VariableValue( "ui_debug" ) ) {
+	trap_Cvar_Register( &ui_debug, "ui_debug", "0", CVAR_INIT );
+	if ( ui_debug.string[0] ) {
 		lua_registersocket( Rml::Lua::Interpreter::GetLuaState() );
 	}
 	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );

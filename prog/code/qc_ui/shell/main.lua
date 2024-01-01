@@ -1,4 +1,4 @@
-require("shell.mobdebug").start("127.0.0.1")
+require("shell.debug")
 require("shell.enum")
 require("shell.config")
 require("shell.utils")
