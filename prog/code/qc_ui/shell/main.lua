@@ -24,5 +24,5 @@ function UI_SetActiveMenu(nmenu)
 end
 
 function UI_IsFullscreen()
-  return (gCurrentMenu ~= UIMENU_NONE) and (gCurrentMenu ~= UIMENU_INGAME) 
+  return (gCurrentMenu ~= UIMENU_NONE) and (gCurrentMenu ~= UIMENU_INGAME) and (gCurrentMenu ~= UIMENU_DEATH)
 end
