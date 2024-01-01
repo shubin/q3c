@@ -22,7 +22,7 @@ function LoadDocument(name)
   return doc
 end
 
-watchlist = {}
+local watchlist = {}
 
 function Cvar_Watch(var_name, callback)
   local w = watchlist[var_name]
