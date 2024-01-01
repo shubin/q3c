@@ -1,4 +1,3 @@
-require("shell.debug")
 require("shell.enum")
 require("shell.config")
 require("shell.utils")

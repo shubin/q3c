@@ -5,8 +5,13 @@ rmlui:LoadFontFace("shell/assets/NotoEmoji-Regular.ttf", true)
 gGlConfig = trap_GetGlconfig()
 gContext = rmlui:CreateContext("main", Vector2i.new(gGlConfig.vidWidth, gGlConfig.vidHeight))
 
-rmlui:InitialiseDebugger(gContext)
-rmlui:SetDebuggerVisible(true)
+local ui_rmldebug = vmCvar_t()
+trap_Cvar_Register( ui_rmldebug, "ui_rmldebug", "0", 0 )
+
+if ui_rmldebug.integer ~= 0 then
+  rmlui:InitialiseDebugger(gContext)
+  rmlui:SetDebuggerVisible(true)
+end
 
 menu = {}
 require("shell.menu.main")
