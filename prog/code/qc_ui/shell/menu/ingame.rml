@@ -20,7 +20,6 @@
 			{
 				text-align: left;
 			}
- 			button { color: black; }
 		</style>
 	</head>
 	<body template="window" onkeydown="menu.ingame:keydown(event)">

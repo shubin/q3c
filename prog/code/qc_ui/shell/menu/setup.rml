@@ -9,7 +9,6 @@
 				height: 225dp;
 
 				margin: auto;
-				color: black;
 			}
 
 			div#title_bar div#icon
@@ -21,7 +20,6 @@
 			{
 				text-align: left;
 			}
- 			button { color: black; }
 		</style>
 	</head>
 	<body template="window" onshow="gMenu.setup:show()" onhide="gMenu.setup:hide()">
