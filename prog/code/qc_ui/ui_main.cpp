@@ -10,6 +10,7 @@ extern "C" {
 #include "ui_local.h"
 #undef DotProduct
 
+float r_brightness;
 glconfig_t g_glConfig;
 Rml::QRenderInterface g_renderInterface;
 Rml::QFileInterface g_fileInterface;
@@ -17,10 +18,13 @@ Rml::QSystemInterface g_systemInterface;
 
 void UI_InitLua( void );
 void UI_ShutdownLua( void );
+void UI_CvarChangedLua( void );
 
 void UI_Init( void ) {
 	glconfig_t glc;
 
+	r_brightness = trap_Cvar_VariableValue( "r_brightness" );
+	trap_Cvar_Watch( "r_brightness", qtrue );
 	trap_GetGlconfig( &glc );
 	g_renderInterface.Initialize( glc.vidWidth, glc.vidHeight );
 	Rml::SetRenderInterface( &g_renderInterface );

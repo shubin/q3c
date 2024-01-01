@@ -55,6 +55,9 @@ void QRenderInterface::RenderGeometry( Vertex *vertices, int num_vertices, int *
 	for ( int i = 0; i < num_vertices; i++ ) {
 		pCurrentVertex[i] = vertices[i];
 		pCurrentVertex[i].position += translation;
+		pCurrentVertex[i].colour.red /= r_brightness;
+		pCurrentVertex[i].colour.green /= r_brightness;
+		pCurrentVertex[i].colour.blue /= r_brightness;
 	}
 	pCurrentVertex += num_vertices;
 }

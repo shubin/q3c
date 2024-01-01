@@ -646,7 +646,7 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 	}
 }
 
-void UI_CvarChanged( void ) {
+void UI_CvarChangedLua( void ) {
 	std::string var_name;
 	var_name.resize( 128 );
 	trap_Argv( 0, var_name.data(), var_name.size() );
