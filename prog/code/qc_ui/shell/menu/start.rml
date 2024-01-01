@@ -25,7 +25,7 @@
 	</head>
 	<body template="window">
 		Start menu here.<br/>
-       <button onclick='menu.start:dm1()'>qcdm1</button>
-       <button onclick='menu.start:back()'>Back</button>
+       <button onclick='gMenu.start:dm1()'>qcdm1</button>
+       <button onclick='gMenu.start:back()'>Back</button>
 	</body>
 </rml>

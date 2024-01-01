@@ -24,10 +24,10 @@
  			button { color: black; }
 		</style>
 	</head>
-	<body template="window" onshow="menu.setup:show()" onhide="menu.setup:hide()">
+	<body template="window" onshow="gMenu.setup:show()" onhide="gMenu.setup:hide()">
 		Setup menu here.<br/>
        Name:<input id="$name" type="text"/><br/> 
-       <button onclick='menu.setup:apply()'>Apply</button>
-       <button onclick='menu.setup:back()'>Back</button>
+       <button onclick='gMenu.setup:apply()'>Apply</button>
+       <button onclick='gMenu.setup:back()'>Back</button>
 	</body>
 </rml>

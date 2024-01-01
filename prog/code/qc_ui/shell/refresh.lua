@@ -1,5 +1,5 @@
 local pointer = trap_R_RegisterShaderNoMip("shell/assets/pointer");
-local pointerSize = Vector2f.new(48, 48)
+local pointerSize = Vector2f.new(32, 32)
 local pointerHotspot = Vector2f.new(0.3, 0)
 
 function UI_Refresh(realtime)

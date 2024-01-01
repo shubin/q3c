@@ -25,9 +25,9 @@
 	</head>
 	<body template="window">
 		Main menu here.<br/>
-       <button onclick='menu.main:open("start")'>Start Game</button>
-       <button onclick='menu.main:open("setup")'>Setup</button>
-       <button onclick='menu.main:restart()'>Restart</button>
-       <button onclick='menu.main:quit()'>Quit</button>
+       <button onclick='gMenu.main:open("start")'>Start Game</button>
+       <button onclick='gMenu.main:open("setup")'>Setup</button>
+       <button onclick='gMenu.main:restart()'>Restart</button>
+       <button onclick='gMenu.main:quit()'>Quit</button>
 	</body>
 </rml>
