@@ -1,9 +1,9 @@
-require("shell.enum")
-require("shell.config")
-require("shell.utils")
-require("shell.init")
-require("shell.input")
-require("shell.refresh")
+require("enum")
+require("config")
+require("utils")
+require("init")
+require("input")
+require("refresh")
 
 gCurrentMenu = UIMENU_NONE
 
@@ -14,10 +14,10 @@ function UI_SetActiveMenu(nmenu)
     trap_Key_ClearStates()
   else
     if nmenu == UIMENU_MAIN then
-      menu.main.doc:Show()
+      ShowMenu("main")
     end
     if nmenu == UIMENU_INGAME then
-      menu.ingame.doc:Show()
+      ShowMenu("ingame")
     end
     trap_Key_SetCatcher(KEYCATCH_UI)
   end

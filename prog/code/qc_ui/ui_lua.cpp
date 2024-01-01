@@ -71,35 +71,6 @@ static int checkload( lua_State *L, int stat, const char *filename ) {
 							  lua_tostring( L, 1 ), filename, lua_tostring( L, -1 ) );
 }
 
-extern "C" int searcher_Quake( lua_State *L ) {
-	const char *module;
-	char qpath[MAX_QPATH];
-	long len;
-	fileHandle_t fh;
-
-	module = luaL_checkstring( L, 1 );
-	strncpy( qpath, module, MAX_QPATH - 1 );
-	qpath[MAX_QPATH - 1] = '\0';
-	for ( char *p = qpath; *p; p++ ) {
-		if ( *p == '.' ) {
-			*p = '/';
-		}
-	}
-	strncat( qpath, ".lua", MAX_QPATH - 1 );
-	len = trap_FS_FOpenFile( qpath, &fh, FS_READ );
-
-	if ( fh == 0 ) {
-		return 1; // cannot open file
-	}
-
-	std::string source;
-	source.resize( len );
-	trap_FS_Read( source.data(), len, fh );
-	trap_FS_FCloseFile( fh );
-
-	return checkload( L, luaL_loadbuffer( L, source.c_str(), source.size(), qpath ) == LUA_OK, qpath);
-}
-
 static void UI_BindLua( lua_State *L ) {
 	luabridge::getGlobalNamespace( L )
 		.addFunction( "readfile", lua_readfile )
@@ -513,14 +484,46 @@ static void lua_registersocket( lua_State *L ) {
 	lua_setglobal( L, "socket" );
 }
 
-static vmCvar_t ui_shell;
-static vmCvar_t ui_luadebug; // ui_luadebug cvar should be set to the "host:port" of the debugger server
+vmCvar_t ui_shell;
+vmCvar_t ui_luadebug; // ui_luadebug cvar should be set to the "host:port" of the debugger server
+
+extern "C" int searcher_Quake( lua_State * L ) {
+	const char *module;
+	std::string qpath;
+	long len;
+	fileHandle_t fh;
+
+	module = luaL_checkstring( L, 1 );
+	qpath = ui_shell.string;
+	qpath += ".";
+	qpath += module;
+	std::replace( qpath.begin(), qpath.end(), '.', '/' );
+	qpath += ".lua";
+	len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ);
+
+	if ( fh == 0 ) {
+		qpath = module;
+		std::replace( qpath.begin(), qpath.end(), '.', '/' );
+		qpath += ".lua";		
+		len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ);
+		if ( fh == 0 ) {
+			return 1; // cannot open file
+		}
+	}
+
+	std::string source;
+	source.resize( len );
+	trap_FS_Read( source.data(), len, fh );
+	trap_FS_FCloseFile( fh );
+
+	return checkload( L, luaL_loadbuffer( L, source.c_str(), source.size(), qpath.c_str() ) == LUA_OK, qpath.c_str() );
+}
 
 void UI_InitDebugger( lua_State *L ) {
 	trap_Cvar_Register( &ui_luadebug, "ui_luadebug", "", CVAR_INIT );
 	if ( ui_luadebug.string[0] ) {
-		trap_Print( "^3*** Initializing Lua debugger ***\n" );
-		// registering the socket module for moddebug.lua
+		trap_Print( va( "^3*** Connecting debugger to %s ***\n", ui_luadebug.string ) );
+		// register the socket module for mobdebug.lua
 		lua_registersocket( Rml::Lua::Interpreter::GetLuaState() );
 		// run the debugger
 		std::string mobdebug = std::string( ui_shell.string );
@@ -539,12 +542,38 @@ void UI_InitDebugger( lua_State *L ) {
 	}
 }
 
+static int ErrorHandler( lua_State *L ) {
+	const char *msg = lua_tostring( L, 1 );
+	if ( msg == NULL ) {
+		if ( luaL_callmeta( L, 1, "__tostring" ) && lua_type( L, -1 ) == LUA_TSTRING )
+			return 1;
+		else
+			msg = lua_pushfstring( L, "(error object is a %s value)", luaL_typename( L, 1 ) );
+	}
+	luaL_traceback( L, L, msg, 1 );
+	return 1;
+}
+
+static void UI_RunMain( lua_State *L, const char *name ) {
+	lua_getglobal( L, "require" );
+	lua_pushstring( L, name );
+	lua_pushcfunction( L, ErrorHandler );
+	lua_insert( L, -3 );
+	if ( lua_pcall( L, 1, 0, -3 ) != LUA_OK ) {
+		trap_Print( va( "^1Error loading UI main()\n^1%s\n", lua_tostring( L, -1 ) ) );
+		lua_pop( L, 2 );
+	}
+	lua_remove( L, -1 );
+}
+
 void UI_InitLua( void ) {
 	trap_Cvar_Register( &ui_shell, "ui_shell", "shell", CVAR_INIT );
 	Rml::Lua::Initialise();
-	UI_InitDebugger( Rml::Lua::Interpreter::GetLuaState() );
-	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );
-	Rml::Lua::Interpreter::LoadFile( va( "%s/main.lua", ui_shell.string ) );
+
+	lua_State *L = Rml::Lua::Interpreter::GetLuaState();
+	UI_InitDebugger( L );
+	UI_BindLua( L );
+	UI_RunMain( L, "main" );
 }
 
 void UI_ShutdownLua( void ) {

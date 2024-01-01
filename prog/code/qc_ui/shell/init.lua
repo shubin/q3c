@@ -1,10 +1,11 @@
-rmlui:LoadFontFace("shell/assets/LatoLatin-Regular.ttf")
-rmlui:LoadFontFace("shell/assets/LatoLatin-Bold.ttf")
-rmlui:LoadFontFace("shell/assets/NotoEmoji-Regular.ttf", true)
+rmlui:LoadFontFace("assets/LatoLatin-Regular.ttf")
+rmlui:LoadFontFace("assets/LatoLatin-Bold.ttf")
+rmlui:LoadFontFace("assets/NotoEmoji-Regular.ttf", true)
 
 gGlConfig = trap_GetGlconfig()
 gContext = rmlui:CreateContext("main", Vector2i.new(gGlConfig.vidWidth, gGlConfig.vidHeight))
 
+-- load the debugger if needed
 local ui_rmldebug = vmCvar_t()
 trap_Cvar_Register( ui_rmldebug, "ui_rmldebug", "0", 0 )
 
@@ -13,8 +14,9 @@ if ui_rmldebug.integer ~= 0 then
   rmlui:SetDebuggerVisible(true)
 end
 
-menu = {}
-require("shell.menu.main")
-require("shell.menu.start")
-require("shell.menu.setup")
-require("shell.menu.ingame")
+-- load all the menus
+gMenu = {}
+local menulist = { "main", "setup", "start", "ingame" }
+for _,v in pairs(menulist) do
+  gMenu[v] = require("menu."..v)
+end

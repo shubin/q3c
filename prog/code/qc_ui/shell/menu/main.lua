@@ -1,15 +1,17 @@
-menu.main = {}
-menu.main.doc = LoadDocument("menu/main.rml")
+local menu = {}
+menu.doc = LoadDocument("menu/main.rml")
 
-function menu.main:open(nmenu)
+function menu:open(nmenu)
   self.doc:Hide()
-  menu[nmenu].doc:Show()
+  ShowMenu(nmenu)
 end
 
-function menu.main:restart()
+function menu:restart()
   trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n")  
 end
 
-function menu.main:quit()
+function menu:quit()
   trap_Cmd_ExecuteText(EXEC_APPEND, "quit\n")
 end
+
+return menu

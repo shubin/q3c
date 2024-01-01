@@ -1,11 +1,13 @@
-menu.start = {}
-menu.start.doc = LoadDocument("menu/start.rml")
+local menu = {}
+menu.doc = LoadDocument("menu/start.rml")
 
-function menu.start:dm1()
+function menu:dm1()
   trap_Cmd_ExecuteText(EXEC_APPEND, "map qcdm1\n")
 end
 
-function menu.start:back()
+function menu:back()
   self.doc:Hide()
-  menu.main.doc:Show()
+  ShowMenu("main")
 end
+
+return menu

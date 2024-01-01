@@ -17,9 +17,13 @@ function clamp(v, low, high)
 end
 
 function LoadDocument(name)
-  local doc = gContext:LoadDocument("shell/"..name)
+  local doc = gContext:LoadDocument(name)
   --doc.GetElementById("#title").inner_rml = doc.title
   return doc
+end
+
+function ShowMenu(nmenu)
+  gMenu[nmenu].doc:Show()
 end
 
 local watchlist = {}

@@ -71,7 +71,15 @@ void QRenderInterface::SetScissorRegion( int x, int y, int width, int height ) {
 }
 
 bool QRenderInterface::LoadTexture( TextureHandle &texture_handle, Vector2i &texture_dimensions, const String &source ) {
-	texture_handle = trap_R_RegisterShaderNoMip( source.c_str() );
+	String qpath;
+
+	if ( source[0] == '/' ) {
+		qpath = source.substr( 1 );
+	} else {
+		qpath = String( ui_shell.string ) + "/" + source;
+	}
+
+	texture_handle = trap_R_RegisterShaderNoMip( qpath.c_str() );
 	if ( texture_handle == 0 ) {
 		return false;
 	}

@@ -30,8 +30,15 @@ QFileInterface::~QFileInterface() {
 
 FileHandle QFileInterface::Open( const String &path ) {
 	FileData *fd = new FileData();
+	String qpath;
 
-	fd->size = trap_FS_FOpenFile( path.c_str(), &fd->qfile, FS_READ );
+	if ( path[0] == '/' ) {
+		qpath = path.substr( 1 );
+	} else  {
+		qpath = String( ui_shell.string ) + "/" + path;
+	}
+
+	fd->size = trap_FS_FOpenFile( qpath.c_str(), &fd->qfile, FS_READ );
 	if ( fd->qfile == 0 ) {
 		delete fd;
 		return 0;
