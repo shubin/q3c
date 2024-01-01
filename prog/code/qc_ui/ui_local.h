@@ -17,6 +17,7 @@ void UI_DrawConnectScreen( qboolean overlay );
 void UI_CvarChanged( void );
 
 void UI_MapKey( int key, int *ki, int *chr );
+const char  *UI_ConvertPath( const char *path );
 
 extern glconfig_t g_glConfig;
 extern vmCvar_t ui_shell;

@@ -59,3 +59,28 @@ char *QDECL va( char *format, ... ) {
 
 	return buf;
 }
+
+const char *UI_ConvertPath( const char *path ) {
+	static char qpath[MAX_QPATH];
+
+	if ( path[0] == '/' ) {
+		strncpy( qpath, path, MAX_QPATH - 1 );
+	} else {
+		strncpy( qpath, ui_shell.string, MAX_QPATH - 1 );
+		qpath[MAX_QPATH - 1] = '\0';
+		strncat( qpath, "/", MAX_QPATH );
+		strncat( qpath, path, MAX_QPATH );
+	}
+	qpath[MAX_QPATH - 1] = '\0';
+	return qpath;
+}
+
+void UI_CvarChanged( void ) {
+	char var_name[64];
+	trap_Argv( 0, var_name, 63 );
+	var_name[63] = 0;
+	if ( !strcmp( var_name, "r_brightness" ) ) {
+		r_brightness = trap_Cvar_VariableValue( "r_brightness" );
+	}
+	UI_CvarChangedLua();
+}
