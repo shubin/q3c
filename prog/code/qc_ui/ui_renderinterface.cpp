@@ -17,7 +17,7 @@ using namespace Rml;
 QRenderInterface::QRenderInterface()
 	: mScissorEnabled( false ), mWholeScreen{ 0 }, mScissor{ 0 }
 	, mVertices( 0 ), mIndices( 0 ), mCommands( 0 ), pCurrentVertex( 0 )
-	, pCurrentIndex( 0 ), pCurrentCommand( 0 )
+	, pCurrentIndex( 0 ), pCurrentCommand( 0 ), mWhite( 0 )
 {
 }
 
@@ -43,7 +43,7 @@ void QRenderInterface::RenderGeometry( Vertex *vertices, int num_vertices, int *
 
 	pCurrentCommand->firstIndex = pCurrentIndex - mIndices;
 	pCurrentCommand->numIndices = num_indices;
-	pCurrentCommand->shader = (qhandle_t)texture;
+	pCurrentCommand->shader = texture ? (qhandle_t)texture : mWhite;
 	pCurrentCommand->scissor = mScissorEnabled ? mScissor : mWholeScreen;
 	pCurrentCommand++;
 
@@ -102,6 +102,7 @@ void QRenderInterface::Initialize( int width, int height ) {
 	pCurrentCommand = mCommands;
 	mWholeScreen.w = width;
 	mWholeScreen.h = height;
+	mWhite = trap_R_RegisterShaderNoMip( "white" );
 }
 
 void QRenderInterface::Shutdown() {

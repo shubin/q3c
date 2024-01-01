@@ -53,6 +53,7 @@ public:
 	virtual void ReleaseTexture( TextureHandle texture );
 	virtual void SetTransform( const Matrix4f *transform );
 
+	qhandle_t	mWhite;
 	bool		mScissorEnabled;
 	QScissor	mWholeScreen, mScissor;
 	Vertex		*mVertices, *pCurrentVertex;
