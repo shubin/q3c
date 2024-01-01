@@ -1,6 +1,6 @@
-gPointer = trap_R_RegisterShaderNoMip("shell/assets/pointer");
-gPointerSize = Vector2f.new(48, 48)
-gPointerHotspot = Vector2f.new(0.3, 0)
+local pointer = trap_R_RegisterShaderNoMip("shell/assets/pointer");
+local pointerSize = Vector2f.new(48, 48)
+local pointerHotspot = Vector2f.new(0.3, 0)
 
 function UI_Refresh(realtime)
   if gCurrentMenu == UIMENU_NONE then
@@ -9,10 +9,10 @@ function UI_Refresh(realtime)
   gContext:Update()
   gContext:Render()
   trap_R_DrawStretchPic(
-    gMousePos.x - gPointerSize.x * gPointerHotspot.x,
-    gMousePos.y - gPointerSize.y * gPointerHotspot.y,
-    gPointerSize.x, gPointerSize.y,
+    gMousePos.x - pointerSize.x * pointerHotspot.x,
+    gMousePos.y - pointerSize.y * pointerHotspot.y,
+    pointerSize.x, pointerSize.y,
     0, 0, 1, 1,
-    gPointer
+    pointer
   )
 end
