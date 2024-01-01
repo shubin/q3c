@@ -513,18 +513,24 @@ static void lua_registersocket( lua_State *L ) {
 	lua_setglobal( L, "socket" );
 }
 
+static vmCvar_t ui_shell;
 static vmCvar_t ui_luadebug; // ui_luadebug cvar should be set to the "host:port" of the debugger server
 
 void UI_InitDebugger( lua_State *L ) {
-	trap_Cvar_Register( &ui_luadebug, "ui_luadebug", "0", CVAR_INIT );
+	trap_Cvar_Register( &ui_luadebug, "ui_luadebug", "", CVAR_INIT );
 	if ( ui_luadebug.string[0] ) {
 		trap_Print( "^3*** Initializing Lua debugger ***\n" );
 		// registering the socket module for moddebug.lua
 		lua_registersocket( Rml::Lua::Interpreter::GetLuaState() );
 		// run the debugger
+		std::string mobdebug = std::string( ui_shell.string );
+		std::replace( mobdebug.begin(), mobdebug.end(), '/', '.' );
+		std::replace( mobdebug.begin(), mobdebug.end(), '\\', '.' );
+		mobdebug += ".mobdebug";
+
 		int top = lua_gettop( L );
 		lua_getglobal( L, "require" );
-		lua_pushstring( L, "shell.mobdebug" );
+		lua_pushstring( L, mobdebug.c_str() );
 		lua_call( L, 1, 1 );
 		lua_getfield( L, -1, "start" );
 		lua_pushstring( L, ui_luadebug.string );
@@ -534,10 +540,11 @@ void UI_InitDebugger( lua_State *L ) {
 }
 
 void UI_InitLua( void ) {
+	trap_Cvar_Register( &ui_shell, "ui_shell", "shell", CVAR_INIT );
 	Rml::Lua::Initialise();
 	UI_InitDebugger( Rml::Lua::Interpreter::GetLuaState() );
 	UI_BindLua( Rml::Lua::Interpreter::GetLuaState() );
-	Rml::Lua::Interpreter::LoadFile( "shell/main.lua" );
+	Rml::Lua::Interpreter::LoadFile( va( "%s/main.lua", ui_shell.string ) );
 }
 
 void UI_ShutdownLua( void ) {

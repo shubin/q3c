@@ -939,7 +939,11 @@ vm_t *VM_Create( vmIndex_t index, syscall_t systemCalls, vmInterpret_t interpret
 
 #if defined( QC )
 	// if we have scriptable ui, load another VM for that
-	if ( index == VM_UI && FS_FileExists( "shell/main.lua" ) ) {
+	cvar_t* ui_shell =  Cvar_FindVar( "ui_shell" );
+	if ( index == VM_UI && (
+		( ui_shell != NULL && FS_FileExists( va( "%s/main.lua", ui_shell->string ) ) )
+		|| FS_FileExists( "shell/main.lua" )
+		) ) {
 		name = "qcui";
 	}
 #endif
