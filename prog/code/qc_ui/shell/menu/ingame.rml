@@ -22,7 +22,7 @@
 			}
 		</style>
 	</head>
-	<body template="window" onkeydown="menu.ingame:keydown(event)">
+	<body template="window" onkeydown="gMenu.ingame:keydown(event)">
 		Ingame menu here.<br/>
        <button onclick='gMenu.ingame:disconnect()'>Disconnect</button>
        <button onclick='gMenu.ingame:resume()'>Resume</button>
