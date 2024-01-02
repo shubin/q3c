@@ -37,6 +37,12 @@ bool QSystemInterface::LogMessage( Log::Type type, const String &message ) {
 	return true;
 }
 
+void UI_SetMousePointer( const char *cursor );
+
+void QSystemInterface::SetMouseCursor( const String &cursor_name ) {
+	UI_SetMousePointer( cursor_name.c_str() );
+}
+
 /*
 int QSystemInterface::TranslateString( String &translated, const String &input ) {
 	//translated 

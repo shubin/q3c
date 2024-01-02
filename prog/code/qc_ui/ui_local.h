@@ -96,10 +96,10 @@ public:
 	virtual ~QSystemInterface();
 	virtual double GetElapsedTime();
 	virtual bool LogMessage( Log::Type type, const String &message );
+	virtual void SetMouseCursor( const String &cursor_name );
 	/*
 	virtual int TranslateString( String &translated, const String &input );
 	virtual void JoinPath( String &translated_path, const String &document_path, const String &path );
-	virtual void SetMouseCursor( const String &cursor_name );
 	virtual void SetClipboardText( const String &text );
 	virtual void GetClipboardText( String &text );
 	*/

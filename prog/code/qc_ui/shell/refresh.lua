@@ -16,3 +16,7 @@ function UI_Refresh(realtime)
     pointer
   )
 end
+
+function UI_SetMousePointer(nptr)
+  --print("Set pointer", nptr)
+end

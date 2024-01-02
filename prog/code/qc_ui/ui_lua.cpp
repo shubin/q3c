@@ -233,3 +233,10 @@ void UI_CvarChangedLua( void ) {
 		luabridge::call( func, var_name );
 	}
 }
+
+void UI_SetMousePointer( const char *pointer ) {
+	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_SetMousePointer" );
+	if ( func.isCallable() ) {
+		luabridge::call( func, pointer );
+	}
+}
