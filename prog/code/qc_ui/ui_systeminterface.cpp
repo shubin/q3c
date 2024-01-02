@@ -43,12 +43,17 @@ void QSystemInterface::SetMouseCursor( const String &cursor_name ) {
 	UI_SetMousePointer( cursor_name.c_str() );
 }
 
-/*
-int QSystemInterface::TranslateString( String &translated, const String &input ) {
-	//translated 
+void QSystemInterface::JoinPath( String &translated_path, const String &document_path, const String &path ) {
+	if ( path.size() != 0 && path[0] == '/' ) {
+		translated_path = path;
+	} else {
+		SystemInterface::JoinPath( translated_path, document_path, path );
+	}
 }
 
-void QSystemInterface::JoinPath( String &translated_path, const String &document_path, const String &path ) {
+/*
+int QSystemInterface::TranslateString( String &translated, const String &input ) {
+	//translated
 }
 
 void QSystemInterface::SetMouseCursor( const String &cursor_name ) {
