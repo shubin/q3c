@@ -8,6 +8,7 @@
   </PropertyGroup>
   <Import Project="Props\ProjectConfigurations.props" />
   <Import Project="Props\ProjectConfigurations_Linux.props" />
+  <Import Project="Props\nasm.props" />
   <Import Project="Props\CommonProjectSetup.props" />
   <ImportGroup Label="PropertySheets">
     <Import Project="Props\Project_qcui.props" />
@@ -48,5 +49,9 @@
       <Project>{22e9de0f-3a2f-44c4-908c-6dc46be6e90f}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <NASM Include="$(ProgSrcDir)code\qc_ui\ui_mobdebugsrc.asm" />
+  </ItemGroup>
+  <Import Project="Props\nasm.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -11,6 +11,9 @@
 			<LibraryDependencies Condition="'$(Game)|$(Compiler)'=='QC|GCC'">lua;luasocket;freetype;RmlUi;%(LibraryDependencies)</LibraryDependencies>
 			<AdditionalDependencies Condition="'$(Game)|$(Compiler)'=='QC|MSVC'">lua.lib;luasocket.lib;freetype.lib;RmlUi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
 		</Link>
+		<NASM>
+			<IncludePaths>$(ProgSrcDir)code\qc_ui\;%(IncludePaths)</IncludePaths>
+		</NASM>
 	</ItemDefinitionGroup>
 	<Import Project="Compiler_qcui.props" />
 	<Import Project="VM.props" />

@@ -28,36 +28,49 @@ static int checkload( lua_State *L, int stat, const char *filename ) {
 							  lua_tostring( L, 1 ), filename, lua_tostring( L, -1 ) );
 }
 
+extern "C" char g_mobdebug_src_start;
+extern "C" char g_mobdebug_src_end;
+
 extern "C" int searcher_Quake( lua_State * L ) {
 	const char *module;
 	std::string qpath;
 	long len;
 	fileHandle_t fh;
+	std::string source;
+	const char *pSource;
+	size_t szSource;
 
 	module = luaL_checkstring( L, 1 );
-	qpath = ui_shell.string;
-	qpath += ".";
-	qpath += module;
-	std::replace( qpath.begin(), qpath.end(), '.', '/' );
-	qpath += ".lua";
-	len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ);
 
-	if ( fh == 0 ) {
-		qpath = module;
+	if ( strcmp( module, "mobdebug" ) ) {
+		qpath = ui_shell.string;
+		qpath += ".";
+		qpath += module;
 		std::replace( qpath.begin(), qpath.end(), '.', '/' );
-		qpath += ".lua";		
-		len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ);
+		qpath += ".lua";
+		len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ );
+
 		if ( fh == 0 ) {
-			return 1; // cannot open file
+			qpath = module;
+			std::replace( qpath.begin(), qpath.end(), '.', '/' );
+			qpath += ".lua";
+			len = trap_FS_FOpenFile( qpath.c_str(), &fh, FS_READ );
+			if ( fh == 0 ) {
+				return 1; // cannot open file
+			}
 		}
+
+		source.resize( len );
+		trap_FS_Read( source.data(), len, fh );
+		trap_FS_FCloseFile( fh );
+		pSource = source.data();
+		szSource = source.size();
+	} else {
+		pSource = &g_mobdebug_src_start;
+		szSource = &g_mobdebug_src_end - &g_mobdebug_src_start;
 	}
 
-	std::string source;
-	source.resize( len );
-	trap_FS_Read( source.data(), len, fh );
-	trap_FS_FCloseFile( fh );
-
-	return checkload( L, luaL_loadbuffer( L, source.c_str(), source.size(), qpath.c_str() ) == LUA_OK, qpath.c_str() );
+	return checkload( L, luaL_loadbuffer( L, pSource, szSource, qpath.c_str() ) == LUA_OK, qpath.c_str() );
 }
 
 static int ErrorHandler( lua_State *L ) {
@@ -124,9 +137,7 @@ void UI_InitDebugger( lua_State *L ) {
 			if ( port.size() != 0 ) {
 				lua_pushinteger( L, atoi( port.c_str() ) ); nargs++;
 			}
-			if ( LuaCall( L, nargs, 0 ) ) {
-				trap_Print( "^3*** Debugger successfully initialized ***\n" );
-			}
+			LuaCall( L, nargs, 0 );
 		}
 		lua_settop( L, top );
 	}
