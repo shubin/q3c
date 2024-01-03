@@ -272,6 +272,633 @@ function UI_SetLerpFrameAnimation(ci, lf, newAnimation)
 	lf.animationTime = lf.frameTime + anim.initialLerp
 end
 
+--[[
+===============
+UI_RunLerpFrame
+===============
+]]--
+function UI_RunLerpFrame(ci, lf, newAnimation)
+  --int			f, numFrames;
+  --animation_t	*anim;
+
+  -- see if the animation sequence is switching
+  if (newAnimation ~= lf.animationNumber) or (lf->animation == nil) then
+    UI_SetLerpFrameAnimation(ci, lf, newAnimation)
+  
+
+  --if we have passed the current frame, move it to
+  -- oldFrame and calculate a new frame
+  if dp_realtime >= lf.frameTime then
+    lf.oldFrame = lf.frame
+    lf.oldFrameTime = lf.frameTime
+
+    -- get the next frame based on the animation
+    anim = lf->animation
+    if anim->frameLerp == 0 then
+      return		-- shouldn't happen
+    end
+    if dp_realtime < lf.animationTime then
+      lf.frameTime = lf.animationTime		-- initial lerp
+    else
+      lf.frameTime = lf.oldFrameTime + anim.frameLerp
+    end
+    f = (lf.frameTime - lf.animationTime) / anim.frameLerp
+
+    local numFrames = anim.numFrames
+    if anim.flipflop then
+      numFrames = numFrames * 2
+    end
+    if f >= numFrames then
+      f = f - numFrames
+      if anim->loopFrames then
+        f = f % anim.loopFrames
+        f = f + anim.numFrames - anim.loopFrames
+      else
+        f = numFrames - 1
+        -- the animation is stuck at the end, so it
+        -- can immediately transition to another sequence
+		lf.frameTime = dp_realtime
+      end
+    end
+    if anim.reversed then
+      lf.frame = anim.firstFrame + anim.numFrames - 1 - f
+    else if anim.flipflop and (f >= anim.numFrames) then
+      lf.frame = anim.firstFrame + anim.numFrames - 1 - (f % anim.numFrames)
+	else
+      lf.frame = anim.firstFrame + f
+    end
+    if dp_realtime > lf.frameTime then
+      lf.frameTime = dp_realtime
+	end
+  end
+
+  if lf.frameTime > dp_realtime + 200 then
+    lf.frameTime = dp_realtime
+  end
+
+  if lf.oldFrameTime > dp_realtime then
+    lf.oldFrameTime = dp_realtime
+  end
+  -- calculate current lerp value
+  if lf.frameTime == lf.oldFrameTime then
+    lf.backlerp = 0
+  else
+    lf.backlerp = 1.0 - (dp_realtime - lf.oldFrameTime) / (lf.frameTime - lf.oldFrameTime)
+  end
+end
+
+--[[
+===============
+UI_PlayerAnimation
+===============
+]]--
+function UI_PlayerAnimation(pi)
+  local legsOld, legs, legsBackLerp, torsoOld, torso, torsoBackLerp
+
+  -- legs animation
+  pi.legsAnimationTimer = pi.legsAnimationTimer - uis.frametime
+  if pi.legsAnimationTimer < 0 then
+    pi.legsAnimationTimer = 0
+  end
+
+  UI_LegsSequencing(pi)
+
+  if pi.legs.yawing and ((pi.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_IDLE) then
+    UI_RunLerpFrame(pi, pi.legs, LEGS_TURN)
+  else
+    UI_RunLerpFrame(pi, pi.legs, pi.legsAnim)
+  end
+  legsOld = pi.legs.oldFrame
+  legs = pi.legs.frame
+  legsBackLerp = pi.legs.backlerp
+
+  -- torso animation
+  pi.torsoAnimationTimer = pi.torsoAnimationTimer - uis.frametime
+  if pi->torsoAnimationTimer < 0 then
+    pi.torsoAnimationTimer = 0
+  end
+
+  UI_TorsoSequencing(pi)
+
+  UI_RunLerpFrame(pi, pi.torso, pi.torsoAnim)
+  torsoOld = pi.torso.oldFrame
+  torso = pi.torso.frame
+  torsoBackLerp = pi.torso.backlerp
+
+  return legsOld, legs, legsBackLerp, torsoOld, torso, torsoBackLerp
+end
+
+--[[
+=================
+AngleSubtract
+
+Always returns a value from -180 to 180
+=================
+]]--
+function AngleSubtract(a1, a2)
+	local a = a1 - a2
+	while a > 180 do
+		a = a - 360
+	end
+	while a < -180 do
+		a = a + 360
+	end
+	return a
+end
+
+function AngleMod(a)
+  local r = (360.0/65536) * (math.floor(a*(65536/360.0)) & 65535)
+  return r
+end
+
+--[[
+==================
+UI_SwingAngles
+==================
+]]--
+function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angle, swinging)
+  -- return angle, swinging
+  local swing
+  local move
+  local scale
+
+  if swinging then
+    -- see if a swing should be started
+    swing = AngleSubtract(angle, destination)
+    if (swing > swingTolerance) or (swing < -swingTolerance) then
+      swinging = true
+    end
+  end
+
+  if ~swinging then
+    return angle, swinging
+  end
+	
+  -- modify the speed depending on the delta
+  -- so it doesn't seem so linear
+  swing = AngleSubtract(destination, angle)
+  scale = math.abs(swing)
+  if scale < swingTolerance * 0.5 then
+    scale = 0.5
+  else if scale < swingTolerance then
+    scale = 1.0
+  else
+    scale = 2.0
+  end
+
+  -- swing towards the destination angle
+  if swing >= 0 then
+    move = uis.frametime * scale * speed
+    if move >= swing then
+      move = swing
+      swinging = false
+    end
+    angle = AngleMod(angle + move)
+  else if swing < 0 then
+    move = uis.frametime * scale * -speed
+    if move <= swing then
+      move = swing
+      swinging = false
+    end
+    angle = AngleMod(angle + move)
+  end
+
+  -- clamp to no more than tolerance
+  swing = AngleSubtract(destination, angle)
+  if swing > clampTolerance then
+    angle = AngleMod(destination - (clampTolerance - 1))
+  else if swing < -clampTolerance then
+    angle = AngleMod(destination + (clampTolerance - 1))
+  end
+  return angle, swinging 
+end
+
+function AngleVectors(angles, forward, right, up)
+  local angle = angles.y * (math.pi*2 / 360)
+  local sy = math.sin(angle)
+  local cy = math.cos(angle)
+  angle = angles.x * (math.pi*2 / 360)
+  local sp = math.sin(angle)
+  local cp = math.cos(angle)
+  angle = angles.z * (math.pi*2 / 360)
+  local sr = math.sin(angle)
+  local cr = math.cos(angle)
+
+  if forward then
+    forward.x = cp*cy
+    forward.y = cp*sy
+    forward.z = -sp
+  end
+  if right then
+    right.x = (-1*sr*sp*cy+-1*cr*-sy)
+    right.y = (-1*sr*sp*sy+-1*cr*cy)
+    right.z = -1*sr*cp
+  end
+  if up then
+    up.x = (cr*sp*cy+-sr*-sy)
+    up.y = (cr*sp*sy+-sr*cy)
+    up.z = cr*cp
+  end
+end
+
+--[[
+======================
+UI_MovedirAdjustment
+======================
+]]--
+function UI_MovedirAdjustment(pi)
+  local relativeAngles = vec3_t()
+  local moveVector = vec3_t()
+
+  relativeAngles.x = pi.viewAngles.x - p.moveAngles.x
+  relativeAngles.y = pi.viewAngles.y - p.moveAngles.y
+  relativeAngles.z = pi.viewAngles.z - p.moveAngles.z
+
+  AngleVectors(relativeAngles, moveVector, nil, nil)
+  if math.abs(moveVector.x) < 0.01 then
+    moveVector.x = 0.0
+  end
+  if math.abs(moveVector.y ) < 0.01 then
+    moveVector.y = 0.0
+  end
+
+  if (moveVector.y == 0) and (moveVector.x > 0) then
+    return 0
+  end
+  if (moveVector.y < 0) and (moveVector.x > 0) then
+    return 22
+  end
+  if (moveVector.y < 0) and (moveVector.x == 0) then
+    return 45
+  end
+  if (moveVector.y < 0) and (moveVector.x < 0) then
+    return -22
+  end
+  if (moveVector.y == 0) and (moveVector.x < 0) then
+    return 0
+  end
+  if (moveVector.y > 0) and (moveVector.x < 0) then
+    return 22
+  end
+  if (moveVector.y > 0) and (moveVector.x == 0) then
+    return  -45
+  end
+  return -22
+end
+
+vec3_origin = vec3()
+
+--[[
+=================
+AnglesToAxis
+=================
+]]--
+function AnglesToAxis(angles, axis0, axis1, axis2)
+  local right = vec3_t()
+  -- angle vectors returns "right" instead of "y axis"
+  AngleVectors(angles, axis0, right, axis2)
+  axis1.x = vec3_origin.x - right.x
+  axis1.y = vec3_origin.y - right.y
+  axis1.z = vec3_origin.z - right.z
+end
+
+--[[
+===============
+UI_PlayerAngles
+===============
+]]--
+function UI_PlayerAngles(pi, legs0, legs1, legs2, torso0, torso1, torso2, head0, head1, head2)
+  local legsAngles = vec3_t()
+  local torsoAngles = vec3_t()
+  local headAngles = vec3_t()
+  local dest, adjust
+
+  headAngles.x = pi.viewAngles.x
+  headAngles.y = pi.viewAngles.y
+  headAngles.z = pi.viewAngles.z
+
+  headAngles.y = AngleMod(headAngles.y)
+
+  -- --------- yaw -------------
+
+  -- allow yaw to drift a bit
+  if  ((pi.legsAnim & ~ANIM_TOGGLEBIT) ~= LEGS_IDLE) or ((pi.torsoAnim & ~ANIM_TOGGLEBIT) ~= TORSO_STAND) then
+    --if not standing still, always point all in the same direction
+    pi.torso.yawing = true	  -- always center
+    pi.torso.pitching = true -- always center
+    pi.legs.yawing = true    -- always center
+  end
+
+  -- adjust legs for movement dir
+  adjust = UI_MovedirAdjustment(pi)
+  legsAngles.y = headAngles.y + adjust
+  torsoAngles.y = headAngles.y + 0.25 * adjust
+
+  -- torso
+  pi.torso.yawAngle, pi.torso.yawing = UI_SwingAngles(torsoAngles.y, 25, 90, SWINGSPEED, pi.torso.yawAngle, pi.torso.yawing)
+  pi.legs.yawAngle, pi.legs.yawing   = UI_SwingAngles(legsAngles.y, 40, 90, SWINGSPEED, pi.legs.yawAngle, pi.legs.yawing)
+
+  torsoAngles.y = pi.torso.yawAngle
+  legsAngles.y = pi.legs.yawAngle
+
+  -- --------- pitch -------------
+
+  -- only show a fraction of the pitch angle in the torso
+  if headAngles.x > 180 then
+    dest = (-360 + headAngles.x) * 0.75
+  else
+    dest = headAngles.x * 0.75
+  end
+  UI_SwingAngles(dest, 15, 30, 0.1, pi.torso.pitchAngle, pi.torso.pitching)
+  torsoAngles.x = pi.xtorso.pitchAngle
+
+  if pi.fixedtorso then
+    torsoAngles.x = 0.0
+  end
+
+  if pi.fixedlegs then
+    legsAngles.y = torsoAngles.y;
+    legsAngles.x = 0.0
+    legsAngles.x = 0.0
+  end
+
+  -- pull the angles back out of the hierarchial chain
+  AnglesSubtract( headAngles, torsoAngles, headAngles )
+  AnglesSubtract( torsoAngles, legsAngles, torsoAngles )
+  AnglesToAxis( legsAngles, legs0, legs1, legs2 )
+  AnglesToAxis( torsoAngles, torso0, torso1, torso2 )
+  AnglesToAxis( headAngles, head0, head1, head2 )
+end
+
+--[[
+===============
+UI_PlayerFloatSprite
+===============
+]]--
+function UI_PlayerFloatSprite(pi, origin, shader)
+  local ent = refEntity_t()
+  ent.origin = vec3(origin.x, origin.y, origin.z + 48)
+  ent.reType = RT_SPRITE
+  ent.customShader = shader
+  ent.radius = 10
+  ent.renderfx = 0
+  trap_R_AddRefEntityToScene(ent)
+end
+
+--[[
+======================
+UI_MachinegunSpinAngle
+======================
+]]--
+function UI_MachinegunSpinAngle(pi)
+  local delta
+  local angle
+  local speed
+  local torsoAnim
+
+  delta = dp_realtime - pi.barrelTime
+  if pi.barrelSpinning then
+    angle = pi.barrelAngle + delta * SPIN_SPEED
+  else
+    if delta > COAST_TIME then
+      delta = COAST_TIME
+    end
+
+    speed = 0.5 * ( SPIN_SPEED + ( COAST_TIME - delta ) / COAST_TIME )
+    angle = pi.barrelAngle + delta * speed
+  end
+
+  torsoAnim = pi.torsoAnim  & ~ANIM_TOGGLEBIT
+  if torsoAnim == TORSO_ATTACK2 then
+    torsoAnim = TORSO_ATTACK
+  end
+  if pi.barrelSpinning == ~(torsoAnim == TORSO_ATTACK) then
+    pi.barrelTime = dp_realtime
+    pi.barrelAngle = AngleMod(angle)
+    pi->barrelSpinning = (torsoAnim == TORSO_ATTACK)
+  end
+  return angle
+end
+
+--[[
+===============
+UI_DrawPlayer
+===============
+]]--
+function UI_DrawPlayer(x, y, w, h, pi, time)
+  local refdef = refdef_t()
+  local legs = refEntity_t()
+  local torso = refEntity_t()
+  local head = refEntity_t()
+  local gun = refEntity_t()
+  local barrel = refEntity_t()
+  local flash = refEntity_t()
+  local origin = vec3_t()
+  local renderfx
+  local mins = vec3_t(-16, -16, -24)
+  local maxs = vec3_t(16, 16, 32)
+  local len
+  local xx
+
+  if (pi.legsModel == 0) or (pi.torsoModel == 0) or (pi->headModel == 0) or (pi.animations[1].numFrames == 0) then
+    return
+  end
+
+  dp_realtime = time
+
+  if (pi.pendingWeapon ~= WP_NUM_WEAPONS) and (dp_realtime > pi->weaponTimer) then
+    pi.weapon = pi.pendingWeapon
+    pi.lastWeapon = pi.pendingWeapon
+    pi.pendingWeapon = WP_NUM_WEAPONS
+    pi.weaponTimer = 0
+    if pi.currentWeapon ~= pi.weapon then
+      trap_S_StartLocalSound(weaponChangeSound, CHAN_LOCAL)
+    end
+  end
+
+  -- UI_AdjustFrom640( &x, &y, &w, &h );
+
+  y = y - jumpHeight;
+
+  refdef.rdflags = RDF_NOWORLDMODEL;
+  refdef.viewaxis0 = vec3_t(1, 0, 0)
+  refdef.viewaxis1 = vec3_t(0, 1, 0)
+  refdef.viewaxis2 = vec3_t(0, 0, 1)
+
+  refdef.x = x
+  refdef.y = y
+  refdef.width = w
+  refdef.height = h
+
+  refdef.fov_x = math.floor(refdef.width / uis.xscale / 640.0 * 90.0)
+  xx = refdef.width / uis.xscale / math.tan( refdef.fov_x / 360 * math.pi)
+  refdef.fov_y = math.atan2(refdef.height / uis.yscale, xx) * (360 / math.pi)
+
+  -- calculate distance so the player nearly fills the box
+  len = 0.7 * (maxs.z - mins.z)
+  origin.x = len / math.tan( refdef.fov_x / 180 * math.pi * 0.5 )
+  origin.y = 0.5 * (mins.y + maxs.y)
+  origin.z = -0.5 * (mins.z + maxs.z)
+
+  refdef.time = dp_realtime;
+
+  trap_R_ClearScene();
+
+  -- get the rotation information
+  local legs_axis0 = vec3_t(), legs_axis1 = vec3_t(), legs_axis2 = vec3_t()
+  local torso_axis0 = vec3_t(), torso_axis1 = vec3_t(), torso_axis2 = vec3_t()
+  local head_axis0 = vec3_t(), head_axis1 = vec3_t(), head_axis2 = vec3_t()
+  UI_PlayerAngles( pi,
+    legs_axis0, legs_axis1, legs_axis2,
+    torso_axis0, torso_axis1, torso_axis2,
+    head_axis0, head_axis1, head_axis2 )
+  legs.axis0 = legs_axis0
+  legs.axis1 = legs_axis1
+  legs.axis2 = legs_axis2
+  torso.axis0 = torso_axis0
+  torso.axis1 = torso_axis1
+  torso.axis2 = torso_axis2
+  
+	
+  -- get the animation state (after rotation, to allow feet shuffle)
+  legs.oldframe, legs.frame, legs.backlerp, torso.oldframe, torso.frame, torso.backlerp = UI_PlayerAnimation(pi)
+  renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW
+
+  -- 
+  -- add the legs
+  --
+  legs.hModel = pi.legsModel
+  legs.customSkin = pi.legsSkin
+
+  legs.origin = origin
+
+  legs.lightingOrigin = origin
+  legs.renderfx = renderfx
+  legs.oldorigin = origin
+
+  trap_R_AddRefEntityToScene(legs)
+
+  -- 
+  -- add the torso
+  --
+  torso.hModel = pi.torsoModel
+  torso.customSkin = pi.torsoSkin
+
+  torso.lightingOrigin = origin
+
+  UI_PositionRotatedEntityOnTag(torso, legs, pi.legsModel, "tag_torso")
+
+  torso.renderfx = renderfx
+
+  trap_R_AddRefEntityToScene( torso )
+
+  --
+  -- add the head
+  --
+  head.hModel = pi.headModel
+  head.customSkin = pi->headSkin
+
+  head.lightingOrigin = origin
+
+  UI_PositionRotatedEntityOnTag(head, torso, pi->torsoModel, "tag_head")
+
+  head.renderfx = renderfx
+
+  trap_R_AddRefEntityToScene(head)
+
+  --
+  -- add the gun
+  --
+--[[
+  if ( pi->currentWeapon != WP_NONE ) {
+		memset( &gun, 0, sizeof(gun) );
+		gun.hModel = pi->weaponModel;
+		if( pi->currentWeapon == WP_RAILGUN ) {
+			Byte4Copy( pi->c1RGBA, gun.shaderRGBA );
+		}
+		else {
+			Byte4Copy( colorWhite, gun.shaderRGBA );
+		}
+		VectorCopy( origin, gun.lightingOrigin );
+		UI_PositionEntityOnTag( &gun, &torso, pi->torsoModel, "tag_weapon");
+		gun.renderfx = renderfx;
+		trap_R_AddRefEntityToScene( &gun );
+	}
+
+	//
+	// add the spinning barrel
+	//
+#if defined( QC )
+	if ( pi->realWeapon == WP_LOUSY_MACHINEGUN || pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#else // QC
+	if ( pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
+#endif // QC
+		vec3_t	angles;
+
+		memset( &barrel, 0, sizeof(barrel) );
+		VectorCopy( origin, barrel.lightingOrigin );
+		barrel.renderfx = renderfx;
+
+		barrel.hModel = pi->barrelModel;
+		angles[YAW] = 0;
+		angles[PITCH] = 0;
+		angles[ROLL] = UI_MachinegunSpinAngle( pi );
+		AnglesToAxis( angles, barrel.axis );
+
+		UI_PositionRotatedEntityOnTag( &barrel, &gun, pi->weaponModel, "tag_barrel");
+
+		trap_R_AddRefEntityToScene( &barrel );
+	}
+
+	//
+	// add muzzle flash
+	//
+	if ( dp_realtime <= pi->muzzleFlashTime ) {
+		if ( pi->flashModel ) {
+			memset( &flash, 0, sizeof(flash) );
+			flash.hModel = pi->flashModel;
+			if( pi->currentWeapon == WP_RAILGUN ) {
+				Byte4Copy( pi->c1RGBA, flash.shaderRGBA );
+			}
+			else {
+				Byte4Copy( colorWhite, flash.shaderRGBA );
+			}
+			VectorCopy( origin, flash.lightingOrigin );
+			UI_PositionEntityOnTag( &flash, &gun, pi->weaponModel, "tag_flash");
+			flash.renderfx = renderfx;
+			trap_R_AddRefEntityToScene( &flash );
+		}
+
+		// make a dlight for the flash
+		if ( pi->flashDlightColor[0] || pi->flashDlightColor[1] || pi->flashDlightColor[2] ) {
+			trap_R_AddLightToScene( flash.origin, 200 + (rand()&31), pi->flashDlightColor[0],
+				pi->flashDlightColor[1], pi->flashDlightColor[2] );
+		}
+	}
+
+	//
+	// add the chat icon
+	//
+	if ( pi->chat ) {
+		UI_PlayerFloatSprite( pi, origin, trap_R_RegisterShaderNoMip( "sprites/balloon3" ) );
+	}
+
+	//
+	// add an accent light
+	//
+	origin[0] -= 100;	// + = behind, - = in front
+	origin[1] += 100;	// + = left, - = right
+	origin[2] += 100;	// + = above, - = below
+	trap_R_AddLightToScene( origin, 500, 1.0, 1.0, 1.0 );
+
+	origin[0] -= 100;
+	origin[1] -= 100;
+	origin[2] -= 100;
+	trap_R_AddLightToScene( origin, 500, 1.0, 0.0, 0.0 );
+]]--
+	trap_R_RenderScene( refdef )
+end
+
 ---------------------------------------------------------------------------------
 
 --[[
