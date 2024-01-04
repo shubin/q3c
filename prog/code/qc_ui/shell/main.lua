@@ -29,7 +29,7 @@ end
 
 function UI_ConsoleCommand()
   local argc = trap_Argc()
-  if (trap_Argv(0) == "lua") and (argc > 1) then
+  if exec and (trap_Argv(0) == "lua") and (argc > 1) then
     local cmd = trap_Argv(-1):gsub("^lua%s*", "")
     exec(cmd)
     return true
