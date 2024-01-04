@@ -63,6 +63,14 @@ static int lua_readfile( lua_State *L ) {
 }
 
 void UI_BindTraps( lua_State *L ) {
+	if ( ui_luadebug.string[0] ) {
+		luabridge::getGlobalNamespace( L )
+			.addFunction( "exec",
+				+[]( const std::string &str ) {
+				return Rml::Lua::Interpreter::DoString( str, "<exec>" );
+				}
+			);
+	}
 	luabridge::getGlobalNamespace( L )
 		.addFunction( "readfile", lua_readfile )
 		.addFunction( "MapKey", 

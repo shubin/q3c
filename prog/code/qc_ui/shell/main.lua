@@ -26,3 +26,13 @@ end
 function UI_IsFullscreen()
   return (gCurrentMenu ~= UIMENU_NONE) and (gCurrentMenu ~= UIMENU_INGAME) and (gCurrentMenu ~= UIMENU_DEATH)
 end
+
+function UI_ConsoleCommand()
+  local argc = trap_Argc()
+  if (trap_Argv(0) == "lua") and (argc > 1) then
+    local cmd = trap_Argv(-1):gsub("^lua%s*", "")
+    exec(cmd)
+    return true
+  end
+  return false
+end
