@@ -156,28 +156,40 @@ void UI_InitLua( void ) {
 void UI_ShutdownLua( void ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_Shutdown" );
 	if ( func.isCallable() ) {
-		luabridge::call( func );
+		auto result = luabridge::call( func );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
 void UI_KeyEvent( int key, int down ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_KeyEvent" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, key, (bool)down );
+		auto result = luabridge::call( func, key, (bool)down );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
 void UI_MouseEvent( int dx, int dy ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_MouseEvent" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, dx, dy );
+		auto result = luabridge::call( func, dx, dy );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
 void UI_Refresh( int realtime ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_Refresh" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, realtime );
+		auto result = luabridge::call( func, realtime );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
@@ -186,6 +198,7 @@ qboolean UI_IsFullscreen( void ) {
 	if ( func.isCallable() ) {
 		auto result = luabridge::call( func );
 		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
 			return qtrue;
 		}
 		return (qboolean)result[0].cast<bool>().value();;
@@ -196,7 +209,10 @@ qboolean UI_IsFullscreen( void ) {
 void UI_SetActiveMenu( uiMenuCommand_t menu ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_SetActiveMenu" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, (int)menu );
+		auto result = luabridge::call( func, (int)menu );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
@@ -209,6 +225,7 @@ qboolean UI_ConsoleCommand( int realTime ) {
 	if ( func.isCallable() ) {
 		auto result = luabridge::call( func, realTime );
 		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
 			return qfalse;
 		}
 		 return (qboolean)result[0].cast<bool>().value();;
@@ -219,7 +236,10 @@ qboolean UI_ConsoleCommand( int realTime ) {
 void UI_DrawConnectScreen( qboolean overlay ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_DrawConnectScreen" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, (bool)overlay );
+		auto result = luabridge::call( func, (bool)overlay );
+		if ( result.hasFailed() ) { 
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
@@ -230,13 +250,19 @@ void UI_CvarChangedLua( void ) {
 	var_name.resize( strlen( var_name.data() ) );
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_CvarChanged" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, var_name );
+		auto result = luabridge::call( func, var_name );
+		if ( result.hasFailed() ) { 
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
 
 void UI_SetMousePointer( const char *pointer ) {
 	auto func = luabridge::getGlobal( Rml::Lua::Interpreter::GetLuaState(), "UI_SetMousePointer" );
 	if ( func.isCallable() ) {
-		luabridge::call( func, pointer );
+		auto result = luabridge::call( func, pointer );
+		if ( result.hasFailed() ) {
+			trap_Print( va( "^1" __FUNCTION__ ": % s\n", result.errorMessage().c_str() ) );
+		}
 	}
 }
