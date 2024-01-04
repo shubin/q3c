@@ -13,10 +13,15 @@ SWINGSPEED				= 0.3
 SPIN_SPEED				= 0.9
 COAST_TIME				= 1000
 
-local dp_realtime = 0
-local jumpHeight = 0
+dp_realtime = 0
+jumpHeight = 0
 
-local bg_itemlist = require("bg_itemlist")
+bg_itemlist = require("bg_itemlist")
+
+uis = {}
+uis.frametime = 20
+uis.xscale = 1
+uis.yscale = 1
 
 --[[
 ===============
@@ -52,7 +57,7 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
     pi.weaponModel = trap_R_RegisterModel( item.world_model[1] )
   end
 
-  if  pi.weaponModel == 0 then
+  if pi.weaponModel == 0 then
     if weaponNum == WP_MACHINEGUN then
       weaponNum = WP_NONE
       goto tryagain
@@ -337,7 +342,7 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
       lf.frame = anim.firstFrame + anim.numFrames - 1 - (f % anim.numFrames)
 	else
       lf.frame = anim.firstFrame + f
-    end
+    end end
     if dp_realtime > lf.frameTime then
       lf.frameTime = dp_realtime
 	end
@@ -455,7 +460,7 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
     scale = 1.0
   else
     scale = 2.0
-  end
+  end end
 
   -- swing towards the destination angle
   if swing >= 0 then
@@ -472,7 +477,7 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
       swinging = false
     end
     angle = AngleMod(angle + move)
-  end
+  end end
 
   -- clamp to no more than tolerance
   swing = AngleSubtract(destination, angle)
@@ -480,7 +485,7 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
     angle = AngleMod(destination - (clampTolerance - 1))
   else if swing < -clampTolerance then
     angle = AngleMod(destination + (clampTolerance - 1))
-  end
+  end end
   return angle, swinging 
 end
 
@@ -1174,7 +1179,7 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   else if weaponNumber ~= WP_NONE then
     pi.pendingWeapon = weaponNumber
     pi.weaponTimer = dp_realtime + UI_TIMER_WEAPON_DELAY
-  end
+  end end
   weaponNum = pi.lastWeapon
   pi.weapon = weaponNum
 
@@ -1200,7 +1205,7 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
     jumpHeight = 0
     pi.pendingLegsAnim = 0
     UI_ForceLegsAnim(pi, legsAnim)
-  end
+  end end
 
   -- torso animation
   if (torsoAnim == TORSO_STAND) or (torsoAnim == TORSO_STAND2) then
@@ -1230,5 +1235,5 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   else if torsoAnim ~= currentAnim then
     pi.pendingTorsoAnim = 0
     UI_ForceTorsoAnim(pi, torsoAnim)
-  end
+  end end end
 end
