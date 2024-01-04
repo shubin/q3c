@@ -390,7 +390,15 @@ const char* Cmd_Args()
 // the interpreted versions use these because they can't have pointers returned to them
 
 void Cmd_ArgvBuffer( int arg, char *buffer, int bufferLength ) {
+#if defined( QC )
+	if ( arg == -1 ) {
+		Q_strncpyz( buffer, cmd_cmd, bufferLength );
+	} else {
+		Q_strncpyz( buffer, Cmd_Argv( arg ), bufferLength );
+	}
+#else
 	Q_strncpyz( buffer, Cmd_Argv( arg ), bufferLength );
+#endif
 }
 
 void Cmd_ArgsBuffer( char *buffer, int bufferLength ) {
