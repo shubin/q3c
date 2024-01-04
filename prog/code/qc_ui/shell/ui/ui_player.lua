@@ -205,8 +205,22 @@ function VectorMA(v, s, b)
   return vec3_t(v.x + s * b.x, v.y + s * b.y, v.z + s * b.z)
 end
 
-function MatrixMultiply(in10, int11, int12, in20, in21, in22)
--- NOTIMPL
+function MatrixMultiply(in10, in11, in12, in20, in21, in22)
+  return vec3_t(
+    in10.x * in20.x + in10.y * in21.x + in10.z * in22.x,
+    in10.x * in20.y + in10.y * in21.y + in10.z * in22.y,
+    in10.x * in20.z + in10.y * in21.z + in10.z * in22.z
+  ),
+  vec3_t(
+    in11.x * in20.x + in11.y * in21.x + in11.z * in22.x,
+    in11.x * in20.y + in11.y * in21.y + in11.z * in22.y,
+    in11.x * in20.z + in11.y * in21.z + in11.z * in22.z
+  )
+  vec3_t(
+	in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
+	in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
+	in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
+  )
 end
 
 --[[
