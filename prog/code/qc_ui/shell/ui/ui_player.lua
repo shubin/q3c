@@ -16,7 +16,7 @@ COAST_TIME				= 1000
 dp_realtime = 0
 jumpHeight = 0
 
-bg_itemlist = require("bg_itemlist")
+bg_itemlist = require("ui.bg_itemlist")
 
 uis = {}
 uis.frametime = 20
@@ -45,12 +45,13 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
 
   for _, v in pairs(bg_itemlist) do
     if v.giType ~= IT_WEAPON then
-      continue
+      goto continue
     end
     if v.giType == weaponNum then
       item = v
       break
     end
+    ::continue::
   end
 
   if item.classname then
@@ -220,7 +221,7 @@ function MatrixMultiply(in10, in11, in12, in20, in21, in22)
     in11.x * in20.x + in11.y * in21.x + in11.z * in22.x,
     in11.x * in20.y + in11.y * in21.y + in11.z * in22.y,
     in11.x * in20.z + in11.y * in21.z + in11.z * in22.z
-  )
+  ),
   vec3_t(
 	in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
 	in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
@@ -300,7 +301,7 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
   -- see if the animation sequence is switching
   if (newAnimation ~= lf.animationNumber) or (lf.animation == nil) then
     UI_SetLerpFrameAnimation(ci, lf, newAnimation)
-  
+  end
 
   --if we have passed the current frame, move it to
   -- oldFrame and calculate a new frame
@@ -523,8 +524,8 @@ UI_MovedirAdjustment
 ======================
 ]]--
 function UI_MovedirAdjustment(pi)
-  local relativeAngles = vec3_t()
-  local moveVector = vec3_t()
+  local relativeAngles = vec3_t(0, 0, 0)
+  local moveVector = vec3_t(0, 0, 0)
 
   relativeAngles.x = pi.viewAngles.x - p.moveAngles.x
   relativeAngles.y = pi.viewAngles.y - p.moveAngles.y
@@ -562,7 +563,7 @@ function UI_MovedirAdjustment(pi)
   return -22
 end
 
-vec3_origin = vec3()
+vec3_origin = vec3_t(0, 0, 0)
 
 --[[
 =================
@@ -570,7 +571,7 @@ AnglesToAxis
 =================
 ]]--
 function AnglesToAxis(angles, axis0, axis1, axis2)
-  local right = vec3_t()
+  local right = vec3_t(0, 0, 0)
   -- angle vectors returns "right" instead of "y axis"
   AngleVectors(angles, axis0, right, axis2)
   axis1.x = vec3_origin.x - right.x
@@ -584,9 +585,9 @@ UI_PlayerAngles
 ===============
 ]]--
 function UI_PlayerAngles(pi, legs0, legs1, legs2, torso0, torso1, torso2, head0, head1, head2)
-  local legsAngles = vec3_t()
-  local torsoAngles = vec3_t()
-  local headAngles = vec3_t()
+  local legsAngles = vec3_t(0, 0, 0)
+  local torsoAngles = vec3_t(0, 0, 0)
+  local headAngles = vec3_t(0, 0, 0)
   local dest, adjust
 
   headAngles.x = pi.viewAngles.x
@@ -653,7 +654,7 @@ UI_PlayerFloatSprite
 ]]--
 function UI_PlayerFloatSprite(pi, origin, shader)
   local ent = refEntity_t()
-  ent.origin = vec3(origin.x, origin.y, origin.z + 48)
+  ent.origin = vec3_t(origin.x, origin.y, origin.z + 48)
   ent.reType = RT_SPRITE
   ent.customShader = shader
   ent.radius = 10
@@ -709,7 +710,7 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   local gun = refEntity_t()
   local barrel = refEntity_t()
   local flash = refEntity_t()
-  local origin = vec3_t()
+  local origin = vec3_t(0, 0, 0)
   local renderfx
   local mins = vec3_t(-16, -16, -24)
   local maxs = vec3_t(16, 16, 32)
@@ -761,9 +762,15 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   trap_R_ClearScene()
 
   -- get the rotation information
-  local legs_axis0 = vec3_t(), legs_axis1 = vec3_t(), legs_axis2 = vec3_t()
-  local torso_axis0 = vec3_t(), torso_axis1 = vec3_t(), torso_axis2 = vec3_t()
-  local head_axis0 = vec3_t(), head_axis1 = vec3_t(), head_axis2 = vec3_t()
+  local legs_axis0 = vec3_t(0, 0, 0)
+  local legs_axis1 = vec3_t(0, 0, 0)
+  local legs_axis2 = vec3_t(0, 0, 0)
+  local torso_axis0 = vec3_t(0, 0, 0)
+  local torso_axis1 = vec3_t(0, 0, 0)
+  local torso_axis2 = vec3_t(0, 0, 0)
+  local head_axis0 = vec3_t(0, 0, 0)
+  local head_axis1 = vec3_t(0, 0, 0)
+  local head_axis2 = vec3_t(0, 0, 0)
   UI_PlayerAngles( pi,
     legs_axis0, legs_axis1, legs_axis2,
     torso_axis0, torso_axis1, torso_axis2,
@@ -832,75 +839,77 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
       gun.shaderRGBA = pi.c1RGBA
     else
       gun.shaderRGBA = rgba_t(255, 255, 255, 255)
-      gun.lightingOrigin = origin
-      UI_PositionEntityOnTag( gun, torso, pi.torsoModel, "tag_weapon")
-      gun.renderfx = renderfx
-      trap_R_AddRefEntityToScene(gun)
     end
-	--
-	-- add the spinning barrel
-	--
-	if (pi.realWeapon == WP_LOUSY_MACHINEGUN) or (pi.realWeapon == WP_MACHINEGUN) or (pi.realWeapon == WP_GAUNTLET) or (pi.realWeapon == WP_BFG) then
-        local angles = vec3_t()		
-        barrel.lightingOrigin = origin
-		barrel.renderfx = renderfx
+    gun.lightingOrigin = origin
+    UI_PositionEntityOnTag( gun, torso, pi.torsoModel, "tag_weapon")
+    gun.renderfx = renderfx
+    trap_R_AddRefEntityToScene(gun)
+  end
+  --
+  -- add the spinning barrel
+  --
+  if (pi.realWeapon == WP_LOUSY_MACHINEGUN) or (pi.realWeapon == WP_MACHINEGUN) or (pi.realWeapon == WP_GAUNTLET) or (pi.realWeapon == WP_BFG) then
+    local angles = vec3_t(0, 0, 0)		
+    barrel.lightingOrigin = origin
+  	barrel.renderfx = renderfx
+    barrel.hModel = pi.barrelModel
+    angles.y = 0
+    angles.x = 0
+    angles.z = UI_MachinegunSpinAngle(pi)
+    local barrel_axis0 = vec3_t(0, 0, 0)
+    local barrel_axis1 = vec3_t(0, 0, 0)
+    local barrel_axis2 = vec3_t(0, 0, 0)
+    AnglesToAxis(angles, barrel_axis0, barrel_axis1, barrel_axis2)
+    barrel.axis0 = barrel_axis0
+    barrel.axis1 = barrel_axis1
+    barrel.axis2 = barrel_axis2
 
-        barrel.hModel = pi.barrelModel
-        angles.y = 0
-        angles.x = 0
-        angles.z = UI_MachinegunSpinAngle(pi)
-        local barrel_axis0 = vec3_t(), barrel_axis1 = vec3_t(), barrel_axis2 = vec3_t()
-        AnglesToAxis(angles, barrel_axis0, barrel_axis1, barrel_axis2)
-        barrel.axis0 = barrel_axis0
-        barrel.axis1 = barrel_axis1
-        barrel.axis2 = barrel_axis2
+    UI_PositionRotatedEntityOnTag(barrel, gun, pi.weaponModel, "tag_barrel")
 
-        UI_PositionRotatedEntityOnTag(barrel, gun, pi.weaponModel, "tag_barrel")
+    trap_R_AddRefEntityToScene(barrel)
+  end
 
-        trap_R_AddRefEntityToScene(barrel)
-    end
-
-	--
-	-- add muzzle flash
-	--
-    if dp_realtime <= pi.muzzleFlashTime then
-      if pi.flashModel then
-        flash.hModel = pi.flashModel
-        if pi.currentWeapon == WP_RAILGUN then
-          flash.shaderRGBA = pi.c1RGBA
-        else
-          flash.shaderRGBA = rgba_t(255, 255, 255, 255)
-        end
-        flash.lightingOrigin = origin
+  --
+  -- add muzzle flash
+  --
+  if dp_realtime <= pi.muzzleFlashTime then
+    if pi.flashModel then
+      flash.hModel = pi.flashModel
+      if pi.currentWeapon == WP_RAILGUN then
+        flash.shaderRGBA = pi.c1RGBA
+      else
+        flash.shaderRGBA = rgba_t(255, 255, 255, 255)
+      end
+      flash.lightingOrigin = origin
         
-        UI_PositionEntityOnTag(flash, gun, pi.weaponModel, "tag_flash")
-        flash.renderfx = renderfx
-        trap_R_AddRefEntityToScene(flash)
-      end
-
-      -- make a dlight for the flash
-      if (pi.flashDlightColor.x > 0) or (pi.flashDlightColor.y > 0) or (pi.flashDlightColor.z > 0) then
-        trap_R_AddLightToScene( flash.origin, 199 + math.random(32), pi.flashDlightColor.x, pi.flashDlightColor.y, pi.flashDlightColor.z )
-      end
+      UI_PositionEntityOnTag(flash, gun, pi.weaponModel, "tag_flash")
+      flash.renderfx = renderfx
+      trap_R_AddRefEntityToScene(flash)
     end
 
-    --
-    -- add the chat icon
-    --
-    if pi.chat then
-      UI_PlayerFloatSprite( pi, origin, trap_R_RegisterShaderNoMip( "sprites/balloon3" ) )
+    -- make a dlight for the flash
+    if (pi.flashDlightColor.x > 0) or (pi.flashDlightColor.y > 0) or (pi.flashDlightColor.z > 0) then
+      trap_R_AddLightToScene( flash.origin, 199 + math.random(32), pi.flashDlightColor.x, pi.flashDlightColor.y, pi.flashDlightColor.z )
     end
+  end
 
-    --
-    -- add an accent light
-    --
-    origin = vec3_t(origin.x - 100, origin.y + 100, origin.z + 100)
-	trap_R_AddLightToScene( origin, 500, 1.0, 1.0, 1.0 )
+  --
+  -- add the chat icon
+  --
+  if pi.chat then
+    UI_PlayerFloatSprite( pi, origin, trap_R_RegisterShaderNoMip( "sprites/balloon3" ) )
+  end
 
-    origin = vec3_t(origin.x - 100, origin.y - 100, origin.z - 100)
-    trap_R_AddLightToScene( origin, 500, 1.0, 0.0, 0.0 )
+  --
+  -- add an accent light
+  --
+  origin = vec3_t(origin.x - 100, origin.y + 100, origin.z + 100)
+  trap_R_AddLightToScene( origin, 500, 1.0, 1.0, 1.0 )
 
-	trap_R_RenderScene( refdef )
+  origin = vec3_t(origin.x - 100, origin.y - 100, origin.z - 100)
+  trap_R_AddLightToScene( origin, 500, 1.0, 0.0, 0.0 )
+
+  trap_R_RenderScene( refdef )
 end
 
 --[[
@@ -959,8 +968,8 @@ function UI_ParseAnimationFile(filename, pi)
     for token in line:gmatch("%w+") do
       table.insert(tokens, token)
     end
+  ::do_frames::
     if parseframes then
-    ::do_frames::
       -- frames
       i = i + 1
       if tokens[1] == nil then
@@ -972,7 +981,7 @@ function UI_ParseAnimationFile(filename, pi)
           animations[i].numFrames = animations[TORSO_GESTURE].numFrames
           animations[i].reversed = false
           animations[i].flipflop = false
-          continue
+          goto continue
         end
         break
       end
@@ -986,7 +995,7 @@ function UI_ParseAnimationFile(filename, pi)
         skip = animations[LEGS_WALKCR].firstFrame - animations[TORSO_GESTURE].firstFrame
       end
       if (i >= LEGS_WALKCR) and  (i < TORSO_GETFLAG ) then
-        animations[i].firstFrame -= skip
+        animations[i].firstFrame = animations[i].firstFrame - skip
       end
       animations[i].numFrames = tonumber(tokens[2])
       animations[i].reversed = false
@@ -1008,28 +1017,30 @@ function UI_ParseAnimationFile(filename, pi)
         if ~tokens[2] then
           goto do_frames
         end
-        continue
+        goto continue
       else if tokens[1] == "headoffset" then
         if ~tokens[2] or ~tokens[3] or ~tokens[4] then
           goto do_frames
         end
-        continue
+        goto continue
       else if tokens[1] == "sex" then
         if ~tokens[2] then
           goto do_frames
         end
-        continue
+        goto continue
       else if tokens[1] == "fixedlegs" then
         pi.fixedlegs = true
-        continue
+        goto continue
       else if tokens[1] == "fixedtorso" then
         pi.fixedtorso = true
-        continue
+        goto continue
       else if tonumber(tokens[1]) then
         parseframes = true
         goto do_frames
       end end end end end end
       print(string.format("unknown token '%s' in %s", tokens[1], filename))
+    end
+    ::continue::
   end
   if i ~= MAX_ANIMATIONS then
     print(string.format("Error parsing animation file: %s", filename))
@@ -1081,7 +1092,7 @@ function UI_RegisterClientModelname(pi, modelSkinName)
     return false
   end
 
-  filename string.format("models/players/%s/head.md3", modelName)
+  filename = string.format("models/players/%s/head.md3", modelName)
   pi.headModel = trap_R_RegisterModel(filename)
   if pi.headModel == 0 then
     print("Failed to load model file", filename)
@@ -1184,8 +1195,10 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   pi.weapon = weaponNum
 
   if (torsoAnim == BOTH_DEATH1) or (legsAnim == BOTH_DEATH1) then
-    torsoAnim = legsAnim = BOTH_DEATH1
-    pi.weapon = pi.currentWeapon = WP_NONE
+    torsoAnim = BOTH_DEATH1
+    legsAnim = BOTH_DEATH1
+    pi.weapon = WP_NONE
+    pi.currentWeapon = WP_NONE
     UI_PlayerInfo_SetWeapon(pi, pi.weapon)
 
     jumpHeight = 0
@@ -1199,7 +1212,7 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
 
   -- leg animation
   currentAnim = pi.legsAnim & ~ANIM_TOGGLEBIT
-  if (legsAnim ~= LEGS_JUMP) && ((currentAnim == LEGS_JUMP) or (currentAnim == LEGS_LAND)) then
+  if (legsAnim ~= LEGS_JUMP) and ((currentAnim == LEGS_JUMP) or (currentAnim == LEGS_LAND)) then
     pi.pendingLegsAnim = legsAnim
   else if legsAnim ~= currentAnim then
     jumpHeight = 0
@@ -1230,7 +1243,7 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
 
   if (weaponNum ~= pi.currentWeapon) or (currentAnim == TORSO_RAISE) or (currentAnim == TORSO_DROP) then
     pi.pendingTorsoAnim = torsoAnim
-  else if ((currentAnim == TORSO_GESTURE) or (currentAnim == TORSO_ATTACK)) && (torsoAnim ~= currentAnim) then
+  else if ((currentAnim == TORSO_GESTURE) or (currentAnim == TORSO_ATTACK)) and (torsoAnim ~= currentAnim) then
     pi.pendingTorsoAnim = torsoAnim
   else if torsoAnim ~= currentAnim then
     pi.pendingTorsoAnim = 0
