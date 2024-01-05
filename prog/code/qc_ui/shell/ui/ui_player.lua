@@ -1017,7 +1017,7 @@ function UI_ParseAnimationFile(filename, pi)
         animations[i].reversed = true
       end
       animations[i].loopFrames = tonumber(tokens[3])      
-      animations[i].fps = math.min(1, tonumber(tokens[4]))
+      animations[i].fps = math.max(1, tonumber(tokens[4]))
       animations[i].initialLerp = 1000 / animations[i].fps
       animations[i].frameLerp = animations[i].initialLerp
     else
