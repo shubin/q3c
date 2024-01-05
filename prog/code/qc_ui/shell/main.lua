@@ -5,7 +5,17 @@ require("init")
 require("input")
 require("refresh")
 
+require("ui.ui_player")
+
 gCurrentMenu = UIMENU_NONE
+
+function InitModel()
+  pi = {}
+  UI_PlayerInfo_SetModel(pi, "sarge/default")
+  local viewangles = vec3_t(0, 150, 0)
+  local moveangles = vec3_t(0, 0, 0)
+  UI_PlayerInfo_SetInfo( pi, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, WP_MACHINEGUN, false );
+end
 
 function UI_SetActiveMenu(nmenu)
   gCurrentMenu = nmenu
@@ -15,6 +25,9 @@ function UI_SetActiveMenu(nmenu)
   else
     if nmenu == UIMENU_MAIN then
       ShowMenu("main")
+      if not pi then
+        InitModel()
+      end
     end
     if nmenu == UIMENU_INGAME then
       ShowMenu("ingame")

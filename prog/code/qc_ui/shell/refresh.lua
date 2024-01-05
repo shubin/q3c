@@ -15,6 +15,9 @@ function UI_Refresh(realtime)
     0, 0, 1, 1,
     pointer
   )
+  if pi then
+    UI_DrawPlayer( 10, 10, 600, 600, pi, realtime/2 )
+  end
 end
 
 function UI_SetMousePointer(nptr)

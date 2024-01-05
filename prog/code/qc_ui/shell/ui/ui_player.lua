@@ -1,3 +1,5 @@
+require("ui.enum")
+
 UI_TIMER_GESTURE		= 2300
 UI_TIMER_JUMP			= 1000
 UI_TIMER_LAND			= 130
@@ -47,7 +49,7 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
     if v.giType ~= IT_WEAPON then
       goto continue
     end
-    if v.giType == weaponNum then
+    if v.giTag == weaponNum then
       item = v
       break
     end
@@ -201,13 +203,16 @@ function UI_LegsSequencing(pi)
     return
   end
 
-  if currentAnim == LEGS_LANDthen then
+  if currentAnim == LEGS_LAND then
     UI_SetLegsAnim(pi, LEGS_IDLE)
     return
   end
 end
 
 function VectorMA(v, s, b)
+  if not s then
+    local x = 1
+  end
   return vec3_t(v.x + s * b.x, v.y + s * b.y, v.z + s * b.z)
 end
 
@@ -241,10 +246,10 @@ function UI_PositionEntityOnTag(entity, parent, parentModel, tagName)
   trap_CM_LerpTag(lerped, parentModel, parent.oldframe, parent.frame, 1.0 - parent.backlerp, tagName)
 
   -- FIXME: allow origin offsets along tag?
-  entity.origin = vec3_t(parent.origin)
-  entity.origin = VectorMA(entity.origin, lerped.origin[0], parent.axis0)
-  entity.origin = VectorMA(entity.origin, lerped.origin[1], parent.axis1)
-  entity.origin = VectorMA(entity.origin, lerped.origin[2], parent.axis2)
+  entity.origin = vec3_t(parent.origin.x, parent.origin.y, parent.origin.z)
+  entity.origin = VectorMA(entity.origin, lerped.origin.x, parent.axis0)
+  entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
+  entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
 
   entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(lerped.axis0, lerped.axis1, lerped.axis2, parent.axis0, parent.axis1, parent.axis2)
   entity.backlerp = parent.backlerp
@@ -262,12 +267,12 @@ function UI_PositionRotatedEntityOnTag(entity, parent, parentModel, tagName)
   trap_CM_LerpTag(lerped, parentModel, parent.oldframe, parent.frame, 1.0 - parent.backlerp, tagName)
 
   -- FIXME: allow origin offsets along tag?
-  entity.origin = vec3_t(parent.origin)
-  entity.origin = VectorMA(entity.origin, lerped.origin[0], parent.axis0)
-  entity.origin = VectorMA(entity.origin, lerped.origin[1], parent.axis1)
-  entity.origin = VectorMA(entity.origin, lerped.origin[2], parent.axis2)
+  entity.origin = vec3_t(parent.origin.x, parent.origin.y, parent.origin.z)
+  entity.origin = VectorMA(entity.origin, lerped.origin.x, parent.axis0)
+  entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
+  entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
 
-  local tampAxis0, tempAxis1, tempAxis2 = MatrixMultiply(entity.axis0, entity.axis1, entity.axis2, lerped.axis0, lerped.axis1, lerped.axis1)
+  local tempAxis0, tempAxis1, tempAxis2 = MatrixMultiply(entity.axis0, entity.axis1, entity.axis2, lerped.axis0, lerped.axis1, lerped.axis1)
   entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(tempAxis0, tempAxis1, tempAxis2, parent.axis0, parent.axis1, parent.axis2)   
 end
 
@@ -302,24 +307,24 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
   if (newAnimation ~= lf.animationNumber) or (lf.animation == nil) then
     UI_SetLerpFrameAnimation(ci, lf, newAnimation)
   end
-
+  local rt = math.floor(dp_realtime)
   --if we have passed the current frame, move it to
   -- oldFrame and calculate a new frame
-  if dp_realtime >= lf.frameTime then
+  if rt >= lf.frameTime then
     lf.oldFrame = lf.frame
     lf.oldFrameTime = lf.frameTime
 
     -- get the next frame based on the animation
-    anim = lf.animation
+    local anim = lf.animation
     if anim.frameLerp == 0 then
       return		-- shouldn't happen
     end
-    if dp_realtime < lf.animationTime then
+    if rt < lf.animationTime then
       lf.frameTime = lf.animationTime		-- initial lerp
     else
       lf.frameTime = lf.oldFrameTime + anim.frameLerp
     end
-    f = (lf.frameTime - lf.animationTime) / anim.frameLerp
+    local f = math.floor((lf.frameTime - lf.animationTime) / anim.frameLerp)
 
     local numFrames = anim.numFrames
     if anim.flipflop then
@@ -327,14 +332,14 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
     end
     if f >= numFrames then
       f = f - numFrames
-      if anim.loopFrames then
+      if anim.loopFrames ~= 0 then
         f = f % anim.loopFrames
         f = f + anim.numFrames - anim.loopFrames
       else
         f = numFrames - 1
         -- the animation is stuck at the end, so it
         -- can immediately transition to another sequence
-		lf.frameTime = dp_realtime
+		lf.frameTime = rt
       end
     end
     if anim.reversed then
@@ -344,13 +349,13 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
 	else
       lf.frame = anim.firstFrame + f
     end end
-    if dp_realtime > lf.frameTime then
-      lf.frameTime = dp_realtime
+    if rt > lf.frameTime then
+      lf.frameTime = rt
 	end
   end
 
-  if lf.frameTime > dp_realtime + 200 then
-    lf.frameTime = dp_realtime
+  if lf.frameTime > rt + 200 then
+    lf.frameTime = rt
   end
 
   if lf.oldFrameTime > dp_realtime then
@@ -447,7 +452,7 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
     end
   end
 
-  if ~swinging then
+  if not swinging then
     return angle, swinging
   end
 	
@@ -527,9 +532,9 @@ function UI_MovedirAdjustment(pi)
   local relativeAngles = vec3_t(0, 0, 0)
   local moveVector = vec3_t(0, 0, 0)
 
-  relativeAngles.x = pi.viewAngles.x - p.moveAngles.x
-  relativeAngles.y = pi.viewAngles.y - p.moveAngles.y
-  relativeAngles.z = pi.viewAngles.z - p.moveAngles.z
+  relativeAngles.x = pi.viewAngles.x - pi.moveAngles.x
+  relativeAngles.y = pi.viewAngles.y - pi.moveAngles.y
+  relativeAngles.z = pi.viewAngles.z - pi.moveAngles.z
 
   AngleVectors(relativeAngles, moveVector, nil, nil)
   if math.abs(moveVector.x) < 0.01 then
@@ -579,6 +584,12 @@ function AnglesToAxis(angles, axis0, axis1, axis2)
   axis1.z = vec3_origin.z - right.z
 end
 
+function AnglesSubtract(v1, v2, v3)
+	v3.x = AngleSubtract(v1.x, v2.x)
+	v3.y = AngleSubtract(v1.y, v2.y)
+	v3.z = AngleSubtract(v1.z, v2.z)
+end
+
 --[[
 ===============
 UI_PlayerAngles
@@ -626,8 +637,9 @@ function UI_PlayerAngles(pi, legs0, legs1, legs2, torso0, torso1, torso2, head0,
   else
     dest = headAngles.x * 0.75
   end
-  UI_SwingAngles(dest, 15, 30, 0.1, pi.torso.pitchAngle, pi.torso.pitching)
-  torsoAngles.x = pi.xtorso.pitchAngle
+  
+  pi.torso.pitchAngle, pi.torso.pitching = UI_SwingAngles(dest, 15, 30, 0.1, pi.torso.pitchAngle, pi.torso.pitching)
+  torsoAngles.x = pi.torso.pitchAngle
 
   if pi.fixedtorso then
     torsoAngles.x = 0.0
@@ -689,8 +701,8 @@ function UI_MachinegunSpinAngle(pi)
   if torsoAnim == TORSO_ATTACK2 then
     torsoAnim = TORSO_ATTACK
   end
-  if pi.barrelSpinning == ~(torsoAnim == TORSO_ATTACK) then
-    pi.barrelTime = dp_realtime
+  if pi.barrelSpinning == not (torsoAnim == TORSO_ATTACK) then
+    pi.barrelTime = math.floor(dp_realtime)
     pi.barrelAngle = AngleMod(angle)
     pi.barrelSpinning = (torsoAnim == TORSO_ATTACK)
   end
@@ -757,7 +769,7 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   origin.y = 0.5 * (mins.y + maxs.y)
   origin.z = -0.5 * (mins.z + maxs.z)
 
-  refdef.time = dp_realtime
+  refdef.time = math.floor(dp_realtime)
 
   trap_R_ClearScene()
 
@@ -784,7 +796,20 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   
 	
   -- get the animation state (after rotation, to allow feet shuffle)
-  legs.oldframe, legs.frame, legs.backlerp, torso.oldframe, torso.frame, torso.backlerp = UI_PlayerAnimation(pi)
+  local legs_oldframe
+  local legs_frame
+  local legs_backlerp
+  local torso_oldframe
+  local torso_frame
+  local torso_backlerp
+  
+  legs_oldframe, legs_frame, legs_backlerp, torso_oldframe, torso_frame, torso_backlerp = UI_PlayerAnimation(pi)
+  legs.oldframe = math.floor(legs_oldframe)
+  legs.frame = math.floor(legs_frame)
+  legs.backlerp = legs_backlerp
+  torso.oldframe = math.floor(torso_oldframe)
+  torso.frame = math.floor(torso_frame)
+  torso.backlerp = torso_backlerp
   renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW
 
   -- 
@@ -964,6 +989,9 @@ function UI_ParseAnimationFile(filename, pi)
   local i = 0
   for line in magiclines(filecontents) do
     line = line:gsub('//.*$', ''):match("^%s*(.-)%s*$")
+    if line == "" then
+      goto continue
+    end
     local tokens = {}
     for token in line:gmatch("%w+") do
       table.insert(tokens, token)
@@ -1007,10 +1035,10 @@ function UI_ParseAnimationFile(filename, pi)
       end
       animations[i].loopFrames = tonumber(tokens[3])      
       animations[i].fps = math.min(1, tonumber(tokens[4]))
-      animations[i].frameLerp = 1000 / animations[i].fps
+      animations[i].initialLerp = 1000 / animations[i].fps
       animations[i].frameLerp = animations[i].initialLerp
     else
-      if ~tokens[1] then
+      if not tokens[1] then
         goto do_frames
       end
       if tokens[1] == "footsteps" then
@@ -1019,12 +1047,12 @@ function UI_ParseAnimationFile(filename, pi)
         end
         goto continue
       else if tokens[1] == "headoffset" then
-        if ~tokens[2] or ~tokens[3] or ~tokens[4] then
+        if not tokens[2] or ~tokens[3] or ~tokens[4] then
           goto do_frames
         end
         goto continue
       else if tokens[1] == "sex" then
-        if ~tokens[2] then
+        if not tokens[2] then
           goto do_frames
         end
         goto continue
@@ -1042,8 +1070,26 @@ function UI_ParseAnimationFile(filename, pi)
     end
     ::continue::
   end
-  if i ~= MAX_ANIMATIONS then
+  
+  for i = TORSO_GETFLAG,TORSO_NEGATIVE do
+    if not animations[i] then
+      animations[i] = {}
+      animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame
+      animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp
+      animations[i].initialLerp = animations[TORSO_GESTURE].initialLerp
+      animations[i].loopFrames = animations[TORSO_GESTURE].loopFrames
+      animations[i].numFrames = animations[TORSO_GESTURE].numFrames
+      animations[i].reversed = false
+      animations[i].flipflop = false
+    end
+  end
+
+  if #animations ~= MAX_ANIMATIONS then
     print(string.format("Error parsing animation file: %s", filename))
+    return false
+  else
+    pi.animations = animations
+    return true
   end
 end
 
@@ -1061,7 +1107,7 @@ function UI_RegisterClientModelname(pi, modelSkinName)
   pi.torsoModel = 0
   pi.headModel = 0
 
-  if (not modelSkinName) or (modelSkinName.len() == 0) then
+  if not modelSkinName then
     return false
   end
 
@@ -1135,6 +1181,24 @@ function UI_PlayerInfo_SetModel( pi, model )
   UI_PlayerInfo_SetWeapon( pi, pi.weapon )
 end
 
+function LerpFrame()
+  return {
+    ["oldFrame"] = 0,
+    ["oldFrameTime"] = 0,
+    ["frame"] = 0,
+    ["frameTime"] = 0,
+    ["backlerp"] = 0,
+    ["yawAngle"] = 0,
+    ["yawing"] = false,
+    ["pitchAngle"] = 0,
+    ["pitching"] = false,
+    ["swingAngle"] = 0,
+    ["swinging"] = false,
+    ["animationNumber" ] = 0,
+    ["animation"] = {},
+    ["animationTime"] = 0
+  }
+end
 
 --[[
 ===============
@@ -1145,6 +1209,21 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   local currentAnim
   local weaponNum
   local c
+
+  pi.legsAnim = 0
+  pi.torsoAnim = 0
+  pi.weaponTimer = 0
+  pi.pendingLegsAnim = 0
+  pi.torsoAnimationTimer = 0
+  pi.pendingTorsoAnim = 0
+  pi.legsAnimationTimer = 0
+  pi.barrelAngle = 0
+  pi.barrelTime = 0
+  pi.realWeapon = 0
+  pi.muzzleFlashTime = 0
+  
+  pi.legs = LerpFrame()  
+  pi.torso = LerpFrame()
 
   pi.chat = chat
 
