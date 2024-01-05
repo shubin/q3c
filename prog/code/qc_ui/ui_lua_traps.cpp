@@ -52,7 +52,7 @@ static int lua_readfile( lua_State *L ) {
 
 	qpath = luaL_checkstring( L, 1 );
 	len = trap_FS_FOpenFile( qpath, &fh, FS_READ );
-	if ( fh != 0 ) {
+	if ( fh == 0 ) {
 		return 0;
 	}
 	filecontents.resize( len );
