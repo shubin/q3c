@@ -11,10 +11,10 @@ gCurrentMenu = UIMENU_NONE
 
 function InitModel()
   pi = {}
-  UI_PlayerInfo_SetModel(pi, "sarge/default")
+  UI_PlayerInfo_SetModel(pi, "ranger/default")
   local viewangles = vec3_t(0, 150, 0)
   local moveangles = vec3_t(0, 0, 0)
-  UI_PlayerInfo_SetInfo( pi, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, WP_MACHINEGUN, false );
+  UI_PlayerInfo_SetInfo( pi, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, WP_LOUSY_MACHINEGUN, false );
 end
 
 function UI_SetActiveMenu(nmenu)

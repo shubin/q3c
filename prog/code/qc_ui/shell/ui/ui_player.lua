@@ -22,6 +22,7 @@ bg_itemlist = require("ui.bg_itemlist")
 
 uis = {}
 uis.frametime = 20
+uis.realtime = 0
 uis.xscale = 1
 uis.yscale = 1
 
@@ -210,9 +211,6 @@ function UI_LegsSequencing(pi)
 end
 
 function VectorMA(v, s, b)
-  if not s then
-    local x = 1
-  end
   return vec3_t(v.x + s * b.x, v.y + s * b.y, v.z + s * b.z)
 end
 
@@ -228,9 +226,9 @@ function MatrixMultiply(in10, in11, in12, in20, in21, in22)
     in11.x * in20.z + in11.y * in21.z + in11.z * in22.z
   ),
   vec3_t(
-	in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
-	in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
-	in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
+	  in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
+	  in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
+	  in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
   )
 end
 
@@ -251,7 +249,10 @@ function UI_PositionEntityOnTag(entity, parent, parentModel, tagName)
   entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
   entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
 
-  entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(lerped.axis0, lerped.axis1, lerped.axis2, parent.axis0, parent.axis1, parent.axis2)
+  entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(
+    lerped.axis0, lerped.axis1, lerped.axis2, 
+    parent.axis0, parent.axis1, parent.axis2
+  )
   entity.backlerp = parent.backlerp
 end
 
@@ -272,8 +273,14 @@ function UI_PositionRotatedEntityOnTag(entity, parent, parentModel, tagName)
   entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
   entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
 
-  local tempAxis0, tempAxis1, tempAxis2 = MatrixMultiply(entity.axis0, entity.axis1, entity.axis2, lerped.axis0, lerped.axis1, lerped.axis1)
-  entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(tempAxis0, tempAxis1, tempAxis2, parent.axis0, parent.axis1, parent.axis2)   
+  local tempAxis0, tempAxis1, tempAxis2 = MatrixMultiply(
+    entity.axis0, entity.axis1, entity.axis2,
+    lerped.axis0, lerped.axis1, lerped.axis2
+  )
+  entity.axis0, entity.axis1, entity.axis2 = MatrixMultiply(
+    tempAxis0,    tempAxis1,    tempAxis2,
+    parent.axis0, parent.axis1, parent.axis2
+  )   
 end
 
 --[[
@@ -307,10 +314,9 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
   if (newAnimation ~= lf.animationNumber) or (lf.animation == nil) then
     UI_SetLerpFrameAnimation(ci, lf, newAnimation)
   end
-  local rt = math.floor(dp_realtime)
   --if we have passed the current frame, move it to
   -- oldFrame and calculate a new frame
-  if rt >= lf.frameTime then
+  if dp_realtime >= lf.frameTime then
     lf.oldFrame = lf.frame
     lf.oldFrameTime = lf.frameTime
 
@@ -319,7 +325,7 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
     if anim.frameLerp == 0 then
       return		-- shouldn't happen
     end
-    if rt < lf.animationTime then
+    if dp_realtime < lf.animationTime then
       lf.frameTime = lf.animationTime		-- initial lerp
     else
       lf.frameTime = lf.oldFrameTime + anim.frameLerp
@@ -339,7 +345,7 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
         f = numFrames - 1
         -- the animation is stuck at the end, so it
         -- can immediately transition to another sequence
-		lf.frameTime = rt
+		lf.frameTime = dp_realtime
       end
     end
     if anim.reversed then
@@ -349,13 +355,13 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
 	else
       lf.frame = anim.firstFrame + f
     end end
-    if rt > lf.frameTime then
-      lf.frameTime = rt
+    if dp_realtime > lf.frameTime then
+      lf.frameTime = dp_realtime
 	end
   end
 
-  if lf.frameTime > rt + 200 then
-    lf.frameTime = rt
+  if lf.frameTime > dp_realtime + 200 then
+    lf.frameTime = dp_realtime
   end
 
   if lf.oldFrameTime > dp_realtime then
@@ -733,7 +739,7 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
     return
   end
 
-  dp_realtime = time
+  dp_realtime = math.floor(time)
 
   if (pi.pendingWeapon ~= WP_NUM_WEAPONS) and (dp_realtime > pi.weaponTimer) then
     pi.weapon = pi.pendingWeapon
@@ -769,7 +775,7 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   origin.y = 0.5 * (mins.y + maxs.y)
   origin.z = -0.5 * (mins.z + maxs.z)
 
-  refdef.time = math.floor(dp_realtime)
+  refdef.time = dp_realtime
 
   trap_R_ClearScene()
 
@@ -793,23 +799,13 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   torso.axis0 = torso_axis0
   torso.axis1 = torso_axis1
   torso.axis2 = torso_axis2
+  head.axis0 = head_axis0
+  head.axis1 = head_axis1
+  head.axis2 = head_axis2
   
 	
   -- get the animation state (after rotation, to allow feet shuffle)
-  local legs_oldframe
-  local legs_frame
-  local legs_backlerp
-  local torso_oldframe
-  local torso_frame
-  local torso_backlerp
-  
-  legs_oldframe, legs_frame, legs_backlerp, torso_oldframe, torso_frame, torso_backlerp = UI_PlayerAnimation(pi)
-  legs.oldframe = math.floor(legs_oldframe)
-  legs.frame = math.floor(legs_frame)
-  legs.backlerp = legs_backlerp
-  torso.oldframe = math.floor(torso_oldframe)
-  torso.frame = math.floor(torso_frame)
-  torso.backlerp = torso_backlerp
+  legs.oldframe, legs.frame, legs.backlerp, torso.oldframe, torso.frame, torso.backlerp = UI_PlayerAnimation(pi)
   renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW
 
   -- 
@@ -838,7 +834,7 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
 
   torso.renderfx = renderfx
 
-  trap_R_AddRefEntityToScene( torso )
+  trap_R_AddRefEntityToScene(torso)
 
   --
   -- add the head

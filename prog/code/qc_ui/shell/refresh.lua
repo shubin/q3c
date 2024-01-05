@@ -3,6 +3,9 @@ local pointerSize = Vector2f.new(32, 32)
 local pointerHotspot = Vector2f.new(0.3, 0)
 
 function UI_Refresh(realtime)
+  uis.frametime = realtime - uis.realtime
+  uis.realtime = realtime
+  
   if gCurrentMenu == UIMENU_NONE then
     return
   end
