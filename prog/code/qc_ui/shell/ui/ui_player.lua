@@ -996,19 +996,6 @@ function UI_ParseAnimationFile(filename, pi)
     if parseframes then
       -- frames
       i = i + 1
-      if tokens[1] == nil then
-        if (i >= TORSO_GETFLAG) and (i <= TORSO_NEGATIVE) then
-          animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame
-          animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp
-          animations[i].initialLerp = animations[TORSO_GESTURE].initialLerp
-          animations[i].loopFrames = animations[TORSO_GESTURE].loopFrames
-          animations[i].numFrames = animations[TORSO_GESTURE].numFrames
-          animations[i].reversed = false
-          animations[i].flipflop = false
-          goto continue
-        end
-        break
-      end
       if #tokens ~= 4 then
         break
       end
@@ -1067,7 +1054,7 @@ function UI_ParseAnimationFile(filename, pi)
     ::continue::
   end
   
-  for i = TORSO_GETFLAG,TORSO_NEGATIVE do
+  for i = TORSO_GETFLAG, TORSO_NEGATIVE do
     if not animations[i] then
       animations[i] = {}
       animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame
@@ -1098,29 +1085,17 @@ function UI_RegisterClientModelname(pi, modelSkinName)
   local modelName = ""
   local skinName = ""
   local filename = ""
-  local slash = nil
 
   pi.torsoModel = 0
   pi.headModel = 0
 
-  if not modelSkinName then
-    return false
-  end
-
-  modelName = modelSkinName
-
-  slash = modelName:find("/")
-  if not slash then
-    -- modelName did not include a skin name
+  modelName, skinName = modelSkinName:match("(%w+)/?(%w*)")
+  if skinName:len() == 0 then
     skinName = "default"
-  else
-    skinName = modelName:sub(slash + 1)
-    -- truncate modelName
-    modelName = modelName:sub(1, slash - 1)
   end
 
   --  load cmodels before models so filecache works
-  filename = string.format("models/players/%s/lower.md3", modelName )
+  filename = string.format("models/players/%s/lower.md3", modelName)
   pi.legsModel = trap_R_RegisterModel(filename)
   if pi.legsModel == 0 then
     print("Failed to load model file", filename)
