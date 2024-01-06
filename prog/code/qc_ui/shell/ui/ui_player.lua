@@ -15,10 +15,10 @@ SWINGSPEED				= 0.3
 SPIN_SPEED				= 0.9
 COAST_TIME				= 1000
 
-dp_realtime = 0
-jumpHeight = 0
+local dp_realtime = 0
+local jumpHeight = 0
 
-bg_itemlist = require("ui.bg_itemlist")
+local bg_itemlist = require("ui.bg_itemlist")
 
 uis = {}
 uis.frametime = 20
@@ -47,14 +47,10 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
   end
 
   for _, v in pairs(bg_itemlist) do
-    if v.giType ~= IT_WEAPON then
-      goto continue
-    end
-    if v.giTag == weaponNum then
+    if v.giType == IT_WEAPON and v.giTag == weaponNum then
       item = v
       break
     end
-    ::continue::
   end
 
   if item.classname then
@@ -76,7 +72,7 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
 
   path = item.world_model[1]:gsub("%.%w+$", "") -- strip extension
   if (weaponNum == WP_LOUSY_MACHINEGUN) or (weaponNum == WP_MACHINEGUN) or (weaponNum == WP_GAUNTLET) or (weaponNum == WP_BFG) then   
-   pi.barrelModel = trap_R_RegisterModel(path.."_barrel.md3")
+    pi.barrelModel = trap_R_RegisterModel(path.."_barrel.md3")
   end
 
   pi.flashModel = trap_R_RegisterModel( path.."_flash.md3" )
@@ -999,43 +995,45 @@ function UI_ParseAnimationFile(filename, pi)
       if #tokens ~= 4 then
         break
       end
-      animations[i] = {}
+      
+      local anim = {}
+      animations[i] = anim
 
-      animations[i].firstFrame = tonumber(tokens[1])
+      anim.firstFrame = tonumber(tokens[1])
       if i == LEGS_WALKCR then
         skip = animations[LEGS_WALKCR].firstFrame - animations[TORSO_GESTURE].firstFrame
       end
       if (i >= LEGS_WALKCR) and  (i < TORSO_GETFLAG ) then
-        animations[i].firstFrame = animations[i].firstFrame - skip
+        anim.firstFrame = anim.firstFrame - skip
       end
-      animations[i].numFrames = tonumber(tokens[2])
-      animations[i].reversed = false
-      animations[i].flipFlop = false
+      anim.numFrames = tonumber(tokens[2])
+      anim.reversed = false
+      anim.flipFlop = false
       -- if numFrames is negative the animation is reversed
-      if animations[i].numFrames < 0 then
-        animations[i].numFrames = -animations[i].numFrames
-        animations[i].reversed = true
+      if anim.numFrames < 0 then
+        anim.numFrames = -anim.numFrames
+        anim.reversed = true
       end
-      animations[i].loopFrames = tonumber(tokens[3])      
-      animations[i].fps = math.max(1, tonumber(tokens[4]))
-      animations[i].initialLerp = 1000 / animations[i].fps
-      animations[i].frameLerp = animations[i].initialLerp
+      anim.loopFrames = tonumber(tokens[3])      
+      anim.fps = math.max(1, tonumber(tokens[4]))
+      anim.initialLerp = 1000 / anim.fps
+      anim.frameLerp = anim.initialLerp
     else
       if not tokens[1] then
         goto do_frames
       end
       if tokens[1] == "footsteps" then
-        if ~tokens[2] then
+        if not tokens[2] then
           goto do_frames
         end
         goto continue
       else if tokens[1] == "headoffset" then
-        if not tokens[2] or ~tokens[3] or ~tokens[4] then
+        if #tokens ~= 4 then
           goto do_frames
         end
         goto continue
       else if tokens[1] == "sex" then
-        if not tokens[2] then
+        if #tokens ~= 2 then
           goto do_frames
         end
         goto continue
@@ -1056,14 +1054,15 @@ function UI_ParseAnimationFile(filename, pi)
   
   for i = TORSO_GETFLAG, TORSO_NEGATIVE do
     if not animations[i] then
-      animations[i] = {}
-      animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame
-      animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp
-      animations[i].initialLerp = animations[TORSO_GESTURE].initialLerp
-      animations[i].loopFrames = animations[TORSO_GESTURE].loopFrames
-      animations[i].numFrames = animations[TORSO_GESTURE].numFrames
-      animations[i].reversed = false
-      animations[i].flipflop = false
+      local anim = {}
+      animations[i] = anim 
+      anim.firstFrame = animations[TORSO_GESTURE].firstFrame
+      anim.frameLerp = animations[TORSO_GESTURE].frameLerp
+      anim.initialLerp = animations[TORSO_GESTURE].initialLerp
+      anim.loopFrames = animations[TORSO_GESTURE].loopFrames
+      anim.numFrames = animations[TORSO_GESTURE].numFrames
+      anim.reversed = false
+      anim.flipflop = false
     end
   end
 
@@ -1141,7 +1140,7 @@ UI_PlayerInfo_SetModel
 ===============
 ]]--
 function UI_PlayerInfo_SetModel( pi, model )	
-  UI_RegisterClientModelname( pi, model )
+  UI_RegisterClientModelname(pi, model)
   pi.weapon = WP_MACHINEGUN
   pi.currentWeapon = pi.weapon
   pi.lastWeapon = pi.weapon
