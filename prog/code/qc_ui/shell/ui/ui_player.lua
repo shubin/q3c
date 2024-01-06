@@ -97,7 +97,7 @@ UI_SetLegsAnim
 ===============
 ]]--
 function UI_SetLegsAnim(pi, anim)
-  if pi.pendingLegsAnim then
+  if pi.pendingLegsAnim ~= 0 then
     anim = pi.pendingLegsAnim
     pi.pendingLegsAnim = 0
   end
@@ -127,7 +127,7 @@ UI_SetTorsoAnim
 ===============
 ]]--
 function UI_SetTorsoAnim(pi, anim)
-  if pi.pendingTorsoAnim then
+  if pi.pendingTorsoAnim ~= 0 then
     anim = pi.pendingTorsoAnim
     pi.pendingTorsoAnim = 0
   end
@@ -318,7 +318,7 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
 
     -- get the next frame based on the animation
     local anim = lf.animation
-    if anim.frameLerp == 0 then
+    if not anim.frameLerp or (anim.frameLerp == 0) then
       return		-- shouldn't happen
     end
     if dp_realtime < lf.animationTime then
