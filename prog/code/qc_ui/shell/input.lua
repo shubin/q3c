@@ -24,11 +24,28 @@ local function CheckMouse(in_key, in_down, q_key, rml_button)
   end
 end
 
+local function CheckMouseWheel(key, down)
+  if not down then
+    return
+  end
+  if key == K_MWHEELDOWN then
+    gContext:ProcessMouseWheel(1, modkeys)
+    return true
+  end
+  if key == K_MWHEELUP then
+    gContext:ProcessMouseWheel(-1, modkeys)
+    return true
+  end
+end
+
 local function CheckCharInput(key, down)
   if (key & K_CHAR_FLAG) ~= 0 then
     local chr = key & ~K_CHAR_FLAG
-    if chr > 0x1F and chr < 0x7F then
-      gContext:ProcessTextInput(string.char(chr))
+    if (chr > 0x1F and chr < 0x7F) then
+      gContext:ProcessTextInput(string.char(chr))      
+    end
+    if chr == 13 then
+      gContext:ProcessTextInput("\n")
     end
     return true
   end
@@ -63,6 +80,10 @@ function UI_KeyEvent(key, down)
   or CheckMouse(key, down, K_MOUSE2, 1)
   or CheckMouse(key, down, K_MOUSE3, 2)
   then
+    return
+  end
+  -- mouse wheel
+  if CheckMouseWheel(key, down) then
     return
   end
   -- general input
