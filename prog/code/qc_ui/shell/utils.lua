@@ -18,7 +18,10 @@ end
 
 function LoadDocument(name)
   local doc = gContext:LoadDocument(name)
-  --doc.GetElementById("#title").inner_rml = doc.title
+  local titleElement = doc:GetElementById("title")
+  if titleElement then
+    titleElement.inner_rml = doc.title
+  end
   return doc
 end
 

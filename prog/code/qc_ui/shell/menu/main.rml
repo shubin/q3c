@@ -1,6 +1,6 @@
 <rml>
 	<head>
-		<title>Main</title>
+		<title>Main Menu</title>
 		<link type="text/template" href="../assets/window.rml" />
 		<style>
 			body
