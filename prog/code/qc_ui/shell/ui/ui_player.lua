@@ -346,11 +346,11 @@ function UI_RunLerpFrame(ci, lf, newAnimation)
     end
     if anim.reversed then
       lf.frame = anim.firstFrame + anim.numFrames - 1 - f
-    else if anim.flipflop and (f >= anim.numFrames) then
+    elseif anim.flipflop and (f >= anim.numFrames) then
       lf.frame = anim.firstFrame + anim.numFrames - 1 - (f % anim.numFrames)
 	else
       lf.frame = anim.firstFrame + f
-    end end
+    end
     if dp_realtime > lf.frameTime then
       lf.frameTime = dp_realtime
 	end
@@ -464,11 +464,11 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
   scale = math.abs(swing)
   if scale < swingTolerance * 0.5 then
     scale = 0.5
-  else if scale < swingTolerance then
+  elseif scale < swingTolerance then
     scale = 1.0
   else
     scale = 2.0
-  end end
+  end
 
   -- swing towards the destination angle
   if swing >= 0 then
@@ -478,22 +478,22 @@ function UI_SwingAngles(destination, swingTolerance, clampTolerance, speed, angl
       swinging = false
     end
     angle = AngleMod(angle + move)
-  else if swing < 0 then
+  elseif swing < 0 then
     move = uis.frametime * scale * -speed
     if move <= swing then
       move = swing
       swinging = false
     end
     angle = AngleMod(angle + move)
-  end end
+  end
 
   -- clamp to no more than tolerance
   swing = AngleSubtract(destination, angle)
   if swing > clampTolerance then
     angle = AngleMod(destination - (clampTolerance - 1))
-  else if swing < -clampTolerance then
+  elseif swing < -clampTolerance then
     angle = AngleMod(destination + (clampTolerance - 1))
-  end end
+  end
   return angle, swinging 
 end
 
@@ -1027,26 +1027,26 @@ function UI_ParseAnimationFile(filename, pi)
           goto do_frames
         end
         goto continue
-      else if tokens[1] == "headoffset" then
+      elseif tokens[1] == "headoffset" then
         if #tokens ~= 4 then
           goto do_frames
         end
         goto continue
-      else if tokens[1] == "sex" then
+      elseif tokens[1] == "sex" then
         if #tokens ~= 2 then
           goto do_frames
         end
         goto continue
-      else if tokens[1] == "fixedlegs" then
+      elseif tokens[1] == "fixedlegs" then
         pi.fixedlegs = true
         goto continue
-      else if tokens[1] == "fixedtorso" then
+      elseif tokens[1] == "fixedtorso" then
         pi.fixedtorso = true
         goto continue
-      else if tonumber(tokens[1]) then
+      elseif tonumber(tokens[1]) then
         parseframes = true
         goto do_frames
-      end end end end end end
+      end
       print(string.format("unknown token '%s' in %s", tokens[1], filename))
     end
     ::continue::
@@ -1236,10 +1236,10 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   if weaponNumber == WP_NUM_WEAPONS then
     pi.pendingWeapon = WP_NUM_WEAPONS
     pi.weaponTimer = 0
-  else if weaponNumber ~= WP_NONE then
+  elseif weaponNumber ~= WP_NONE then
     pi.pendingWeapon = weaponNumber
     pi.weaponTimer = dp_realtime + UI_TIMER_WEAPON_DELAY
-  end end
+  end
   weaponNum = pi.lastWeapon
   pi.weapon = weaponNum
 
@@ -1263,11 +1263,11 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
   currentAnim = pi.legsAnim & ~ANIM_TOGGLEBIT
   if (legsAnim ~= LEGS_JUMP) and ((currentAnim == LEGS_JUMP) or (currentAnim == LEGS_LAND)) then
     pi.pendingLegsAnim = legsAnim
-  else if legsAnim ~= currentAnim then
+  elseif legsAnim ~= currentAnim then
     jumpHeight = 0
     pi.pendingLegsAnim = 0
     UI_ForceLegsAnim(pi, legsAnim)
-  end end
+  end
 
   -- torso animation
   if (torsoAnim == TORSO_STAND) or (torsoAnim == TORSO_STAND2) then
@@ -1292,10 +1292,10 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
 
   if (weaponNum ~= pi.currentWeapon) or (currentAnim == TORSO_RAISE) or (currentAnim == TORSO_DROP) then
     pi.pendingTorsoAnim = torsoAnim
-  else if ((currentAnim == TORSO_GESTURE) or (currentAnim == TORSO_ATTACK)) and (torsoAnim ~= currentAnim) then
+  elseif ((currentAnim == TORSO_GESTURE) or (currentAnim == TORSO_ATTACK)) and (torsoAnim ~= currentAnim) then
     pi.pendingTorsoAnim = torsoAnim
-  else if torsoAnim ~= currentAnim then
+  elseif torsoAnim ~= currentAnim then
     pi.pendingTorsoAnim = 0
     UI_ForceTorsoAnim(pi, torsoAnim)
-  end end end
+  end
 end
