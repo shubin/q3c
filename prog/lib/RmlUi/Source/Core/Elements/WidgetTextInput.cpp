@@ -451,9 +451,19 @@ void WidgetTextInput::ProcessEvent(Event& event)
 		case Input::KI_DECIMAL:	if (numlock) break; //-fallthrough
 		case Input::KI_DELETE:
 		{
-			CursorMovement direction = (ctrl ? CursorMovement::NextWord : CursorMovement::Right);
-			DeleteCharacters(direction);
-			ShowCursor(true);
+			if (key_identifier == Input::KI_DELETE && shift && !ctrl && !alt && selection_length > 0)
+			{
+				CopySelection();
+				DeleteSelection();
+				DispatchChangeEvent();
+				ShowCursor(true);
+			}
+			else
+			{
+				CursorMovement direction = (ctrl ? CursorMovement::NextWord : CursorMovement::Right);
+				DeleteCharacters(direction);
+				ShowCursor(true);
+			}
 		}
 		break;
 			// clang-format on
@@ -500,6 +510,27 @@ void WidgetTextInput::ProcessEvent(Event& event)
 
 				AddCharacters(clipboard_text);
 				ShowCursor(true);
+			}
+		}
+		break;
+
+		// additional hotkeys for copy/paste
+		case Input::KI_INSERT:
+		{
+			if (!ctrl && !alt && shift)
+			{
+				String clipboard_text;
+				GetSystemInterface()->GetClipboardText(clipboard_text);
+
+				AddCharacters(clipboard_text);
+				ShowCursor(true);
+				break;
+			}
+
+			if (ctrl && !alt && !shift && selection_length > 0 )
+			{
+				CopySelection();
+				break;
 			}
 		}
 		break;
