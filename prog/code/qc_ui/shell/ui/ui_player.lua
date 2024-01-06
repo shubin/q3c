@@ -222,9 +222,9 @@ function MatrixMultiply(in10, in11, in12, in20, in21, in22)
     in11.x * in20.z + in11.y * in21.z + in11.z * in22.z
   ),
   vec3_t(
-	  in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
-	  in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
-	  in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
+    in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
+    in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
+    in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
   )
 end
 
