@@ -73,16 +73,7 @@ void UI_BindTraps( lua_State *L ) {
 	}
 	luabridge::getGlobalNamespace( L )
 		.addFunction( "readfile", lua_readfile )
-		.addFunction( "MapKey", 
-			+[]( lua_State *L ) {
-				auto key = luabridge::Stack<int>::get( L, 1 );
-				int rmlkey, chr;
-				UI_MapKey( key.value(), &rmlkey, &chr );
-				auto retval = luabridge::Stack<int>::push( L, rmlkey );
-				retval = luabridge::Stack<int>::push( L, chr );
-				return 2;
-			}
-		)
+		.addFunction( "MapKey", UI_MapKey )
 		.beginClass<QVec2>( "vec2_t" )
 			.addConstructor<void(*)()>()
 			.addConstructor<void(*)( float, float )>()

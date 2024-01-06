@@ -16,7 +16,7 @@ qboolean UI_ConsoleCommand( int realTime );
 void UI_DrawConnectScreen( qboolean overlay );
 void UI_CvarChanged( void );
 
-void UI_MapKey( int key, int *ki, int *chr );
+int UI_MapKey( int key );
 const char  *UI_ConvertPath( const char *path );
 
 extern float r_brightness;
