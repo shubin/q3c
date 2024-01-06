@@ -76,7 +76,7 @@ function UI_PlayerInfo_SetWeapon(pi, weaponNum)
   end
 
   pi.flashModel = trap_R_RegisterModel( path.."_flash.md3" )
-  pi.flashDlightColor = vec3_t(0.6, 0.6, 1) -- todo: weapon-specific flash color
+  pi.flashDlightColor = vec3_t.new(0.6, 0.6, 1) -- todo: weapon-specific flash color
 end
 
 --[[
@@ -207,21 +207,21 @@ function UI_LegsSequencing(pi)
 end
 
 function VectorMA(v, s, b)
-  return vec3_t(v.x + s * b.x, v.y + s * b.y, v.z + s * b.z)
+  return vec3_t.new(v.x + s * b.x, v.y + s * b.y, v.z + s * b.z)
 end
 
 function MatrixMultiply(in10, in11, in12, in20, in21, in22)
-  return vec3_t(
+  return vec3_t.new(
     in10.x * in20.x + in10.y * in21.x + in10.z * in22.x,
     in10.x * in20.y + in10.y * in21.y + in10.z * in22.y,
     in10.x * in20.z + in10.y * in21.z + in10.z * in22.z
   ),
-  vec3_t(
+  vec3_t.new(
     in11.x * in20.x + in11.y * in21.x + in11.z * in22.x,
     in11.x * in20.y + in11.y * in21.y + in11.z * in22.y,
     in11.x * in20.z + in11.y * in21.z + in11.z * in22.z
   ),
-  vec3_t(
+  vec3_t.new(
     in12.x * in20.x + in12.y * in21.x + in12.z * in22.x,
     in12.x * in20.y + in12.y * in21.y + in12.z * in22.y,
     in12.x * in20.z + in12.y * in21.z + in12.z * in22.z
@@ -240,7 +240,7 @@ function UI_PositionEntityOnTag(entity, parent, parentModel, tagName)
   trap_CM_LerpTag(lerped, parentModel, parent.oldframe, parent.frame, 1.0 - parent.backlerp, tagName)
 
   -- FIXME: allow origin offsets along tag?
-  entity.origin = vec3_t(parent.origin.x, parent.origin.y, parent.origin.z)
+  entity.origin = vec3_t.new(parent.origin.x, parent.origin.y, parent.origin.z)
   entity.origin = VectorMA(entity.origin, lerped.origin.x, parent.axis0)
   entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
   entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
@@ -264,7 +264,7 @@ function UI_PositionRotatedEntityOnTag(entity, parent, parentModel, tagName)
   trap_CM_LerpTag(lerped, parentModel, parent.oldframe, parent.frame, 1.0 - parent.backlerp, tagName)
 
   -- FIXME: allow origin offsets along tag?
-  entity.origin = vec3_t(parent.origin.x, parent.origin.y, parent.origin.z)
+  entity.origin = vec3_t.new(parent.origin.x, parent.origin.y, parent.origin.z)
   entity.origin = VectorMA(entity.origin, lerped.origin.x, parent.axis0)
   entity.origin = VectorMA(entity.origin, lerped.origin.y, parent.axis1)
   entity.origin = VectorMA(entity.origin, lerped.origin.z, parent.axis2)
@@ -531,8 +531,8 @@ UI_MovedirAdjustment
 ======================
 ]]--
 function UI_MovedirAdjustment(pi)
-  local relativeAngles = vec3_t(0, 0, 0)
-  local moveVector = vec3_t(0, 0, 0)
+  local relativeAngles = vec3_t()
+  local moveVector = vec3_t()
 
   relativeAngles.x = pi.viewAngles.x - pi.moveAngles.x
   relativeAngles.y = pi.viewAngles.y - pi.moveAngles.y
@@ -570,7 +570,7 @@ function UI_MovedirAdjustment(pi)
   return -22
 end
 
-vec3_origin = vec3_t(0, 0, 0)
+vec3_origin = vec3_t()
 
 --[[
 =================
@@ -578,7 +578,7 @@ AnglesToAxis
 =================
 ]]--
 function AnglesToAxis(angles, axis0, axis1, axis2)
-  local right = vec3_t(0, 0, 0)
+  local right = vec3_t()
   -- angle vectors returns "right" instead of "y axis"
   AngleVectors(angles, axis0, right, axis2)
   axis1.x = vec3_origin.x - right.x
@@ -598,9 +598,9 @@ UI_PlayerAngles
 ===============
 ]]--
 function UI_PlayerAngles(pi, legs0, legs1, legs2, torso0, torso1, torso2, head0, head1, head2)
-  local legsAngles = vec3_t(0, 0, 0)
-  local torsoAngles = vec3_t(0, 0, 0)
-  local headAngles = vec3_t(0, 0, 0)
+  local legsAngles = vec3_t()
+  local torsoAngles = vec3_t()
+  local headAngles = vec3_t()
   local dest, adjust
 
   headAngles.x = pi.viewAngles.x
@@ -668,7 +668,7 @@ UI_PlayerFloatSprite
 ]]--
 function UI_PlayerFloatSprite(pi, origin, shader)
   local ent = refEntity_t()
-  ent.origin = vec3_t(origin.x, origin.y, origin.z + 48)
+  ent.origin = vec3_t.new(origin.x, origin.y, origin.z + 48)
   ent.reType = RT_SPRITE
   ent.customShader = shader
   ent.radius = 10
@@ -724,10 +724,10 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   local gun = refEntity_t()
   local barrel = refEntity_t()
   local flash = refEntity_t()
-  local origin = vec3_t(0, 0, 0)
+  local origin = vec3_t()
   local renderfx
-  local mins = vec3_t(-16, -16, -24)
-  local maxs = vec3_t(16, 16, 32)
+  local mins = vec3_t.new(-16, -16, -24)
+  local maxs = vec3_t.new(16, 16, 32)
   local len
   local xx
 
@@ -752,9 +752,9 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   y = y - jumpHeight
 
   refdef.rdflags = RDF_NOWORLDMODEL
-  refdef.viewaxis0 = vec3_t(1, 0, 0)
-  refdef.viewaxis1 = vec3_t(0, 1, 0)
-  refdef.viewaxis2 = vec3_t(0, 0, 1)
+  refdef.viewaxis0 = vec3_t.new(1, 0, 0)
+  refdef.viewaxis1 = vec3_t.new(0, 1, 0)
+  refdef.viewaxis2 = vec3_t.new(0, 0, 1)
 
   refdef.x = x
   refdef.y = y
@@ -776,15 +776,15 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   trap_R_ClearScene()
 
   -- get the rotation information
-  local legs_axis0 = vec3_t(0, 0, 0)
-  local legs_axis1 = vec3_t(0, 0, 0)
-  local legs_axis2 = vec3_t(0, 0, 0)
-  local torso_axis0 = vec3_t(0, 0, 0)
-  local torso_axis1 = vec3_t(0, 0, 0)
-  local torso_axis2 = vec3_t(0, 0, 0)
-  local head_axis0 = vec3_t(0, 0, 0)
-  local head_axis1 = vec3_t(0, 0, 0)
-  local head_axis2 = vec3_t(0, 0, 0)
+  local legs_axis0 = vec3_t()
+  local legs_axis1 = vec3_t()
+  local legs_axis2 = vec3_t()
+  local torso_axis0 = vec3_t()
+  local torso_axis1 = vec3_t()
+  local torso_axis2 = vec3_t()
+  local head_axis0 = vec3_t()
+  local head_axis1 = vec3_t()
+  local head_axis2 = vec3_t()
   UI_PlayerAngles( pi,
     legs_axis0, legs_axis1, legs_axis2,
     torso_axis0, torso_axis1, torso_axis2,
@@ -866,16 +866,16 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   -- add the spinning barrel
   --
   if (pi.realWeapon == WP_LOUSY_MACHINEGUN) or (pi.realWeapon == WP_MACHINEGUN) or (pi.realWeapon == WP_GAUNTLET) or (pi.realWeapon == WP_BFG) then
-    local angles = vec3_t(0, 0, 0)		
+    local angles = vec3_t()		
     barrel.lightingOrigin = origin
   	barrel.renderfx = renderfx
     barrel.hModel = pi.barrelModel
     angles.y = 0
     angles.x = 0
     angles.z = UI_MachinegunSpinAngle(pi)
-    local barrel_axis0 = vec3_t(0, 0, 0)
-    local barrel_axis1 = vec3_t(0, 0, 0)
-    local barrel_axis2 = vec3_t(0, 0, 0)
+    local barrel_axis0 = vec3_t()
+    local barrel_axis1 = vec3_t()
+    local barrel_axis2 = vec3_t()
     AnglesToAxis(angles, barrel_axis0, barrel_axis1, barrel_axis2)
     barrel.axis0 = barrel_axis0
     barrel.axis1 = barrel_axis1
@@ -920,10 +920,10 @@ function UI_DrawPlayer(x, y, w, h, pi, time)
   --
   -- add an accent light
   --
-  origin = vec3_t(origin.x - 100, origin.y + 100, origin.z + 100)
+  origin = vec3_t.new(origin.x - 100, origin.y + 100, origin.z + 100)
   trap_R_AddLightToScene( origin, 500, 1.0, 1.0, 1.0 )
 
-  origin = vec3_t(origin.x - 100, origin.y - 100, origin.z - 100)
+  origin = vec3_t.new(origin.x - 100, origin.y - 100, origin.z - 100)
   trap_R_AddLightToScene( origin, 500, 1.0, 0.0, 0.0 )
 
   trap_R_RenderScene( refdef )
@@ -1199,7 +1199,7 @@ function UI_PlayerInfo_SetInfo(pi, legsAnim, torsoAnim, viewAngles, moveAngles, 
 
   c = math.floor(trap_Cvar_VariableValue("color1"))
 
-  pi.color1 = vec3_t(1, 1, 1)  -- todo color parsing
+  pi.color1 = vec3_t.new(1, 1, 1)  -- todo color parsing
 
   pi.c1RGBA = rgba_t(255 * pi.color1.x, 255 * pi.color1.y, 255 * pi.color1.z, 255)
   pi.viewAngles = viewAngles
