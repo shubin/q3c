@@ -88,6 +88,8 @@ int ParseStartingWeapon( const char *name );
 #define ACID_LIFETIME		10000
 
 #define TWILIGHT_DEPLOY_TIME    250
+#define WALLJUMP_VELOCITY       350
+#define WALLJUMP_BOUNCE         350
 
 //#define ANARKI_SPEED_BOOST  1.11875f       // in QC, the normal speed is 320 and 358 when injected
 #define ANARKI_SPEED_BOOST  1.05

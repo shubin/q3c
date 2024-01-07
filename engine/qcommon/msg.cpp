@@ -947,7 +947,6 @@ static const netField_t playerStateFields[] =
 { PSF(champion), 5 },
 
 { PSF(jumpTime), 16 },
-{ PSF(walljumpTime), 16 },
 { PSF(crouchSlideTime), 16 },
 
 { PSF(ab_time), 32 }, // up to 64 seconds to recharge an ability; UPD: make it 32 bit why not?

@@ -172,12 +172,6 @@ typedef enum {
 #define PMF_ABILITY_ACTIVATED	0x08000
 #define PMF_JUMPPAD				0x10000 // if the bit is set then player is launched by a jumppad
 #define PMF_WALLJUMPING			0x20000
-#define PMF_WALLJUMPCOUNT		0x40000
-#define PMF_DASHING				0x80000
-#endif
-
-#if defined( QC )
-#define PM_DASH_DELAY	500
 #endif
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)

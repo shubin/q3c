@@ -955,8 +955,6 @@ typedef struct playerState_s {
 
 	int			jumpTime;
 	int			landTime;
-	int			walljumpTime;
-	int			dashSpeed, dashTime;
 	int			crouchSlideTime;
 
 	int			ab_time;		// ability timer, semantic depends on the flags
