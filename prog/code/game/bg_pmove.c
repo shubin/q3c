@@ -686,23 +686,43 @@ static qboolean PM_CheckJump( void ) {
 #if defined( QC )
 // Could be used to test if player walk touching a wall, if not used in any other part of pm code i'll integrate
 // this function to the walljumpcheck function.
-// usage : nbTestDir = nb of direction to test around the player
+// usage : 
+// wishvel is the current use intention vector, we check the wall behind that first in order to get the correct bounce
+// nbTestDir = nb of direction to test around the player
 // maxZnormal is the Z value of the normal of a poly to considere it as a wall
 // normal is a pointer to the normal of the nearest wall
-// (borrowed from WarFork source code)
-static qboolean PlayerTouchWall( int nbTestDir, float maxZnormal, vec3_t *normal ) {
+// (serge: borrowed from WarFork source code and altered for my needs)
+static qboolean PlayerTouchWall( vec3_t wishvel, int nbTestDir, float maxZnormal, vec3_t normal ) {
 	vec3_t min, max, dir;
 	int i, j;
 	trace_t trace;
-	float dist = 1.0;
+	float dist = 1.0, wishlen;
 	entityState_t *state;
 	qboolean retval;
+	vec3_t invwishdir;
+
+	VectorCopy( wishvel, invwishdir );
+	invwishdir[2] = 0.0f;
+	wishlen = VectorLength( invwishdir );
+	if ( wishlen < 0.01f ) {
+		wishlen = 0.0f;
+	}
+	VectorScale( wishvel, -1.0f/wishlen, invwishdir );
 
 	retval = qfalse;
-	for ( i = 0; i < nbTestDir; i++ ) {
-		dir[0] = pm->ps->origin[0] + ( pm->maxs[0] * cos( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[0] * 0.015f );
-		dir[1] = pm->ps->origin[1] + ( pm->maxs[1] * sin( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[1] * 0.015f );
-		dir[2] = pm->ps->origin[2] + CROUCH_VIEWHEIGHT;
+	for ( i = -1; i < nbTestDir; i++ ) {
+		if ( i == -1 ) {
+			if ( wishlen == 0.0f ) {
+				continue;
+			}
+			dir[0] = pm->ps->origin[0] + ( pm->maxs[0] * invwishdir[0] + pm->ps->velocity[0] * 0.015f );
+			dir[1] = pm->ps->origin[1] + ( pm->maxs[1] * invwishdir[1] + pm->ps->velocity[1] * 0.015f );
+			dir[2] = pm->ps->origin[2] + CROUCH_VIEWHEIGHT;
+		} else {
+			dir[0] = pm->ps->origin[0] + ( pm->maxs[0] * cos( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[0] * 0.015f );
+			dir[1] = pm->ps->origin[1] + ( pm->maxs[1] * sin( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[1] * 0.015f );
+			dir[2] = pm->ps->origin[2] + CROUCH_VIEWHEIGHT;
+		}
 
 		for ( j = 0; j < 2; j++ ) {
 			min[j] = pm->mins[j];
@@ -734,8 +754,11 @@ static qboolean PlayerTouchWall( int nbTestDir, float maxZnormal, vec3_t *normal
 		if ( trace.fraction > 0 ) {
 			if ( dist > trace.fraction && fabs( trace.plane.normal[2] ) < maxZnormal ) {
 				dist = trace.fraction;
-				VectorCopy( trace.plane.normal, *normal );
+				VectorCopy( trace.plane.normal, normal );
 				retval = qtrue;
+				if ( i == -1 ) {
+					break; // if the wishvel gave us the wall point, we're happy with it
+				}
 			}
 		}
 	}
@@ -778,7 +801,11 @@ static qboolean PM_CheckWallJump( void ) {
 		return qfalse;
 	}
 
-	if ( !PlayerTouchWall( 12, 0.3f, &normal ) ) {
+	for ( i = 0; i < 3; i++ ) { // get the player move intention vector
+		wishvel[i] = pml.forward[i] * pm->cmd.forwardmove + pml.right[i] * pm->cmd.rightmove;
+	}
+
+	if ( !PlayerTouchWall( wishvel, 12, 0.3f, normal ) ) {
 		return qfalse;
 	}
 
@@ -792,10 +819,6 @@ static qboolean PM_CheckWallJump( void ) {
 
 	// calculate the bounce amount
 	
-	for ( i = 0; i < 3; i++ ) { // get the player move intention vector
-		wishvel[i] = pml.forward[i] * pm->cmd.forwardmove + pml.right[i] * pm->cmd.rightmove;
-	}
-
 	normal[2] = 0.0f; // ignore the Z coordinate as irrelevant for the wall bounce
 	VectorNormalize( normal );
 	bounce = DotProduct( normal, wishvel ) / 127.0f;
