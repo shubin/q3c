@@ -750,9 +750,9 @@ PM_CheckWallJump
 
 static qboolean PM_CheckWallJump( void ) {
 	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );
-	float	groundSpeed, speedLimit, speedScale, wjproj;
+	float	groundSpeed, speedLimit, speedScale, bounce;
 	int i;
-	vec3_t normal, vel, forward, wishvel;
+	vec3_t normal, wishvel;
 
 	if ( pm->ps->champion != CHAMP_NYX ) {
 		return qfalse;
@@ -796,18 +796,12 @@ static qboolean PM_CheckWallJump( void ) {
 		wishvel[i] = pml.forward[i] * pm->cmd.forwardmove + pml.right[i] * pm->cmd.rightmove;
 	}
 
-#if 0
-	AngleVectors( pm->ps->viewangles, forward, NULL, NULL );
-#else
-	VectorNormalize( wishvel, forward ); 
-#endif
-
-	VectorNormalize( normal );
 	normal[2] = 0.0f; // ignore the Z coordinate as irrelevant for the wall bounce
-	forward[2] = 0.0f;
-	if ( DotProduct( normal, wishvel ) > 0.1f ) { // player's intention is directed away from the wall?
-		wjproj = Com_Clamp( 0.0f, 1.0f, DotProduct( wishvel, normal ) * 1.5f ); // amplify the bounce a bit to make the it more controllable
-		VectorMA( pm->ps->velocity, wjproj * WALLJUMP_BOUNCE, normal, pm->ps->velocity ); // apply the bounce
+	VectorNormalize( normal );
+	bounce = DotProduct( normal, wishvel ) / 127.0f;
+	if ( bounce > 0.3f ) { // player's intention is directed away from the wall?
+		bounce = WALLJUMP_BOUNCE * Com_Clamp( 0.0f, 1.0f, bounce * 1.5f ); // amplify the bounce a bit to make the it more controllable
+		VectorMA( pm->ps->velocity, bounce, normal, pm->ps->velocity ); // apply the bounce
 	}
 
 	PM_AddEvent( EV_JUMP );
