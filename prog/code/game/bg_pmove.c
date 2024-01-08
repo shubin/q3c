@@ -702,7 +702,7 @@ static qboolean PlayerTouchWall( int nbTestDir, float maxZnormal, vec3_t *normal
 	for ( i = 0; i < nbTestDir; i++ ) {
 		dir[0] = pm->ps->origin[0] + ( pm->maxs[0] * cos( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[0] * 0.015f );
 		dir[1] = pm->ps->origin[1] + ( pm->maxs[1] * sin( ( 2 * M_PI / nbTestDir ) * i ) + pm->ps->velocity[1] * 0.015f );
-		dir[2] = pm->ps->origin[2];
+		dir[2] = pm->ps->origin[2] + CROUCH_VIEWHEIGHT;
 
 		for ( j = 0; j < 2; j++ ) {
 			min[j] = pm->mins[j];
@@ -751,7 +751,8 @@ PM_CheckWallJump
 static qboolean PM_CheckWallJump( void ) {
 	movement_parameters_t *mp = PM_ChampionMovementParameters( pm->ps->champion );
 	float	groundSpeed, speedLimit, speedScale, wjproj;
-	vec3_t normal, vel;
+	int i;
+	vec3_t normal, vel, forward, wishvel;
 
 	if ( pm->ps->champion != CHAMP_NYX ) {
 		return qfalse;
@@ -788,15 +789,26 @@ static qboolean PM_CheckWallJump( void ) {
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	pm->ps->velocity[2] = WALLJUMP_VELOCITY;
 
-#if 0
-	VectorSet( vel, pm->ps->velocity[0], pm->ps->velocity[1], 0.0f );
-	VectorNormalize( normal );
-	normal[2] = 0.0f;
-	wjproj = DotProduct( vel, normal );
-	if ( wjproj > 0 ) {
-		VectorMA( pm->ps->velocity, wjproj * WALLJUMP_BOUNCE, normal, pm->ps->velocity );
+
+	// calculate the bounce amount
+	
+	for ( i = 0; i < 3; i++ ) { // get the player move intention vector
+		wishvel[i] = pml.forward[i] * pm->cmd.forwardmove + pml.right[i] * pm->cmd.rightmove;
 	}
+
+#if 0
+	AngleVectors( pm->ps->viewangles, forward, NULL, NULL );
+#else
+	VectorNormalize( wishvel, forward ); 
 #endif
+
+	VectorNormalize( normal );
+	normal[2] = 0.0f; // ignore the Z coordinate as irrelevant for the wall bounce
+	forward[2] = 0.0f;
+	if ( DotProduct( normal, wishvel ) > 0.1f ) { // player's intention is directed away from the wall?
+		wjproj = Com_Clamp( 0.0f, 1.0f, DotProduct( wishvel, normal ) * 1.5f ); // amplify the bounce a bit to make the it more controllable
+		VectorMA( pm->ps->velocity, wjproj * WALLJUMP_BOUNCE, normal, pm->ps->velocity ); // apply the bounce
+	}
 
 	PM_AddEvent( EV_JUMP );
 
