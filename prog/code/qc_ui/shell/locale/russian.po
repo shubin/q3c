@@ -1,0 +1,48 @@
+# this is some comment
+msgid "Main Menu"
+msgstr "Главное меню"
+
+msgid "Start Game"
+msgstr "Новая игра"
+
+msgid "Setup"
+msgstr "Настройки"
+
+msgid "Restart"
+msgstr "Перезапуск"
+
+msgid "Quit"
+msgstr "Выход"
+
+msgid "Ingame Menu"
+msgstr "Меню"
+
+msgid "Ingame menu here."
+msgstr "Тут внутриигровое меню"
+
+msgid "Disconnect"
+msgstr "Отключиться"
+
+msgid "Resume"
+msgstr "Вернуться в игру"
+
+msgid "Setup menu here."
+msgstr "Тут меню настроек."
+
+msgid "Name:"
+msgstr "Имя:"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Settings Menu"
+msgstr "Настройки"
+
+msgid "Start menu here."
+msgstr "Это меню новой игры."
+
+msgid "Main menu here."
+msgstr "Это тут у нас главное меню."

@@ -142,7 +142,7 @@
 
 body
 {
-	font-family: LatoLatin;
+	font-family: "Noto Sans Display";
 	font-weight: normal;
 	font-style: normal;
 	font-size: 15dp;

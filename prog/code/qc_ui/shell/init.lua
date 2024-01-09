@@ -1,6 +1,4 @@
-rmlui:LoadFontFace("assets/LatoLatin-Regular.ttf")
-rmlui:LoadFontFace("assets/LatoLatin-Bold.ttf")
-rmlui:LoadFontFace("assets/NotoEmoji-Regular.ttf", true)
+rmlui:LoadFontFace("assets/NotoSansDisplay.ttf")
 
 gGlConfig = trap_GetGlconfig()
 gContext = rmlui:CreateContext("main", Vector2i.new(gGlConfig.vidWidth, gGlConfig.vidHeight))
