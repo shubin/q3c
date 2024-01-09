@@ -210,6 +210,7 @@ qboolean UI_LoadLocalisation( const char *path ) {
 		S_RDID,
 		S_WAITMSG,
 		S_RDMSG,
+		S_RDMSGADD,
 		S_END,
 	} state;
 
@@ -244,11 +245,6 @@ qboolean UI_LoadLocalisation( const char *path ) {
 			state = S_ERROR;
 			break;
 		case S_RDID:
-			if ( msgid.size() ) {
-				messages[msgid] = msgstr.str();
-				msgstr.str( "" );
-				msgid.clear();
-			}
 			tok = lx.get( tokstr );
 			if ( tok == T_END ) { state = S_END; break; }
 			if ( tok == T_ERROR ) { state = S_ERROR; break; }
@@ -277,15 +273,28 @@ qboolean UI_LoadLocalisation( const char *path ) {
 			state = S_ERROR;
 			break;
 		case S_RDMSG:
+		case S_RDMSGADD:
 			tok = lx.get( tokstr );
-			if ( tok == T_END ) { state = S_END; break; }
+			if ( tok == T_END ) {
+				if ( state == S_RDMSG ) {
+					trap_Print( "^1Error parsing localisation file: msgstr value expected, got end of file\n" );
+					state = S_ERROR; 
+					break;
+				}
+				messages[msgid] = msgstr.str();
+				msgstr.str( "" );
+				state = S_END;
+				break;
+			}
 			if ( tok == T_ERROR ) { state = S_ERROR; break; }
 			if ( tok == T_STRING ) {
 				msgstr << tokstr;
-				state = S_RDMSG;
+				state = S_RDMSGADD;
 				break;
 			}
 			if ( tok == T_ATOM ) {
+				messages[msgid] = msgstr.str();
+				msgstr.str( "" );
 				state = S_WAITID;
 				break;
 			}
@@ -297,9 +306,6 @@ qboolean UI_LoadLocalisation( const char *path ) {
 	trap_FS_FCloseFile( handle );
 
 	if ( state == S_END ) {
-		if ( msgid.size() ) {
-			messages[msgid] = msgstr.str();
-		}
 		::messages.swap( messages );
 		return qtrue;
 	}
