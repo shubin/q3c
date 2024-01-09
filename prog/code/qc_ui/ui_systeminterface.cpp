@@ -10,6 +10,9 @@ extern "C" {
 
 #include "ui_local.h"
 
+// ui_localisation.cpp
+const char *UI_LocaliseString( const char *str );
+
 using namespace Rml;
 
 QSystemInterface::QSystemInterface() {
@@ -51,11 +54,17 @@ void QSystemInterface::JoinPath( String &translated_path, const String &document
 	}
 }
 
-/*
+bool UI_LocaliseString( std::string &translated, const std::string &input );
+
 int QSystemInterface::TranslateString( String &translated, const String &input ) {
-	//translated
+	if ( UI_LocaliseString( translated, input ) ) {
+		return 1;
+	}
+	translated = input;
+	return 0;
 }
 
+/*
 void QSystemInterface::SetMouseCursor( const String &cursor_name ) {
 }
 
