@@ -22,6 +22,7 @@ const char  *UI_ConvertPath( const char *path );
 extern float r_brightness;
 extern glconfig_t g_glConfig;
 extern vmCvar_t ui_shell;
+extern vmCvar_t ui_language;
 extern vmCvar_t ui_luadebug; // ui_luadebug cvar should be set to the "host:port" of the debugger server
 
 namespace Rml {

@@ -19,12 +19,17 @@ Rml::QSystemInterface g_systemInterface;
 void UI_InitLua( void );
 void UI_ShutdownLua( void );
 void UI_CvarChangedLua( void );
+void UI_LoadLocalisation( const char *language );
 
 void UI_Init( void ) {
 	glconfig_t glc;
 
 	r_brightness = trap_Cvar_VariableValue( "r_brightness" );
 	trap_Cvar_Watch( "r_brightness", qtrue );
+	trap_Cvar_Register( &ui_shell, "ui_shell", "shell", CVAR_INIT );
+	trap_Cvar_Register( &ui_language, "ui_language", "english", CVAR_ARCHIVE );
+	trap_Cvar_Watch( "ui_language", qtrue );
+	UI_LoadLocalisation( ui_language.string );
 	trap_GetGlconfig( &glc );
 	g_renderInterface.Initialize( glc.vidWidth, glc.vidHeight );
 	Rml::SetRenderInterface( &g_renderInterface );
@@ -85,6 +90,10 @@ void UI_CvarChanged( void ) {
 	var_name[63] = 0;
 	if ( !strcmp( var_name, "r_brightness" ) ) {
 		r_brightness = trap_Cvar_VariableValue( "r_brightness" );
+	}
+	if ( !strcmp( var_name, "ui_language" ) ) {
+		trap_Cvar_Update( &ui_language );
+		UI_LoadLocalisation( ui_language.string );
 	}
 	UI_CvarChangedLua();
 }

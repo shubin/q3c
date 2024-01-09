@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_dispatch.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_keymap.cpp" />
+    <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_localisation.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_lua.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_lua_libs.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_lua_traps.cpp" />

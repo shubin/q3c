@@ -17,6 +17,7 @@ void UI_OpenStdLibs( lua_State *L );
 void UI_OpenSocketLib( lua_State *L );
 
 vmCvar_t ui_shell;
+vmCvar_t ui_language;
 vmCvar_t ui_luadebug; // ui_luadebug cvar should be set to the "host:port" of the debugger server
 
 static int checkload( lua_State *L, int stat, const char *filename ) {
@@ -144,7 +145,6 @@ void UI_InitDebugger( lua_State *L ) {
 }
 
 void UI_InitLua( void ) {
-	trap_Cvar_Register( &ui_shell, "ui_shell", "shell", CVAR_INIT );
 	Rml::Lua::Initialise();
 
 	lua_State *L = Rml::Lua::Interpreter::GetLuaState();	
