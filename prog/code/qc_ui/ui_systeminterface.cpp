@@ -57,7 +57,22 @@ void QSystemInterface::JoinPath( String &translated_path, const String &document
 bool UI_LocaliseString( std::string &translated, const std::string &input );
 
 int QSystemInterface::TranslateString( String &translated, const String &input ) {
-	if ( UI_LocaliseString( translated, input ) ) {
+	const char spaces[] = "\n\t\r ";
+	size_t first = input.find_first_not_of( spaces );
+
+	if ( first == std::string::npos ) {
+		translated = input;
+		return 1;
+	}
+
+	size_t last = input.find_last_not_of( spaces ) + 1;
+	std::string prologue = input.substr( 0, first );
+	std::string core = input.substr( first, last - first );
+	std::string epilogue = input.substr( last );
+	std::string loccore;
+
+	if ( UI_LocaliseString( loccore, core ) ) {
+		translated = prologue + loccore + epilogue;
 		return 1;
 	}
 	translated = input;
