@@ -8,7 +8,10 @@ extern "C" {
 #include <string>
 #include <unordered_map>
 
-typedef std::unordered_map<std::string, std::string> msgmap;
+namespace {
+	typedef std::unordered_map<std::string, std::string> msgmap;
+}
+
 static msgmap messages;
 
 bool UI_LocaliseString( std::string &translated, const std::string &input ) {
