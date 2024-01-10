@@ -43,6 +43,8 @@ msgstr "Настройки"
 
 msgid "Start menu here."
 msgstr "Это меню новой игры."
+       "!"
 
 msgid "Main menu here."
 msgstr "Это тут у нас главное меню."
+       "!"

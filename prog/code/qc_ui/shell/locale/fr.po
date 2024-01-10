@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; "
+"charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+# this is some comment
+msgid "Main" " Menu"
+msgstr "Menu Principal"
+
+msgid "Start Game"
+msgstr "Démarrer jeu"
+
+msgid "Setup"
+msgstr "Configuration"
+
+msgid "Restart"
+msgstr "Recommencer"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "Ingame Menu"
+msgstr "Menu du jeu"
+
+msgid "Ingame menu here."
+msgstr "Menu du jeu ici."
+
+msgid "Disconnect"
+msgstr "Déconnecter"
+
+msgid "Resume"
+msgstr "Résumé"
+
+msgid "Setup menu here."
+msgstr "Menu de configuration ici."
+
+msgid "Name:"
+msgstr "Nom:"
