@@ -236,11 +236,11 @@ qboolean UI_LoadLocalisation( const char *path ) {
 					state = S_RDID;
 					break;
 				}
-				trap_Print( va( "^1Error parsing localisation file: msgid expected, got %s\n", tokstr.c_str() ));
+				trap_Print( va( "^1Error parsing localisation file: msgid expected, got %s\n", tokstr.c_str() ) );
 				state = S_ERROR;
 				break;
 			}
-			trap_Print( va( "^1Error parsing localisation file: msgid expected, got token %d (%s)\n", tok, tokstr.c_str() ));
+			trap_Print( va( "^1Error parsing localisation file: msgid expected, got token %d (%s)\n", tok, tokstr.c_str() ) );
 			state = S_ERROR;
 			break;
 		case S_RDID:
