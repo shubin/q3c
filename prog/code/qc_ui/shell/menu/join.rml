@@ -5,8 +5,8 @@
 		<style>
 			body
 			{
-				width: 300dp;
-				height: 225dp;
+				width: 400dp;
+				height: 500dp;
 
 				margin: auto;
 			}
@@ -20,6 +20,11 @@
 			{
 				text-align: left;
 			}
+
+            #serverlist {
+                height: 200dp;
+                width: 90%;
+            }
 		</style>
 	</head>
 	<body template="window">

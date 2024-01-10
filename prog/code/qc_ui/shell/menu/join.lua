@@ -27,28 +27,29 @@ function menu:refresh()
   end
   local command = "globalservers 0 "..protocol.." full empty"
   trap_Cmd_ExecuteText(EXEC_APPEND, command)
-  self.serverlist.inner_rml = "Refreshing..."
+  self.serverlist:SetAttribute("value", "Refreshing...")
   self.numservers = 0
+  self.servers = {}
   self.state = S_QUERY
 end
 
 function menu:getservers()
   for i = 1, self.numservers do
-    table.insert( self.servers, trap_LAN_GetServerAddressString( AS_GLOBAL, i - 1 ) )
+    table.insert(self.servers, trap_LAN_GetServerAddressString(AS_GLOBAL, i - 1))
   end
 end
 
 function menu:update()
   if self.state == S_QUERY then
-    self.numservers = trap_LAN_GetServerCount( AS_GLOBAL )
+    self.numservers = trap_LAN_GetServerCount(AS_GLOBAL)
     if self.numservers > 0 then
       self:getservers()
-      print("numservers", self.numservers )
+      print("numservers", self.numservers)
       local s = ""
       for i, v in pairs(self.servers) do
         s = s .. string.format("server #%s: %s\n", i, v)
       end
-      self.serverlist.inner_rml = s
+      self.serverlist:SetAttribute("value", s)
       self.state = S_IDLE
     end
   end  
