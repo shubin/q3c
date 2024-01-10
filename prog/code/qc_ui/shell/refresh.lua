@@ -26,9 +26,18 @@ local function DoFade(realtime)
   end
 end
 
+local function UpdateMenus()
+  for _, menu in pairs(gMenu) do
+    if menu.update then
+      menu:update()
+    end
+  end
+end
+
 function UI_Refresh(realtime)
   uis.frametime = realtime - uis.realtime
-  uis.realtime = realtime  
+  uis.realtime = realtime
+  UpdateMenus()
   if gCurrentMenu == UIMENU_NONE then
     return
   end

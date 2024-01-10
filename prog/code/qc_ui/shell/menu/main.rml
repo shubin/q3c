@@ -25,6 +25,7 @@
 	<body template="window">
 		Main menu here.<br/>
        <button onclick='gMenu.main:open("start")'>Start Game</button>
+       <button onclick='gMenu.main:open("join")'>Join Game</button>
        <button onclick='gMenu.main:open("setup")'>Setup</button>
        <button onclick='gMenu.main:restart()'>Restart</button>
        <button onclick='gMenu.main:quit()'>Quit</button>

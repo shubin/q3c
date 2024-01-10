@@ -14,7 +14,7 @@ end
 
 -- load all the menus
 gMenu = {}
-local menulist = { "main", "setup", "start", "ingame" }
+local menulist = { "main", "setup", "start", "join", "ingame" }
 for _,v in pairs(menulist) do
   gMenu[v] = require("menu."..v)
 end
