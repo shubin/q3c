@@ -18,3 +18,11 @@ local menulist = { "main", "setup", "start", "ingame" }
 for _,v in pairs(menulist) do
   gMenu[v] = require("menu."..v)
 end
+
+-- execution context
+
+ui_cookie = vmCvar_t()
+trap_Cvar_Register( ui_cookie, "__ui_cookie", "", 0 )
+
+gFreshStart = ui_cookie.string == ""
+trap_Cvar_Set( "__ui_cookie", "1")

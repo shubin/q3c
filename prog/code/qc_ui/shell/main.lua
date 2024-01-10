@@ -24,6 +24,9 @@ function UI_SetActiveMenu(nmenu)
     trap_Key_ClearStates()
   else
     if nmenu == UIMENU_MAIN then
+      if gFreshStart then 
+        FadeIn(1000)
+      end
       ShowMenu("main")
       if not pi then
         InitModel()
