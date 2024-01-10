@@ -31,6 +31,10 @@ static void read( void *file, void *buffer, int amount ) {
 	trap_FS_Read( buffer, amount, (fileHandle_t)(intptr_t)file );
 }
 
+static void error( const char *errmsg ) {
+	trap_Print( va( "^1%s\n", errmsg ) );
+}
+
 qboolean UI_LoadLocalisation( const char *path ) {
 	fileHandle_t handle;
 	int len;
@@ -39,16 +43,15 @@ qboolean UI_LoadLocalisation( const char *path ) {
 		return qfalse;
 	}
 	
-	std::unordered_map<std::string, std::string> messages;
+	std::unordered_map<std::string, std::string> pairs;
 
-	bool success = po_parse( read, len, (void*)( intptr_t )handle, addmsg, &messages, trap_Print );
+	bool success = po_parse( read, len, (void*)( intptr_t )handle, addmsg, &pairs, error );
 
 	trap_FS_FCloseFile( handle );
 
 	if ( success ) {
-		::messages.swap( messages );
+		messages.swap( pairs );
 		return qtrue;
 	}
-	trap_Print( "^1Error parsing localisation file\n" );
 	return qfalse;
 }

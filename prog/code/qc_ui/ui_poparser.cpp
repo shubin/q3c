@@ -17,7 +17,7 @@ static std::string format( const char *format, ... ) {
 }
 
 struct reader {
-	po_read read;
+	void ( *read )( void *file, void *buffer, int amount );
 	void *file;
 	int len;
 	
@@ -26,7 +26,10 @@ struct reader {
 	unsigned char *ptr, *end;
 	int line;
 
-	reader( po_read read, void *file, int len )
+	reader(
+		void ( *read )( void *file, void *buffer, int amount ),
+		void *file, int len 
+	)
 		:read( read ), file( file ), len( len ), bytesread( 0 )
 		, ptr( buffer ), end( buffer ), line( 0 ) {
 		bufferize();
@@ -190,7 +193,13 @@ struct lexer {
 	}
 };
 
-bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storage, po_error error ) {
+bool po_parse(
+	void ( *read )( void *file, void *buffer, int amount ),
+	int len, void *file,
+	void ( *addmsg )( void *storage, const char *msgid, const char *msgstr ),
+	void *storage,
+	void ( *error ) ( const char *error )
+) {
 	reader rd( read, file, len );
 	lexer lx( rd );
 
@@ -208,7 +217,7 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 	} state;
 
 	state = S_INIT;
-	token_type tok;
+	token_type tok = T_ERROR;
 	std::string tokstr;
 
 	std::stringstream msgid;
@@ -232,11 +241,11 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 					state = S_RDID;
 					break;
 				}
-				error( format( "^1Error parsing localisation file: msgid expected, got %s\n", tokstr.c_str() ).c_str() );
+				error( format( "Error parsing localisation file: msgid expected, got %s", tokstr.c_str() ).c_str() );
 				state = S_ERROR;
 				break;
 			}
-			error( format( "^1Error parsing localisation file: msgid expected, got token %d (%s)\n", tok, tokstr.c_str() ).c_str() );
+			error( format( "Error parsing localisation file: msgid expected, got token %d (%s)", tok, tokstr.c_str() ).c_str() );
 			state = S_ERROR;
 			break;
 		case S_RDIDADD:
@@ -257,7 +266,7 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 				state = S_WAITMSG_NOREAD;
 				break;
 			}
-			error( format( "^1Error parsing localisation file: msgid value expected, got token %d (%s)\n", tok, tokstr.c_str() ).c_str() );
+			error( format( "^1Error parsing localisation file: msgid value expected, got token %d (%s)", tok, tokstr.c_str() ).c_str() );
 			state = S_ERROR;
 			break;
 		case S_WAITMSG:
@@ -276,11 +285,11 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 					state = S_RDMSG;
 					break;
 				}
-				error( format( "^1Error parsing localisation file: msgstr expected, got %s\n", tokstr.c_str() ).c_str() );
+				error( format( "Error parsing localisation file: msgstr expected, got %s", tokstr.c_str() ).c_str() );
 				state = S_ERROR;
 				break;
 			}
-			error( format( "^1Error parsing localisation file: msgstr expected, got token %d (%s)\n", tok, tokstr.c_str() ).c_str() );
+			error( format( "Error parsing localisation file: msgstr expected, got token %d (%s)", tok, tokstr.c_str() ).c_str() );
 			state = S_ERROR;
 			break;
 		case S_RDMSG:
@@ -288,7 +297,7 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 			tok = lx.get( tokstr );
 			if ( tok == T_END ) {
 				if ( state == S_RDMSG ) {
-					error( "^1Error parsing localisation file: msgstr value expected, got end of file\n" );
+					error( "Error parsing localisation file: msgstr value expected, got end of file" );
 					state = S_ERROR;
 					break;
 				}
@@ -313,7 +322,7 @@ bool po_parse( po_read read, int len, void *file, po_addmsg addmsg, void *storag
 				state = S_WAITID;
 				break;
 			}
-			error( format( "^1Error parsing localisation file: msgstr value or msgid expected, got token %d (%s)\n", tok, tokstr.c_str() ).c_str() );
+			error( format( "Error parsing localisation file: msgstr value or msgid expected, got token %d (%s)", tok, tokstr.c_str() ).c_str() );
 			state = S_ERROR;
 			break;
 		}
