@@ -25,7 +25,7 @@ function UI_SetActiveMenu(nmenu)
   else
     if nmenu == UIMENU_MAIN then
       if gFreshStart then 
-        FadeIn(1000)
+        FadeIn(500)
       end
       ShowMenu("main")
       if not pi then

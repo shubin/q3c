@@ -17,7 +17,7 @@ local function DoFade(realtime)
     fadestart = realtime
   end
   if fadetime then
-    fadecolor.a = clamp(1 - (realtime - fadestart) / fadetime, 0, 1)
+    fadecolor.a = 0.5 * (math.sin(math.pi * (clamp(1 - (realtime - fadestart) / fadetime, 0, 1) - 0.5)) + 1)
     trap_R_SetColor( fadecolor )
     trap_R_DrawStretchPic( 0, 0, gGlConfig.vidWidth, gGlConfig.vidHeight, 0, 0, 1, 1, fadeshader )
     if fadecolor.a == 0 then
