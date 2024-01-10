@@ -29,7 +29,7 @@ void UI_Init( void ) {
 	r_brightness = trap_Cvar_VariableValue( "r_brightness" );
 	trap_Cvar_Watch( "r_brightness", qtrue );
 	trap_Cvar_Register( &ui_shell, "ui_shell", "shell", CVAR_INIT );
-	trap_Cvar_Register( &ui_language, "ui_language", "english", CVAR_ARCHIVE );
+	trap_Cvar_Register( &ui_language, "ui_language", "en", CVAR_ARCHIVE );
 	UI_LoadLocalisation( va( "%s/locale/%s.po", ui_shell.string, ui_language.string ) );
 	trap_GetGlconfig( &glc );
 	g_renderInterface.Initialize( glc.vidWidth, glc.vidHeight );

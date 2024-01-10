@@ -24,6 +24,7 @@
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_fileinterface.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_renderinterface.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_systeminterface.cpp" />
+    <ClCompile Include="$(ProgSrcDir)code\qc_ui\ui_poparser.cpp" />
     <ClCompile Include="$(ProgSrcDir)code\ui\ui_syscalls.c">
       <CompileAs Condition="'$(Game)'=='QC'">CompileAsCpp</CompileAs>
     </ClCompile>
@@ -32,6 +33,7 @@
     <ClInclude Include="$(ProgSrcDir)code\qcommon\q_shared.h" />
     <ClInclude Include="$(ProgSrcDir)code\qc_ui\ui_local.h" />
     <ClInclude Include="$(ProgSrcDir)code\qc_ui\ui_public.h" />
+    <ClInclude Include="$(ProgSrcDir)code\qc_ui\ui_poparser.h" />
   </ItemGroup>
   <ItemGroup>
     <PropertyPageSchema Include="Props\CRTSettings.xml" />
