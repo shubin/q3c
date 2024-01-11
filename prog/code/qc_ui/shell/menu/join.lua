@@ -17,8 +17,22 @@ function menu:back()
   ShowMenu("main")
 end
 
+function menu:refcb(info, time)
+  if info then
+    print("PING:", time)
+    for k,v in pairs(info) do
+      print(k, v)
+    end
+    table.insert(self.servers, info)
+  else
+    print(string.format("-- refresh done, %d servers", #self.servers))
+    print("ping queue: ", trap_LAN_GetPingQueueCount() )
+  end
+end
+
 function menu:refresh()
-  sb:refresh(function(servers) self:onupdate(servers) end)
+  self.servers = {}
+  sb:refresh(function(...) self:refcb(...)end)
 end
 
 function menu:getservers()
