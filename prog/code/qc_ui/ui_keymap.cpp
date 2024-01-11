@@ -19,6 +19,7 @@ int UI_MapKey( int key ) {
 	krange( '0', '9', KI_0 );
 	krange( 'A', 'Z', KI_A );
 	krange( 'a', 'z', KI_A );
+	krange( K_F1, K_F24, KI_F1 );
 	kmap( K_TAB, KI_TAB );
 	kmap( K_ENTER, KI_RETURN);
 	kmap( K_LEFTARROW, KI_LEFT );
@@ -27,6 +28,7 @@ int UI_MapKey( int key ) {
 	kmap( K_DOWNARROW, KI_DOWN );
 	kmap( K_ESCAPE, KI_ESCAPE );
 	kmap( K_BACKSPACE, KI_BACK );
+	kmap( K_CAPSLOCK, KI_CAPITAL );
 	kmap( K_INS, KI_INSERT );
 	kmap( K_HOME, KI_HOME );
 	kmap( K_PGUP, KI_PRIOR );
