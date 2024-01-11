@@ -26,18 +26,31 @@ local function DoFade(realtime)
   end
 end
 
-local function UpdateMenus()
-  for _, menu in pairs(gMenu) do
-    if menu.update then
-      menu:update()
-    end
+-- Refresh hooks
+
+local hook_refresh = {}
+
+function InstallRefreshHook(func)
+  hook_refresh[func] = true
+  return func
+end
+
+function RemoveRefreshHook(func)
+  hook_refresh[func] = nil
+end
+
+function RunRefreshHooks(realtime)
+  for func, _ in pairs(hook_refresh) do
+    func(realtime)
   end
 end
+
+-- System handlers
 
 function UI_Refresh(realtime)
   uis.frametime = realtime - uis.realtime
   uis.realtime = realtime
-  UpdateMenus()
+  RunRefreshHooks(realtime)
   if gCurrentMenu == UIMENU_NONE then
     return
   end

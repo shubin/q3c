@@ -4,7 +4,7 @@ require("utils")
 require("init")
 require("input")
 require("refresh")
-
+require("serverbrowser")
 require("ui.ui_player")
 
 gCurrentMenu = UIMENU_NONE
