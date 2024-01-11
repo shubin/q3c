@@ -29,6 +29,8 @@ function ShowMenu(nmenu)
   gMenu[nmenu].doc:Show()
 end
 
+-- Cvar change watching
+
 local watchlist = {}
 
 function Cvar_Watch(var_name, callback)
@@ -44,7 +46,7 @@ function Cvar_Watch(var_name, callback)
 end
 
 function Cvar_Unwatch(handle)
-  local var_name, callback = table.unpack(handle, 1,2)
+  local var_name, callback = table.unpack(handle, 1, 2)
   local w = watchlist[var_name]
   if w == nil then
     return

@@ -2,6 +2,8 @@ local pointer = trap_R_RegisterShaderNoMip("shell/assets/pointer");
 local pointerSize = Vector2f.new(32, 32)
 local pointerHotspot = Vector2f.new(0.3, 0)
 
+-- Fade effect
+
 local fadetime = nil
 local fadestart = nil
 local fadeshader = trap_R_RegisterShaderNoMip("white")
@@ -19,8 +21,8 @@ local function DoFade(realtime)
   if fadetime then
     fadecolor.a = 0.5 * (math.sin(math.pi * (clamp(1 - (realtime - fadestart) / fadetime, 0, 1) - 0.5)) + 1)
     trap_R_SetColor( fadecolor )
-    trap_R_DrawStretchPic( 0, 0, gGlConfig.vidWidth, gGlConfig.vidHeight, 0, 0, 1, 1, fadeshader )
-    if fadecolor.a == 0 then
+    trap_R_DrawStretchPic(0, 0, gGlConfig.vidWidth, gGlConfig.vidHeight, 0, 0, 1, 1, fadeshader)
+    if realtime >= fadestart + fadetime then
       fadetime = nil
     end
   end

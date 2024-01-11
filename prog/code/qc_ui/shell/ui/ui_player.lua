@@ -20,11 +20,9 @@ local jumpHeight = 0
 
 local bg_itemlist = require("ui.bg_itemlist")
 
-uis = {}
-uis.frametime = 20
-uis.realtime = 0
-uis.xscale = 1
-uis.yscale = 1
+uis = {
+  frametime = 20, realtime = 0, xscale = 1, yscale = 1
+}
 
 --[[
 ===============
@@ -1152,21 +1150,10 @@ function UI_PlayerInfo_SetModel( pi, model )
 end
 
 function LerpFrame()
-  return {
-    ["oldFrame"] = 0,
-    ["oldFrameTime"] = 0,
-    ["frame"] = 0,
-    ["frameTime"] = 0,
-    ["backlerp"] = 0,
-    ["yawAngle"] = 0,
-    ["yawing"] = false,
-    ["pitchAngle"] = 0,
-    ["pitching"] = false,
-    ["swingAngle"] = 0,
-    ["swinging"] = false,
-    ["animationNumber" ] = 0,
-    ["animation"] = {},
-    ["animationTime"] = 0
+  return { 
+    oldFrame = 0, oldFrameTime = 0, frame = 0, frameTime = 0, backlerp = 0,
+    yawAngle = 0, yawing = false, pitchAngle = 0, pitching = false, swingAngle = 0,
+    swinging = false, animationNumber = 0, animation = {}, animationTime = 0
   }
 end
 
