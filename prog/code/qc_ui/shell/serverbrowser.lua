@@ -60,7 +60,7 @@ function serverbrowser:refreshhook(source, realtime)
     self.nextping = realtime + PING_DELAY
     -- process ping results
     for i = 1, MAX_PINGREQUESTS do
-      local addr, time = trap_LAN_GetPing( i - 1 )
+      local addr, time = trap_LAN_GetPing(i - 1)
       if addr:len() == 0 then
         -- ignore empty or pending pings
         goto continue        
@@ -89,7 +89,7 @@ function serverbrowser:refreshhook(source, realtime)
           local infostring = trap_LAN_GetPingInfo(i - 1)
           info = ParseInfoString(infostring) 
         end
-        self.cb(info, time)
+        self.cb(addr, time, info)
       end
       trap_LAN_ClearPing(i - 1)
     ::continue::
@@ -150,7 +150,7 @@ function serverbrowser:refresh(callback)
 end
 
 function serverbrowser:stoprefresh()
-  if self.cb then self.cb(nil) end
+  if self.cb then self.cb() end
   RemoveRefreshHook(self.rh)
   self.rh = nil
   self.cb = nil

@@ -5,7 +5,7 @@
 		<style>
 			body
 			{
-				width: 400dp;
+				width: 600dp;
 				height: 500dp;
 
 				margin: auto;
@@ -23,13 +23,20 @@
 
             #serverlist {
                 height: 200dp;
-                width: 90%;
+                width: 95%;
+                color: black;
+                background: rgba(255,255,255,128);
+            }
+            #serverlist tr.hdr td {
+                font-weight: bold;
             }
 		</style>
 	</head>
 	<body template="window" onshow="gMenu.join:show()" onhide="gMenu.join:hide()">
 		Join menu here.<br/>
-       <textarea id="serverlist">...</textarea>
+       <table id="serverlist">
+			<!--<tr class='hdr'><td>Address</td><td>Hostname</td><td>Ping</td></tr>-->
+		</table>
        <button onclick='gMenu.join:refresh()'>Refresh</button>
        <button onclick='gMenu.join:back()'>Back</button>
 	</body>

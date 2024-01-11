@@ -17,22 +17,44 @@ function menu:back()
   ShowMenu("main")
 end
 
-function menu:refcb(info, time)
+function menu:addcells(tr, cells)
+  local td
+  for i = 1, #cells do
+    td = tr:AppendChild(self.doc:CreateElement("td"))
+    td:AppendChild(self.doc:CreateTextNode(tostring(cells[i])))
+  end
+end
+
+function menu:buildlist()
+  local tab = self.doc:GetElementById("serverlist")
+  tab.inner_rml = ""
+  local tr, td
+  tr = tab:AppendChild(self.doc:CreateElement("tr"))
+  tr:SetAttribute("class", "hdr")
+  -- header
+  self:addcells(tr, { "Address", "Hostname", "Ping" })
+  -- add server info
+  for i = 1, #self.servers do
+    local sv = self.servers[i]
+    tr = tab:AppendChild(self.doc:CreateElement("tr"))
+    self:addcells(tr, { sv["/addr"], sv.hostname, sv["/time"] })
+  end
+end
+
+-- this callback receives no args when the server list is complete
+function menu:refresh_callback(addr, time, info)
   if info then
-    print("PING:", time)
-    for k,v in pairs(info) do
-      print(k, v)
-    end
+    info["/addr"] = addr
+    info["/time"] = time
     table.insert(self.servers, info)
   else
-    print(string.format("-- refresh done, %d servers", #self.servers))
-    print("ping queue: ", trap_LAN_GetPingQueueCount() )
+    self:buildlist()
   end
 end
 
 function menu:refresh()
   self.servers = {}
-  sb:refresh(function(...) self:refcb(...)end)
+  sb:refresh(function(...) self:refresh_callback(...)end)
 end
 
 function menu:getservers()
