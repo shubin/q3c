@@ -8,31 +8,56 @@ local S_QUERY	= 1
 local S_PING	= 2
 
 local QUERY_TIMEOUT	= 5000
+local PING_DELAY = 50
 local MAX_PINGREQUESTS = 32
+local MAX_PING = 500
 
 local serverbrowser = {}
 
 serverbrowser.state = S_IDLE
 
-function serverbrowser:refreshhook(source, realtime)
-  local numservers = trap_LAN_GetServerCount(AS_GLOBAL)
-  local servers = {}
-  if numservers > 0 then
-    for i = 1, numservers do
-      table.insert(servers, trap_LAN_GetServerAddressString(source, i - 1))
-    end
-    self.state = S_IDLE
-    RemoveRefreshHook(self.rh)
-    if self.cb then
-      self.cb(servers)
-    end
-    return
+function ParseInfoString(infostring, result)
+  if result == nil then
+    result = {}
   end
-  if realtime - self.querystart > QUERY_TIMEOUT then
-    if self.cb then
-      self.cb({})
+  for k,v in infostring:gmatch("\\([^\\]+)\\([^\\]+)") do
+    result[k] = v
+  end
+  return result
+end
+
+local function FindEmptySlot(list)
+  for k, v in pairs(list) do
+    if not next(v) then
+      return k, v
     end
-    self:stoprefresh()
+  end
+end
+
+function serverbrowser:refreshhook(source, realtime)
+  if self.state == S_QUERY then
+    local numservers = trap_LAN_GetServerCount(AS_GLOBAL)
+    if numservers > 0 then
+      self.servers = {}  
+      self.pinglist = {}
+      for i = 1, numservers do
+        table.insert(self.servers, trap_LAN_GetServerAddressString(source, i - 1))
+        table.insert(self.pinglist, {})
+      end
+      self.state = S_PING
+      self.nextping = realtime
+      return
+    end
+    if realtime - self.querystart > QUERY_TIMEOUT then
+      self:stoprefresh()
+      return
+    end
+  elseif self.state == S_PING then
+    -- throttle ping requests
+    if realtime < self.nextping then
+      return
+    end
+    self.nextping = realtime + PING_DELAY
   end
 end
 
@@ -56,6 +81,7 @@ end
 
 function serverbrowser:stoprefresh()
   if self.state == S_QUERY then
+    if self.cb then self.cb(nil) end
     RemoveRefreshHook(self.rh)
     self.rh = nil
     self.cb = nil
