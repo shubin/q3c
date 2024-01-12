@@ -30,6 +30,10 @@ static char LastKeyTooHigh[K_LAST_KEY < 256 ? 1 : -1];
 
 static cvar_t* m_speed;
 static cvar_t* m_accel;
+#if defined( QC )
+static cvar_t* m_zoomSpeed;
+static cvar_t* m_zoomAccel;
+#endif // QC
 static cvar_t* m_accelStyle;	// 0=original, 1=new
 static cvar_t* m_accelOffset;	// for style 1 only
 static cvar_t* m_limit;			// for style 0 only
@@ -358,6 +362,18 @@ static void CL_JoystickMove( usercmd_t *cmd )
 static void CL_MouseMove( usercmd_t* cmd )
 {
 	float mx, my;
+#if defined( QC )
+	float sensitivity;
+	float accel;
+
+	if ( cl.cgameUserCmdValue & 128 ) { // zoomed
+		sensitivity = m_zoomSpeed->value > 0 ? m_zoomSpeed->value : m_speed->value;
+		accel = m_zoomAccel->value > 0 ? m_zoomAccel->value : m_accel->value;
+	} else {
+		sensitivity = m_speed->value;
+		accel = m_accel->value;
+	}
+#endif // QC
 
 	// allow mouse smoothing
 	if ( m_filter->integer ) {
@@ -374,11 +390,19 @@ static void CL_MouseMove( usercmd_t* cmd )
 	if (mx == 0.0f && my == 0.0f)
 		return;
 
+#if defined( QC )
+	if (accel != 0.0f) {
+#else
 	if (m_accel->value != 0.0f) {
+#endif
 		// legacy style
 		if (m_accelStyle->integer == 0) {
 			const float rate = sqrtf( mx * mx + my * my ) / (float)frame_msec;
+#if defined( QC )
+			float speed = sensitivity + rate * accel;
+#else
 			float speed = m_speed->value + rate * m_accel->value;
+#endif
 
 			if (m_limit->value != 0.0f && (speed > m_limit->value))
 				speed = m_limit->value;
@@ -393,19 +417,33 @@ static void CL_MouseMove( usercmd_t* cmd )
 			const float offset = m_accelOffset->value;
 			const float rateXa = fabsf( mx ) / (float)frame_msec;
 			const float rateYa = fabsf( my ) / (float)frame_msec;
+#if defined( QC )
+			const float powerXa = powf( rateXa / offset, accel );
+			const float powerYa = powf( rateYa / offset, accel );
+#else
 			const float powerXa = powf( rateXa / offset, m_accel->value );
 			const float powerYa = powf( rateYa / offset, m_accel->value );
+#endif
 			const float powerX = mx >= 0 ? powerXa : -powerXa;
 			const float powerY = my >= 0 ? powerYa : -powerYa;
 
+#if defined( QC )
+			mx = sensitivity * ( mx + powerX * offset );
+			my = sensitivity * ( my + powerY * offset );
+#else
 			mx = m_speed->value * ( mx + powerX * offset );
 			my = m_speed->value * ( my + powerY * offset );
+#endif
 
 			if (cl_showMouseRate->integer)
 				Com_Printf( "ratex: %f, ratey: %f, powx: %f, powy: %f\n", rateXa, rateYa, powerX, powerY );
 		}
 	} else {
+#if defined( QC )
+		float speed = sensitivity;
+#else
 		float speed = m_speed->value;
+#endif
 
 		if (m_limit->value != 0.0f && speed > m_limit->value)
 			speed = m_limit->value;
@@ -859,6 +897,16 @@ static const cvarTableItem_t cl_cvars[] =
 		&m_accel, "m_accel", "0", CVAR_ARCHIVE, CVART_FLOAT, "0", "100", "mouse acceleration",
 		"Mouse acceleration", CVARCAT_INPUT, "", ""
 	},
+#if defined( QC )
+	{
+		&m_zoomSpeed, "m_zoomSpeed", "0", CVAR_ARCHIVE, CVART_FLOAT, "0", "100", "mouse sensitivity when zoomed",
+		"Mouse sensitivity when zoomed (0 - use regular sensitivity)", CVARCAT_INPUT, "", ""
+	},
+	{
+		&m_zoomAccel, "m_zoomAccel", "0", CVAR_ARCHIVE, CVART_FLOAT, "0", "100", "mouse acceleration when zoomed",
+		"Mouse acceleration when zoomed (0 - use regular acceleration)", CVARCAT_INPUT, "", ""
+	},
+#endif // QC
 	{
 		&m_accelStyle, "m_accelStyle", "0", CVAR_ARCHIVE, CVART_INTEGER, "0", "1", help_m_accelStyle,
 		"Mouse accel style", CVARCAT_INPUT, "", "",
