@@ -311,6 +311,11 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	if ( !other->takedamage &&
 		( ent->s.eFlags & ( EF_BOUNCE | EF_BOUNCE_HALF ) ) ) {
 		G_BounceMissile( ent, trace );
+#if defined( QC )
+		if ( ent->s.eFlags & EF_BOUNCE_ONCE ) {
+			ent->s.eFlags &= ~EF_BOUNCE_HALF;
+		}
+#endif // QC		
 		G_AddEvent( ent, EV_GRENADE_BOUNCE, 0 );
 		return;
 	}

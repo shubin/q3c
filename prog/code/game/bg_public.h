@@ -309,6 +309,7 @@ typedef enum {
 #if defined( QC )
 #define EF_FMUTE			0x00100000		// mute this entity for friends
 #define EF_TWILIGHT			0x00200000		// the entity is in the twilight dimension
+#define EF_BOUNCE_ONCE		0x00400000		// Keel's grenade should bounce just once, then explode
 #endif // QC
 
 // NOTE: may not have more than 16

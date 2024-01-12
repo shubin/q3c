@@ -326,6 +326,7 @@ static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	m->splashDamage = 75;
 	m->splashRadius = 120;
 	m->s.constantLight = 255 | ( 16 << 24 ); // red glow
+	m->s.eFlags |= EF_BOUNCE_ONCE;
 
 	quadFactor = ps->powerups[PW_QUAD] ? g_quadfactor.value : 1;
 	m->damage *= quadFactor;
