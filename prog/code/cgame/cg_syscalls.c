@@ -230,18 +230,26 @@ void	trap_S_ClearLoopingSounds( qboolean killall ) {
 	syscall( CG_S_CLEARLOOPINGSOUNDS, killall );
 }
 
+#if defined( QC )
+void	trap_S_AddLoopingSound( int entityNum, const vec3_t origin, float maxDist, const vec3_t velocity, sfxHandle_t sfx ) {
+	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, maxDist, velocity, sfx );
+}
+#else
 void	trap_S_AddLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
 	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx );
 }
-
-void	trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
-#if defined( QC )
-	// CNQ3 does not implement CG_S_ADDREALLOOPINGSOUND
-	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx );
-#else
-	syscall( CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx );
 #endif
+
+#if defined( QC )
+void	trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, float maxDist, const vec3_t velocity, sfxHandle_t sfx ) {
+	// CNQ3 does not implement CG_S_ADDREALLOOPINGSOUND
+	syscall( CG_S_ADDLOOPINGSOUND, entityNum, origin, maxDist, velocity, sfx );
 }
+#else
+void	trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx ) {
+	syscall( CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx );
+}
+#endif
 
 void	trap_S_StopLoopingSound( int entityNum ) {
 	syscall( CG_S_STOPLOOPINGSOUND, entityNum );

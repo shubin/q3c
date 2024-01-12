@@ -1944,7 +1944,11 @@ static void CG_PlayerPowerups( centity_t *cent, refEntity_t *torso ) {
 
 	// flight plays a looped sound
 	if ( powerups & ( 1 << PW_FLIGHT ) ) {
+#if defined( QC )
+		trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 0, vec3_origin, cgs.media.flightSound );
+#else
 		trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.flightSound );
+#endif
 	}
 
 	ci = &cgs.clientinfo[ cent->currentState.clientNum ];

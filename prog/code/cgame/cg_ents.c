@@ -123,13 +123,10 @@ Add continuous entity effects, like local entity emission and lighting
 */
 static void CG_EntityEffects( centity_t *cent ) {
 #if defined( QC )
-	vec3_t	dist;
 
 	if ( ( cent->currentState.eFlags & EF_FMUTE ) && CG_IsEntityFriendly( cg.predictedPlayerState.clientNum, cent ) ) {
 		return;
 	}
-
-	dist[0] = cent->currentState.loopSoundDist;
 #endif // QC
 
 	// update sound origins
@@ -140,18 +137,16 @@ static void CG_EntityEffects( centity_t *cent ) {
 		if (cent->currentState.eType != ET_SPEAKER) {
 			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 
 #if defined( QC )
-				dist,
-#else // QC
+				cent->currentState.loopSoundDist,
+#endif
 				vec3_origin, 
-#endif //QC
 				cgs.gameSounds[ cent->currentState.loopSound ] );
 		} else {
 			trap_S_AddRealLoopingSound( cent->currentState.number, cent->lerpOrigin, 
 #if defined( QC )
-				dist,
-#else // QC
-				vec3_origin,
+				cent->currentState.loopSoundDist,
 #endif //QC
+				vec3_origin,
 				cgs.gameSounds[ cent->currentState.loopSound ] );
 		}
 	}
@@ -535,7 +530,11 @@ static void CG_Missile( centity_t *cent ) {
 
 		BG_EvaluateTrajectoryDelta( &cent->currentState.pos, cg.time, velocity );
 
+#if defined( QC )
+		trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 0, velocity, weapon->missileSound );
+#else
 		trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, velocity, weapon->missileSound );
+#endif
 	}
 
 	// create the render entity

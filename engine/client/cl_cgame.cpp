@@ -502,7 +502,7 @@ static intptr_t CL_CgameSystemCalls( intptr_t *args )
 	case CG_S_ADDLOOPINGSOUND:
 #if defined( QC )
 	case DO_NOT_WANT_CG_S_ADDREALLOOPINGSOUND:
-		S_AddLoopingSound(args[1], VMA(2), VMA(3), args[4]);
+		S_AddLoopingSound(args[1], VMA(2), VMF(3), /*unused args[3],*/ args[5]);
 #else  // QC
 		S_AddLoopingSound( args[1], VMA(2), /*unused args[3],*/ args[4] );
 #endif // QC

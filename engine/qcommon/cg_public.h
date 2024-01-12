@@ -312,11 +312,19 @@ void		trap_S_StopBackgroundTrack( void );
 #if !defined(Q3_VM)
 sfxHandle_t	shit_S_RegisterSound( const char* sample, qboolean ignored );
 void		shit_S_ClearLoopingSounds( qboolean ignored );
+#if defined( QC )
+void		shit_S_AddLoopingSound( int entityNum, const vec3_t origin, float maxDist, vec3_t ignored, sfxHandle_t sfx );
+#else
 void		shit_S_AddLoopingSound( int entityNum, const vec3_t origin, const vec3_t ignored, sfxHandle_t sfx );
+#endif
 #endif
 #define		trap_S_RegisterSound( x ) shit_S_RegisterSound( x, qfalse )
 #define		trap_S_ClearLoopingSounds() shit_S_ClearLoopingSounds( qfalse )
+#if defined( QC )
+#define		trap_S_AddLoopingSound( n, o, m, s ) shit_S_AddLoopingSound( n, o, m, vec3_origin, s )
+#else
 #define		trap_S_AddLoopingSound( n, o, s ) shit_S_AddLoopingSound( n, o, vec3_origin, s )
+#endif
 
 
 void		trap_R_LoadWorldMap( const char *mapname );

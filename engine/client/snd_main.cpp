@@ -109,10 +109,10 @@ void S_ClearLoopingSounds()
 }
 
 #if defined( QC )
-void S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx)
+void S_AddLoopingSound(int entityNum, const vec3_t origin, float maxDist, sfxHandle_t sfx)
 {
 	if (si.AddLoopingSound)
-		si.AddLoopingSound(entityNum, origin, velocity[0], sfx);
+		si.AddLoopingSound(entityNum, origin, maxDist, sfx);
 }
 #else  // QC
 void S_AddLoopingSound( int entityNum, const vec3_t origin, sfxHandle_t sfx )

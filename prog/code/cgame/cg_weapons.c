@@ -1549,10 +1549,18 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		cent->pe.lightningFiring = qfalse;
 		if ( ( cent->currentState.eFlags & EF_FIRING ) && weapon->firingSound ) {
 			// lightning gun and guantlet make a different sound when fire is held down
+#if defined( QC )
+			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 0, vec3_origin, weapon->firingSound );
+#else
 			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->firingSound );
+#endif
 			cent->pe.lightningFiring = qtrue;
 		} else if ( weapon->readySound ) {
+#if defined( QC )
+			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 0, vec3_origin, weapon->readySound );
+#else
 			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->readySound );
+#endif
 		}
 	}
 
