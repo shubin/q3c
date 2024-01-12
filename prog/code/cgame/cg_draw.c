@@ -1845,7 +1845,10 @@ void CG_CenterPrint( const char *str, int y, int charWidth ) {
 CG_DrawCenterString
 ===================
 */
-static void CG_DrawCenterString( void ) {
+#if !defined( QC )
+static 
+#endif // QC
+void CG_DrawCenterString( void ) {
 	char	*start;
 	int		l;
 	int		x, y, w;
@@ -2414,7 +2417,10 @@ static void CG_DrawProxWarning( void ) {
 CG_DrawWarmup
 =================
 */
-static void CG_DrawWarmup( void ) {
+#if !defined( QC )
+static
+#endif
+void CG_DrawWarmup( void ) {
 	int			w;
 	int			sec;
 	int			i;
@@ -2434,7 +2440,11 @@ static void CG_DrawWarmup( void ) {
 	if ( sec < 0 ) {
 		s = "Waiting for players";		
 		w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
+#if defined( QC )
+		CG_DrawBigString(320 - w / 2, 48, s, 1.0F);
+#else
 		CG_DrawBigString(320 - w / 2, 24, s, 1.0F);
+#endif
 		cg.warmupCount = 0;
 		return;
 	}
@@ -2465,8 +2475,13 @@ static void CG_DrawWarmup( void ) {
 			} else {
 				cw = GIANT_WIDTH;
 			}
-			CG_DrawStringExt( 320 - w * cw/2, 20,s, colorWhite, 
-					qfalse, qtrue, cw, (int)(cw * 1.5f), 0 );
+#if defined( QC )
+			CG_DrawStringExt( 320 - w * cw/2, 44,s, colorWhite,
+				qfalse, qtrue, cw, (int)(cw * 1.5f), 0 );
+#else
+			CG_DrawStringExt( 320 - w * cw/2, 20,s, colorWhite,
+				qfalse, qtrue, cw, (int)(cw * 1.5f), 0 );
+#endif
 #endif
 		}
 	} else {
@@ -2497,8 +2512,13 @@ static void CG_DrawWarmup( void ) {
 		} else {
 			cw = GIANT_WIDTH;
 		}
+#if defined( QC )
+		CG_DrawStringExt( 320 - w * cw/2, 49,s, colorWhite, 
+				qfalse, qtrue, cw, (int)(cw * 1.1f), 0 );
+#else
 		CG_DrawStringExt( 320 - w * cw/2, 25,s, colorWhite, 
 				qfalse, qtrue, cw, (int)(cw * 1.1f), 0 );
+#endif
 #endif
 	}
 
@@ -2560,8 +2580,13 @@ static void CG_DrawWarmup( void ) {
 	}
 
 	w = CG_DrawStrlen( s );
+#if defined( QC )
+	CG_DrawStringExt( 320 - w * cw/2, 94, s, colorWhite, 
+			qfalse, qtrue, cw, (int)(cw * 1.5), 0 );
+#else
 	CG_DrawStringExt( 320 - w * cw/2, 70, s, colorWhite, 
 			qfalse, qtrue, cw, (int)(cw * 1.5), 0 );
+#endif
 #endif
 }
 
