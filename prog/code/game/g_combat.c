@@ -987,6 +987,10 @@ dflags		these flags are used to control how T_Damage works
 ============
 */
 
+#if defined( QC )
+void hurt_touch( gentity_t *self, gentity_t *other, trace_t *trace ); // g_trigger.c
+#endif // QC
+
 void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			   vec3_t dir, vec3_t point, int damage, int dflags, int mod ) {
 	gclient_t	*client;
@@ -1002,6 +1006,13 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 #if defined( QC )
 	float		knockback_scale = 1.0f; // knokback scale factor for more powerful rocketjumps and plasmajumps to allow various QC tricks
 	float		knockback_value;
+
+	// check if we should hurt Nyx being in twilight
+	if ( ( targ->s.eFlags & EF_TWILIGHT ) && ( !inflictor || inflictor->touch == hurt_touch ) ) {
+		if ( damage < 300 ) { // recognize killboxes from some lighter hurts as having tons of damage
+			return;
+		}
+	}
 #endif
 
 	if (!targ->takedamage) {
@@ -1353,6 +1364,12 @@ qboolean CanDamage (gentity_t *targ, vec3_t origin) {
 	vec3_t	midpoint;
 	vec3_t	offsetmins = {-15, -15, -15};
 	vec3_t	offsetmaxs = {15, 15, 15};
+
+#if defined( QC )
+	if ( targ->s.eFlags & EF_TWILIGHT ) {
+		return qfalse;
+	}
+#endif // QC
 
 	// use the midpoint of the bounds instead of the origin, because
 	// bmodels may have their origin is 0,0,0

@@ -863,6 +863,8 @@ typedef struct {
 	qhandle_t	dissolveShader;
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;
+	qhandle_t	twilightShader;
+	qhandle_t	twilightWeaponShader;
 	qhandle_t	totemModel;
 	qhandle_t	totemRingModel;
 	qhandle_t	totemHazeModel;

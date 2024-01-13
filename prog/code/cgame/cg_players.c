@@ -2383,7 +2383,7 @@ void CG_Player( centity_t *cent ) {
 #if defined( QC )
 	float			scale = cg_playerScale.value;
 	vec4_t			*modelColors;
-	qboolean		piercingSight, twilight;
+	qboolean		piercingSight, twilight, twilightVisible;
 	float			twilightPhase;
 #endif
 
@@ -2407,7 +2407,12 @@ void CG_Player( centity_t *cent ) {
 		&& cg.snap->ps.champion == CHAMP_VISOR
 		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED );
 
+	twilightVisible = CG_IsEntityFriendly( cg.snap->ps.clientNum, cent );
+
 	if ( cent->currentState.eFlags & EF_TWILIGHT ) {
+		if ( cg.snap->ps.eFlags & EF_TWILIGHT ) {
+			twilightVisible = qtrue;
+		}
 		twilight = qtrue;
 		if ( cg.time - cent->currentState.time < TWILIGHT_DEPLOY_TIME ) {
 			twilightPhase = ( cg.time - cent->currentState.time ) / (float)TWILIGHT_DEPLOY_TIME;
@@ -2416,7 +2421,7 @@ void CG_Player( centity_t *cent ) {
 		} else {
 			twilightPhase = 1.0f;
 		}
-		if ( twilightPhase == 1.0f ) {
+		if ( twilightPhase == 1.0f && !twilightVisible && !piercingSight ) {
 			return;
 		}
 	} else {
@@ -2515,9 +2520,13 @@ void CG_Player( centity_t *cent ) {
 		legs.customShader = cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &legs );
 	} else if ( twilight ) {
-		legs.customShader = cgs.media.dissolveShader;
-		legs.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
-		legs.shaderRGBA[3] = 60;
+		if ( twilightVisible ) {
+			legs.customShader = cgs.media.twilightShader;
+		} else {
+			legs.customShader = cgs.media.dissolveShader;
+			legs.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
+			legs.shaderRGBA[3] = 60;
+		}
 		trap_R_AddRefEntityToScene( &legs );
 	} else {
 		CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
@@ -2562,9 +2571,13 @@ void CG_Player( centity_t *cent ) {
 		torso.customShader = cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &torso );
 	} else if ( twilight ) {
-		torso.customShader = cgs.media.dissolveShader;
-		torso.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
-		torso.shaderRGBA[3] = 60;
+		if ( twilightVisible ) {
+			torso.customShader = cgs.media.twilightShader;
+		} else {
+			torso.customShader = cgs.media.dissolveShader;
+			torso.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
+			torso.shaderRGBA[3] = 60;
+		}
 		trap_R_AddRefEntityToScene( &torso );
 	} else {
 		CG_AddRefEntityWithPowerups( &torso, &cent->currentState, ci->team );
@@ -2798,10 +2811,6 @@ void CG_Player( centity_t *cent ) {
 	head.renderfx = renderfx;
 
 #if defined( QC )
-	//VectorScale( head.axis[0], 2, head.axis[0] );
-	//VectorScale( head.axis[1], 2, head.axis[1] );
-	//VectorScale( head.axis[2], 2, head.axis[2] );
-	//head.nonNormalizedAxes = qtrue;
 	head.shaderRGBA[0] = (int)(modelColors[1][0] * 255.0f);
 	head.shaderRGBA[1] = (int)(modelColors[1][1] * 255.0f);
 	head.shaderRGBA[2] = (int)(modelColors[1][2] * 255.0f);
@@ -2811,9 +2820,13 @@ void CG_Player( centity_t *cent ) {
 		trap_R_AddRefEntityToScene( &head );
 	}
 	else if ( twilight ) {
-		head.customShader = cgs.media.dissolveShader;
-		head.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
-		head.shaderRGBA[3] = 60;
+		if ( twilightVisible ) {
+			head.customShader = cgs.media.twilightShader;
+		} else {
+			head.customShader = cgs.media.dissolveShader;
+			head.shaderTime = cg.time / 1000.0f - twilightPhase * 0.25f;
+			head.shaderRGBA[3] = 60;
+		}
 		trap_R_AddRefEntityToScene( &head );
 	} else {
 		CG_AddRefEntityWithPowerups( &head, &cent->currentState, ci->team );
@@ -2836,8 +2849,12 @@ void CG_Player( centity_t *cent ) {
 		CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.piercingSightShader, &torso.shaderRGBA[0], cg.time / 1000.0f );
 	}
 	else if ( twilight ) {
-		torso.shaderRGBA[3] = 60;
-		CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.dissolveShader , &torso.shaderRGBA[0], cg.time / 1000.0f - twilightPhase * 0.25f );
+		if ( twilightVisible ) {
+			CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.twilightShader, &torso.shaderRGBA[0], cg.time / 1000.0f - twilightPhase * 0.25f );
+		} else {
+			torso.shaderRGBA[3] = 60;
+			CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.dissolveShader, &torso.shaderRGBA[0], cg.time / 1000.0f - twilightPhase * 0.25f );
+		}
 	} else {
 		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team );
 	}

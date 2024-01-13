@@ -371,6 +371,13 @@ void Cmd_Give_f (gentity_t *ent)
 		return;
 	}
 
+#if defined( QC )
+	if (Q_stricmp(name, "ability") == 0) {
+		G_RechargeAbility( ent, 999 );
+		return;
+	}
+#endif // QC
+
 	// spawn a specific item right on the player
 	if ( !give_all ) {
 		it = BG_FindItem (name);

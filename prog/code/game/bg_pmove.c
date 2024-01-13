@@ -1544,6 +1544,9 @@ static void PM_CrashLand( void ) {
 
 	// SURF_NODAMAGE is used for bounce pads where you don't ever
 	// want to take damage or play a crunch sound
+#if defined( QC )
+	if ( !( pm->ps->eFlags & EF_TWILIGHT ) )
+#endif // QC
 	if ( !(pml.groundTrace.surfaceFlags & SURF_NODAMAGE) )  {
 		if ( delta > 60 ) {
 			PM_AddEvent( EV_FALL_FAR );
@@ -2038,7 +2041,10 @@ static void PM_Footsteps( void ) {
 	old = pm->ps->bobCycle;
 	pm->ps->bobCycle = (int)( old + bobmove * pml.msec ) & 255;
 
-	// if we just crossed a cycle boundary, play an appropriate footstep event
+#if defined( QC )
+	if ( !( pm->ps->eFlags & EF_TWILIGHT ) )
+#endif // QC
+		// if we just crossed a cycle boundary, play an appropriate footstep event
 	if ( ( ( old + 64 ) ^ ( pm->ps->bobCycle + 64 ) ) & 128 ) {
 		if ( pm->waterlevel == 0 ) {
 			// on ground will only play sounds if running

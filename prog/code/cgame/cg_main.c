@@ -1299,6 +1299,8 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.dissolveShader = trap_R_RegisterShader( "textures/effects/decay" ); // totem decay reused
 	cgs.media.protectionShader = trap_R_RegisterShader( "powerups/protection" );
 	cgs.media.protectionWeaponShader = trap_R_RegisterShader( "powerups/protectionWeapon" );
+	cgs.media.twilightShader = trap_R_RegisterShader( "ability/twilight" );
+	cgs.media.twilightWeaponShader = trap_R_RegisterShader( "ability/twilightWeapon" );
 #endif
 	cgs.media.invisShader = trap_R_RegisterShader("powerups/invisibility" );
 	cgs.media.regenShader = trap_R_RegisterShader("powerups/regen" );

@@ -547,6 +547,9 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir );
 void G_CheckTeamItems( void );
 void G_RunItem( gentity_t *ent );
 void RespawnItem( gentity_t *ent );
+#if defined( QC )
+int G_RechargeAbility( gentity_t *other, int amount );
+#endif // QC
 
 void UseHoldableItem( gentity_t *ent );
 void PrecacheItem (gitem_t *it);

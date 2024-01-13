@@ -537,6 +537,11 @@ void G_KillBox (gentity_t *ent) {
 	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
 
 	for (i=0 ; i<num ; i++) {
+#if defined( QC )
+		if ( G_IsEntityFriendly( ent->client->ps.clientNum, touch[i] ) ) {
+			continue;
+		}
+#endif // QC
 		hit = &g_entities[touch[i]];
 		if ( !hit->client ) {
 			continue;
