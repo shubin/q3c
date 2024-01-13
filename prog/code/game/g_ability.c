@@ -288,6 +288,7 @@ static
  void ActivateInjection( gentity_t *ent ) {
 	ent->client->ps.ab_flags &= ~ABF_READY;
 	ent->client->ps.ab_time = 0;
+	ent->client->ps.ab_misctime = level.time;
 	ent->health += 50;
 
 	if ( ent->health > champion_stats[CHAMP_ANARKI].max_health ) {
@@ -364,6 +365,7 @@ void G_ActivateAbility( gentity_t *ent ) {
 			ent->s.time = ent->client->ps.ab_misctime = level.time;
 			ent->client->ps.eFlags |= EF_TWILIGHT;
 			ent->client->ps.weaponTime = 10000; // disable weapon firing
+			ent->client->ps.ab_misctime = level.time;
 			break;
 		case CHAMP_RANGER:
 			if ( ent->client->ps.ab_num != 0 ) {

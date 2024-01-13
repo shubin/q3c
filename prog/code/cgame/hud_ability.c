@@ -128,6 +128,7 @@ void hud_draw_ability( void ) {
 	clientInfo_t *ci;
 	float yellow[] = { 1.0f, 0.8f, 0.0f, 1.0f };
 	float white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float transp[] = { 1.0f, 1.0f, 1.0f, 0.2f };
 
 	float overall, current, dim;
 	int sec_left;
@@ -174,7 +175,7 @@ void hud_draw_ability( void ) {
 	hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, hud_media.abbg );
 	trap_R_SetColor( NULL );
 
-	if ( ps->ab_time == champion_stats[ps->champion].ability_cooldown) {
+	if ( ps->ab_time == champion_stats[ps->champion].ability_cooldown ) {
 		// ability is fully charged, draw the ring and its glow
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, hud_media.ringgauge );
 		trap_R_SetColor( yellow );
@@ -188,6 +189,9 @@ void hud_draw_ability( void ) {
 		white[3] = 0.5f;
 		trap_R_SetColor( white) ;
 		hud_drawpic( gaugex, gaugey, gaugesize, gaugesize, 0.5f, 0.5f, hud_media.ringgauge );
+		// draw the ability icon
+		trap_R_SetColor( transp );
+		hud_drawpic( gaugex, gaugey, gaugesize * 0.6f, gaugesize * 0.6f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
 	}
 
@@ -196,8 +200,8 @@ void hud_draw_ability( void ) {
 		trap_R_SetColor( white );
 		hud_drawpic( gaugex, gaugey, gaugesize * 0.6f, gaugesize * 0.6f, 0.5f, 0.5f, hud_media.skillicon[ps->champion] );
 		trap_R_SetColor( NULL );
-		if ( ps->champion == CHAMP_ANARKI && ci->abilityActivationTime != 0 ) {
-			current = cg.time - ci->abilityActivationTime;
+		if ( ps->champion == CHAMP_ANARKI ) {
+			current = cg.time - cg.snap->ps.ab_misctime;
 			overall = champion_stats[CHAMP_ANARKI].ability_duration * 100;
 			if ( current < 0 || current > overall ) {
 				return;
@@ -211,9 +215,9 @@ void hud_draw_ability( void ) {
 			else {
 				cg.blurFactor = 0.0f;
 			}
-		} if ( ps->champion == CHAMP_VISOR ) {
+		} else if ( ps->champion == CHAMP_VISOR || ps->champion == CHAMP_NYX ) {
 			current = cg.time - cg.snap->ps.ab_misctime;
-			overall = champion_stats[CHAMP_VISOR].ability_duration * 100;
+			overall = champion_stats[ps->champion].ability_duration * 100;
 			if ( current < 0 || current > overall ) {
 				return;
 			}

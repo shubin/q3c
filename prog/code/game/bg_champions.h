@@ -75,8 +75,13 @@ extern byte	blueRGBA[4], redRGBA[4];
 int ParseChampionName( const char *name );
 int ParseStartingWeapon( const char *name );
 
+/* Galena */
 #define MAX_TOTEMS			3
+
+/* Keel */
 #define MAX_GRENADES		5
+
+/* Sorlag */
 #define MAX_SPITS			5
 #define SPIT_DELAY			200
 #define SPIT_DISTANCE       850
@@ -87,10 +92,12 @@ int ParseStartingWeapon( const char *name );
 #define ACID_DOT_TICK		1000
 #define ACID_LIFETIME		10000
 
+/* Nyx */
 #define TWILIGHT_DEPLOY_TIME    250
 #define WALLJUMP_VELOCITY       350
 #define WALLJUMP_BOUNCE         200
 
+/* Anarki */
 //#define ANARKI_SPEED_BOOST  1.11875f       // in QC, the normal speed is 320 and 358 when injected
 #define ANARKI_SPEED_BOOST  1.05
 
