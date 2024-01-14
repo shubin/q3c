@@ -502,7 +502,7 @@ typedef enum {
 	EV_DAMAGEPLUM,
 	EV_DAMAGEDIR,
 	EV_KILLERINFO,
-	EV_WALLJUMP,
+	EV_WHOOSH,				// various combined sound and visual effects
 #endif
 
 //#ifdef MISSIONPACK
@@ -528,6 +528,12 @@ typedef enum {
 
 } entity_event_t;
 
+#if defined( QC )
+/* audio/visual effect type for the EV_WHOOSH event */
+typedef enum {
+	WHOOSH_DISAPPEAR,
+} whooshType_t;
+#endif // QC
 
 typedef enum {
 	GTS_RED_CAPTURE,

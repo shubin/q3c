@@ -350,13 +350,43 @@ void ActivatePiercingSight( gentity_t *ent ) {
 	ent->r.piercingSightMask = -1;
 }
 
+static void AddTwilightWhoosh( gentity_t *ent, int alpha ) {
+	gentity_t *whoosh;
+
+	whoosh = G_TempEntity( ent->r.currentOrigin, EV_WHOOSH );
+	whoosh->s.generic1 = WHOOSH_DISAPPEAR;
+	whoosh->s.frame = alpha;
+	VectorCopy( ent->client->ps.origin, whoosh->s.origin );
+	VectorScale( ent->client->ps.velocity, 0.1, whoosh->s.origin2 );
+}
+
+#define NUM_TWILIGHT_WHOOSHES 5
+#define TWILIGHT_WHOOSH_DELAY 49
+
 static
 void EnterTwilight( gentity_t *ent ) {
+
 	ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
 	ent->s.time = ent->client->ps.ab_misctime = level.time;
 	ent->client->ps.eFlags |= EF_TWILIGHT;
 	ent->client->ps.weaponTime = 10000; // disable weapon firing
 	ent->client->ps.ab_misctime = level.time;
+
+	// add visual effect
+	AddTwilightWhoosh( ent, 255 );
+	ent->client->ps.numfx = NUM_TWILIGHT_WHOOSHES;
+	ent->client->ps.nextfx = level.time + TWILIGHT_WHOOSH_DELAY;
+}
+
+static
+void ExitTwilight( gentity_t *ent ) {
+	ent->client->ps.ab_flags = 0;
+	ent->client->ps.ab_time = 0;
+	ent->client->ps.eFlags &= ~EF_TWILIGHT;
+	ent->client->ps.weaponTime = 0; // enable weapon firing
+	trap_UnlinkEntity( ent );
+	G_KillBox( ent ); // do telefrag
+	trap_LinkEntity( ent );
 }
 
 void G_ActivateAbility( gentity_t *ent ) {
@@ -459,13 +489,12 @@ void G_AbilityTickFrame( gentity_t *ent ) {
 	// nyx
 	if ( client->ps.champion == CHAMP_NYX && ( client->ps.ab_flags & ABF_ENGAGED ) ) {
 		if ( level.time > client->ps.ab_time ) {
-			client->ps.ab_flags = 0;
-			client->ps.ab_time = 0;
-			client->ps.eFlags &= ~EF_TWILIGHT;
-			client->ps.weaponTime = 0; // enable weapon firing
-			trap_UnlinkEntity( ent );
-			G_KillBox( ent ); // do telefrag
-			trap_LinkEntity( ent );
+			ExitTwilight( ent );
+		}
+		if ( client->ps.numfx > 0 && level.time > client->ps.nextfx ) {
+			client->ps.numfx--;
+			client->ps.nextfx = level.time + TWILIGHT_WHOOSH_DELAY;
+			AddTwilightWhoosh( ent, (int)( 255.0f * (client->ps.numfx / (float)NUM_TWILIGHT_WHOOSHES) ) );
 		}
 	}
 

@@ -815,3 +815,67 @@ void CG_BigExplode( vec3_t playerOrigin ) {
 	CG_LaunchExplode( origin, velocity, cgs.media.smoke2 );
 }
 
+#if defined( QC )
+/*
+==================
+CG_Disappear
+
+Disappering effect (Nyx twilight)
+==================
+*/
+void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float alpha ) {
+	vec3_t		move;
+	vec3_t		vec;
+	float		len;
+	int			i;
+
+	VectorCopy (start, move);
+	VectorSubtract (end, start, vec);
+	len = VectorNormalize (vec);
+
+	// advance a random amount first
+	i = rand() % (int)spacing;
+	VectorMA( move, i, vec, move );
+
+	VectorScale (vec, spacing, vec);
+
+	for ( ; i < len; i += spacing ) {
+		localEntity_t	*le;
+		refEntity_t		*re;
+
+		le = CG_AllocLocalEntity();
+		le->leFlags = LEF_PUFF_DONT_SCALE;
+		le->leType = LE_MOVE_SCALE_FADE;
+		le->startTime = cg.time;
+		le->endTime = cg.time + 1000 + random() * 250;
+		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
+
+		re = &le->refEntity;
+		re->shaderTime = cg.time / 1000.0f;
+
+		re->reType = RT_SPRITE;
+		re->rotation = 0;
+		re->radius = 3;
+		re->customShader = cgs.media.disappearParticleShader;
+		re->shaderRGBA[0] = 64;
+		re->shaderRGBA[1] = 128;
+		re->shaderRGBA[2] = 255;
+		re->shaderRGBA[3] = 255;
+
+		le->color[3] = alpha;
+
+		le->pos.trType = TR_LINEAR;
+		le->pos.trTime = cg.time;
+		VectorCopy( move, le->pos.trBase );
+		le->pos.trBase[0] += crandom() * 12;
+		le->pos.trBase[1] += crandom() * 12;
+		le->pos.trBase[2] += crandom() * 5;
+		VectorCopy( delta, le->pos.trDelta );
+		le->pos.trDelta[0] += crandom()*5;
+		le->pos.trDelta[1] += crandom()*5;
+		le->pos.trDelta[2] += crandom()*5 + 6;
+
+		VectorAdd (move, vec, move);
+	}
+}
+#endif // QC

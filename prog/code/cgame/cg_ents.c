@@ -1296,6 +1296,28 @@ void CG_TotemDecay( centity_t *cent ) {
 	}
 }
 
+/*
+===============
+CG_Whoosh
+
+===============
+*/
+void CG_Whoosh( centity_t *cent ) {
+	vec3_t start, end;
+
+	switch ( cent->currentState.generic1 ) {
+	case WHOOSH_DISAPPEAR:
+		VectorCopy( cent->currentState.origin, start );
+		VectorCopy( cent->currentState.origin, end );
+		start[2] -= 20;
+		end[2] += 50;
+		CG_Disappear( start, end, cent->currentState.origin2, 1, cent->currentState.frame/255.0f );
+		break;
+	default:
+		break;
+	}
+}
+
 void CG_AcidSpitDecal( centity_t *cent ) {
 	if ( cg.time - cent->currentState.time2 < ACID_LIFETIME + 450 ) {
 		CG_Decal( 

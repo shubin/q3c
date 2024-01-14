@@ -999,6 +999,9 @@ typedef struct playerState_s {
 	int			attackerNum;
 	int			attackerTime;
 	int			ringoutKiller;
+
+	int numfx;
+	int nextfx;
 #endif
 } playerState_t;
 

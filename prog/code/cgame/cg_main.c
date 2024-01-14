@@ -1301,6 +1301,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.protectionWeaponShader = trap_R_RegisterShader( "powerups/protectionWeapon" );
 	cgs.media.twilightShader = trap_R_RegisterShader( "ability/twilight" );
 	cgs.media.twilightWeaponShader = trap_R_RegisterShader( "ability/twilightWeapon" );
+	cgs.media.disappearParticleShader = trap_R_RegisterShader( "effects/disappearParticleShader" );
 #endif
 	cgs.media.invisShader = trap_R_RegisterShader("powerups/invisibility" );
 	cgs.media.regenShader = trap_R_RegisterShader("powerups/regen" );
