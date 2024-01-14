@@ -851,6 +851,8 @@ void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float 
 		nump = density * radius * radius;
 
 		for ( j = 0; j < nump; j++ ) {
+			float dx, dy;
+
 			le = CG_AllocLocalEntity();
 			le->leFlags = LEF_PUFF_DONT_SCALE;
 			le->leType = LE_MOVE_SCALE_FADE;
@@ -875,8 +877,13 @@ void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float 
 			le->pos.trType = TR_LINEAR;
 			le->pos.trTime = cg.time;
 			VectorCopy( move, le->pos.trBase );
-			le->pos.trBase[0] += crandom() * radius;
-			le->pos.trBase[1] += crandom() * radius;
+			dx = crandom() * radius;
+			dy = crandom() * radius;
+			if ( dx * dx + dy * dy > radius * radius ) {
+				continue; // reject particles which are outside of the circle
+			}
+			le->pos.trBase[0] += dx;
+			le->pos.trBase[1] += dy;
 			le->pos.trBase[2] += crandom() * 5;
 			VectorCopy( delta, le->pos.trDelta );
 			le->pos.trDelta[0] += crandom()*5;
