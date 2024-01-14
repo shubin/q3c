@@ -369,7 +369,6 @@ void EnterTwilight( gentity_t *ent ) {
 	ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
 	ent->s.time = ent->client->ps.ab_misctime = level.time;
 	ent->client->ps.eFlags |= EF_TWILIGHT;
-	ent->client->ps.weaponTime = 10000; // disable weapon firing
 	ent->client->ps.ab_misctime = level.time;
 
 	// add visual effect
