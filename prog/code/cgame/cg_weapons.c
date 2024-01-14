@@ -1238,6 +1238,12 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	vec3_t   muzzlePoint, endPoint;
 	int      anim;
 
+#if defined( QC )
+	if ( cent->currentState.eFlags & EF_TWILIGHT ) {
+		return;
+	}
+#endif // QC
+
 	if (cent->currentState.weapon != WP_LIGHTNING) {
 		return;
 	}
@@ -1426,7 +1432,11 @@ static float	CG_MachinegunSpinAngle( centity_t *cent ) {
 	float	speed;
 
 	delta = cg.time - cent->pe.barrelTime;
+#if defined( QC )
+	if ( cent->pe.barrelSpinning && !( cent->currentState.eFlags & EF_TWILIGHT ) ) {
+#else
 	if ( cent->pe.barrelSpinning ) {
+#endif // QC
 		angle = cent->pe.barrelAngle + delta * SPIN_SPEED;
 	} else {
 		if ( delta > COAST_TIME ) {
@@ -1437,7 +1447,11 @@ static float	CG_MachinegunSpinAngle( centity_t *cent ) {
 		angle = cent->pe.barrelAngle + delta * speed;
 	}
 
+#if defined( QC )
+	if ( cent->pe.barrelSpinning == !(cent->currentState.eFlags & EF_FIRING) && !( cent->currentState.eFlags & EF_TWILIGHT ) ) {
+#else
 	if ( cent->pe.barrelSpinning == !(cent->currentState.eFlags & EF_FIRING) ) {
+#endif // QC
 		cent->pe.barrelTime = cg.time;
 		cent->pe.barrelAngle = AngleMod( angle );
 		cent->pe.barrelSpinning = !!(cent->currentState.eFlags & EF_FIRING);
@@ -1547,7 +1561,11 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	if ( !ps ) {
 		// add weapon ready sound
 		cent->pe.lightningFiring = qfalse;
+#if defined( QC )
+		if ( ( cent->currentState.eFlags & EF_FIRING ) && weapon->firingSound && !( cent->currentState.eFlags & EF_TWILIGHT ) ) {
+#else
 		if ( ( cent->currentState.eFlags & EF_FIRING ) && weapon->firingSound ) {
+#endif // QC
 			// lightning gun and guantlet make a different sound when fire is held down
 #if defined( QC )
 			trap_S_AddLoopingSound( cent->currentState.number, cent->lerpOrigin, 0, vec3_origin, weapon->firingSound );
@@ -1633,6 +1651,12 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	}
 
 	// add the flash
+#if defined( QC )
+	if ( nonPredictedCent->currentState.eFlags & EF_TWILIGHT ) {
+		return; // no flash when in twilight
+	}
+#endif // QC
+
 	if ( ( weaponNum == WP_LIGHTNING || weaponNum == WP_GAUNTLET || weaponNum == WP_GRAPPLING_HOOK )
 		&& ( nonPredictedCent->currentState.eFlags & EF_FIRING ) ) 
 	{
