@@ -2270,7 +2270,7 @@ static void PlayAbilitySound( int champion, int clientNum ) {
 ================
 CG_ActivateAbility
 
-Caused by an EV_ACTIVTE_ABILITY event
+Caused by an EV_ACTIVATE_ABILITY event
 ================
 */
 void CG_ActivateAbility( centity_t *cent ) {

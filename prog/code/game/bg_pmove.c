@@ -228,6 +228,17 @@ void PM_AddTouchEnt( int entityNum ) {
 
 /*
 ===================
+PM_ActivateAbility
+===================
+*/
+
+static PM_ActivateAbility( playerState_t *ps ) {
+	BG_AddPredictableEventToPlayerstate( EV_ACTIVATE_ABILITY, ps->champion, ps );
+	ps->pm_flags |= PMF_ABILITY_ACTIVATED;
+}
+
+/*
+===================
 PM_StartTorsoAnim
 ===================
 */
@@ -2219,8 +2230,7 @@ static void PM_Weapon( void ) {
 	if ( pm->cmd.buttons & BUTTON_ABILITY ) {
 		if ( ! ( pm->ps->pm_flags & PMF_ABILITY_ACTIVATED ) ) {
 			if ( BG_CanAbilityBeActivated( pm->ps ) ) {
-				BG_AddPredictableEventToPlayerstate( EV_ACTIVATE_ABILITY, pm->ps->champion, pm->ps );
-				pm->ps->pm_flags |= PMF_ABILITY_ACTIVATED;
+				PM_ActivateAbility( pm->ps );
 			}
 		}
 	} else {

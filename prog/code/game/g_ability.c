@@ -300,7 +300,15 @@ static
 	G_RemoveDOT( ent, DOT_ALL );
  }
 
-static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
+static
+void Vomit( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
+	ent->client->ps.ab_num = MAX_SPITS - 1;
+	ent->client->ps.ab_misctime = level.time + SPIT_DELAY;
+	G_ThrowAcidSpit( ent, muzzle, forward );
+}
+
+static
+void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	playerState_t *ps;
 	gentity_t	*m;
 	int quadFactor;
@@ -335,6 +343,22 @@ static void ThrowGrenade( gentity_t *ent, vec3_t muzzle, vec3_t forward ) {
 	m->splashDamage *= quadFactor;
 }
 
+static
+void ActivatePiercingSight( gentity_t *ent ) {
+	ent->client->ps.ab_time = level.time + champion_stats[CHAMP_VISOR].ability_duration * 100;
+	ent->client->ps.ab_misctime = level.time;
+	ent->r.piercingSightMask = -1;
+}
+
+static
+void EnterTwilight( gentity_t *ent ) {
+	ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
+	ent->s.time = ent->client->ps.ab_misctime = level.time;
+	ent->client->ps.eFlags |= EF_TWILIGHT;
+	ent->client->ps.weaponTime = 10000; // disable weapon firing
+	ent->client->ps.ab_misctime = level.time;
+}
+
 void G_ActivateAbility( gentity_t *ent ) {
 	int champ;
 	vec3_t forward, right, up, muzzle;
@@ -361,11 +385,7 @@ void G_ActivateAbility( gentity_t *ent ) {
 			ActivateInjection( ent );
 			break;
 		case CHAMP_NYX:
-			ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
-			ent->s.time = ent->client->ps.ab_misctime = level.time;
-			ent->client->ps.eFlags |= EF_TWILIGHT;
-			ent->client->ps.weaponTime = 10000; // disable weapon firing
-			ent->client->ps.ab_misctime = level.time;
+			EnterTwilight( ent );
 			break;
 		case CHAMP_RANGER:
 			if ( ent->client->ps.ab_num != 0 ) {
@@ -378,17 +398,13 @@ void G_ActivateAbility( gentity_t *ent ) {
 			ThrowGrenade( ent, muzzle, forward );
 			break;
 		case CHAMP_SORLAG:
-			ent->client->ps.ab_num = MAX_SPITS - 1;
-			ent->client->ps.ab_misctime = level.time + SPIT_DELAY;
-			G_ThrowAcidSpit( ent, muzzle, forward );
+			Vomit( ent, muzzle, forward );
 			break;
 		case CHAMP_GALENA:
 			G_ThrowTotem( ent, muzzle, forward );
 			break;
 		case CHAMP_VISOR:
-			ent->client->ps.ab_time = level.time + champion_stats[CHAMP_VISOR].ability_duration * 100;
-			ent->client->ps.ab_misctime = level.time;
-			ent->r.piercingSightMask = -1;
+			ActivatePiercingSight( ent );
 			break;
 	}
 }
