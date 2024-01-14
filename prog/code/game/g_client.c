@@ -1290,9 +1290,6 @@ void ClientBegin( int clientNum ) {
 	// locate ent at a spawn point
 	ClientSpawn( ent );
 #if defined( QC )
-	ent->s.eFlags |= EF_NOFF;
-	client->ps.eFlags |= EF_NOFF;
-	ent->s.affiliation = G_ClientAffiliation( client );
 	client->ps.ab_time = champion_stats[client->ps.champion].ability_cooldown;
 	client->ps.ab_flags = ABF_READY;
 #endif
@@ -1423,6 +1420,9 @@ void ClientSpawn(gentity_t *ent) {
 		ab_num = client->ps.ab_num;
 		champion_switched = qfalse;
 	}
+	ent->s.eFlags |= EF_NOFF;
+	client->ps.eFlags |= EF_NOFF;
+	ent->s.affiliation = G_ClientAffiliation( client );
 #endif
 
 	// clear everything but the persistant data

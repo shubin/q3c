@@ -515,6 +515,11 @@ void DropPortalSource( gentity_t *player ) {
 // please keep it coherent with the corresponding function in cg_predict.c
 qboolean G_IsEntityFriendly( int clientNum, int traceEnt ) {
 	gentity_t *ent = &g_entities[traceEnt];
+
+	if ( clientNum == traceEnt ) {
+		return qfalse; // player is not friendly to himself
+	}
+
 	if ( ent->s.eFlags & EF_NOFF ) {
 		if ( g_gametype.integer >= GT_TEAM ) {
 			return ent->s.affiliation == g_clients[clientNum].ps.persistant[PERS_TEAM];

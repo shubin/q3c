@@ -206,6 +206,10 @@ void	CG_Trace( trace_t *result, const vec3_t start, const vec3_t mins, const vec
 #if defined( QC )
 // please keep it coherent with the corresponding function in g_misc.c
 qboolean CG_IsEntityFriendly( int clientNum, centity_t *cent ) {
+	if ( cent->currentState.number == clientNum ) {
+		return qfalse; // player is not friendly to himself
+	}
+
 	if ( cent->currentState.eFlags & EF_NOFF ) {
 		if ( cgs.gametype >= GT_TEAM ) {
 			return cent->currentState.affiliation == cgs.clientinfo[clientNum].team;
