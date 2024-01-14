@@ -1511,7 +1511,6 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	orientation_t	lerped;
 #if defined( QC )
 	qboolean	muzzleFlash;
-	byte		twilightRGBA[4];
 #endif // QC
 
 	weaponNum = cent->currentState.weapon;
@@ -1564,20 +1563,6 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 #endif
 		}
 	}
-
-#if defined( QC )
-	if ( ps != NULL ) {
-		if ( ( ps->eFlags & EF_TWILIGHT ) && customShader == 0 ) {
-			customShader = cgs.media.twilightWeaponShader;
-			twilightRGBA[0] = 64;
-			twilightRGBA[1] = 128;
-			twilightRGBA[2] = 255;
-			twilightRGBA[3] = 255;
-			shaderRGBA = &twilightRGBA;
-		}
-	}
-#endif // QC
-
 
 	trap_R_LerpTag(&lerped, parent->hModel, parent->oldframe, parent->frame,
 		1.0 - parent->backlerp, "tag_weapon");
@@ -1800,7 +1785,16 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 	// add everything onto the hand
+#if defined( QC )
+	if ( ps->eFlags & EF_TWILIGHT ) {
+		byte twilightRGBA[4] = { 64, 128, 255, 255 };
+		CG_AddPlayerWeaponEx( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], cgs.media.twilightWeaponShader, twilightRGBA, 0 );
+	} else {
+		CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM] );
+	}
+#else
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM] );
+#endif
 }
 
 /*
