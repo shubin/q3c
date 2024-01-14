@@ -823,11 +823,11 @@ CG_Disappear
 Disappering effect (Nyx twilight)
 ==================
 */
-void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float alpha ) {
+void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float density, float r, float alpha ) {
 	vec3_t		move;
 	vec3_t		vec;
 	float		len;
-	int			i;
+	int			i, j, istep, nsteps;
 
 	VectorCopy (start, move);
 	VectorSubtract (end, start, vec);
@@ -839,43 +839,51 @@ void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float 
 
 	VectorScale (vec, spacing, vec);
 
-	for ( ; i < len; i += spacing ) {
+	nsteps = ( int )( len / spacing );
+		for ( istep = 0; i < len; i += spacing, istep++ ) {
 		localEntity_t	*le;
 		refEntity_t		*re;
+		float			x, radius;
+		int				nump;
 
-		le = CG_AllocLocalEntity();
-		le->leFlags = LEF_PUFF_DONT_SCALE;
-		le->leType = LE_MOVE_SCALE_FADE;
-		le->startTime = cg.time;
-		le->endTime = cg.time + 1000 + random() * 250;
-		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
+		x = ( istep / (float)nsteps - 0.5f ) * 2.0f;
+		radius = 1.0f / Q_rsqrt( 1 - x * x ) * r;
+		nump = density * radius * radius;
 
-		re = &le->refEntity;
-		re->shaderTime = cg.time / 1000.0f;
+		for ( j = 0; j < nump; j++ ) {
+			le = CG_AllocLocalEntity();
+			le->leFlags = LEF_PUFF_DONT_SCALE;
+			le->leType = LE_MOVE_SCALE_FADE;
+			le->startTime = cg.time;
+			le->endTime = cg.time + 1000 + random() * 250;
+			le->lifeRate = 1.0 / ( le->endTime - le->startTime );
 
-		re->reType = RT_SPRITE;
-		re->rotation = 0;
-		re->radius = 3;
-		re->customShader = cgs.media.disappearParticleShader;
-		re->shaderRGBA[0] = 64;
-		re->shaderRGBA[1] = 128;
-		re->shaderRGBA[2] = 255;
-		re->shaderRGBA[3] = 255;
+			re = &le->refEntity;
+			re->shaderTime = cg.time / 1000.0f;
 
-		le->color[3] = alpha;
+			re->reType = RT_SPRITE;
+			re->rotation = 0;
+			re->radius = 3;
+			re->customShader = cgs.media.disappearParticleShader;
+			re->shaderRGBA[0] = 64;
+			re->shaderRGBA[1] = 128;
+			re->shaderRGBA[2] = 255;
+			re->shaderRGBA[3] = 255;
 
-		le->pos.trType = TR_LINEAR;
-		le->pos.trTime = cg.time;
-		VectorCopy( move, le->pos.trBase );
-		le->pos.trBase[0] += crandom() * 12;
-		le->pos.trBase[1] += crandom() * 12;
-		le->pos.trBase[2] += crandom() * 5;
-		VectorCopy( delta, le->pos.trDelta );
-		le->pos.trDelta[0] += crandom()*5;
-		le->pos.trDelta[1] += crandom()*5;
-		le->pos.trDelta[2] += crandom()*5 + 6;
+			le->color[3] = alpha;
 
-		VectorAdd (move, vec, move);
+			le->pos.trType = TR_LINEAR;
+			le->pos.trTime = cg.time;
+			VectorCopy( move, le->pos.trBase );
+			le->pos.trBase[0] += crandom() * radius;
+			le->pos.trBase[1] += crandom() * radius;
+			le->pos.trBase[2] += crandom() * 5;
+			VectorCopy( delta, le->pos.trDelta );
+			le->pos.trDelta[0] += crandom()*5;
+			le->pos.trDelta[1] += crandom()*5;
+			le->pos.trDelta[2] += crandom()*5 + 6;
+		}
+		VectorAdd( move, vec, move );
 	}
 }
 #endif // QC
