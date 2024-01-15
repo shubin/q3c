@@ -833,21 +833,17 @@ void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float 
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
 
-	// advance a random amount first
-	i = rand() % (int)spacing;
-	VectorMA( move, i, vec, move );
-
 	VectorScale (vec, spacing, vec);
 
-	nsteps = ( int )( len / spacing );
-		for ( istep = 0; i < len; i += spacing, istep++ ) {
+	nsteps = (int)(len/spacing);
+	for ( i = 0, istep = 0; i < len; i += spacing, istep++ ) {
 		localEntity_t	*le;
 		refEntity_t		*re;
 		float			x, radius;
 		int				nump;
 
 		x = ( istep / (float)nsteps - 0.5f ) * 2.0f;
-		radius = 1.0f / Q_rsqrt( 1 - x * x ) * r;
+		radius = r / Q_rsqrt( 1 - x * x );
 		nump = density * radius * radius;
 
 		for ( j = 0; j < nump; j++ ) {
@@ -889,6 +885,7 @@ void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float 
 			le->pos.trDelta[0] += crandom()*5;
 			le->pos.trDelta[1] += crandom()*5;
 			le->pos.trDelta[2] += crandom()*5 + 6;
+			VectorMA( le->pos.trBase, random(), le->pos.trDelta, le->pos.trBase );
 		}
 		VectorAdd( move, vec, move );
 	}
