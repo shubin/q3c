@@ -69,6 +69,9 @@ vmCvar_t	g_weaponTeamRespawn;
 vmCvar_t	g_motd;
 vmCvar_t	g_synchronousClients;
 vmCvar_t	g_warmup;
+#if defined( QC )
+vmCvar_t	g_warmupReadyTime;
+#endif
 vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
 vmCvar_t	g_logfile;
@@ -151,6 +154,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE  },
 
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0, qtrue  },
+#if defined( QC )
+	{ &g_warmupReadyTime, "g_warmupReadyTime", "10", CVAR_ARCHIVE, 0, qtrue  },
+#endif // QC
 	{ &g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_logfile, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_logfileSync, "g_logsync", "0", CVAR_ARCHIVE, 0, qfalse  },
@@ -1619,6 +1625,23 @@ void CheckTournament( void ) {
 			}
 			return;
 		}
+
+#if defined( QC )
+		// if all players ready, reduce warmup time
+		if ( g_warmup.integer > 1 && level.warmupTime - level.time > g_warmupReadyTime.integer * 1000 ) {
+			int i, numready = 0;
+			for ( i = 0; i < level.numConnectedClients; i++ ) {
+				if ( g_clients[i].sess.sessionTeam == TEAM_FREE && g_clients[i].pers.ready ) {
+					numready++;
+				}
+			}
+			if ( numready == 2 ) {
+				level.warmupTime = level.time + g_warmupReadyTime.integer * 1000;
+				trap_SetConfigstring( CS_WARMUP, va( "%i", level.warmupTime ) );
+			}
+		}
+#endif // QC
+
 
 		// if the warmup time has counted down, restart
 		if ( level.time > level.warmupTime ) {

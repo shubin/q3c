@@ -1100,8 +1100,8 @@ void ClientUserinfoChanged( int clientNum ) {
 	}
 	else
 	{
-		s = va("n\\%s\\ch\\%i\\t\\%i\\model\\%s\\hmodel\\%s\\g_redteam\\%s\\g_blueteam\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
-			client->pers.netname, client->pers.champion, client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
+		s = va("n\\%s\\ch\\%i\\rd\\%i\\t\\%i\\model\\%s\\hmodel\\%s\\g_redteam\\%s\\g_blueteam\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
+			client->pers.netname, client->pers.champion, client->pers.ready ? 1 : 0, client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
 			client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
 	}
 #else

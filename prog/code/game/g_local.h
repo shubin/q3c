@@ -281,6 +281,7 @@ typedef struct {
 	int			startingWeapon;		// weapon with which the player spawns by default, could be one of "lousy" weapons
 	int			baseHealth;			// base health persistence (needed for Anarki)
 	qboolean	voting;				// indicates if this client has a voting right
+	qboolean	ready;				// ready status
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 	// these correspond with variables in the userinfo string

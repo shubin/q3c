@@ -571,6 +571,29 @@ void Cmd_Respawn_f( gentity_t *ent ) {
 	}
 	ent->client->forceRespawn = qtrue;
 }
+
+/*
+=================
+Cmd_Ready_f
+=================
+*/
+void Cmd_Ready_f( gentity_t *ent, qboolean ready ) {
+	if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+		return;
+	}
+	if ( g_gametype.integer != GT_TOURNAMENT ) {
+		return;
+	}
+	if ( level.time > level.warmupTime ) {
+		trap_SendServerCommand( ent - g_entities, "print \"Match already started\n\"" );
+		return;
+	}
+	if ( ent->client->pers.ready != ready ) {
+		ent->client->pers.ready = ready;
+		ClientUserinfoChanged( ent - g_entities );
+	}
+}
+
 #endif
 
 /*
@@ -1931,6 +1954,8 @@ void ClientCommand( int clientNum ) {
 #if defined( QC )
 	else if (Q_stricmp (cmd, "respawn") == 0)
 		Cmd_Respawn_f (ent);
+	else if (Q_stricmp (cmd, "ready") == 0)
+		Cmd_Ready_f (ent, qtrue);
 #endif
 	else if (Q_stricmp (cmd, "teamtask") == 0)
 		Cmd_TeamTask_f (ent);

@@ -368,6 +368,7 @@ typedef struct {
 	int				handicap;
 #if defined( QC )
 	int				champion;
+	qboolean		ready;
 #endif
 	int				wins, losses;	// in tourney mode
 

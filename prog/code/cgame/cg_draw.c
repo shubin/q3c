@@ -2431,6 +2431,11 @@ void CG_DrawWarmup( void ) {
 #endif
 	clientInfo_t	*ci1, *ci2;
 	const char	*s;
+#if defined( QC )
+	int			numready, y;
+
+	numready = 0;
+#endif
 
 	sec = cg.warmup;
 	if ( !sec ) {
@@ -2455,6 +2460,11 @@ void CG_DrawWarmup( void ) {
 		ci2 = NULL;
 		for ( i = 0 ; i < cgs.maxclients ; i++ ) {
 			if ( cgs.clientinfo[i].infoValid && cgs.clientinfo[i].team == TEAM_FREE ) {
+#if defined( QC )
+				if ( cgs.clientinfo[i].ready ) {
+					numready++;
+				}
+#endif
 				if ( !ci1 ) {
 					ci1 = &cgs.clientinfo[i];
 				} else {
@@ -2579,9 +2589,16 @@ void CG_DrawWarmup( void ) {
 		break;
 	}
 
-	w = CG_DrawStrlen( s );
 #if defined( QC )
-	CG_DrawStringExt( 320 - w * cw/2, 94, s, colorWhite, 
+	y = 94;
+	if ( numready == 2 ) {
+		w = CG_DrawStrlen( "All players ready" );
+		CG_DrawStringExt( 320 - w, y, "All players ready", colorWhite,
+				qfalse, qtrue, cw, cw, 0 );
+		y += 25;
+	}
+	w = CG_DrawStrlen( s );
+	CG_DrawStringExt( 320 - w * cw/2, y, s, colorWhite, 
 			qfalse, qtrue, cw, (int)(cw * 1.5), 0 );
 #else
 	CG_DrawStringExt( 320 - w * cw/2, 70, s, colorWhite, 

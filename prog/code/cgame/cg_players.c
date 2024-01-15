@@ -984,6 +984,10 @@ void CG_NewClientInfo( int clientNum ) {
 	// champion
 	v = Info_ValueForKey( configstring, "ch" );
 	newInfo.champion = atoi( v );
+
+	// ready or not
+	v = Info_ValueForKey( configstring, "rd" );
+	newInfo.ready = atoi( v );
 #endif
 
 	// wins

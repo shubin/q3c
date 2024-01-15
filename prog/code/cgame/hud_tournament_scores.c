@@ -92,9 +92,21 @@ void hud_drawscores_brief_tournament( void ) {
 	// player icons
 	if ( myScore != SCORE_NOT_PRESENT ) {
 		hud_drawpic( centerx - 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.smallface[ cgs.clientinfo[ myNum ].champion ] );
+		if ( cg.warmup && cgs.clientinfo[myNum].ready ) {
+			text = "READY";
+			dim = hud_measurestring( 0.3f, hud_media.font_regular, text );
+			trap_R_SetColor( NULL );
+			hud_drawstring( centerx - 250 - dim / 2, hud_bounds.top + 90, 0.3f, hud_media.font_regular, text, black, 2, 2 );
+		}
 	}
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		hud_drawpic( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.smallface[cgs.clientinfo[enemyNum].champion] );
+		if ( cg.warmup && cgs.clientinfo[enemyNum].ready ) {
+			text = "READY";
+			dim = hud_measurestring( 0.3f, hud_media.font_regular, text );
+			trap_R_SetColor( NULL );
+			hud_drawstring( centerx + 250 - dim / 2, hud_bounds.top + 90, 0.3f, hud_media.font_regular, text, black, 2, 2 );
+		}
 	}
 
 	if ( myScore != SCORE_NOT_PRESENT ) {
