@@ -546,6 +546,13 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 		G_FreeEntity( ent );
 		return;
 	}
+#elif defined( QC )
+	G_SpawnInt( "notqc", "0", &i );
+	if ( i ) {
+		ADJUST_AREAPORTAL();
+		G_FreeEntity( ent );
+		return;
+	}
 #else
 	G_SpawnInt( "notq3a", "0", &i );
 	if ( i ) {
