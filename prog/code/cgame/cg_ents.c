@@ -1303,15 +1303,14 @@ CG_Whoosh
 ===============
 */
 void CG_Whoosh( centity_t *cent ) {
-	vec3_t start, end;
+	vec3_t origin, dim;
 
 	switch ( cent->currentState.generic1 ) {
 	case WHOOSH_DISAPPEAR:
-		VectorCopy( cent->currentState.origin, start );
-		VectorCopy( cent->currentState.origin, end );
-		start[2] -= 25;
-		end[2] += 55;
-		CG_Disappear( start, end, cent->currentState.origin2, 5, 0.05, 12, cent->currentState.frame/255.0f );
+		VectorSet( dim, 14, 14, 25 );
+		VectorCopy( cent->currentState.origin, origin );
+		origin[2] += 11;
+		CG_Disappear( origin, dim, cent->currentState.origin2, 0.01, cent->currentState.frame / 255.0f );
 		break;
 	default:
 		break;

@@ -99,6 +99,7 @@ void hud_drawscores_brief_tournament( void ) {
 			hud_drawstring( centerx - 250 - dim / 2, hud_bounds.top + 90, 0.3f, hud_media.font_regular, text, black, 2, 2 );
 		}
 	}
+
 	if ( enemyScore != SCORE_NOT_PRESENT ) {
 		hud_drawpic( centerx + 250, hud_bounds.top + 55, 58, 58, 0.5f, 0.5f, hud_media.smallface[cgs.clientinfo[enemyNum].champion] );
 		if ( cg.warmup && cgs.clientinfo[enemyNum].ready ) {

@@ -1673,7 +1673,7 @@ localEntity_t *CG_SmokePuff( const vec3_t p,
 void CG_BubbleTrail( vec3_t start, vec3_t end, float spacing );
 void CG_SpawnEffect( vec3_t org );
 #if defined( QC )
-void CG_Disappear( vec3_t start, vec3_t end, vec3_t delta, float spacing, float density, float r, float alpha );
+void CG_Disappear( vec3_t origin, vec3_t dim, vec3_t delta, float density, float alpha );
 #endif // QC
 #ifdef MISSIONPACK
 void CG_KamikazeEffect( vec3_t org );
