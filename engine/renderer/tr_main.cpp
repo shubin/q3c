@@ -1449,7 +1449,7 @@ static int R_CompareDrawSurf( const void* aPtr, const void* bPtr )
 		return 1;
 #if defined( QC )
 	if ( *a->surface == SF_POLY && *b->surface == SF_POLY )
-		return (intptr_t)a->surface - (intptr_t)b->surface;
+		return a->index - b->index;
 #endif
 
 	if ( a->depth > b->depth )
@@ -1468,6 +1468,10 @@ static int R_CompareDrawSurfNoKey( const void* aPtr, const void* bPtr )
 {
 	const drawSurf_t* a = ( const drawSurf_t* )aPtr;
 	const drawSurf_t* b = ( const drawSurf_t* )bPtr;
+#if defined( QC )
+	if ( *a->surface == SF_POLY && *b->surface == SF_POLY )
+		return a->index - b->index;
+#endif
 	if ( a->depth > b->depth )
 		return -1;
 	if ( a->depth < b->depth )
