@@ -1510,7 +1510,11 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.burnMarkShader = trap_R_RegisterShader( "gfx/damage/burn_med_mrk" );
 	cgs.media.holeMarkShader = trap_R_RegisterShader( "gfx/damage/hole_lg_mrk" );
 	cgs.media.energyMarkShader = trap_R_RegisterShader( "gfx/damage/plasma_mrk" );
+#if defined( QC )
+	cgs.media.shadowMarkShader = trap_R_RegisterShader( "playerShadow" );
+#else
 	cgs.media.shadowMarkShader = trap_R_RegisterShader( "markShadow" );
+#endif
 	cgs.media.wakeMarkShader = trap_R_RegisterShader( "wake" );
 #if defined( QC )
 	if ( cgs.media.ql ) {
