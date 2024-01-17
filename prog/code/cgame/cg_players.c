@@ -2411,7 +2411,7 @@ void CG_Player( centity_t *cent ) {
 		&& cg.snap->ps.champion == CHAMP_VISOR
 		&& ( cg.snap->ps.ab_flags & ABF_ENGAGED );
 
-	twilightVisible = CG_IsEntityFriendly( cg.snap->ps.clientNum, cent );
+	twilightVisible = cg.snap->ps.clientNum == clientNum || CG_IsEntityFriendly( cg.snap->ps.clientNum, cent );
 
 	if ( cent->currentState.eFlags & EF_TWILIGHT ) {
 		if ( cg.snap->ps.eFlags & EF_TWILIGHT ) {
@@ -2570,7 +2570,6 @@ void CG_Player( centity_t *cent ) {
 	torso.shaderRGBA[1] = (int)(modelColors[2][1] * 255.0f);
 	torso.shaderRGBA[2] = (int)(modelColors[2][2] * 255.0f);
 	torso.shaderRGBA[3] = (int)(modelColors[2][3] * 255.0f);
-	//torso.customShader = 0;
 	if ( piercingSight ) {
 		torso.customShader = twilight ? cgs.media.piercingSightTwilightShader : cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &torso );
@@ -2849,16 +2848,8 @@ void CG_Player( centity_t *cent ) {
 	// add the gun / barrel / flash
 	//
 #if defined( QC )
-	if ( piercingSight ) {
-		CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.piercingSightShader, &torso.shaderRGBA[0], cg.time / 1000.0f );
-	}
-	else if ( twilight ) {
-		if ( twilightVisible ) {
-			CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.twilightShader, &torso.shaderRGBA[0], cg.time / 1000.0f - twilightPhase * 0.25f );
-		} else {
-			torso.shaderRGBA[3] = 60;
-			CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, cgs.media.dissolveShader, &torso.shaderRGBA[0], cg.time / 1000.0f - twilightPhase * 0.25f );
-		}
+	if ( piercingSight || twilight ) {
+		CG_AddPlayerWeaponEx( &torso, NULL, cent, ci->team, torso.customShader, &torso.shaderRGBA[0], torso.shaderTime );
 	} else {
 		CG_AddPlayerWeapon( &torso, NULL, cent, ci->team );
 	}
