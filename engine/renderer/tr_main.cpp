@@ -1447,6 +1447,10 @@ static int R_CompareDrawSurf( const void* aPtr, const void* bPtr )
 		return -1;
 	if ( a->shaderSort > b->shaderSort )
 		return 1;
+#if defined( QC )
+	if ( *a->surface == SF_POLY && *b->surface == SF_POLY )
+		return (intptr_t)a->surface - (intptr_t)b->surface;
+#endif
 
 	if ( a->depth > b->depth )
 		return -1;
