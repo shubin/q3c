@@ -861,6 +861,7 @@ typedef struct {
 	qhandle_t	acidTrailShader;
 	qhandle_t	acidBallShader;
 	qhandle_t	piercingSightShader;
+	qhandle_t	piercingSightTwilightShader;
 	qhandle_t	dissolveShader;
 	qhandle_t	protectionShader;
 	qhandle_t	protectionWeaponShader;

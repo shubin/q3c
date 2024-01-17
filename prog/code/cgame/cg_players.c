@@ -2521,7 +2521,7 @@ void CG_Player( centity_t *cent ) {
 	legs.shaderRGBA[2] = (int)(modelColors[3][2] * 255.0f);
 	legs.shaderRGBA[3] = (int)(modelColors[3][3] * 255.0f);
 	if ( piercingSight ) {
-		legs.customShader = cgs.media.piercingSightShader;
+		legs.customShader = twilight ? cgs.media.piercingSightTwilightShader : cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &legs );
 	} else if ( twilight ) {
 		if ( twilightVisible ) {
@@ -2572,7 +2572,7 @@ void CG_Player( centity_t *cent ) {
 	torso.shaderRGBA[3] = (int)(modelColors[2][3] * 255.0f);
 	//torso.customShader = 0;
 	if ( piercingSight ) {
-		torso.customShader = cgs.media.piercingSightShader;
+		torso.customShader = twilight ? cgs.media.piercingSightTwilightShader : cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &torso );
 	} else if ( twilight ) {
 		if ( twilightVisible ) {
@@ -2820,7 +2820,7 @@ void CG_Player( centity_t *cent ) {
 	head.shaderRGBA[2] = (int)(modelColors[1][2] * 255.0f);
 	head.shaderRGBA[3] = (int)(modelColors[1][3] * 255.0f);
 	if ( piercingSight ) {
-		head.customShader = cgs.media.piercingSightShader;
+		head.customShader = twilight ? cgs.media.piercingSightTwilightShader : cgs.media.piercingSightShader;
 		trap_R_AddRefEntityToScene( &head );
 	}
 	else if ( twilight ) {

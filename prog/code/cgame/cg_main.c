@@ -1296,11 +1296,12 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.acidTrailShader = trap_R_RegisterShader( "acidTrail" );
 	cgs.media.acidBallShader = trap_R_RegisterShader( "acidBall" );
 	cgs.media.piercingSightShader = trap_R_RegisterShader( "effects/piercingSight" );
+	cgs.media.piercingSightTwilightShader = trap_R_RegisterShader( "effects/piersingSightTwilight" );
 	cgs.media.dissolveShader = trap_R_RegisterShader( "textures/effects/decay" ); // totem decay reused
 	cgs.media.protectionShader = trap_R_RegisterShader( "powerups/protection" );
 	cgs.media.protectionWeaponShader = trap_R_RegisterShader( "powerups/protectionWeapon" );
-	cgs.media.twilightShader = trap_R_RegisterShader( "ability/twilight" );
-	cgs.media.twilightWeaponShader = trap_R_RegisterShader( "ability/twilightWeapon" );
+	cgs.media.twilightShader = trap_R_RegisterShader( "effects/twilight" );
+	cgs.media.twilightWeaponShader = trap_R_RegisterShader( "effects/twilightWeapon" );
 	cgs.media.disappearParticleShader = trap_R_RegisterShader( "effects/disappearParticleShader" );
 #endif
 	cgs.media.invisShader = trap_R_RegisterShader("powerups/invisibility" );
