@@ -1220,8 +1220,12 @@ static void Cvar_ResetWatch()
 
 void CL_InitUI()
 {
+#if defined( QC )
+	vmInterpret_t interpret = VMI_NATIVE;
+#else
 	// if sv_pure is set we only allow qvms to be loaded
 	vmInterpret_t interpret = cl_connectedToPureServer ? VMI_COMPILED : (vmInterpret_t)Cvar_VariableIntegerValue("vm_ui");
+#endif
 
 #if defined( QC )
 	Cvar_ResetWatch();
