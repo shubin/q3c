@@ -366,10 +366,12 @@ static void AddTwilightWhoosh( gentity_t *ent, int alpha ) {
 static
 void EnterTwilight( gentity_t *ent ) {
 
-	ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
-	ent->s.time = ent->client->ps.ab_misctime = level.time;
+	ent->client->ps.ab_flags &= ~ABF_READY;
+	ent->client->ps.ab_time = 0;
 	ent->client->ps.eFlags |= EF_TWILIGHT;
 	ent->client->ps.ab_misctime = level.time;
+	ent->s.time2 = ent->client->ps.ab_time = level.time + champion_stats[CHAMP_NYX].ability_duration * 100;
+	ent->s.time = ent->client->ps.ab_misctime = level.time;
 
 	// add visual effect
 	AddTwilightWhoosh( ent, 255 );
