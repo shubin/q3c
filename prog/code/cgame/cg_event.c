@@ -1038,6 +1038,13 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		DEBUGNAME( "EV_WHOOSH" );
 		CG_Whoosh( cent );
 		break;
+	case EV_PLAYER_TWILIGHT_IN:
+		DEBUGNAME( "EV_PLAYER_TWILIGHT_IN" );
+		break;
+	case EV_PLAYER_TWILIGHT_OUT:
+		DEBUGNAME( "EV_PLAYER_TWILIGHT_OUT" );
+		trap_S_StartSound( NULL, es->number, CHAN_AUTO, cgs.media.twilightOutSound );
+		break;
 #endif
 
 #ifdef MISSIONPACK

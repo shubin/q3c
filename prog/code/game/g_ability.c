@@ -483,6 +483,7 @@ void G_AbilityTickFrame( gentity_t *ent ) {
 	vec3_t		forward, right, up, muzzle;
 	int			damage;
 	gclient_t	*client, *other;
+	gentity_t	*tent;
 
 	client = ent->client;
 	// nyx
@@ -494,6 +495,11 @@ void G_AbilityTickFrame( gentity_t *ent ) {
 			client->ps.numfx--;
 			client->ps.nextfx = level.time + TWILIGHT_WHOOSH_DELAY;
 			AddTwilightWhoosh( ent, (int)( 255.0f * (client->ps.numfx / (float)NUM_TWILIGHT_WHOOSHES) ) );
+		}
+		if ( client->ps.numfx == 0 && level.time > client->ps.ab_time - 700 ) {
+			client->ps.numfx = -1;
+			tent = G_TempEntity( client->ps.origin, EV_PLAYER_TWILIGHT_OUT );
+			tent->s.clientNum = ent->s.clientNum;
 		}
 	}
 

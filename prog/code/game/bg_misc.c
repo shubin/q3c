@@ -1864,6 +1864,9 @@ char *eventnames[] = {
 	"EV_DAMAGEPLUM",
 	"EV_DAMAGEDIR",
 	"EV_KILLERINFO",
+	"EV_WHOOSH",
+	"EV_PLAYER_TWILIGHT_IN",
+	"EV_PLAYER_TWILIGHT_OUT",
 #endif
 
 //#ifdef MISSIONPACK

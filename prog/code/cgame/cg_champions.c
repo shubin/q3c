@@ -7,7 +7,7 @@ char* champion_ability_sounds[NUM_CHAMPIONS] = {
     NULL,   // sarge
     "sound/abilities/anarki_injection.wav", // anarki
     NULL,   // athena
-    NULL,   // nyx
+    "sound/abilities/twilight_in.wav",   // nyx
     NULL,   // slash
     NULL,   // bj
     NULL,   // dk

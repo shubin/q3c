@@ -503,6 +503,8 @@ typedef enum {
 	EV_DAMAGEDIR,
 	EV_KILLERINFO,
 	EV_WHOOSH,				// various combined sound and visual effects
+	EV_PLAYER_TWILIGHT_IN,
+	EV_PLAYER_TWILIGHT_OUT,
 #endif
 
 //#ifdef MISSIONPACK
