@@ -31,6 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void G_PoisonPlayer( gentity_t *ent, gentity_t *other, qboolean direct ) {
 	playerState_t *ps;
 
+	if ( !other || !other->client ) {
+		return;
+	}
+
 	ps = &other->client->ps;
 
 	if ( ps->champion == CHAMP_SORLAG ) {
