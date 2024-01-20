@@ -132,7 +132,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         LIGHT_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         LIGHT_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
         30, // ability_cooldown
-        50, // ability_duration
+        30, // ability_duration
         LIGHT_CHAMPION_STARTING_HEALTH,
         LIGHT_CHAMPION_STARTING_ARMOUR,
         { // spawn_protection
