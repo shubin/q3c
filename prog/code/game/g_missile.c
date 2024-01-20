@@ -828,17 +828,17 @@ gentity_t *fire_bolt (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->damage = 35;
 	bolt->minSplashDamage = 10;
 	bolt->splashDamage = 35;
-	bolt->splashRadius = 100;
+	bolt->splashRadius = 120;
 	bolt->methodOfDeath = MOD_TRIBOLT;
 	bolt->splashMethodOfDeath = MOD_TRIBOLT_SPLASH;
 	bolt->clipmask = MASK_SHOT;
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trGravity = 400; // flat trajectory for bolts
+	bolt->s.pos.trGravity = 320; // flat trajectory for bolts
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
-	VectorScale( dir, 1600, bolt->s.pos.trDelta );
+	VectorScale( dir, 1250, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
 	VectorCopy (start, bolt->r.currentOrigin);
 
