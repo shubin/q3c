@@ -357,10 +357,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_simpleItems, "cg_simpleItems", "0", CVAR_ARCHIVE },
 #if defined( QC )
 	{ &cg_addMarks, "cg_marks", "2", CVAR_ARCHIVE },
+	{ &cg_lagometer, "cg_lagometer", "0", CVAR_ARCHIVE },
 #else // QC
 	{ &cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE },
+	{ &cg_lagometer, "cg_lagometer", "1", CVAR_ARCHIVE },
 #endif // QC
-	{ &cg_lagometer, "cg_lagometer", "0", CVAR_ARCHIVE },
 	{ &cg_railTrailTime, "cg_railTrailTime", "400", CVAR_ARCHIVE  },
 #if defined( QC )
 	{ &cg_gun_x, "cg_gunX", "0", CVAR_ARCHIVE },
@@ -375,8 +376,13 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_runpitch, "cg_runpitch", "0.002", CVAR_ARCHIVE},
 	{ &cg_runroll, "cg_runroll", "0.005", CVAR_ARCHIVE },
 	{ &cg_bobup , "cg_bobup", "0.005", CVAR_CHEAT },
+#if defined( QC )
 	{ &cg_bobpitch, "cg_bobpitch", "0", CVAR_ARCHIVE },
 	{ &cg_bobroll, "cg_bobroll", "0", CVAR_ARCHIVE },
+#else
+	{ &cg_bobpitch, "cg_bobpitch", "0.002", CVAR_ARCHIVE },
+	{ &cg_bobroll, "cg_bobroll", "0.002", CVAR_ARCHIVE },
+#endif
 	{ &cg_swingSpeed, "cg_swingSpeed", "0.3", CVAR_CHEAT },
 	{ &cg_animSpeed, "cg_animspeed", "1", CVAR_CHEAT },
 	{ &cg_debugAnim, "cg_debuganim", "0", CVAR_CHEAT },
@@ -521,7 +527,11 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_smokeRadius_GL, "cg_smokeRadius_GL", "64", CVAR_ARCHIVE },
 	{ &cg_smokeRadius_TB, "cg_smokeRadius_TB", "24", CVAR_ARCHIVE },
 	{ &cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
+#if defined( QC )
 	{ &cg_bob, "cg_bob", "0", CVAR_ARCHIVE },
+#else
+	{ &cg_bob, "cg_bob", "1", CVAR_ARCHIVE },
+#endif
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairColor, "cg_crosshairColor", "7", CVAR_ARCHIVE },
 	{ &cg_noAmmoSound, "cg_noAmmoSound", "1", CVAR_ARCHIVE },
