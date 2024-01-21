@@ -795,7 +795,7 @@ void weapon_railgun_fire (gentity_t *ent) {
 	gentity_t	*unlinkedEntities[MAX_RAIL_HITS];
 
 #if defined( QC )
-	damage = 90 * s_quadFactor;
+	damage = 80 * s_quadFactor;
 #else
 	damage = 100 * s_quadFactor;
 #endif
