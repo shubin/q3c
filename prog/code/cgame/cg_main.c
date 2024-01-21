@@ -527,11 +527,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_smokeRadius_GL, "cg_smokeRadius_GL", "64", CVAR_ARCHIVE },
 	{ &cg_smokeRadius_TB, "cg_smokeRadius_TB", "24", CVAR_ARCHIVE },
 	{ &cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
-#if defined( QC )
 	{ &cg_bob, "cg_bob", "0", CVAR_ARCHIVE },
-#else
-	{ &cg_bob, "cg_bob", "1", CVAR_ARCHIVE },
-#endif
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairColor, "cg_crosshairColor", "7", CVAR_ARCHIVE },
 	{ &cg_noAmmoSound, "cg_noAmmoSound", "1", CVAR_ARCHIVE },
