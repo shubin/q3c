@@ -37,7 +37,7 @@ static qboolean champ_locked[NUM_CHAMPIONS] = {
     qtrue, // sarge
     qfalse, // anarki
     qtrue, // athena
-    qtrue, // nyx
+    qfalse, // nyx
     qtrue, // slash
     qtrue, // bj
     qtrue, // dk
@@ -181,7 +181,7 @@ static void ChampionsMenu_Draw( void ) {
 	UI_DrawString( 320, 290, "CHOOSE CHAMPION", UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, color_white );
 	Q_strncpyz( buf, champion_names[s_championsmenu.champion], sizeof( buf ) );
 	Q_strupr( buf );
-	UI_DrawString( 20 + 40 * ( s_championsmenu.champion - 1 ), 342, buf, UI_CENTER|UI_SMALLFONT, color_red );
+	UI_DrawString( 16 + s_championsmenu.picbuttons[s_championsmenu.champion].generic.left, 342, buf, UI_CENTER|UI_SMALLFONT, color_red );
 	UI_DrawString( 320, 370, "CHOOSE WEAPON", UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, color_white );
 
 	if ( !s_championsmenu.ingame ) {
@@ -236,13 +236,17 @@ void ChampionsMenu_MenuInit( qboolean ingame ) {
 	}
 
 
-	x = 4;
+	x = 184;
 	y = 310;
 
 	trap_Cvar_VariableStringBuffer( "champion", buf, sizeof( buf ) );
 	s_championsmenu.champion = ParseChampionName( buf );
 
 	for ( i = 1; i < NUM_CHAMPIONS; i++ ) {
+		if ( champ_locked[i] ) {
+			continue;
+		}
+
 		if ( trap_R_RegisterShaderNoMip( va( "hud/faces/small/%s", champion_names[i] ) ) != 0 ) {
 			Q_strncpyz( s_championsmenu.names[i], va( "hud/faces/small/%s", champion_names[i] ), sizeof( s_championsmenu.names[i] ) );
 		} else {
