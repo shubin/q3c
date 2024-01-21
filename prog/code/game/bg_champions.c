@@ -455,7 +455,7 @@ char *champion_names[NUM_CHAMPIONS] = {
     "sarge",
     "anarki",
     "athena",
-    "nyx",
+    "mynx",
     "slash",
     "bj",
     "dk",
@@ -469,6 +469,26 @@ char *champion_names[NUM_CHAMPIONS] = {
     "keel",
     "scalebearer",
     "sorlag",
+};
+
+char *champion_aliases[NUM_CHAMPIONS][4] = {
+    { NULL }, // sarge
+    { NULL }, // anarki
+    { NULL }, // athena
+    { "nyx", NULL }, // mynx
+    { NULL }, // slash
+    { NULL }, // bj
+    { NULL }, // dk
+    { NULL }, // doom
+    { NULL }, // eisen
+    { NULL }, // galena
+    { NULL }, // ranger
+    { NULL }, // strogg
+    { NULL }, // visor
+    { NULL }, // clutch
+    { NULL }, // keel
+    { NULL }, // scalebearer
+    { NULL }, // sorlag
 };
 
 char* champion_models[NUM_CHAMPIONS] = {
@@ -515,10 +535,15 @@ byte	blueRGBA[4] = { 0, 150, 255, 255 };
 byte	redRGBA[4] = { 255, 40, 40, 255 };
 
 int ParseChampionName( const char* name ) {
-    int i;
+    int i, j;
     for ( i = 0; i < NUM_CHAMPIONS; i++ ) {
         if ( !Q_stricmp( name, champion_names[i] ) ) {
             return i;
+        }
+        for ( j = 0; j < 4; j++ ) {
+            if ( champion_aliases[i][j] != NULL && !Q_stricmp( name, champion_aliases[i][j] ) ) {
+                return i;
+            }
         }
     }
     return CHAMP_SARGE;
