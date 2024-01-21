@@ -223,7 +223,7 @@ but not on every player enter or exit.
 */
 #define	HEARTBEAT_MSEC	300*1000
 #if defined( QC )
-#define HEARTBEAT_GAME	"Quake3Champions"
+#define HEARTBEAT_GAME	"DarkPlaces"
 #else // QC
 #define	HEARTBEAT_GAME	"QuakeArena-1"
 #endif // QC
