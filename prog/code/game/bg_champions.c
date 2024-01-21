@@ -57,6 +57,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_HEALTH_INCREMENT 75
 #define MAX_ARMOUR_INCREMENT 75
 
+#define ABILITY_COOLDOWN 45
+
 champion_stat_t champion_stats[NUM_CHAMPIONS] = {
     // sarge
     {
@@ -64,7 +66,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -86,7 +88,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         LIGHT_CHAMPION_BASE_ARMOUR,
         LIGHT_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         LIGHT_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        45, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         30, // tenths of a second // ability_duration
         LIGHT_CHAMPION_STARTING_HEALTH,
         LIGHT_CHAMPION_STARTING_ARMOUR,
@@ -109,7 +111,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         LIGHT_CHAMPION_BASE_ARMOUR,
         LIGHT_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         LIGHT_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         LIGHT_CHAMPION_STARTING_HEALTH,
         LIGHT_CHAMPION_STARTING_ARMOUR,
@@ -131,7 +133,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         LIGHT_CHAMPION_BASE_ARMOUR,
         LIGHT_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         LIGHT_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         30, // ability_duration
         LIGHT_CHAMPION_STARTING_HEALTH,
         LIGHT_CHAMPION_STARTING_ARMOUR,
@@ -153,7 +155,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         LIGHT_CHAMPION_BASE_ARMOUR,
         LIGHT_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         LIGHT_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         LIGHT_CHAMPION_STARTING_HEALTH,
         LIGHT_CHAMPION_STARTING_ARMOUR,
@@ -175,7 +177,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -197,7 +199,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -219,7 +221,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -241,7 +243,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -263,7 +265,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        45, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -285,7 +287,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        45, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -307,7 +309,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -329,7 +331,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         MEDIUM_CHAMPION_BASE_ARMOUR,
         MEDIUM_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         MEDIUM_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        45, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         50, // ability_duration
         MEDIUM_CHAMPION_STARTING_HEALTH,
         MEDIUM_CHAMPION_STARTING_ARMOUR,
@@ -351,7 +353,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         100, // base_armor
         200, // max_health
         200, // max_armor
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         { // start_health
             100, // GT_FFA
@@ -387,7 +389,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         HEAVY_CHAMPION_BASE_ARMOUR,
         HEAVY_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         HEAVY_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        45, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         HEAVY_CHAMPION_STARTING_HEALTH,
         HEAVY_CHAMPION_STARTING_ARMOUR,
@@ -409,7 +411,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         HEAVY_CHAMPION_BASE_ARMOUR,
         HEAVY_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         HEAVY_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         HEAVY_CHAMPION_STARTING_HEALTH,
         HEAVY_CHAMPION_STARTING_ARMOUR,
@@ -431,7 +433,7 @@ champion_stat_t champion_stats[NUM_CHAMPIONS] = {
         HEAVY_CHAMPION_BASE_ARMOUR,
         HEAVY_CHAMPION_BASE_HEALTH + MAX_HEALTH_INCREMENT,
         HEAVY_CHAMPION_BASE_ARMOUR + MAX_ARMOUR_INCREMENT,
-        30, // ability_cooldown
+        ABILITY_COOLDOWN, // ability_cooldown
         -1, // ability_duration
         HEAVY_CHAMPION_STARTING_HEALTH,
         HEAVY_CHAMPION_STARTING_ARMOUR,
