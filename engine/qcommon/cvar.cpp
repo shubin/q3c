@@ -84,11 +84,13 @@ static qbool Cvar_ValidateString( const char *s )
 	return qtrue;
 }
 
+#if defined( QC )
 static void Cvar_NotifyChange( const cvar_t *cvar ) {
 #if !defined( DEDICATED )
 	UI_CvarChanged( cvar );
 #endif
 }
+#endif // QC
 
 cvar_t* Cvar_FindVar( const char* var_name )
 {
@@ -1481,6 +1483,7 @@ void Cvar_Update( vmCvar_t *vmCvar )
 	vmCvar->integer = cv->integer;
 }
 
+#if defined( QC )
 void Cvar_Watch( const char *var_name, qbool watch )
 {
 	cvar_t* cv = Cvar_FindVar( var_name );
@@ -1488,6 +1491,7 @@ void Cvar_Watch( const char *var_name, qbool watch )
 		cv->notifyUI = watch;
 	}
 }
+#endif // QC
 
 static const cmdTableItem_t cl_cmds[] =
 {
