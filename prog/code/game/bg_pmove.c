@@ -226,6 +226,7 @@ void PM_AddTouchEnt( int entityNum ) {
 	pm->numtouch++;
 }
 
+#if defined( QC )
 /*
 ===================
 PM_ActivateAbility
@@ -236,6 +237,7 @@ static void PM_ActivateAbility( playerState_t *ps ) {
 	BG_AddPredictableEventToPlayerstate( EV_ACTIVATE_ABILITY, ps->champion, ps );
 	ps->pm_flags |= PMF_ABILITY_ACTIVATED;
 }
+#endif // QC
 
 /*
 ===================
