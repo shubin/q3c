@@ -599,11 +599,23 @@ namespace RHI
 		IDXGISwapChain3* swapChain;
 		HTexture renderTargets[FrameCount];
 		ID3D12CommandAllocator* mainCommandAllocators[FrameCount];
+#if defined( QC )
+		ID3D12GraphicsCommandList* mainCommandList;
+#else
 		ID3D12GraphicsCommandList6* mainCommandList;
+#endif
 		ID3D12CommandAllocator* tempCommandAllocator;
+#if defined( QC )
+		ID3D12GraphicsCommandList* tempCommandList;
+#else
 		ID3D12GraphicsCommandList6* tempCommandList;
+#endif
 		bool tempCommandListOpen;
+#if defined( QC )
+		ID3D12GraphicsCommandList* commandList; // not owned, don't release it!
+#else
 		ID3D12GraphicsCommandList6* commandList; // not owned, don't release it!
+#endif
 		uint32_t swapChainBufferCount;
 		uint32_t renderFrameCount;
 		HANDLE frameLatencyWaitableObject;
@@ -4459,8 +4471,9 @@ namespace RHI
 					break;
 			}
 		}
-
+#if !defined( QC )
 		rhi.commandList->RSSetShadingRate(GetD3DShadingRate(shadingRate), NULL);
+#endif
 	}
 
 	uint32_t GetDurationCount()
