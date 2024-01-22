@@ -1546,6 +1546,13 @@ static qbool ParseShader( const char** text )
 			ParseSort( text );
 			continue;
 		}
+#if defined( QC )
+		else if ( !Q_stricmp(token, "nodepthsort") )
+		{
+			shader.noDepthSort = qtrue;
+			continue;
+		}
+#endif // QC
 		else
 		{
 			ParserError( "unknown general shader parameter '%s'", token );

@@ -390,6 +390,7 @@ struct shader_t {
 	qbool		polygonOffset;			// set for decals and other items that must be offset
 #if defined( QC )
 	qboolean	noVLCollapse;			// prevent ignoring lightmaps if vertex lighting is enabled
+	qboolean	noDepthSort;			// don't use surface's  midpoint depth when sorting
 #endif
 	int imgflags;	// nopicmip, nomipmaps, etc
 
@@ -517,6 +518,9 @@ struct drawSurf_t {
 	uint64_t				sort;		// sort key for scene rendering
 	const surfaceType_t*	surface;	// any of surface*_t
 	float					depth;		// transparent surface's midpoint's depth
+#if defined( QC )
+	qboolean				noDepthSort;// ignore surface's midpoint depth
+#endif // QC
 	qhandle_t				model;		// MD3 model handle, can be 0
 	int						index;		// transparent surface's registration order
 	float					shaderSort;	// transparent surface's shader sort

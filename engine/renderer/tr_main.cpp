@@ -1448,7 +1448,7 @@ static int R_CompareDrawSurf( const void* aPtr, const void* bPtr )
 	if ( a->shaderSort > b->shaderSort )
 		return 1;
 #if defined( QC )
-	if ( *a->surface == SF_POLY && *b->surface == SF_POLY )
+	if ( a->noDepthSort && b->noDepthSort )
 		return a->index - b->index;
 #endif
 
@@ -1469,7 +1469,7 @@ static int R_CompareDrawSurfNoKey( const void* aPtr, const void* bPtr )
 	const drawSurf_t* a = ( const drawSurf_t* )aPtr;
 	const drawSurf_t* b = ( const drawSurf_t* )bPtr;
 #if defined( QC )
-	if ( *a->surface == SF_POLY && *b->surface == SF_POLY )
+	if ( a->noDepthSort && b->noDepthSort )
 		return a->index - b->index;
 #endif
 	if ( a->depth > b->depth )
@@ -1524,6 +1524,9 @@ static void R_SortDrawSurfs( int firstDrawSurf, int firstLitSurf )
 		drawSurfs[i].depth = R_ComputeSurfaceDepth( drawSurfs[i].surface, entityNum, drawSurfs[i].model );
 		drawSurfs[i].index = i;
 		drawSurfs[i].shaderSort = shader->sort;
+#if defined( QC )
+		drawSurfs[i].noDepthSort = shader->noDepthSort;
+#endif // QC
 	}
 
 	// sort transparent surfaces by depth
