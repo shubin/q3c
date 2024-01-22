@@ -24,9 +24,24 @@ typedef void     ( VMCALL *dllEntry_t )   ( syscall_t syscallptr );
 
 static syscall_t syscallptr;
 
+template<typename T>
+intptr_t sysarg( T a ) {
+	return (intptr_t)a;
+}
+
+inline intptr_t sysarg( float a ) {
+	union {
+		float f;
+		int i;
+	} floatint;
+	floatint.f = a;
+	return (intptr_t)floatint.i;
+}
+
 template<typename ... Parms>
 intptr_t syscall( intptr_t arg, Parms... parms  ) {
-	intptr_t p[] = { arg, (intptr_t)parms ... };
+	intptr_t p[] = { arg, sysarg( parms ) ... };
+
 	return syscallptr( p );
 }
 
