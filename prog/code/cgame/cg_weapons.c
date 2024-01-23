@@ -2277,7 +2277,14 @@ void CG_FireWeapon( centity_t *cent ) {
 
 #if defined( QC )
 static void PlayAbilitySound( int champion, int clientNum ) {
+	int seed = cg.snap->serverTime;
+
 	if ( cgs.media.abilitySounds[champion] != 0 ) {
+		if ( champion == CHAMP_KEEL ) {
+			if ( ( Q_rand( &seed ) % 8 ) != 1 ) {
+				return;
+			}
+		}
 		trap_S_StartSound( NULL, clientNum, CHAN_BODY, cgs.media.abilitySounds[champion] );
 	} else {
 		trap_S_StartSound( NULL, clientNum, CHAN_BODY, CG_CustomSound( clientNum, "*taunt.wav" ) );
@@ -2439,6 +2446,11 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		radius = 64;
 		light = 300;
 		isSprite = qtrue;
+#if defined( QC )
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.5;
+#endif // QC
 		break;
 	case WP_ROCKET_LAUNCHER:
 		mod = cgs.media.dishFlashModel;
