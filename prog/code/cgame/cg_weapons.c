@@ -2277,11 +2277,9 @@ void CG_FireWeapon( centity_t *cent ) {
 
 #if defined( QC )
 static void PlayAbilitySound( int champion, int clientNum ) {
-	int seed = cg.snap->serverTime;
-
 	if ( cgs.media.abilitySounds[champion] != 0 ) {
 		if ( champion == CHAMP_KEEL ) {
-			if ( ( Q_rand( &seed ) % 8 ) != 1 ) {
+			if ( ( cg.snap->serverTime % 4 ) != 1 ) {
 				return;
 			}
 		}
