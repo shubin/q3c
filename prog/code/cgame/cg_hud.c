@@ -173,10 +173,10 @@ void CG_Draw2DQC( stereoFrame_t stereoFrame ) {
 	}
 	;
 	if ( !hud_drawfollow() && !cg.showScores ) {
-		CG_DrawWarmup();
+		hud_drawwarmup();
 	}
 	if ( !cg.showScores ) {
-		CG_DrawCenterString();
+		hud_drawcenterstring();
 	}
 
 	if ( cgs.gametype >= GT_TEAM ) {

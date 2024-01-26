@@ -66,6 +66,10 @@ void hud_drawscores_tournament( void );
 void hud_drawscores_brief_tdm( void );
 //
 void hud_drawscores_tdm( void );
+//
+void hud_drawwarmup( void ); // hud_warmup.c
+//
+void hud_drawcenterstring( void ); // hud_warmup.c
 // ability status
 void hud_draw_ability( void );
 // crosshair
