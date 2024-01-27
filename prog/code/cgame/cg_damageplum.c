@@ -244,9 +244,10 @@ void AddDamagePlum( int clientnum, vec3_t origin, int damage, int time ) {
 		data->damage += damage;
 		data->time = time;
 		sound = MIN( MAX( 0, data->damage ), 98 )/33;
-
-		trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
+	} else {
+		sound = MIN( MAX( 0, damage ), 98 )/33;
 	}
+	trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
 }
 
 static
