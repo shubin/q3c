@@ -1382,7 +1382,7 @@ extern	vmCvar_t		cg_totemEffects;
 extern	vmCvar_t		cg_totemLight;
 extern	vmCvar_t		cg_abilityGaugeOffset;
 extern	vmCvar_t		cg_railCoreWidth;
-extern	vmCvar_t		cg_lightingBeamWidth;
+extern	vmCvar_t		cg_lightningBeamWidth;
 extern	vmCvar_t		cg_bubbleTrail;
 extern	vmCvar_t		cg_muzzleFlash;
 extern	vmCvar_t		cg_smokeRadius_RL;

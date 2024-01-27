@@ -279,7 +279,7 @@ vmCvar_t	cg_totemLight;
 vmCvar_t	cg_abilityGaugeOffset;
 // weapon effect appearance
 vmCvar_t	cg_railCoreWidth;
-vmCvar_t	cg_lightingBeamWidth;
+vmCvar_t	cg_lightningBeamWidth;
 vmCvar_t	cg_bubbleTrail;
 vmCvar_t	cg_muzzleFlash;
 vmCvar_t	cg_smokeRadius_RL;
@@ -516,7 +516,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_totemLight, "cg_totemLight", "1", CVAR_ARCHIVE },
 	{ &cg_abilityGaugeOffset, "cg_abilityGaugeOffset", "0", CVAR_ARCHIVE },
 	{ &cg_railCoreWidth, "cg_railCoreWidth", "8", CVAR_ARCHIVE },
-	{ &cg_lightingBeamWidth, "cg_lightingBeamWidth", "8", CVAR_ARCHIVE },
+	{ &cg_lightningBeamWidth, "cg_lightningBeamWidth", "8", CVAR_ARCHIVE },
 	{ &cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
 	{ &cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
 	{ &cg_smokeRadius_RL, "cg_smokeRadius_RL", "32", CVAR_ARCHIVE },

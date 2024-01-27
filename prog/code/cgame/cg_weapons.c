@@ -1328,7 +1328,7 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 
 	beam.reType = RT_LIGHTNING;
 #if defined( QC )
-	beam.radius = Com_Clamp( 1, 32, cg_lightingBeamWidth.integer );
+	beam.radius = Com_Clamp( 1, 32, cg_lightningBeamWidth.integer );
 #endif // QC
 	beam.customShader = cgs.media.lightningShader;
 	trap_R_AddRefEntityToScene( &beam );
