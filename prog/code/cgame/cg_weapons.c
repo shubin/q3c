@@ -1334,6 +1334,9 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	trap_R_AddRefEntityToScene( &beam );
 
 	// add the impact flare if it hit something
+#if defined( QC )
+	if ( cg_lightningImpactFlare.integer )
+#endif // QC
 	if ( trace.fraction < 1.0 ) {
 		vec3_t	angles;
 		vec3_t	dir;
