@@ -237,16 +237,15 @@ damage_plum_data_t *GetDamagePlumData( int clientnum, int time ) {
 static
 void AddDamagePlum( int clientnum, vec3_t origin, int damage, int time ) {
 	damage_plum_data_t *data = GetDamagePlumData( clientnum, time );
-	int sound;
+	int sound = 0;
 
 	if ( data != NULL ) {
 		VectorCopy( origin, data->origin );
 		data->damage += damage;
 		data->time = time;
 		sound = MIN( MAX( 0, data->damage ), 98 )/33;
-
-		trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
 	}
+	trap_S_StartLocalSound( cgs.media.hitSound[sound], CHAN_LOCAL_SOUND );
 }
 
 static
