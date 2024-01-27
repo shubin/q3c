@@ -1389,7 +1389,7 @@ extern	vmCvar_t		cg_smokeRadius_RL;
 extern	vmCvar_t		cg_smokeRadius_GL;
 extern	vmCvar_t		cg_smokeRadius_TB;
 extern	vmCvar_t		cg_smoke_SG;
-extern	vmCvar_t		cg_lightningImpactFlare;
+extern	vmCvar_t		cg_lightningImpact;
 extern	vmCvar_t		cg_bob;
 extern	vmCvar_t		cg_crosshairPulse;
 extern	vmCvar_t		cg_crosshairColor;
