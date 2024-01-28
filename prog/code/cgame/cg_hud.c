@@ -44,7 +44,7 @@ qboolean hud_drawfollow( void ) {
 		centerx = ( hud_bounds.left + hud_bounds.right ) / 2;
 		text = va( "Following ^7%s", cgs.clientinfo[cg.snap->ps.clientNum].name );
 		dim = hud_measurecolorstring( 0.6f, hud_media.font_regular, text );
-		hud_drawcolorstring( centerx - dim / 2, hud_bounds.bottom - 48, 0.6f, hud_media.font_regular, text, black, 2, 2, qfalse );
+		hud_drawcolorstring( centerx - dim / 2, hud_bounds.bottom + cg_followingOffset.value, 0.6f, hud_media.font_regular, text, black, 2, 2, qfalse );
 		return qtrue;
 	}return qfalse;
 }

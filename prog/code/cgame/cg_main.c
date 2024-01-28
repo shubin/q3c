@@ -296,6 +296,7 @@ vmCvar_t	cg_changeWeaponNoAmmoSound;
 vmCvar_t	cg_changeWeaponSound;
 vmCvar_t	cg_speedometer;
 vmCvar_t	cg_speedometerOffset;
+vmCvar_t	cg_followingOffset;
 #endif // QC
 
 typedef struct {
@@ -530,6 +531,7 @@ static cvarTable_t cvarTable[] = {
 	{ &cg_changeWeaponSound, "cg_changeWeaponSound", "1", CVAR_ARCHIVE },
 	{ &cg_speedometer, "cg_speedometer", "0", CVAR_ARCHIVE },
 	{ &cg_speedometerOffset, "cg_speedometerOffset", "130", CVAR_ARCHIVE },
+	{ &cg_followingOffset, "cg_followingOffset", "-48", CVAR_ARCHIVE },
 #endif
 };
 

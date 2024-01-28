@@ -1397,6 +1397,7 @@ extern	vmCvar_t		cg_changeWeaponNoAmmoSound;
 extern	vmCvar_t		cg_changeWeaponSound;
 extern	vmCvar_t		cg_speedometer;
 extern	vmCvar_t		cg_speedometerOffset;
+extern	vmCvar_t		cg_followingOffset;
 #endif
 #if defined( UNLAGGED ) //unlagged - client options
 extern	vmCvar_t		cg_delag;
