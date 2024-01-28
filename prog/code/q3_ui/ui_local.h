@@ -94,7 +94,9 @@ extern vmCvar_t	ui_cdkey;
 extern vmCvar_t	ui_cdkeychecked;
 extern vmCvar_t	ui_ioq3;
 
-
+#if defined( QC )
+extern vmCvar_t ui_connectstring;
+#endif // QC
 //
 // ui_qmenu.c
 //

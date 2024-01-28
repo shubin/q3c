@@ -92,23 +92,22 @@ UI_CreditMenu_Draw_qc
 static void UI_CreditMenu_Draw_qc( void ) {
 	int		y;
 	int		i;
-	char	*colon;
 
-	static char *names[] = {
-		"",
-		"Programming: Serge Shubin",
-		"Artist: Anton Savinov",
-		"Map maker: Obsessed",
-		"Weapon models: CannerZ45",
-		"",
-		"Client/Engine: based on CNQ3 by myT",
-		"Additional art: Serge Shubin, Alexei Gorelov",
-		"Additional art: Dannaki Kobayashi, Elena Kaisheva",
-		"Additional art: Vladimir Shubin",
-		"PR and marketing: RESP TEAM",
-		"Various assets: OpenArena team",
-		"Misc sound FX: www.playonloop.com (CC BY 4.0)",
-		NULL
+	static char *names[][2] = {
+		{ "", "" },
+		{ "Programming", "Serge Shubin" },
+		{ "Artist", "Anton Savinov" },
+		{ "Map maker", "Obsessed" },
+		{ "Weapon models", "CannerZ45" },
+		{ "", "" },
+		{ "Client/Engine", "based on CNQ3 by myT" },
+		{ "Additional art", "Serge Shubin, Alexei Gorelov" },
+		{ "Additional art", "Dannaki Kobayashi, Elena Kaisheva" },
+		{ "Additional art", "Vladimir Shubin" },
+		{ "PR and marketing", "RESP TEAM" },
+		{ "Various assets", "OpenArena team" },
+		{ "Misc sound FX", "www.playonloop.com(CC BY 4.0)" },
+		{ NULL, NULL }
 	};
 
 	// Center text vertically on the screen
@@ -117,15 +116,12 @@ static void UI_CreditMenu_Draw_qc( void ) {
 	UI_DrawProportionalString( 320, y, "Blood Run Crew", UI_CENTER | UI_SMALLFONT, color_red);
 	y += 1.42 * PROP_HEIGHT * PROP_SMALL_SIZE_SCALE;
 
-	for ( i = 0; names[i]; i++ ) {
-		colon = strchr( names[i], ':' );
-		if ( colon ) {
-			*colon = '\0';
-			UI_DrawProportionalString( 200, y, names[i], UI_RIGHT | UI_SMALLFONT, color_yellow );
-			UI_DrawProportionalString( 200, y, colon + 1, UI_LEFT| UI_SMALLFONT, color_white );
-			*colon = ':';
+	for ( i = 0; names[i][0]; i++ ) {
+		if ( names[1] ) {
+			UI_DrawProportionalString( 200, y, names[i][0], UI_RIGHT | UI_SMALLFONT, color_yellow);
+			UI_DrawProportionalString( 220, y, names[i][1], UI_LEFT | UI_SMALLFONT, color_white);
 		} else {
-			UI_DrawProportionalString( 320, y, names[i], UI_CENTER | UI_SMALLFONT, color_white );
+			UI_DrawProportionalString( 320, y, names[i][0], UI_CENTER | UI_SMALLFONT, color_white);
 		}
 		y += 1.42 * PROP_HEIGHT * PROP_SMALL_SIZE_SCALE;
 	}

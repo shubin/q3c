@@ -180,7 +180,15 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 		UI_DrawProportionalString( 320, 16, va( "Loading %s", Info_ValueForKey( info, "mapname" ) ), UI_BIGFONT|UI_CENTER|UI_DROPSHADOW, color_white );
 	}
 
+#if defined( QC )
+	if ( ui_connectstring.string[0] ) {
+		UI_DrawProportionalString( 320, 64, va( "Connecting to %s", ui_connectstring.string ), UI_CENTER | UI_SMALLFONT | UI_DROPSHADOW, menu_text_color );
+	} else {
+		UI_DrawProportionalString( 320, 64, va( "Connecting to %s", cstate.servername ), UI_CENTER | UI_SMALLFONT | UI_DROPSHADOW, menu_text_color );
+	}
+#else
 	UI_DrawProportionalString( 320, 64, va("Connecting to %s", cstate.servername), UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color );
+#endif
 	//UI_DrawProportionalString( 320, 96, "Press Esc to abort", UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color );
 
 	// display global MOTD at bottom
