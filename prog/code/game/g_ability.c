@@ -529,7 +529,7 @@ void G_AbilityTickFrame( gentity_t *ent ) {
 	if ( client->ps.dotAcidNum > 0 && level.time > client->ps.dotAcidTime ) {
 		other = &g_clients[client->ps.dotAcidOwner];
 		client->ps.dotAcidNum--;
-		client->ps.dotAcidTime = level.time + ACID_DOT_TICK;
+		client->ps.dotAcidTime += ACID_DOT_TICK;
 		damage = ACID_DOT_AMOUNT;
 		damage *= ( other->ps.powerups[PW_QUAD] ? g_quadfactor.value : 1 );
 		G_Damage( 
