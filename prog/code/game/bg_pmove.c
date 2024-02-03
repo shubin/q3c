@@ -68,7 +68,7 @@ static movement_parameters_t s_mp[] = {
 		0.45f,	// pm_duckScale
 		0.50f,	// pm_swimScale
 
-		15.0f,	// pm_accelerate
+		10.0f,	// pm_accelerate
 		1.0f,	// pm_airaccelerate
 		4.0f,	// pm_wateraccelerate
 		8.0f,	// pm_flyaccelerate
@@ -81,8 +81,8 @@ static movement_parameters_t s_mp[] = {
 		1.0f,	// pm_slidevelocity
 		0.09f,	// pm_powerslide
 
-		2.5f,	// cpm_pm_airstopaccelerate
-		150.0f,	// cpm_pm_aircontrol
+		1.5f,	// cpm_pm_airstopaccelerate
+		50.0f,	// cpm_pm_aircontrol
 		70.0f,	// cpm_pm_strafeaccelerate
 		30.0f,	// cpm_pm_wishspeed
 		50.0f,	// cpm_pm_jump_z	
