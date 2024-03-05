@@ -117,7 +117,7 @@ float4 ps(VOut input) : SV_Target
 	float spec = pow(specFactor, 16.0) * 0.25;
 
 	// Lambertian diffuse reflection term (N.L)
-	float diffuse = min(abs(dot(nN, nL)), 1.0);
+	float diffuse = max(dot(nN, nL), 0);
 	float3 color = (base.rgb * diffuse.rrr + spec.rrr) * intens * intensity;
 	float alpha = lerp(opaque, 1.0, base.a);
 	float4 final = float4(color.rgb * alpha, alpha);
